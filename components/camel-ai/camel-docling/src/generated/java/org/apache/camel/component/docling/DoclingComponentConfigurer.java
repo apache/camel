@@ -32,6 +32,12 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": getOrCreateConfiguration(target).setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "apitimeout":
+        case "apiTimeout": getOrCreateConfiguration(target).setApiTimeout(property(camelContext, long.class, value)); return true;
+        case "asyncpollinterval":
+        case "asyncPollInterval": getOrCreateConfiguration(target).setAsyncPollInterval(property(camelContext, long.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": getOrCreateConfiguration(target).setAsyncTimeout(property(camelContext, long.class, value)); return true;
         case "authenticationscheme":
         case "authenticationScheme": getOrCreateConfiguration(target).setAuthenticationScheme(property(camelContext, org.apache.camel.component.docling.AuthenticationScheme.class, value)); return true;
         case "authenticationtoken":
@@ -62,6 +68,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "outputFormat": getOrCreateConfiguration(target).setOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "processtimeout":
         case "processTimeout": getOrCreateConfiguration(target).setProcessTimeout(property(camelContext, long.class, value)); return true;
+        case "useasyncmode":
+        case "useAsyncMode": getOrCreateConfiguration(target).setUseAsyncMode(property(camelContext, boolean.class, value)); return true;
         case "usedoclingserve":
         case "useDoclingServe": getOrCreateConfiguration(target).setUseDoclingServe(property(camelContext, boolean.class, value)); return true;
         case "workingdirectory":
@@ -75,6 +83,12 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": return java.lang.String.class;
+        case "apitimeout":
+        case "apiTimeout": return long.class;
+        case "asyncpollinterval":
+        case "asyncPollInterval": return long.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "authenticationscheme":
         case "authenticationScheme": return org.apache.camel.component.docling.AuthenticationScheme.class;
         case "authenticationtoken":
@@ -105,6 +119,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "outputFormat": return java.lang.String.class;
         case "processtimeout":
         case "processTimeout": return long.class;
+        case "useasyncmode":
+        case "useAsyncMode": return boolean.class;
         case "usedoclingserve":
         case "useDoclingServe": return boolean.class;
         case "workingdirectory":
@@ -119,6 +135,12 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": return getOrCreateConfiguration(target).getApiKeyHeader();
+        case "apitimeout":
+        case "apiTimeout": return getOrCreateConfiguration(target).getApiTimeout();
+        case "asyncpollinterval":
+        case "asyncPollInterval": return getOrCreateConfiguration(target).getAsyncPollInterval();
+        case "asynctimeout":
+        case "asyncTimeout": return getOrCreateConfiguration(target).getAsyncTimeout();
         case "authenticationscheme":
         case "authenticationScheme": return getOrCreateConfiguration(target).getAuthenticationScheme();
         case "authenticationtoken":
@@ -149,6 +171,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "outputFormat": return getOrCreateConfiguration(target).getOutputFormat();
         case "processtimeout":
         case "processTimeout": return getOrCreateConfiguration(target).getProcessTimeout();
+        case "useasyncmode":
+        case "useAsyncMode": return getOrCreateConfiguration(target).isUseAsyncMode();
         case "usedoclingserve":
         case "useDoclingServe": return getOrCreateConfiguration(target).isUseDoclingServe();
         case "workingdirectory":

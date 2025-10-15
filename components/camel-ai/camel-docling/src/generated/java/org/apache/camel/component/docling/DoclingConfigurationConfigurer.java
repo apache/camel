@@ -25,6 +25,12 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": target.setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "apitimeout":
+        case "apiTimeout": target.setApiTimeout(property(camelContext, long.class, value)); return true;
+        case "asyncpollinterval":
+        case "asyncPollInterval": target.setAsyncPollInterval(property(camelContext, long.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": target.setAsyncTimeout(property(camelContext, long.class, value)); return true;
         case "authenticationscheme":
         case "authenticationScheme": target.setAuthenticationScheme(property(camelContext, org.apache.camel.component.docling.AuthenticationScheme.class, value)); return true;
         case "authenticationtoken":
@@ -50,6 +56,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "outputFormat": target.setOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "processtimeout":
         case "processTimeout": target.setProcessTimeout(property(camelContext, long.class, value)); return true;
+        case "useasyncmode":
+        case "useAsyncMode": target.setUseAsyncMode(property(camelContext, boolean.class, value)); return true;
         case "usedoclingserve":
         case "useDoclingServe": target.setUseDoclingServe(property(camelContext, boolean.class, value)); return true;
         case "workingdirectory":
@@ -63,6 +71,12 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": return java.lang.String.class;
+        case "apitimeout":
+        case "apiTimeout": return long.class;
+        case "asyncpollinterval":
+        case "asyncPollInterval": return long.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "authenticationscheme":
         case "authenticationScheme": return org.apache.camel.component.docling.AuthenticationScheme.class;
         case "authenticationtoken":
@@ -88,6 +102,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "outputFormat": return java.lang.String.class;
         case "processtimeout":
         case "processTimeout": return long.class;
+        case "useasyncmode":
+        case "useAsyncMode": return boolean.class;
         case "usedoclingserve":
         case "useDoclingServe": return boolean.class;
         case "workingdirectory":
@@ -102,6 +118,12 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": return target.getApiKeyHeader();
+        case "apitimeout":
+        case "apiTimeout": return target.getApiTimeout();
+        case "asyncpollinterval":
+        case "asyncPollInterval": return target.getAsyncPollInterval();
+        case "asynctimeout":
+        case "asyncTimeout": return target.getAsyncTimeout();
         case "authenticationscheme":
         case "authenticationScheme": return target.getAuthenticationScheme();
         case "authenticationtoken":
@@ -127,6 +149,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "outputFormat": return target.getOutputFormat();
         case "processtimeout":
         case "processTimeout": return target.getProcessTimeout();
+        case "useasyncmode":
+        case "useAsyncMode": return target.isUseAsyncMode();
         case "usedoclingserve":
         case "useDoclingServe": return target.isUseDoclingServe();
         case "workingdirectory":

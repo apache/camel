@@ -41,6 +41,16 @@ public enum DoclingOperations {
     /**
      * Extract structured data including tables and layout
      */
-    EXTRACT_STRUCTURED_DATA
+    EXTRACT_STRUCTURED_DATA,
+
+    /**
+     * Submit an async conversion and return task ID (docling-serve only)
+     */
+    SUBMIT_ASYNC_CONVERSION,
+
+    /**
+     * Check the status of an async conversion task (docling-serve only)
+     */
+    CHECK_CONVERSION_STATUS
 
 }

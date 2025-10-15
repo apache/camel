@@ -231,6 +231,57 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * API request timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param apiTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder apiTimeout(long apiTimeout) {
+            doSetProperty("apiTimeout", apiTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Polling interval for async conversion status in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param asyncPollInterval the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder asyncPollInterval(long asyncPollInterval) {
+            doSetProperty("asyncPollInterval", asyncPollInterval);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum time to wait for async conversion completion in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -297,6 +348,23 @@ public interface DoclingComponentBuilderFactory {
          */
         default DoclingComponentBuilder processTimeout(long processTimeout) {
             doSetProperty("processTimeout", processTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Use asynchronous conversion mode (docling-serve API only).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param useAsyncMode the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder useAsyncMode(boolean useAsyncMode) {
+            doSetProperty("useAsyncMode", useAsyncMode);
             return this;
         }
     
@@ -412,10 +480,14 @@ public interface DoclingComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((DoclingComponent) component).setOperation((org.apache.camel.component.docling.DoclingOperations) value); return true;
             case "outputFormat": getOrCreateConfiguration((DoclingComponent) component).setOutputFormat((java.lang.String) value); return true;
             case "useDoclingServe": getOrCreateConfiguration((DoclingComponent) component).setUseDoclingServe((boolean) value); return true;
+            case "apiTimeout": getOrCreateConfiguration((DoclingComponent) component).setApiTimeout((long) value); return true;
+            case "asyncPollInterval": getOrCreateConfiguration((DoclingComponent) component).setAsyncPollInterval((long) value); return true;
+            case "asyncTimeout": getOrCreateConfiguration((DoclingComponent) component).setAsyncTimeout((long) value); return true;
             case "autowiredEnabled": ((DoclingComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "convertEndpoint": getOrCreateConfiguration((DoclingComponent) component).setConvertEndpoint((java.lang.String) value); return true;
             case "doclingCommand": getOrCreateConfiguration((DoclingComponent) component).setDoclingCommand((java.lang.String) value); return true;
             case "processTimeout": getOrCreateConfiguration((DoclingComponent) component).setProcessTimeout((long) value); return true;
+            case "useAsyncMode": getOrCreateConfiguration((DoclingComponent) component).setUseAsyncMode((boolean) value); return true;
             case "workingDirectory": getOrCreateConfiguration((DoclingComponent) component).setWorkingDirectory((java.lang.String) value); return true;
             case "apiKeyHeader": getOrCreateConfiguration((DoclingComponent) component).setApiKeyHeader((java.lang.String) value); return true;
             case "authenticationScheme": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationScheme((org.apache.camel.component.docling.AuthenticationScheme) value); return true;

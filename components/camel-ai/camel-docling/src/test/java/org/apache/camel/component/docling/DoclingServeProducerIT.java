@@ -144,6 +144,210 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         LOG.info("Output file size: {} bytes", outputFile.length());
     }
 
+    @Test
+    public void testAsyncMarkdownConversion() throws Exception {
+        Path testFile = createTestFile();
+
+        String result = template.requestBodyAndHeader("direct:convert-async-markdown",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+
+        assertNotNull(result, "Async conversion result should not be null");
+        assertTrue(result.length() > 0, "Async conversion result should not be empty");
+
+        LOG.info("Successfully converted document to Markdown using async mode");
+    }
+
+    @Test
+    public void testAsyncHtmlConversion() throws Exception {
+        Path testFile = createTestFile();
+
+        String result = template.requestBodyAndHeader("direct:convert-async-html",
+                testFile.toString(),
+                DoclingHeaders.OPERATION, DoclingOperations.CONVERT_TO_HTML, String.class);
+
+        assertNotNull(result, "Async HTML conversion result should not be null");
+        assertTrue(result.length() > 0, "Async HTML conversion result should not be empty");
+
+        LOG.info("Successfully converted document to HTML using async mode");
+    }
+
+    @Test
+    public void testAsyncJsonConversion() throws Exception {
+        Path testFile = createTestFile();
+
+        String result = template.requestBodyAndHeader("direct:convert-async-json",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+
+        assertNotNull(result, "Async JSON conversion result should not be null");
+        assertTrue(result.length() > 0, "Async JSON conversion result should not be empty");
+        assertTrue(result.contains("{") || result.contains("["), "JSON result should contain JSON structure");
+
+        LOG.info("Successfully converted document to JSON using async mode");
+    }
+
+    @Test
+    public void testAsyncUrlConversion() throws Exception {
+        String url = "https://arxiv.org/pdf/2501.17887";
+
+        String result = template.requestBody("direct:convert-async-url", url, String.class);
+
+        assertNotNull(result, "Async URL conversion result should not be null");
+        assertTrue(result.length() > 0, "Async URL conversion result should not be empty");
+
+        LOG.info("Successfully converted document from URL using async mode");
+    }
+
+    @Test
+    public void testAsyncConversionWithCustomTimeout() throws Exception {
+        Path testFile = createTestFile();
+
+        String result = template.requestBodyAndHeader("direct:convert-async-custom-timeout",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+
+        assertNotNull(result, "Async conversion with custom timeout should not be null");
+        assertTrue(result.length() > 0, "Async conversion with custom timeout should not be empty");
+
+        LOG.info("Successfully converted document using async mode with custom timeout");
+    }
+
+    @Test
+    public void testAsyncConversionWithHeaderOverride() throws Exception {
+        Path testFile = createTestFile();
+
+        // Use sync endpoint but override with async header
+        String result = template.requestBodyAndHeaders("direct:convert-markdown-serve",
+                testFile.toString(),
+                new java.util.HashMap<String, Object>() {
+                    {
+                        put(DoclingHeaders.INPUT_FILE_PATH, testFile.toString());
+                        put(DoclingHeaders.USE_ASYNC_MODE, true);
+                        put(DoclingHeaders.ASYNC_POLL_INTERVAL, 1000L);
+                        put(DoclingHeaders.ASYNC_TIMEOUT, 120000L);
+                    }
+                }, String.class);
+
+        assertNotNull(result, "Async conversion via header override should not be null");
+        assertTrue(result.length() > 0, "Async conversion via header override should not be empty");
+
+        LOG.info("Successfully converted document using async mode via header override");
+    }
+
+    @Test
+    public void testSubmitAsyncConversion() throws Exception {
+        Path testFile = createTestFile();
+
+        // Submit async conversion and get task ID
+        String taskId = template.requestBodyAndHeader("direct:submit-async",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+
+        assertNotNull(taskId, "Task ID should not be null");
+        assertTrue(taskId.length() > 0, "Task ID should not be empty");
+
+        LOG.info("Successfully submitted async conversion with task ID: {}", taskId);
+    }
+
+    @Test
+    public void testCheckConversionStatus() throws Exception {
+        Path testFile = createTestFile();
+
+        // First, submit async conversion
+        String taskId = template.requestBodyAndHeader("direct:submit-async",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+
+        assertNotNull(taskId, "Task ID should not be null");
+
+        // Wait a bit for processing
+        Thread.sleep(1000);
+
+        // Check status
+        ConversionStatus status = template.requestBody("direct:check-status", taskId, ConversionStatus.class);
+
+        assertNotNull(status, "Status should not be null");
+        assertNotNull(status.getTaskId(), "Status task ID should not be null");
+        assertNotNull(status.getStatus(), "Status state should not be null");
+
+        LOG.info("Successfully checked status for task {}: {}", taskId, status.getStatus());
+    }
+
+    @Test
+    public void testCustomAsyncWorkflow() throws Exception {
+        Path testFile = createTestFile();
+
+        // Custom workflow: submit, poll until complete, get result
+        String taskId = template.requestBodyAndHeader("direct:submit-async",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+
+        assertNotNull(taskId, "Task ID should not be null");
+        LOG.info("Submitted conversion with task ID: {}", taskId);
+
+        // Poll for completion
+        ConversionStatus status = null;
+        int maxAttempts = 60; // 60 seconds max
+        int attempts = 0;
+
+        while (attempts < maxAttempts) {
+            status = template.requestBody("direct:check-status", taskId, ConversionStatus.class);
+            LOG.info("Attempt {}: Task {} status is {}", attempts + 1, taskId, status.getStatus());
+
+            if (status.isCompleted()) {
+                LOG.info("Task completed successfully");
+                break;
+            } else if (status.isFailed()) {
+                throw new RuntimeException("Task failed: " + status.getErrorMessage());
+            }
+
+            Thread.sleep(1000);
+            attempts++;
+        }
+
+        assertNotNull(status, "Final status should not be null");
+        assertTrue(status.isCompleted(), "Task should be completed");
+
+        if (status.getResult() != null) {
+            assertTrue(status.getResult().length() > 0, "Result should not be empty");
+            LOG.info("Successfully retrieved result: {} characters", status.getResult().length());
+        }
+    }
+
+    @Test
+    public void testCustomPollingWorkflowWithRoute() throws Exception {
+        Path testFile = createTestFile();
+
+        // Send document to custom polling workflow route
+        String result = template.requestBodyAndHeader("direct:custom-polling-workflow",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+
+        assertNotNull(result, "Result should not be null");
+        assertTrue(result.length() > 0, "Result should not be empty");
+
+        LOG.info("Custom polling workflow completed successfully with {} characters", result.length());
+    }
+
+    // Helper method for polling loop condition
+    public static boolean shouldContinuePolling(org.apache.camel.Exchange exchange) {
+        Integer attempt = exchange.getProperty("attempt", Integer.class);
+        Integer maxAttempts = exchange.getProperty("maxAttempts", Integer.class);
+        Boolean isCompleted = exchange.getProperty("isCompleted", Boolean.class);
+        Boolean isFailed = exchange.getProperty("isFailed", Boolean.class);
+
+        if (Boolean.TRUE.equals(isCompleted) || Boolean.TRUE.equals(isFailed)) {
+            return false; // Stop polling if completed or failed
+        }
+
+        if (attempt != null && maxAttempts != null && attempt >= maxAttempts) {
+            return false; // Stop if max attempts reached
+        }
+
+        return true; // Continue polling
+    }
+
     private Path createTestFile() throws Exception {
         Path tempFile = Files.createTempFile("docling-serve-test", ".md");
         Files.write(tempFile,
@@ -157,6 +361,7 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // Synchronous conversion routes
                 from("direct:convert-markdown-serve")
                         .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true");
 
@@ -172,6 +377,78 @@ public class DoclingServeProducerIT extends CamelTestSupport {
                 from("direct:convert-and-write")
                         .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true")
                         .to("file:" + outputDir.toString() + "?fileName=converted-output.md");
+
+                // Asynchronous conversion routes
+                from("direct:convert-async-markdown")
+                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+
+                from("direct:convert-async-html")
+                        .to("docling:convert?operation=CONVERT_TO_HTML&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+
+                from("direct:convert-async-json")
+                        .to("docling:convert?operation=CONVERT_TO_JSON&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+
+                from("direct:convert-async-url")
+                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+
+                from("direct:convert-async-custom-timeout")
+                        .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&useAsyncMode=true&asyncPollInterval=500&asyncTimeout=300000");
+
+                // Custom async workflow routes
+                from("direct:submit-async")
+                        .to("docling:convert?operation=SUBMIT_ASYNC_CONVERSION");
+
+                from("direct:check-status")
+                        .to("docling:convert?operation=CHECK_CONVERSION_STATUS");
+
+                // Custom polling workflow - demonstrates submit and poll pattern
+                from("direct:custom-polling-workflow")
+                        .log("Starting custom polling workflow for file: ${header.CamelDoclingInputFilePath}")
+                        // Step 1: Submit async conversion
+                        .to("docling:convert?operation=SUBMIT_ASYNC_CONVERSION")
+                        .log("Submitted async conversion with task ID: ${body}")
+                        .setHeader("taskId", body())
+                        .setProperty("maxAttempts", constant(60))
+                        .setProperty("attempt", constant(0))
+                        // Step 2: Poll for completion using process to check status
+                        .loopDoWhile(method(DoclingServeProducerIT.class, "shouldContinuePolling"))
+                        .process(exchange -> {
+                            // Increment attempt counter
+                            Integer attempt = exchange.getProperty("attempt", Integer.class);
+                            exchange.setProperty("attempt", attempt != null ? attempt + 1 : 1);
+                        })
+                        .log("Polling attempt ${exchangeProperty.attempt} of ${exchangeProperty.maxAttempts}")
+                        .setBody(header("taskId"))
+                        .to("docling:convert?operation=CHECK_CONVERSION_STATUS")
+                        .setProperty("conversionStatus", body())
+                        .process(exchange -> {
+                            ConversionStatus status = exchange.getProperty("conversionStatus", ConversionStatus.class);
+                            LOG.info("Task {} status: {}", exchange.getIn().getHeader("taskId"), status.getStatus());
+
+                            if (status.isCompleted()) {
+                                exchange.setProperty("isCompleted", true);
+                            } else if (status.isFailed()) {
+                                exchange.setProperty("isFailed", true);
+                                exchange.setProperty("errorMessage", status.getErrorMessage());
+                            }
+                        })
+                        .choice()
+                        .when(exchangeProperty("isCompleted").isEqualTo(true))
+                        .stop()
+                        .when(exchangeProperty("isFailed").isEqualTo(true))
+                        .throwException(new RuntimeException("Conversion failed: ${exchangeProperty.errorMessage}"))
+                        .end()
+                        .delay(1000) // Wait 1 second before next poll
+                        .end()
+                        // Step 3: Extract result
+                        .process(exchange -> {
+                            ConversionStatus status = exchange.getProperty("conversionStatus", ConversionStatus.class);
+                            if (status != null && status.isCompleted() && status.getResult() != null) {
+                                exchange.getIn().setBody(status.getResult());
+                            } else {
+                                throw new RuntimeException("Conversion did not complete successfully");
+                            }
+                        });
             }
         };
     }

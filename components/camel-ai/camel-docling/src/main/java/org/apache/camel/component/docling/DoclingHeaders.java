@@ -44,6 +44,18 @@ public final class DoclingHeaders {
     @Metadata(description = "Custom command line arguments to pass to Docling", javaType = "List<String>")
     public static final String CUSTOM_ARGUMENTS = "CamelDoclingCustomArguments";
 
+    @Metadata(description = "Use asynchronous conversion mode (overrides endpoint configuration)", javaType = "Boolean")
+    public static final String USE_ASYNC_MODE = "CamelDoclingUseAsyncMode";
+
+    @Metadata(description = "Polling interval for async conversion status in milliseconds", javaType = "Long")
+    public static final String ASYNC_POLL_INTERVAL = "CamelDoclingAsyncPollInterval";
+
+    @Metadata(description = "Maximum time to wait for async conversion completion in milliseconds", javaType = "Long")
+    public static final String ASYNC_TIMEOUT = "CamelDoclingAsyncTimeout";
+
+    @Metadata(description = "Task ID for checking async conversion status", javaType = "String")
+    public static final String TASK_ID = "CamelDoclingTaskId";
+
     private DoclingHeaders() {
     }
 

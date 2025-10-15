@@ -25,6 +25,12 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": target.getConfiguration().setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "apitimeout":
+        case "apiTimeout": target.getConfiguration().setApiTimeout(property(camelContext, long.class, value)); return true;
+        case "asyncpollinterval":
+        case "asyncPollInterval": target.getConfiguration().setAsyncPollInterval(property(camelContext, long.class, value)); return true;
+        case "asynctimeout":
+        case "asyncTimeout": target.getConfiguration().setAsyncTimeout(property(camelContext, long.class, value)); return true;
         case "authenticationscheme":
         case "authenticationScheme": target.getConfiguration().setAuthenticationScheme(property(camelContext, org.apache.camel.component.docling.AuthenticationScheme.class, value)); return true;
         case "authenticationtoken":
@@ -52,6 +58,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputFormat": target.getConfiguration().setOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "processtimeout":
         case "processTimeout": target.getConfiguration().setProcessTimeout(property(camelContext, long.class, value)); return true;
+        case "useasyncmode":
+        case "useAsyncMode": target.getConfiguration().setUseAsyncMode(property(camelContext, boolean.class, value)); return true;
         case "usedoclingserve":
         case "useDoclingServe": target.getConfiguration().setUseDoclingServe(property(camelContext, boolean.class, value)); return true;
         case "workingdirectory":
@@ -65,6 +73,12 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": return java.lang.String.class;
+        case "apitimeout":
+        case "apiTimeout": return long.class;
+        case "asyncpollinterval":
+        case "asyncPollInterval": return long.class;
+        case "asynctimeout":
+        case "asyncTimeout": return long.class;
         case "authenticationscheme":
         case "authenticationScheme": return org.apache.camel.component.docling.AuthenticationScheme.class;
         case "authenticationtoken":
@@ -92,6 +106,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputFormat": return java.lang.String.class;
         case "processtimeout":
         case "processTimeout": return long.class;
+        case "useasyncmode":
+        case "useAsyncMode": return boolean.class;
         case "usedoclingserve":
         case "useDoclingServe": return boolean.class;
         case "workingdirectory":
@@ -106,6 +122,12 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": return target.getConfiguration().getApiKeyHeader();
+        case "apitimeout":
+        case "apiTimeout": return target.getConfiguration().getApiTimeout();
+        case "asyncpollinterval":
+        case "asyncPollInterval": return target.getConfiguration().getAsyncPollInterval();
+        case "asynctimeout":
+        case "asyncTimeout": return target.getConfiguration().getAsyncTimeout();
         case "authenticationscheme":
         case "authenticationScheme": return target.getConfiguration().getAuthenticationScheme();
         case "authenticationtoken":
@@ -133,6 +155,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputFormat": return target.getConfiguration().getOutputFormat();
         case "processtimeout":
         case "processTimeout": return target.getConfiguration().getProcessTimeout();
+        case "useasyncmode":
+        case "useAsyncMode": return target.getConfiguration().isUseAsyncMode();
         case "usedoclingserve":
         case "useDoclingServe": return target.getConfiguration().isUseDoclingServe();
         case "workingdirectory":
