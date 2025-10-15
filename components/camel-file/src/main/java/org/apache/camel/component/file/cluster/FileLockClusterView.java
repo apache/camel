@@ -44,7 +44,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
     // Used only during service startup as each context could try to access it concurrently.
     // It isolates the critical section making sure only one service creates the files.
-    private static ReentrantLock contextStartLock = new ReentrantLock();
+    private static final ReentrantLock contextStartLock = new ReentrantLock();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileLockClusterView.class);
     private final ClusterMember localMember;
