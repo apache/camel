@@ -153,7 +153,7 @@
                                 <propertyregex property="ov.p2a" input="${ov.p2}" regexp="(\..+)" replace="\1" defaultValue=".0" />
                                 <property name="camel.schema.version" value="${ov.p1a}${ov.p2a}" />
                                 <mkdir dir="target" />
-                                <echo file="target/camel.osgi.version.txt">
+                                <echo level="info" file="target/camel.osgi.version.txt">
                                     camel.schema.version = ${camel.schema.version}
                                 </echo>
                             </target>
@@ -167,7 +167,7 @@
                         <phase>process-classes</phase>
                         <configuration>
                             <target>
-                                <echo>Copying code together for the XSD generation</echo>
+                                <echo level="info">Copying code together for the XSD generation</echo>
                                 <mkdir dir="${project.build.directory}/schema-src" />
                                 <copy todir="${project.build.directory}/schema-src">
                                     <fileset dir="${project.basedir}/../camel-api/src/main/java">
@@ -202,7 +202,7 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <target>
-                                <echo>Updating namespace in XSD schema</echo>
+                                <echo level="info">Updating namespace in XSD schema</echo>
                                 <replace file="${project.build.directory}/classes/camel-xml-io.xsd" token="&quot;http://camel.apache.org/schema/spring&quot;" value="&quot;http://camel.apache.org/schema/xml-io&quot;" preservelastmodified="true" />
                                 <copy file="${project.build.directory}/classes/camel-xml-io.xsd" tofile="${project.build.directory}/classes/camel-xml-io-v${camel.schema.version}.xsd" preservelastmodified="true" />
                                 <replace file="${project.build.directory}/classes/camel-xml-io-v${camel.schema.version}.xsd" token="&quot;http://camel.apache.org/schema/xml-io&quot;" value="&quot;http://camel.apache.org/schema/xml-io/v${camel.schema.version}&quot;" preservelastmodified="true" />
