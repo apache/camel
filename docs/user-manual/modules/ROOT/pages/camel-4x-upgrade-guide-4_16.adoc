@@ -13,6 +13,11 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.15 to 4.16
 
+=== camel-core
+
+The `tryConvertTo` method in Camel type converters will no longer in case of no converter suitable,
+mark this as a _miss_ for any same future converter attempts to immediately be identified as a _miss_.
+
 === camel-kamelet
 
 The kamelet component is now parsing endpoint parameters using _raw mode_ to ensure when using sensitive parameters
