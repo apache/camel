@@ -23,9 +23,12 @@ import java.util.Map;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.opentelemetry2.CamelOpenTelemetryExtension.OtelTrace;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +41,7 @@ public class DisableEndpointTest extends OpenTelemetryTracerTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         OpenTelemetryTracer tst = new OpenTelemetryTracer();
         tst.setTraceProcessors(true);
-        tst.setExcludePatterns("log*,to*");
+        tst.setExcludePatterns("log*,to*,setVariable*");
         tst.setTracer(otelExtension.getOpenTelemetry().getTracer("traceTest"));
         tst.setContextPropagators(otelExtension.getOpenTelemetry().getPropagators());
         CamelContext context = super.createCamelContext();
@@ -53,6 +56,18 @@ public class DisableEndpointTest extends OpenTelemetryTracerTestSupport {
         Map<String, OtelTrace> traces = otelExtension.getTraces();
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
+    }
+
+    @Test
+    void testExcludedVariableIsPresent() throws InterruptedException {
+        MockEndpoint endpoint = context().getEndpoint("mock:variable", MockEndpoint.class);
+
+        endpoint.expectedMessageCount(1);
+        template.sendBody("direct:variable", "Test Message");
+        endpoint.assertIsSatisfied();
+        Exchange first = endpoint.getReceivedExchanges().get(0);
+        String myVar = first.getVariable("myVar", String.class);
+        Assertions.assertEquals("testValue", myVar);
     }
 
     private void checkTrace(OtelTrace trace) {
@@ -82,6 +97,10 @@ public class DisableEndpointTest extends OpenTelemetryTracerTestSupport {
                         .routeId("start")
                         .log("A message")
                         .to("log:info");
+
+                from("direct:variable")
+                        .setVariable("myVar", constant("testValue"))
+                        .to("mock:variable");
             }
         };
     }

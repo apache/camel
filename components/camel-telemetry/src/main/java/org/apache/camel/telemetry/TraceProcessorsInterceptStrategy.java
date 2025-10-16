@@ -61,6 +61,8 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
                 } finally {
                     tracer.endProcessorSpan(exchange, processor);
                 }
+            } else {
+                target.process(exchange);
             }
         }
     }
