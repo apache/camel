@@ -87,7 +87,8 @@ public interface GraphqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * The query file name located in the classpath.
+         * The query file name located in the classpath (or use file: to load
+         * from file system).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

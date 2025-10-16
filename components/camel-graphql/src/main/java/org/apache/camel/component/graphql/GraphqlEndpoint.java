@@ -17,6 +17,7 @@
 package org.apache.camel.component.graphql;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
@@ -33,8 +34,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.CredentialsStore;
@@ -203,10 +204,14 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
 
     public String getQuery() {
         if (query == null && queryFile != null) {
+            InputStream is = null;
             try {
-                query = IOHelper.loadText(ObjectHelper.loadResourceAsStream(queryFile, getClass().getClassLoader()));
+                is = ResourceHelper.resolveResourceAsInputStream(getCamelContext(), queryFile);
+                query = IOHelper.loadText(is);
             } catch (IOException e) {
                 throw new RuntimeCamelException("Failed to read query file: " + queryFile, e);
+            } finally {
+                IOHelper.close(is);
             }
         }
         return query;
@@ -235,7 +240,7 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     /**
-     * The query file name located in the classpath.
+     * The query file name located in the classpath (or use file: to load from file system).
      */
     public void setQueryFile(String queryFile) {
         this.queryFile = queryFile;
