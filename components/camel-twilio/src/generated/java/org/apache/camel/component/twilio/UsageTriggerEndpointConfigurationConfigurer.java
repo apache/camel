@@ -28,7 +28,7 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
         map.put("PathAccountSid", java.lang.String.class);
         map.put("PathSid", java.lang.String.class);
         map.put("TriggerValue", java.lang.String.class);
-        map.put("UsageCategory", com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class);
+        map.put("UsageCategory", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
@@ -49,7 +49,7 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
         case "triggervalue":
         case "triggerValue": target.setTriggerValue(property(camelContext, java.lang.String.class, value)); return true;
         case "usagecategory":
-        case "usageCategory": target.setUsageCategory(property(camelContext, com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class, value)); return true;
+        case "usageCategory": target.setUsageCategory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -75,7 +75,7 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
         case "triggervalue":
         case "triggerValue": return java.lang.String.class;
         case "usagecategory":
-        case "usageCategory": return com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class;
+        case "usageCategory": return java.lang.String.class;
         default: return null;
         }
     }
