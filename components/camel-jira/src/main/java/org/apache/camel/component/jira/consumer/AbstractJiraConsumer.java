@@ -49,7 +49,7 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
     protected AbstractJiraConsumer(JiraEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        setDelay(endpoint.getDelay());
+        this.endpoint.setDelay(endpoint.getDelay());
     }
 
     @Override
