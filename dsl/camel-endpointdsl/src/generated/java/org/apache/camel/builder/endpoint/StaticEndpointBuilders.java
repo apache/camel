@@ -12209,7 +12209,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>pinecone:collection</code>
      * 
      * Path parameter: collection (required)
-     * The collection Name
+     * The collection Name. (Only used by some actions)
      * 
      * @param path collection
      * @return the dsl builder
@@ -12228,7 +12228,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>pinecone:collection</code>
      * 
      * Path parameter: collection (required)
-     * The collection Name
+     * The collection Name. (Only used by some actions)
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

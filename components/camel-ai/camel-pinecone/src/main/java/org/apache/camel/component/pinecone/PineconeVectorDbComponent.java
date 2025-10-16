@@ -23,12 +23,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component(PineconeVectorDb.SCHEME)
 public class PineconeVectorDbComponent extends DefaultComponent {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PineconeVectorDbComponent.class);
 
     @Metadata
     private PineconeVectorDbConfiguration configuration;
@@ -39,7 +36,6 @@ public class PineconeVectorDbComponent extends DefaultComponent {
 
     public PineconeVectorDbComponent(CamelContext context) {
         super(context);
-
         this.configuration = new PineconeVectorDbConfiguration();
     }
 

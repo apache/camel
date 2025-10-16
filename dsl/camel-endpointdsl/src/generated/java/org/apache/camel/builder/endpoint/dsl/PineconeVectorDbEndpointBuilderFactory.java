@@ -45,6 +45,36 @@ public interface PineconeVectorDbEndpointBuilderFactory {
         }
 
         /**
+         * Action to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.pinecone.PineconeVectorDbAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder action(org.apache.camel.component.pinecone.PineconeVectorDbAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
+         * Action to perform.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.pinecone.PineconeVectorDbAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default PineconeVectorDbEndpointBuilder action(String action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
          * Sets the cloud type to use (aws/gcp/azure).
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -196,7 +226,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * The option is a: <code>boolean</code> type.
          * 
          * Default: true
-         * Group: producer
+         * Group: security
          * 
          * @param tls the value to set
          * @return the dsl builder
@@ -212,7 +242,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
-         * Group: producer
+         * Group: security
          * 
          * @param tls the value to set
          * @return the dsl builder
@@ -226,7 +256,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: producer
+         * Group: security
          * 
          * @param token the value to set
          * @return the dsl builder
@@ -320,7 +350,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * Syntax: <code>pinecone:collection</code>
          * 
          * Path parameter: collection (required)
-         * The collection Name
+         * The collection Name. (Only used by some actions)
          * 
          * @param path collection
          * @return the dsl builder
@@ -339,7 +369,7 @@ public interface PineconeVectorDbEndpointBuilderFactory {
          * Syntax: <code>pinecone:collection</code>
          * 
          * Path parameter: collection (required)
-         * The collection Name
+         * The collection Name. (Only used by some actions)
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

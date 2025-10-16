@@ -27,11 +27,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class PineconeVectorDbConfiguration implements Cloneable {
 
-    @Metadata(secret = true)
+    @Metadata
+    @UriParam(label = "producer")
+    private PineconeVectorDbAction action;
+
+    @Metadata(label = "security", secret = true)
     @UriParam
     private String token;
 
-    @Metadata(autowired = true)
+    @Metadata(label = "advanced", autowired = true)
     private Pinecone client;
 
     @UriParam(label = "producer")
@@ -43,7 +47,7 @@ public class PineconeVectorDbConfiguration implements Cloneable {
     @UriParam(label = "producer", defaultValue = "1536")
     private Integer collectionDimension;
 
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", enums = "aws,azure,gcp")
     private String cloud;
 
     @UriParam(label = "producer")
@@ -55,7 +59,7 @@ public class PineconeVectorDbConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private Integer proxyPort;
 
-    @UriParam(defaultValue = "true", label = "producer")
+    @UriParam(defaultValue = "true", label = "security")
     private boolean tls;
 
     @UriParam(label = "producer")
@@ -158,6 +162,17 @@ public class PineconeVectorDbConfiguration implements Cloneable {
      */
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public PineconeVectorDbAction getAction() {
+        return action;
+    }
+
+    /**
+     * Action to perform.
+     */
+    public void setAction(PineconeVectorDbAction action) {
+        this.action = action;
     }
 
     public String getToken() {
