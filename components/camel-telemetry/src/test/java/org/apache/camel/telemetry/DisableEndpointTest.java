@@ -21,12 +21,15 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.apache.camel.telemetry.mock.MockTrace;
 import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +44,7 @@ public class DisableEndpointTest extends ExchangeTestSupport {
         CamelContext context = super.createCamelContext();
         this.mockTracer = new MockTracer();
         mockTracer.setTraceProcessors(true);
-        mockTracer.setExcludePatterns("log*,to*");
+        mockTracer.setExcludePatterns("log*,to*,setVariable*");
         CamelContextAware.trySetCamelContext(mockTracer, context);
         mockTracer.init(context);
         return context;
@@ -53,6 +56,18 @@ public class DisableEndpointTest extends ExchangeTestSupport {
         Map<String, MockTrace> traces = mockTracer.traces();
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
+    }
+
+    @Test
+    void testExcludedVariableIsPresent() throws InterruptedException {
+        MockEndpoint endpoint = context().getEndpoint("mock:variable", MockEndpoint.class);
+
+        endpoint.expectedMessageCount(1);
+        template.sendBody("direct:variable", "Test Message");
+        endpoint.assertIsSatisfied();
+        Exchange first = endpoint.getReceivedExchanges().get(0);
+        String myVar = first.getVariable("myVar", String.class);
+        Assertions.assertEquals("testValue", myVar);
     }
 
     private void checkTrace(MockTrace trace) {
@@ -84,6 +99,10 @@ public class DisableEndpointTest extends ExchangeTestSupport {
                         .routeId("start")
                         .log("A message")
                         .to("log:info");
+
+                from("direct:variable")
+                        .setVariable("myVar", constant("testValue"))
+                        .to("mock:variable");
             }
         };
     }
