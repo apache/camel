@@ -26,6 +26,7 @@ import graphql.ExecutionResult;
 import graphql.GraphQL;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
@@ -68,8 +69,15 @@ public class GraphqlServer {
         public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
                 throws HttpException, IOException {
             HttpEntity entity = request.getEntity();
-            String json = EntityUtils.toString(entity);
 
+            Header h = request.getHeader("kaboom");
+            if (h != null) {
+                response.setCode(500);
+                response.setReasonPhrase("Forced error due to kaboom");
+                return;
+            }
+
+            String json = EntityUtils.toString(entity);
             Map<String, Object> map = jsonToMap(json);
             String query = (String) map.get("query");
             String operationName = (String) map.get("operationName");
@@ -84,6 +92,10 @@ public class GraphqlServer {
             Map<String, Object> resultMap = executionResult.toSpecification();
             String result = objectMapper.writeValueAsString(resultMap);
 
+            h = request.getHeader("foo");
+            if (h != null) {
+                response.setHeader("bar", "response-" + h.getValue());
+            }
             response.setHeader("Content-Type", "application/json; charset=UTF-8");
             response.setEntity(new StringEntity(result));
         }

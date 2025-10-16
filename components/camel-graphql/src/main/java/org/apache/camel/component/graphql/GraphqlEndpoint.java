@@ -28,7 +28,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.EndpointServiceLocation;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -85,6 +87,12 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
     private String queryHeader;
     @UriParam(label = "advanced")
     private HttpClient httpClient;
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.")
+    private boolean throwExceptionOnFailure = true;
+    @UriParam(label = "common,advanced",
+              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public GraphqlEndpoint(String uri, Component component) {
         super(uri, component);
@@ -104,6 +112,14 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
             return Map.of("username", username);
         }
         return null;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new HttpHeaderFilterStrategy();
+        }
     }
 
     @Override
@@ -300,6 +316,22 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
      */
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
+    }
+
+    public boolean isThrowExceptionOnFailure() {
+        return throwExceptionOnFailure;
+    }
+
+    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
+        this.throwExceptionOnFailure = throwExceptionOnFailure;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     @Override

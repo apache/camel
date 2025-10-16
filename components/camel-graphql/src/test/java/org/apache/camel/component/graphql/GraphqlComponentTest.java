@@ -25,6 +25,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.graphql.server.GraphqlServer;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -34,6 +35,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class GraphqlComponentTest extends CamelTestSupport {
 
@@ -117,6 +120,10 @@ public class GraphqlComponentTest extends CamelTestSupport {
                         .to("mock:result");
                 from("direct:start8")
                         .to("graphql://http://localhost:" + server.getPort() + "/graphql?apikey=123456&query={books{id name}}")
+                        .to("mock:result");
+                from("direct:start9")
+                        .setHeader("foo", constant("cheese"))
+                        .to("graphql://http://localhost:" + server.getPort() + "/graphql?query={books{id name}}")
                         .to("mock:result");
             }
         };
@@ -208,7 +215,6 @@ public class GraphqlComponentTest extends CamelTestSupport {
 
     @Test
     public void checkApiKey() throws Exception {
-
         GraphqlEndpoint graphqlEndpoint = (GraphqlEndpoint) template.getCamelContext().getEndpoint(
                 "graphql://http://localhost:" + server.getPort() + "/graphql?apikey=123456&query={books{id name}}");
         URI httpUri = graphqlEndpoint.getHttpUri();
@@ -220,6 +226,34 @@ public class GraphqlComponentTest extends CamelTestSupport {
         template.sendBody("direct:start8", "");
 
         result.assertIsSatisfied();
-
     }
+
+    @Test
+    public void checkCustomHeader() throws Exception {
+        result.expectedMessageCount(1);
+        result.expectedBodiesReceived(booksQueryResult);
+        result.expectedHeaderReceived("foo", "cheese");
+        result.expectedHeaderReceived("bar", "response-cheese");
+
+        template.sendBody("direct:start9", "");
+
+        result.assertIsSatisfied();
+    }
+
+    @Test
+    public void checkThrowException() throws Exception {
+        result.expectedMessageCount(0);
+
+        try {
+            template.sendBodyAndHeader("direct:start9", "", "kaboom", "force some error");
+            fail();
+        } catch (Exception e) {
+            HttpOperationFailedException he = assertInstanceOf(HttpOperationFailedException.class, e.getCause());
+            assertEquals(500, he.getStatusCode());
+            assertEquals("Forced error due to kaboom", he.getHttpResponseStatus());
+        }
+
+        result.assertIsSatisfied();
+    }
+
 }

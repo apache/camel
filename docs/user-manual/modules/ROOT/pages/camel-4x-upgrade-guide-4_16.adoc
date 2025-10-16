@@ -18,6 +18,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The kamelet component is now parsing endpoint parameters using _raw mode_ to ensure when using sensitive parameters
 such as access keys, passwords etc. they are not URI encoded.
 
+=== camel-graphql
+
+The `camel-graphql` component now includes Camel message headers as HTTP headers when calling the remote Graphql server.
+
+If the response is not success (2xx) then the component now throws the `org.apache.camel.http.base.HttpOperationFailedException`.
+This can be turned off by setting `throwExceptionOnFailure=false`.
+
 === camel-infinispan
 
 The `queryBuilder` option on `camel-infinispan` endpoint has been migrated to no longer use the deprecated query factory
