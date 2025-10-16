@@ -30,6 +30,7 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PineconeVectorDbComponent target = (PineconeVectorDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": getOrCreateConfiguration(target).setAction(property(camelContext, org.apache.camel.component.pinecone.PineconeVectorDbAction.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "cloud": getOrCreateConfiguration(target).setCloud(property(camelContext, java.lang.String.class, value)); return true;
@@ -58,6 +59,7 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return org.apache.camel.component.pinecone.PineconeVectorDbAction.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "cloud": return java.lang.String.class;
@@ -87,6 +89,7 @@ public class PineconeVectorDbComponentConfigurer extends PropertyConfigurerSuppo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PineconeVectorDbComponent target = (PineconeVectorDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return getOrCreateConfiguration(target).getAction();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "cloud": return getOrCreateConfiguration(target).getCloud();

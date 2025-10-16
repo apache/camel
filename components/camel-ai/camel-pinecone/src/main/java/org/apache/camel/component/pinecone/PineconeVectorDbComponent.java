@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 @Component(PineconeVectorDb.SCHEME)
 public class PineconeVectorDbComponent extends DefaultComponent {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PineconeVectorDbComponent.class);
 
     @Metadata
     private PineconeVectorDbConfiguration configuration;
@@ -39,7 +38,6 @@ public class PineconeVectorDbComponent extends DefaultComponent {
 
     public PineconeVectorDbComponent(CamelContext context) {
         super(context);
-
         this.configuration = new PineconeVectorDbConfiguration();
     }
 
