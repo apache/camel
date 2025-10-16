@@ -16,16 +16,20 @@
  */
 package org.apache.camel.component.jira.consumer;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
+import com.atlassian.jira.rest.client.api.UserRestClient;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.atlassian.jira.rest.client.api.domain.User;
 import io.atlassian.util.concurrent.Promise;
 import io.atlassian.util.concurrent.Promises;
 import org.apache.camel.CamelContext;
@@ -35,6 +39,8 @@ import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -47,6 +53,7 @@ import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FAC
 import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
 import static org.apache.camel.component.jira.JiraTestConstants.PROJECT;
 import static org.apache.camel.component.jira.Utils.createIssue;
+import static org.apache.camel.component.jira.Utils.createIssueWithCreationDate;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -65,6 +72,9 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
     @Mock
     private SearchRestClient searchRestClient;
 
+    @Mock
+    private UserRestClient userRestClient;
+
     @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
@@ -75,18 +85,24 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
 
     @BeforeAll
     public static void beforeAll() {
-        ISSUES.add(createIssue(3L));
-        ISSUES.add(createIssue(2L));
-        ISSUES.add(createIssue(1L));
+        ISSUES.add(createIssueWithCreationDate(3L, DateTime.now().minusMinutes(10)));
+        ISSUES.add(createIssueWithCreationDate(2L, DateTime.now().minusMinutes(8)));
+        ISSUES.add(createIssueWithCreationDate(1L, DateTime.now().minusMinutes(6)));
     }
 
     public void setMocks() {
-        SearchResult result = new SearchResult(0, 50, 3, ISSUES);
+        SearchResult result = new SearchResult(0, 50, 0, ISSUES);
         Promise<SearchResult> promiseSearchResult = Promises.promise(result);
+        User user = new User(
+                null, "admin", null, null, true, null,
+                Map.of("48x48", URI.create("")), DateTime.now().getZone().getID());
+        Promise<User> promiseUserResult = Promises.promise(user);
 
         when(jiraClient.getSearchClient()).thenReturn(searchRestClient);
+        when(jiraClient.getUserClient()).thenReturn(userRestClient);
         when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
         when(searchRestClient.searchJql(any(), any(), any(), any())).thenReturn(promiseSearchResult);
+        when(userRestClient.getUser(any(URI.class))).thenReturn(promiseUserResult);
     }
 
     @Override
@@ -216,10 +232,11 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
 
     @Test
     public void multipleQueriesOffsetFilterTest() throws Exception {
-        Issue issue1 = createIssue(51);
-        Issue issue2 = createIssue(52);
-        Issue issue3 = createIssue(53);
-        Issue issue4 = createIssue(54);
+        DateTime now = DateTime.now();
+        Issue issue1 = createIssueWithCreationDate(51, now.minusMinutes(3));
+        Issue issue2 = createIssueWithCreationDate(52, now.minusMinutes(2));
+        Issue issue3 = createIssueWithCreationDate(53, now.minusMinutes(1));
+        Issue issue4 = createIssueWithCreationDate(54, now);
 
         reset(searchRestClient);
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
@@ -230,7 +247,7 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
             Assertions.assertEquals(0, startAt);
 
             String jqlFilter = invocation.getArgument(0);
-            Assertions.assertTrue(jqlFilter.startsWith("id > 53"));
+            Assertions.assertTrue(jqlFilter.startsWith("created > \"" + now.minusMinutes(1).toString("yyyy-MM-dd HH:mm")));
             SearchResult result = new SearchResult(0, 50, 1, Collections.singletonList(issue4));
             return Promises.promise(result);
         });
@@ -241,6 +258,87 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         mockResult.reset();
 
         mockResult.expectedBodiesReceived(issue4);
+        mockResult.assertIsSatisfied();
+    }
+
+    @Test
+    public void shouldIgnoreOlderIssuesInPollTest() throws Exception {
+        DateTime now = DateTime.now();
+        Issue issue1 = createIssueWithCreationDate(8, now.minusSeconds(2));
+        Issue issue2 = createIssueWithCreationDate(9, now.minusSeconds(1));
+        Issue issue3 = createIssueWithCreationDate(10, now);
+
+        reset(searchRestClient);
+        when(searchRestClient.searchJql(any(), any(), any(), any()))
+                .then(invocation -> {
+                    SearchResult result = new SearchResult(0, 50, 1, List.of(issue2));
+                    return Promises.promise(result);
+                }).then(invocation -> {
+                    SearchResult result = new SearchResult(0, 50, 3, List.of(issue1, issue2, issue3));
+                    return Promises.promise(result);
+                });
+
+        mockResult.expectedBodiesReceived(issue2);
+        mockResult.assertIsSatisfied();
+
+        mockResult.reset();
+
+        mockResult.expectedBodiesReceived(issue3);
+        mockResult.assertIsSatisfied();
+    }
+
+    @Test
+    public void shouldUseUsersTimezoneInJQLTest() throws Exception {
+        DateTime now = DateTime.now();
+        DateTime perth = now.withZone(DateTimeZone.forID("Australia/Perth"));
+        Issue issue1 = createIssueWithCreationDate(8, perth);
+        Issue issue2 = createIssueWithCreationDate(9, perth.plusSeconds(1));
+
+        reset(searchRestClient);
+        when(searchRestClient.searchJql(any(), any(), any(), any()))
+                .then(invocation -> {
+                    SearchResult result = new SearchResult(0, 50, 1, List.of(issue1));
+                    return Promises.promise(result);
+                }).then(invocation -> {
+                    String jqlFilter = invocation.getArgument(0);
+                    Assertions.assertTrue(
+                            jqlFilter.startsWith("created > \"" + now.toString("yyyy-MM-dd HH:mm")));
+                    SearchResult result = new SearchResult(0, 50, 1, List.of(issue2));
+                    return Promises.promise(result);
+                });
+
+        mockResult.expectedBodiesReceived(issue1, issue2);
+        mockResult.assertIsSatisfied();
+    }
+
+    @Test
+    public void shouldDoEmptyPollTest() throws Exception {
+        DateTime now = DateTime.now();
+        Issue issue1 = createIssueWithCreationDate(9, now.minusSeconds(1));
+        Issue issue2 = createIssueWithCreationDate(10, now);
+
+        reset(searchRestClient);
+        when(searchRestClient.searchJql(any(), any(), any(), any()))
+                .then(invocation -> {
+                    SearchResult result = new SearchResult(0, 50, 1, List.of(issue1));
+                    return Promises.promise(result);
+                }).then(invocation -> {
+                    SearchResult result = new SearchResult(0, 50, 1, List.of(issue1));
+                    return Promises.promise(result);
+                }).then(invocation -> {
+                    SearchResult result = new SearchResult(0, 50, 1, List.of(issue2));
+                    return Promises.promise(result);
+                });
+
+        mockResult.expectedBodiesReceived(issue1);
+        mockResult.assertIsSatisfied();
+
+        mockResult.reset();
+        mockResult.expectedMessageCount(0);
+        mockResult.assertIsSatisfied();
+
+        mockResult.reset();
+        mockResult.expectedBodiesReceived(issue2);
         mockResult.assertIsSatisfied();
     }
 }
