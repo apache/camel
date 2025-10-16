@@ -100,6 +100,15 @@ public final class Utils {
         return transitionIssueDone(issue, status, resolution);
     }
 
+    public static Issue createIssueWithCreationDate(long id, DateTime dateTime) {
+        URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
+        return new Issue(
+                "jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
+                null, null, null, null, userAssignee, dateTime, null, null, null, null, null, null, null, null, null,
+                null,
+                null, null, null, null, null, null, null, null, null);
+    }
+
     public static Issue createIssueWithAttachment(
             long id, String summary, String key, IssueType issueType, String description,
             BasicPriority priority, User assignee, Collection<Attachment> attachments) {
@@ -125,7 +134,8 @@ public final class Utils {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
         return new Issue(
                 "jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
-                null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, comments, null, null,
+                null, null, null, null, userAssignee, DateTime.now(), null, null, null, null, null, null, null, comments, null,
+                null,
                 null, null, null, null, null, null, null, null, null);
     }
 
