@@ -25,7 +25,7 @@ public enum UsageTriggerApiMethod implements ApiMethod {
         "creator",
         arg("callbackUrl", java.net.URI.class),
         arg("triggerValue", String.class),
-        arg("usageCategory", com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class)),
+        arg("usageCategory", String.class)),
 
     CREATOR_1(
         com.twilio.rest.api.v2010.account.usage.TriggerCreator.class,
@@ -33,7 +33,7 @@ public enum UsageTriggerApiMethod implements ApiMethod {
         arg("pathAccountSid", String.class),
         arg("callbackUrl", java.net.URI.class),
         arg("triggerValue", String.class),
-        arg("usageCategory", com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class)),
+        arg("usageCategory", String.class)),
 
     DELETER(
         com.twilio.rest.api.v2010.account.usage.TriggerDeleter.class,
