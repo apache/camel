@@ -15,7 +15,7 @@
 
 *{component-header}*
 
-The LangChain4j Agent component provides comprehensive AI agent capabilities by integrating with the https://github.com/langchain4j/langchain4j[LangChain4j library]. This component supports advanced AI agent patterns including tool calling, conversation memory, retrieval-augmented generation (RAG), and input/output guardrails.
+The LangChain4j Agent component provides comprehensive AI agent capabilities by integrating with the https://github.com/langchain4j/langchain4j[LangChain4j library]. This component supports advanced AI agent patterns including tool calling, MCP (Model Context Protocol) integration, conversation memory, retrieval-augmented generation (RAG), and input/output guardrails.
 
 == Features
 
@@ -23,6 +23,7 @@ The LangChain4j Agent component offers the following key features:
 
 * **Agent-Based Architecture**: Flexible agent creation using the `Agent` API interface
 * **Tool Integration**: Seamless integration with Camel routes via the `langchain4j-tools` component
+* **MCP Tools**: Integration with Model Context Protocol (MCP) tools for external system access
 * **Conversation Memory**: Persistent chat memory for maintaining conversation context
 * **RAG Support**: Integration with retrieval systems for naive and advanced RAG
 * **Guardrails**: Input and output validation and transformation
@@ -35,7 +36,7 @@ The component has been simplified to use only two main options:
 * **agent**: Reference to an `Agent` implementation registered in the Camel registry
 * **tags**: Tags for discovering and calling Camel route tools (optional)
 
-All other configuration (chat models, memory, RAG, guardrails, custom tools) is now handled through the `AgentConfiguration` when creating agents.
+All other configuration (chat models, memory, RAG, guardrails, custom tools, MCP clients) is now handled through the `AgentConfiguration` when creating agents.
 
 == URI format
 
@@ -382,6 +383,99 @@ String response = template.requestBody("direct:chat",
 ====
 When using mixed tools, Camel route tools are discovered dynamically via the `tags` parameter, while custom LangChain4j tools are provided statically via the `customTools` configuration.
 ====
+
+=== MCP (Model Context Protocol) Tools
+
+The LangChain4j Agent component supports integration with MCP (Model Context Protocol) tools, allowing agents to interact with external systems and services through standardized protocols.
+
+==== Configuring MCP Clients
+
+To use MCP tools with your agent, you need to configure MCP clients in your `AgentConfiguration`:
+
+[source,java]
+----
+// Create MCP transport for filesystem server
+McpTransport filesystemTransport = new StdioMcpTransport.Builder()
+    .command(Arrays.asList("npx", "-y", "@modelcontextprotocol/server-filesystem", "/path/to/directory"))
+    .logEvents(true)
+    .build();
+
+// Create MCP client
+McpClient filesystemClient = new DefaultMcpClient.Builder()
+    .transport(filesystemTransport)
+    .build();
+
+// Create agent configuration with MCP clients
+AgentConfiguration config = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withMcpClients(Arrays.asList(filesystemClient));
+
+// Create agent
+Agent agent = new AgentWithoutMemory(config);
+----
+
+==== MCP Tool Filtering
+
+You can apply filters to control which MCP tools are available to your agent:
+
+[source,java]
+----
+// Create security filter to only allow read operations
+BiPredicate<McpClient, ToolSpecification> securityFilter = (client, toolSpec) -> {
+    String toolName = toolSpec.name().toLowerCase();
+    // Only allow read operations for safety
+    return toolName.contains("read") || toolName.contains("list") || toolName.contains("get");
+};
+
+AgentConfiguration config = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withMcpClients(Arrays.asList(filesystemClient))
+    .withMcpToolProviderFilter(securityFilter);
+----
+
+==== Complete MCP Example
+
+Here's a complete example showing how to use MCP tools with an agent:
+
+[source,java]
+----
+// Create MCP client for filesystem access
+McpTransport transport = new StdioMcpTransport.Builder()
+    .command(Arrays.asList("npx", "-y", "@modelcontextprotocol/server-filesystem", "/tmp"))
+    .logEvents(true)
+    .build();
+
+McpClient mcpClient = new DefaultMcpClient.Builder()
+    .transport(transport)
+    .build();
+
+// Create agent with MCP tools
+AgentConfiguration config = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withMcpClient(mcpClient);
+
+Agent agent = new AgentWithoutMemory(config);
+
+// Register agent in Camel context
+context.getRegistry().bind("mcpAgent", agent);
+----
+
+==== Route Configuration with MCP Tools
+
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-agent:assistant?agent=#mcpAgent")
+    .to("mock:agent-response");
+----
+
+==== Usage Example with MCP Tools
+
+[source,java]
+----
+String response = template.requestBody("direct:chat", 
+    "Can you list the files in the current directory and read the content of file.txt?", String.class);
+----
 
 === RAG Integration
 

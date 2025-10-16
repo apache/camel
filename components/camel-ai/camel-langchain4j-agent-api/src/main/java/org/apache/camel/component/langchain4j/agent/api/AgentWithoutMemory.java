@@ -18,6 +18,7 @@ package org.apache.camel.component.langchain4j.agent.api;
 
 import java.util.List;
 
+import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
 
@@ -55,6 +56,19 @@ public class AgentWithoutMemory implements Agent {
         // Apache Camel Tool Provider
         if (toolProvider != null) {
             builder.toolProvider(toolProvider);
+        }
+
+        // MCP Clients - create MCP ToolProvider if MCP clients are configured
+        if (configuration.getMcpClients() != null && !configuration.getMcpClients().isEmpty()) {
+            McpToolProvider.Builder mcpBuilder = McpToolProvider.builder()
+                    .mcpClients(configuration.getMcpClients());
+
+            // Apply MCP tool filter if configured
+            if (configuration.getMcpToolProviderFilter() != null) {
+                mcpBuilder.filter(configuration.getMcpToolProviderFilter());
+            }
+
+            builder.toolProvider(mcpBuilder.build());
         }
 
         // Additional custom LangChain4j Tool Instances (objects with @Tool methods)
