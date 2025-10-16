@@ -410,7 +410,9 @@ public abstract class CoreTypeConverterRegistry extends ServiceSupport implement
             return objConverter.convertTo(type, exchange, value);
         }
 
-        converters.put(typeConvertible, MISS_CONVERTER);
+        if (!tryConvert) {
+            converters.put(typeConvertible, MISS_CONVERTER);
+        }
 
         // Could not find suitable conversion, so return Void to indicate not found
         return TypeConverter.MISS_VALUE;
