@@ -48,6 +48,22 @@ public class FlinkEndpoint extends DefaultEndpoint {
     private DataStreamCallback dataStreamCallback;
     @UriParam(defaultValue = "true")
     private boolean collect = true;
+    @UriParam(label = "producer,advanced", enums = "STREAMING,BATCH,AUTOMATIC")
+    private String executionMode;
+    @UriParam(label = "producer,advanced")
+    private Long checkpointInterval;
+    @UriParam(label = "producer,advanced", enums = "EXACTLY_ONCE,AT_LEAST_ONCE")
+    private String checkpointingMode;
+    @UriParam(label = "producer,advanced")
+    private Integer parallelism;
+    @UriParam(label = "producer,advanced")
+    private Integer maxParallelism;
+    @UriParam(label = "producer,advanced")
+    private String jobName;
+    @UriParam(label = "producer,advanced")
+    private Long checkpointTimeout;
+    @UriParam(label = "producer,advanced")
+    private Long minPauseBetweenCheckpoints;
 
     public FlinkEndpoint(String endpointUri, FlinkComponent component, EndpointType endpointType) {
         super(endpointUri, component);
@@ -105,7 +121,10 @@ public class FlinkEndpoint extends DefaultEndpoint {
 
     /**
      * DataSet to compute against.
+     *
+     * @deprecated The DataSet API is deprecated since Flink 1.12. Use the DataStream API with bounded streams instead.
      */
+    @Deprecated(since = "4.16.0")
     public void setDataSet(DataSet ds) {
         this.dataSet = ds;
     }
@@ -127,7 +146,10 @@ public class FlinkEndpoint extends DefaultEndpoint {
 
     /**
      * Function performing action against a DataSet.
+     *
+     * @deprecated The DataSet API is deprecated since Flink 1.12. Use the DataStream API with bounded streams instead.
      */
+    @Deprecated(since = "4.16.0")
     public void setDataSetCallback(DataSetCallback dataSetCallback) {
         this.dataSetCallback = dataSetCallback;
     }
@@ -148,5 +170,97 @@ public class FlinkEndpoint extends DefaultEndpoint {
      */
     public void setCollect(boolean collect) {
         this.collect = collect;
+    }
+
+    public String getExecutionMode() {
+        return executionMode;
+    }
+
+    /**
+     * Execution mode for the Flink job. Options: STREAMING (default), BATCH, AUTOMATIC. BATCH mode is recommended for
+     * bounded streams (batch processing).
+     */
+    public void setExecutionMode(String executionMode) {
+        this.executionMode = executionMode;
+    }
+
+    public Long getCheckpointInterval() {
+        return checkpointInterval;
+    }
+
+    /**
+     * Interval in milliseconds between checkpoints. Enables checkpointing when set. Recommended for streaming jobs to
+     * ensure fault tolerance.
+     */
+    public void setCheckpointInterval(Long checkpointInterval) {
+        this.checkpointInterval = checkpointInterval;
+    }
+
+    public String getCheckpointingMode() {
+        return checkpointingMode;
+    }
+
+    /**
+     * Checkpointing mode: EXACTLY_ONCE (default) or AT_LEAST_ONCE. EXACTLY_ONCE provides stronger guarantees but may
+     * have higher overhead.
+     */
+    public void setCheckpointingMode(String checkpointingMode) {
+        this.checkpointingMode = checkpointingMode;
+    }
+
+    public Integer getParallelism() {
+        return parallelism;
+    }
+
+    /**
+     * Parallelism for the Flink job. If not set, uses the default parallelism of the execution environment.
+     */
+    public void setParallelism(Integer parallelism) {
+        this.parallelism = parallelism;
+    }
+
+    public Integer getMaxParallelism() {
+        return maxParallelism;
+    }
+
+    /**
+     * Maximum parallelism for the Flink job. Defines the upper bound for dynamic scaling and the number of key groups
+     * for stateful operators.
+     */
+    public void setMaxParallelism(Integer maxParallelism) {
+        this.maxParallelism = maxParallelism;
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    /**
+     * Name for the Flink job. Useful for identification in the Flink UI and logs.
+     */
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
+    public Long getCheckpointTimeout() {
+        return checkpointTimeout;
+    }
+
+    /**
+     * Timeout in milliseconds for checkpoints. Checkpoints that take longer will be aborted.
+     */
+    public void setCheckpointTimeout(Long checkpointTimeout) {
+        this.checkpointTimeout = checkpointTimeout;
+    }
+
+    public Long getMinPauseBetweenCheckpoints() {
+        return minPauseBetweenCheckpoints;
+    }
+
+    /**
+     * Minimum pause in milliseconds between consecutive checkpoints. Helps prevent checkpoint storms under heavy load.
+     */
+    public void setMinPauseBetweenCheckpoints(Long minPauseBetweenCheckpoints) {
+        this.minPauseBetweenCheckpoints = minPauseBetweenCheckpoints;
     }
 }

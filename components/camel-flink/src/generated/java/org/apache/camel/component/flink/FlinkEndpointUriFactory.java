@@ -23,14 +23,22 @@ public class FlinkEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(7);
+        Set<String> props = new HashSet<>(15);
+        props.add("checkpointInterval");
+        props.add("checkpointTimeout");
+        props.add("checkpointingMode");
         props.add("collect");
         props.add("dataSet");
         props.add("dataSetCallback");
         props.add("dataStream");
         props.add("dataStreamCallback");
         props.add("endpointType");
+        props.add("executionMode");
+        props.add("jobName");
         props.add("lazyStartProducer");
+        props.add("maxParallelism");
+        props.add("minPauseBetweenCheckpoints");
+        props.add("parallelism");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();

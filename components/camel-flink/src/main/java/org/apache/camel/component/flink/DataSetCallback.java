@@ -21,8 +21,12 @@ import org.apache.flink.api.java.DataSet;
 /**
  * Generic block of code with parameters which can be executed against DataSet and return results.
  *
- * @param <T> results type
+ * @param      <T> results type
+ * @deprecated     The DataSet API is deprecated since Flink 1.12. Use the DataStream API with bounded streams instead.
+ *                 See the Flink migration guide for details on migrating from DataSet to DataStream API. This class
+ *                 will be maintained for backward compatibility but may be removed in future versions.
  */
+@Deprecated(since = "4.16.0")
 public interface DataSetCallback<T> {
 
     T onDataSet(DataSet ds, Object... payloads);

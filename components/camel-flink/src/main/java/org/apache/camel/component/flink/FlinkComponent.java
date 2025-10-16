@@ -58,7 +58,10 @@ public class FlinkComponent extends DefaultComponent {
 
     /**
      * DataSet to compute against.
+     *
+     * @deprecated The DataSet API is deprecated since Flink 1.12. Use the DataStream API with bounded streams instead.
      */
+    @Deprecated(since = "4.16.0")
     public void setDataSet(DataSet ds) {
         this.ds = ds;
     }
@@ -80,7 +83,10 @@ public class FlinkComponent extends DefaultComponent {
 
     /**
      * Function performing action against a DataSet.
+     *
+     * @deprecated The DataSet API is deprecated since Flink 1.12. Use the DataStream API with bounded streams instead.
      */
+    @Deprecated(since = "4.16.0")
     public void setDataSetCallback(DataSetCallback dataSetCallback) {
         this.dataSetCallback = dataSetCallback;
     }

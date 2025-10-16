@@ -94,4 +94,151 @@ item.setDataValueListener(dataValue -> processValue(dataValue));
 item.setDataValueListener((monitoredItem, dataValue) -> processValue(dataValue));
 ----
 
+=== camel-flink
+
+Apache Flink deprecated the DataSet API in version 1.12 in favor of a unified DataStream API that handles both
+streaming and batch processing. The DataStream API with bounded streams provides all the functionality of the
+DataSet API and more, with better performance and a unified programming model.
+
+==== Key Differences
+
+[cols="1,1,1", options="header"]
+|===
+|Aspect |DataSet API |DataStream API (Batch Mode)
+
+|Execution
+|Immediate (lazy evaluation)
+|Event-driven (requires explicit execution)
+
+|Data Type
+|Bounded datasets
+|Bounded or unbounded streams
+
+|Time Semantics
+|Not applicable
+|Event time, processing time, ingestion time
+
+|State Management
+|Limited
+|Full support for keyed and operator state
+
+|Windowing
+|Not applicable
+|Full windowing support
+|===
+
+==== Migration Guide
+
+===== Update Endpoint Type
+
+Replace `flink:dataset` with `flink:datastream`:
+
+.Before
+[source,java]
+-----------------------------------
+from("direct:start")
+    .to("flink:dataset?dataSet=#myDataSet&dataSetCallback=#myCallback");
+-----------------------------------
+
+.After
+[source,java]
+-----------------------------------
+from("direct:start")
+    .to("flink:datastream?dataStream=#myDataStream&dataStreamCallback=#myCallback");
+-----------------------------------
+
+===== Configure Batch Execution Mode
+
+For batch processing with DataStream API, configure the execution environment for batch mode:
+
+[source,java]
+-----------------------------------
+StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+// Set to batch mode for bounded streams
+env.setRuntimeMode(RuntimeExecutionMode.BATCH);
+-----------------------------------
+
+===== Update Data Sources
+
+.Before (DataSet API)
+[source,java]
+-----------------------------------
+ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+DataSet<String> dataSet = env.readTextFile("input.txt");
+-----------------------------------
+
+.After (DataStream API)
+[source,java]
+-----------------------------------
+StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+env.setRuntimeMode(RuntimeExecutionMode.BATCH);
+DataStream<String> dataStream = env.readTextFile("input.txt");
+-----------------------------------
+
+===== Update Transformations
+
+Most transformation operations have direct equivalents:
+
+[cols="1,1", options="header"]
+|===
+|DataSet API |DataStream API
+
+|`map()`
+|`map()`
+
+|`flatMap()`
+|`flatMap()`
+
+|`filter()`
+|`filter()`
+
+|`reduce()`
+|`reduce()` or `keyBy().reduce()`
+
+|`groupBy()`
+|`keyBy()`
+
+|`join()`
+|`join()` (with windowing)
+
+|`coGroup()`
+|`coGroup()` (with windowing)
+|===
+
+===== Update Callbacks
+
+Replace `DataSetCallback` with `DataStreamCallback`:
+
+.Before (DataSet)
+[source,java]
+-----------------------------------
+@Bean
+public DataSetCallback<Long> dataSetCallback() {
+    return new DataSetCallback<Long>() {
+        public Long onDataSet(DataSet dataSet, Object... objects) {
+            try {
+                return dataSet.count();
+            } catch (Exception e) {
+                return -1L;
+            }
+        }
+    };
+}
+-----------------------------------
+
+.After (DataStream)
+[source,java]
+-----------------------------------
+@Bean
+public DataStreamCallback dataStreamCallback() {
+    return new DataStreamCallback() {
+        public Object onDataStream(DataStream dataStream, Object... objects) {
+            // For batch mode, ensure runtime mode is set
+            dataStream.print();
+            return null;
+        }
+    };
+}
+-----------------------------------
+
 NOTE: Most users will not be affected by these changes as they primarily affect advanced use cases where you directly interact with the Milo API. Standard camel-milo endpoint configurations remain unchanged.
