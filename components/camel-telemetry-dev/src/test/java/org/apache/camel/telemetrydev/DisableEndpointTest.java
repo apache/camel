@@ -22,8 +22,11 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +39,7 @@ public class DisableEndpointTest extends TelemetryDevTracerTestSupport {
         TelemetryDevTracer tst = new TelemetryDevTracer();
         tst.setTraceFormat("json");
         tst.setTraceProcessors(true);
-        tst.setExcludePatterns("log*,to*");
+        tst.setExcludePatterns("log*,to*,setVariable*");
         CamelContext context = super.createCamelContext();
         CamelContextAware.trySetCamelContext(tst, context);
         tst.init(context);
@@ -49,6 +52,18 @@ public class DisableEndpointTest extends TelemetryDevTracerTestSupport {
         Map<String, DevTrace> traces = tracesFromLog();
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
+    }
+
+    @Test
+    void testExcludedVariableIsPresent() throws InterruptedException {
+        MockEndpoint endpoint = context().getEndpoint("mock:variable", MockEndpoint.class);
+
+        endpoint.expectedMessageCount(1);
+        template.sendBody("direct:variable", "Test Message");
+        endpoint.assertIsSatisfied();
+        Exchange first = endpoint.getReceivedExchanges().get(0);
+        String myVar = first.getVariable("myVar", String.class);
+        Assertions.assertEquals("testValue", myVar);
     }
 
     private void checkTrace(DevTrace trace) {
@@ -78,6 +93,10 @@ public class DisableEndpointTest extends TelemetryDevTracerTestSupport {
                         .routeId("start")
                         .log("A message")
                         .to("log:info");
+
+                from("direct:variable")
+                        .setVariable("myVar", constant("testValue"))
+                        .to("mock:variable");
             }
         };
     }
