@@ -60,7 +60,8 @@ public class PineconeVectorDbProducer extends DefaultProducer {
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
         // header take precedence
-        final PineconeVectorDbAction action = in.getHeader(PineconeVectorDbHeaders.ACTION, getEndpoint().getConfiguration().getAction(), PineconeVectorDbAction.class);
+        final PineconeVectorDbAction action = in.getHeader(PineconeVectorDbHeaders.ACTION,
+                getEndpoint().getConfiguration().getAction(), PineconeVectorDbAction.class);
 
         try {
             if (action == null) {
