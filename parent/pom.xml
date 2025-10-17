@@ -96,6 +96,10 @@
         <cassandra-driver-version>4.19.0</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
+        <!-- This is exclusively required in camel-aws-xray as the dependency is leaking a build time annotation
+            TODO: remove when this issue is solved https://github.com/aws/aws-xray-sdk-java/issues/441
+        -->
+        <checker-framework-version>3.51.1</checker-framework-version>
         <chicory-version>1.5.3</chicory-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <citrus-version>4.8.1</citrus-version>
@@ -347,6 +351,10 @@
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.24.3</log4j2-version>
         <logback-version>1.5.19</logback-version>
+        <!-- This is exclusively required in camel-milvus as the dependency is leaking a build time annotation
+            TODO: remove when this issue is solved https://github.com/milvus-io/milvus-sdk-java/issues/1651
+        -->
+        <lombok-version>1.18.30</lombok-version>
         <lucene-version>9.12.0</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.4.5</littleproxy-version>

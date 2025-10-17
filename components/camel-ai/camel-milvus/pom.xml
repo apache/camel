@@ -103,6 +103,15 @@
             </exclusions>
         </dependency>
 
+        <!-- Required as the Milvus API is leaking a @NonNull annotation -->
+        <!-- TODO: remove when this issue is solved https://github.com/milvus-io/milvus-sdk-java/issues/1651-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok-version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
