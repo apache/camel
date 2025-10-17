@@ -57,6 +57,7 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
                 List<VertxWebsocketPeer> connectedPeers = entry.getValue().getConnectedPeers();
                 sb.append(String.format("\n        Connected Peers (%d): ", connectedPeers.size()));
                 for (VertxWebsocketPeer peer : connectedPeers) {
+                    sb.append(String.format("\n            ID: %s", peer.getConnectionKey()));
                     sb.append(String.format("\n            Path: %s", peer.getPath()));
 
                     ServerWebSocket webSocket = peer.getWebSocket();
@@ -96,6 +97,7 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
                 JsonArray peers = new JsonArray();
                 for (VertxWebsocketPeer peer : entry.getValue().getConnectedPeers()) {
                     JsonObject peerJson = new JsonObject();
+                    peerJson.put("id", peer.getConnectionKey());
                     peerJson.put("path", peer.getPath());
 
                     ServerWebSocket webSocket = peer.getWebSocket();
