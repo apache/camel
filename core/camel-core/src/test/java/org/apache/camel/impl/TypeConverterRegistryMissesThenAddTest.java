@@ -28,8 +28,11 @@ public class TypeConverterRegistryMissesThenAddTest {
     public void testMissThenAddTypeConverter() {
         DefaultCamelContext context = new DefaultCamelContext();
 
+        int before = context.getTypeConverterRegistry().size();
         MyOrder order = context.getTypeConverter().convertTo(MyOrder.class, "123");
         assertNull(order);
+        int after = context.getTypeConverterRegistry().size();
+        assertTrue(after > before); // should add miss converter marker
 
         // add missing type converter
         context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
@@ -38,6 +41,26 @@ public class TypeConverterRegistryMissesThenAddTest {
         order = context.getTypeConverter().convertTo(MyOrder.class, "123");
         assertNotNull(order);
         assertEquals(123, order.getId());
+    }
+
+    @Test
+    public void testTryMiss() {
+        DefaultCamelContext context = new DefaultCamelContext();
+
+        int before = context.getTypeConverterRegistry().size();
+        MyOrder order = context.getTypeConverter().tryConvertTo(MyOrder.class, "456");
+        assertNull(order);
+        int after = context.getTypeConverterRegistry().size();
+        // we only try to convert so no miss marker
+        assertEquals(before, after);
+
+        // add missing type converter
+        context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
+
+        // this time it should work
+        order = context.getTypeConverter().convertTo(MyOrder.class, "456");
+        assertNotNull(order);
+        assertEquals(456, order.getId());
     }
 
     private static class MyOrder {
