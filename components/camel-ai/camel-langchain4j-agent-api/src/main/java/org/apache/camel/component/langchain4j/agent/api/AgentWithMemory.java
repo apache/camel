@@ -21,6 +21,7 @@ import java.util.List;
 import dev.langchain4j.mcp.McpToolProvider;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
