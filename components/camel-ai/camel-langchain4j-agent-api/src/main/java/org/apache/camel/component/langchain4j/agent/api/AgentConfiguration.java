@@ -20,7 +20,10 @@ package org.apache.camel.component.langchain4j.agent.api;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiPredicate;
 
+import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.rag.RetrievalAugmentor;
@@ -45,6 +48,9 @@ import org.slf4j.LoggerFactory;
  * <li><strong>Retrieval Augmentor:</strong> For RAG (Retrieval-Augmented Generation) capabilities</li>
  * <li><strong>Input Guardrails:</strong> Security filters applied to incoming messages</li>
  * <li><strong>Output Guardrails:</strong> Security filters applied to agent responses</li>
+ * <li><strong>Custom Tools:</strong> Custom LangChain4j tools with @Tool annotations</li>
+ * <li><strong>MCP Clients:</strong> Model Context Protocol clients for external tool integration</li>
+ * <li><strong>MCP Tool Filters:</strong> Filters for controlling which MCP tools are available</li>
  * </ul>
  *
  * @since 4.9.0
@@ -58,6 +64,8 @@ public class AgentConfiguration {
     private List<Class<?>> inputGuardrailClasses;
     private List<Class<?>> outputGuardrailClasses;
     private List<Object> customTools; // Custom LangChain4j tools
+    private List<McpClient> mcpClients; // MCP clients for external tool integration
+    private BiPredicate<McpClient, ToolSpecification> mcpToolProviderFilter; // Filter for MCP tools
 
     /**
      * Gets the configured chat model.
@@ -283,6 +291,57 @@ public class AgentConfiguration {
      */
     public AgentConfiguration withCustomTools(List<Object> customTools) {
         this.customTools = customTools;
+        return this;
+    }
+
+    /**
+     * Gets the configured MCP clients for external tool integration.
+     *
+     * @return the list of MCP clients, or {@code null} if not configured
+     */
+    public List<McpClient> getMcpClients() {
+        return mcpClients;
+    }
+
+    /**
+     * Sets the MCP clients for external tool integration.
+     *
+     * @param  mcpClients the list of MCP clients to connect to external tools
+     * @return            this configuration instance for method chaining
+     */
+    public AgentConfiguration withMcpClients(List<McpClient> mcpClients) {
+        this.mcpClients = mcpClients;
+        return this;
+    }
+
+    /**
+     * Sets a single MCP client for external tool integration.
+     *
+     * @param  mcpClient the MCP client to connect to external tools
+     * @return           this configuration instance for method chaining
+     */
+    public AgentConfiguration withMcpClient(McpClient mcpClient) {
+        this.mcpClients = Arrays.asList(mcpClient);
+        return this;
+    }
+
+    /**
+     * Gets the configured MCP tool provider filter.
+     *
+     * @return the MCP tool provider filter, or {@code null} if not configured
+     */
+    public BiPredicate<McpClient, ToolSpecification> getMcpToolProviderFilter() {
+        return mcpToolProviderFilter;
+    }
+
+    /**
+     * Sets the MCP tool provider filter for controlling which MCP tools are available.
+     *
+     * @param  mcpToolProviderFilter the filter predicate that determines which MCP tools to include
+     * @return                       this configuration instance for method chaining
+     */
+    public AgentConfiguration withMcpToolProviderFilter(BiPredicate<McpClient, ToolSpecification> mcpToolProviderFilter) {
+        this.mcpToolProviderFilter = mcpToolProviderFilter;
         return this;
     }
 
