@@ -22,6 +22,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.flink.api.java.DataSet;
 
+/**
+ * Producer for executing Flink DataSet operations.
+ *
+ * @deprecated The DataSet API is deprecated since Flink 1.12. Use the DataStream API with bounded streams instead. See
+ *             the Flink migration guide for details on migrating from DataSet to DataStream API.
+ */
+@Deprecated(since = "4.16.0")
 public class DataSetFlinkProducer extends DefaultProducer {
 
     public DataSetFlinkProducer(FlinkEndpoint endpoint) {

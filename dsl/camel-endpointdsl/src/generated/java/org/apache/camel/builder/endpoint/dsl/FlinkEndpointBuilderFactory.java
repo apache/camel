@@ -210,6 +210,113 @@ public interface FlinkEndpointBuilderFactory {
         }
 
         /**
+         * Checkpointing mode: EXACTLY_ONCE (default) or AT_LEAST_ONCE.
+         * EXACTLY_ONCE provides stronger guarantees but may have higher
+         * overhead.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param checkpointingMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder checkpointingMode(String checkpointingMode) {
+            doSetProperty("checkpointingMode", checkpointingMode);
+            return this;
+        }
+        /**
+         * Interval in milliseconds between checkpoints. Enables checkpointing
+         * when set. Recommended for streaming jobs to ensure fault tolerance.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param checkpointInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder checkpointInterval(Long checkpointInterval) {
+            doSetProperty("checkpointInterval", checkpointInterval);
+            return this;
+        }
+        /**
+         * Interval in milliseconds between checkpoints. Enables checkpointing
+         * when set. Recommended for streaming jobs to ensure fault tolerance.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param checkpointInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder checkpointInterval(String checkpointInterval) {
+            doSetProperty("checkpointInterval", checkpointInterval);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for checkpoints. Checkpoints that take longer
+         * will be aborted.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param checkpointTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder checkpointTimeout(Long checkpointTimeout) {
+            doSetProperty("checkpointTimeout", checkpointTimeout);
+            return this;
+        }
+        /**
+         * Timeout in milliseconds for checkpoints. Checkpoints that take longer
+         * will be aborted.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param checkpointTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder checkpointTimeout(String checkpointTimeout) {
+            doSetProperty("checkpointTimeout", checkpointTimeout);
+            return this;
+        }
+        /**
+         * Execution mode for the Flink job. Options: STREAMING (default),
+         * BATCH, AUTOMATIC. BATCH mode is recommended for bounded streams
+         * (batch processing).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param executionMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder executionMode(String executionMode) {
+            doSetProperty("executionMode", executionMode);
+            return this;
+        }
+        /**
+         * Name for the Flink job. Useful for identification in the Flink UI and
+         * logs.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param jobName the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder jobName(String jobName) {
+            doSetProperty("jobName", jobName);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -253,6 +360,98 @@ public interface FlinkEndpointBuilderFactory {
          */
         default AdvancedFlinkEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Maximum parallelism for the Flink job. Defines the upper bound for
+         * dynamic scaling and the number of key groups for stateful operators.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param maxParallelism the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder maxParallelism(Integer maxParallelism) {
+            doSetProperty("maxParallelism", maxParallelism);
+            return this;
+        }
+        /**
+         * Maximum parallelism for the Flink job. Defines the upper bound for
+         * dynamic scaling and the number of key groups for stateful operators.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param maxParallelism the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder maxParallelism(String maxParallelism) {
+            doSetProperty("maxParallelism", maxParallelism);
+            return this;
+        }
+        /**
+         * Minimum pause in milliseconds between consecutive checkpoints. Helps
+         * prevent checkpoint storms under heavy load.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param minPauseBetweenCheckpoints the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder minPauseBetweenCheckpoints(Long minPauseBetweenCheckpoints) {
+            doSetProperty("minPauseBetweenCheckpoints", minPauseBetweenCheckpoints);
+            return this;
+        }
+        /**
+         * Minimum pause in milliseconds between consecutive checkpoints. Helps
+         * prevent checkpoint storms under heavy load.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param minPauseBetweenCheckpoints the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder minPauseBetweenCheckpoints(String minPauseBetweenCheckpoints) {
+            doSetProperty("minPauseBetweenCheckpoints", minPauseBetweenCheckpoints);
+            return this;
+        }
+        /**
+         * Parallelism for the Flink job. If not set, uses the default
+         * parallelism of the execution environment.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param parallelism the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder parallelism(Integer parallelism) {
+            doSetProperty("parallelism", parallelism);
+            return this;
+        }
+        /**
+         * Parallelism for the Flink job. If not set, uses the default
+         * parallelism of the execution environment.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param parallelism the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFlinkEndpointBuilder parallelism(String parallelism) {
+            doSetProperty("parallelism", parallelism);
             return this;
         }
     }

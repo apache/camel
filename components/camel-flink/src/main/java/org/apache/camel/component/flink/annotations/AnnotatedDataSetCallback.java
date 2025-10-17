@@ -32,7 +32,12 @@ import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 /**
  * Provides facade for working with annotated DataSet callbacks i.e. POJO classes with an appropriate annotations on
  * selected methods.
+ *
+ * @deprecated The DataSet API is deprecated since Flink 1.12. Use the DataStream API with bounded streams instead. See
+ *             the Flink migration guide for details on migrating from DataSet to DataStream API. This class will be
+ *             maintained for backward compatibility but may be removed in future versions.
  */
+@Deprecated(since = "4.16.0")
 public class AnnotatedDataSetCallback implements org.apache.camel.component.flink.DataSetCallback {
 
     private final Object objectWithCallback;
