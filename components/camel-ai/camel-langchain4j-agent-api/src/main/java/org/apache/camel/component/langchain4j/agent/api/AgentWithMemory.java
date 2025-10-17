@@ -63,7 +63,8 @@ public class AgentWithMemory implements Agent {
         }
 
         // MCP Clients - create MCP ToolProvider if MCP clients are configured
-        if (configuration.getMcpClients() != null && !configuration.getMcpClients().isEmpty()) {
+        // import org.apache.camel.util.ObjectHelper
+        if (ObjectHelper.isNotEmpty(configuration.getMcpClients())) {
             McpToolProvider.Builder mcpBuilder = McpToolProvider.builder()
                     .mcpClients(configuration.getMcpClients());
 
