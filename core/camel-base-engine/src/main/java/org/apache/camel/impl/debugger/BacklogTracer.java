@@ -135,15 +135,30 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
             return;
         }
 
-        // ensure there is space on the queue by polling until at least single slot is free
-        int drain = queue.size() - backlogSize + 1;
-        if (drain > 0) {
-            for (int i = 0; i < drain; i++) {
-                queue.poll();
+        // pre-drain to make space
+        drain(false);
+
+        boolean added = false;
+        while (!added) {
+            try {
+                added = queue.add(event);
+            } catch (IllegalStateException e) {
+                drain(true);
             }
         }
+    }
 
-        queue.add(event);
+    private void drain(boolean force) {
+        if (force) {
+            queue.poll();
+        } else {
+            int drain = queue.size() - backlogSize + 1;
+            if (drain > 0) {
+                for (int i = 0; i < drain; i++) {
+                    queue.poll();
+                }
+            }
+        }
     }
 
     private boolean shouldTraceFilter(Exchange exchange) {
