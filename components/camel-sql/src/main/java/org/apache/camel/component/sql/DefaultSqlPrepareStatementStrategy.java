@@ -268,7 +268,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
     protected static Object lookupParameter(String nextParam, Exchange exchange, Object batchBody) {
         Object body = batchBody != null ? batchBody : exchange.getMessage().getBody();
-        Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
+        Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, body));
         Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
         Map<?, ?> variablesMap = safeMap(exchange.getVariables());
 
