@@ -52,8 +52,23 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
     private boolean allPermissionsRequired = true;
     private boolean useResourceOwnerPasswordCredentials = false;
     private PublicKey publicKey;
+    /**
+     * Enable OAuth 2.0 token introspection for real-time token validation. When enabled, tokens are validated by
+     * calling Keycloak's introspection endpoint instead of local JWT parsing. This allows detecting revoked tokens
+     * before expiration.
+     */
+    private boolean useTokenIntrospection = false;
+    /**
+     * Enable caching of token introspection results to reduce API calls to Keycloak.
+     */
+    private boolean introspectionCacheEnabled = true;
+    /**
+     * Time-to-live for cached introspection results in seconds. Default is 60 seconds.
+     */
+    private long introspectionCacheTtl = 60;
 
     private Keycloak keycloakClient;
+    private KeycloakTokenIntrospector tokenIntrospector;
 
     public KeycloakSecurityPolicy() {
         this.requiredRoles = "";
@@ -84,6 +99,10 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
         if (keycloakClient == null) {
             initializeKeycloakClient();
         }
+        // Initialize token introspector if introspection is enabled
+        if (useTokenIntrospection && tokenIntrospector == null) {
+            initializeTokenIntrospector();
+        }
     }
 
     @Override
@@ -106,6 +125,16 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
 
         // Note: Permission-based authorization requires additional setup with Keycloak Authorization Services
         // For now, this implementation focuses on role-based authorization
+    }
+
+    private void initializeTokenIntrospector() {
+        if (clientSecret == null) {
+            throw new IllegalArgumentException(
+                    "Client secret is required for token introspection");
+        }
+        tokenIntrospector = new KeycloakTokenIntrospector(
+                serverUrl, realm, clientId, clientSecret,
+                introspectionCacheEnabled, introspectionCacheTtl);
     }
 
     // Getters and setters
@@ -275,5 +304,33 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
 
     public void setPublicKey(PublicKey publicKey) {
         this.publicKey = publicKey;
+    }
+
+    public boolean isUseTokenIntrospection() {
+        return useTokenIntrospection;
+    }
+
+    public void setUseTokenIntrospection(boolean useTokenIntrospection) {
+        this.useTokenIntrospection = useTokenIntrospection;
+    }
+
+    public boolean isIntrospectionCacheEnabled() {
+        return introspectionCacheEnabled;
+    }
+
+    public void setIntrospectionCacheEnabled(boolean introspectionCacheEnabled) {
+        this.introspectionCacheEnabled = introspectionCacheEnabled;
+    }
+
+    public long getIntrospectionCacheTtl() {
+        return introspectionCacheTtl;
+    }
+
+    public void setIntrospectionCacheTtl(long introspectionCacheTtl) {
+        this.introspectionCacheTtl = introspectionCacheTtl;
+    }
+
+    public KeycloakTokenIntrospector getTokenIntrospector() {
+        return tokenIntrospector;
     }
 }

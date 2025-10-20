@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.keycloak.security;
 
+import java.io.IOException;
 import java.security.PublicKey;
 import java.util.Collection;
 import java.util.HashSet;
@@ -141,6 +142,94 @@ public final class KeycloakSecurityHelper {
             if (!scopesString.isEmpty()) {
                 permissions.addAll(java.util.Arrays.asList(scopesString.split(" ")));
             }
+        }
+
+        return permissions;
+    }
+
+    /**
+     * Validates a token using OAuth 2.0 token introspection.
+     *
+     * @param  token             the access token to validate
+     * @param  tokenIntrospector the introspector to use
+     * @return                   the introspection result
+     * @throws IOException       if introspection fails
+     */
+    public static KeycloakTokenIntrospector.IntrospectionResult introspectToken(
+            String token, KeycloakTokenIntrospector tokenIntrospector)
+            throws IOException {
+        return tokenIntrospector.introspect(token);
+    }
+
+    /**
+     * Extracts roles from an introspection result.
+     *
+     * @param  introspectionResult the introspection result
+     * @param  realm               the realm name
+     * @param  clientId            the client ID
+     * @return                     set of roles
+     */
+    public static Set<String> extractRolesFromIntrospection(
+            KeycloakTokenIntrospector.IntrospectionResult introspectionResult,
+            String realm, String clientId) {
+        Set<String> roles = new HashSet<>();
+
+        // Extract roles from realm_access claim
+        Object realmAccess = introspectionResult.getClaim("realm_access");
+        if (realmAccess instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> realmAccessMap = (Map<String, Object>) realmAccess;
+            Object realmRoles = realmAccessMap.get("roles");
+            if (realmRoles instanceof Collection) {
+                @SuppressWarnings("unchecked")
+                Collection<String> realmRolesCollection = (Collection<String>) realmRoles;
+                roles.addAll(realmRolesCollection);
+            }
+        }
+
+        // Extract client roles from resource_access claim
+        Object resourceAccess = introspectionResult.getClaim("resource_access");
+        if (resourceAccess instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> resourceAccessMap = (Map<String, Object>) resourceAccess;
+            Object clientAccess = resourceAccessMap.get(clientId);
+            if (clientAccess instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> clientAccessMap = (Map<String, Object>) clientAccess;
+                Object clientRoles = clientAccessMap.get("roles");
+                if (clientRoles instanceof Collection) {
+                    @SuppressWarnings("unchecked")
+                    Collection<String> clientRolesCollection = (Collection<String>) clientRoles;
+                    roles.addAll(clientRolesCollection);
+                }
+            }
+        }
+
+        return roles;
+    }
+
+    /**
+     * Extracts permissions from an introspection result.
+     *
+     * @param  introspectionResult the introspection result
+     * @return                     set of permissions
+     */
+    public static Set<String> extractPermissionsFromIntrospection(
+            KeycloakTokenIntrospector.IntrospectionResult introspectionResult) {
+        Set<String> permissions = new HashSet<>();
+
+        // Extract permissions from custom claims
+        Object permissionsClaim = introspectionResult.getClaim("permissions");
+        if (permissionsClaim instanceof Collection) {
+            @SuppressWarnings("unchecked")
+            Collection<String> permissionsCollection = (Collection<String>) permissionsClaim;
+            permissions.addAll(permissionsCollection);
+        }
+
+        // Also check for scope-based permissions
+        String scope = introspectionResult.getScope();
+        if (scope != null && !scope.isEmpty()) {
+            permissions.addAll(java.util.Arrays.asList(scope.split(" ")));
         }
 
         return permissions;
