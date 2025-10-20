@@ -175,6 +175,17 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
         assertIsInstanceOf(UnidentifiedRecordException.class, ex);
     }
 
+    @Test
+    void testUnmarshalEncoding() throws Exception {
+        context.setTracing(true);
+        MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
+        mock.expectedBodiesReceived(createTestData(false));
+
+        template.sendBody("direct:unmarshalEncoding", data);
+
+        mock.assertIsSatisfied();
+    }
+
     private List<Object> createTestData(boolean skipB1header) throws ParseException {
         String source = "camel-beanio";
         List<Object> body = new ArrayList<>();
@@ -233,6 +244,14 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
                         .to("mock:beanio-unmarshal");
 
                 from("direct:marshal").marshal(format).to("mock:beanio-marshal");
+
+                var df = dataFormat().beanio()
+                        .mapping("org/apache/camel/dataformat/beanio/mappings.xml")
+                        .streamName("securityData")
+                        .encoding("UTF-8")
+                        .end();
+                from("direct:unmarshalEncoding")
+                        .unmarshal(df).split(simple("${body}")).to("mock:beanio-unmarshal");
             }
         };
     }
