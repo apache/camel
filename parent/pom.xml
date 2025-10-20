@@ -158,7 +158,7 @@
         <elytron-web>4.1.2.Final</elytron-web>
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
-        <exec-maven-plugin-version>3.6.1</exec-maven-plugin-version>
+        <exec-maven-plugin-version>3.6.2</exec-maven-plugin-version>
         <fastjson-version>2.0.59</fastjson-version>
         <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
         <google-maps-services-version>2.2.0</google-maps-services-version>
