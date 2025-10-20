@@ -356,4 +356,9 @@ public final class IOConverter {
         return path.toFile();
     }
 
+    @Converter(order = 45)
+    public static Charset toCharset(String name) {
+        return Charset.forName(name);
+    }
+
 }

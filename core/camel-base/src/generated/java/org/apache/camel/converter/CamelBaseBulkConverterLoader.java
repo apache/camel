@@ -41,7 +41,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
 
     @Override
     public int size() {
-        return 130;
+        return 131;
     }
 
     @Override
@@ -430,6 +430,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.io.InputStream) {
                 return org.apache.camel.converter.IOConverter.covertToByteBuffer((java.io.InputStream) value);
             }
+        } else if (to == java.nio.charset.Charset.class) {
+            if (value instanceof java.lang.String) {
+                return org.apache.camel.converter.IOConverter.toCharset((java.lang.String) value);
+            }
         } else if (to == java.nio.file.Path.class) {
             if (value instanceof java.io.File) {
                 return org.apache.camel.converter.IOConverter.toPath((java.io.File) value);
@@ -635,6 +639,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
         registry.addConverter(new TypeConvertible<>(java.lang.Float.class, java.nio.ByteBuffer.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Double.class, java.nio.ByteBuffer.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.InputStream.class, java.nio.ByteBuffer.class), this);
+        registry.addConverter(new TypeConvertible<>(java.lang.String.class, java.nio.charset.Charset.class), this);
         registry.addConverter(new TypeConvertible<>(java.io.File.class, java.nio.file.Path.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Long.class, java.sql.Timestamp.class), this);
         registry.addConverter(new TypeConvertible<>(java.lang.Long.class, java.time.Duration.class), this);
@@ -1001,6 +1006,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == java.io.InputStream.class) {
+                return this;
+            }
+        } else if (to == java.nio.charset.Charset.class) {
+            if (from == java.lang.String.class) {
                 return this;
             }
         } else if (to == java.nio.file.Path.class) {

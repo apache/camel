@@ -29,6 +29,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -277,6 +278,13 @@ public class IOConverterTest extends ContextTestSupport {
         assertNotNull(p);
         assertEquals(file.getName(), p.getFileName().toString());
         assertEquals("log4j2.properties", p.getFileName().toString());
+    }
+
+    @Test
+    public void testToCharset() {
+        Charset c = IOConverter.toCharset("UTF-8");
+        assertNotNull(c);
+        assertEquals("UTF-8", c.name());
     }
 
 }
