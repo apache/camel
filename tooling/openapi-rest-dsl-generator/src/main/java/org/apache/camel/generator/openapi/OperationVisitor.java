@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.media.MediaType;
@@ -38,17 +39,23 @@ import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class OperationVisitor<T> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OperationVisitor.class);
+
+    private final OpenAPI openAPI;
     private final DestinationGenerator destinationGenerator;
     private final CodeEmitter<T> emitter;
     private final OperationFilter filter;
     private final String path;
     private final String dtoPackageName;
 
-    OperationVisitor(final CodeEmitter<T> emitter, final OperationFilter filter, final String path,
+    OperationVisitor(final OpenAPI openAPI, final CodeEmitter<T> emitter, final OperationFilter filter, final String path,
                      final DestinationGenerator destinationGenerator, final String dtoPackageName) {
+        this.openAPI = openAPI;
         this.emitter = emitter;
         this.filter = filter;
         this.path = path;
@@ -71,7 +78,27 @@ class OperationVisitor<T> {
         return stringList;
     }
 
-    CodeEmitter<T> emit(final Parameter parameter) {
+    CodeEmitter<T> emit(Parameter parameter) {
+        // skip invalid parameters (such as when openapi spec refers to external schemas)
+        String ref = parameter.get$ref();
+        if (parameter.getName() == null && ref == null) {
+            return emitter;
+        }
+
+        // parser may not resolve parameters (bug) so we try to lookup parameter via ref
+        if (openAPI != null && parameter.getName() == null && ref.startsWith("#/components/parameters/")) {
+            ref = ref.substring(24);
+            var lookup = openAPI.getComponents().getParameters().get(ref);
+            if (lookup != null) {
+                parameter = lookup;
+            }
+        }
+
+        if (parameter.getName() == null) {
+            LOG.warn("OpenAPIV3Parser could not parse parameter (has no name): {}", parameter);
+            return emitter;
+        }
+
         emitter.emit("param");
 
         emit("name", parameter.getName());
