@@ -56,7 +56,7 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
         for (String name : document.getPaths().keySet()) {
             PathItem item = document.getPaths().get(name);
-            restDslStatement.visit(name, item);
+            restDslStatement.visit(document, name, item);
         }
 
         final RestsDefinition rests = emitter.result();

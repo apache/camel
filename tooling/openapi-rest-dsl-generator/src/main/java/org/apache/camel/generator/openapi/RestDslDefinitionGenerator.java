@@ -34,7 +34,7 @@ public final class RestDslDefinitionGenerator extends RestDslGenerator<RestDslDe
 
         for (String name : document.getPaths().keySet()) {
             PathItem item = document.getPaths().get(name);
-            restDslStatement.visit(name, item);
+            restDslStatement.visit(document, name, item);
         }
 
         return emitter.result();

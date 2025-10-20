@@ -16,6 +16,7 @@
  */
 package org.apache.camel.generator.openapi;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import org.apache.camel.util.ObjectHelper;
 
@@ -40,9 +41,9 @@ class PathVisitor<T> {
         }
     }
 
-    void visit(final String path, final PathItem definition) {
+    void visit(final OpenAPI openAPI, final String path, final PathItem definition) {
         final OperationVisitor<T> restDslOperation
-                = new OperationVisitor<>(emitter, filter, path, destinationGenerator, dtoPackageName);
+                = new OperationVisitor<>(openAPI, emitter, filter, path, destinationGenerator, dtoPackageName);
         definition.readOperationsMap().forEach((method, op) -> restDslOperation.visit(method, op, definition));
     }
 
