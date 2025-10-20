@@ -116,6 +116,21 @@ public class KeycloakConfiguration implements Cloneable {
     @UriParam(description = "Filter admin events by resource path")
     private String resourcePath;
 
+    // Token introspection configuration options
+    @UriParam(description = "Enable OAuth 2.0 token introspection for real-time token validation. "
+                            + "When enabled, tokens are validated by calling Keycloak's introspection endpoint "
+                            + "instead of local JWT parsing. This allows detecting revoked tokens before expiration.",
+              defaultValue = "false")
+    private boolean useTokenIntrospection = false;
+
+    @UriParam(description = "Enable caching of token introspection results to reduce API calls to Keycloak",
+              defaultValue = "true")
+    private boolean introspectionCacheEnabled = true;
+
+    @UriParam(description = "Time-to-live for cached introspection results in seconds",
+              defaultValue = "60")
+    private long introspectionCacheTtl = 60;
+
     public String getLabel() {
         return label;
     }
@@ -413,6 +428,41 @@ public class KeycloakConfiguration implements Cloneable {
      */
     public void setResourcePath(String resourcePath) {
         this.resourcePath = resourcePath;
+    }
+
+    public boolean isUseTokenIntrospection() {
+        return useTokenIntrospection;
+    }
+
+    /**
+     * Enable OAuth 2.0 token introspection for real-time token validation. When enabled, tokens are validated by
+     * calling Keycloak's introspection endpoint instead of local JWT parsing. This allows detecting revoked tokens
+     * before expiration.
+     */
+    public void setUseTokenIntrospection(boolean useTokenIntrospection) {
+        this.useTokenIntrospection = useTokenIntrospection;
+    }
+
+    public boolean isIntrospectionCacheEnabled() {
+        return introspectionCacheEnabled;
+    }
+
+    /**
+     * Enable caching of token introspection results to reduce API calls to Keycloak
+     */
+    public void setIntrospectionCacheEnabled(boolean introspectionCacheEnabled) {
+        this.introspectionCacheEnabled = introspectionCacheEnabled;
+    }
+
+    public long getIntrospectionCacheTtl() {
+        return introspectionCacheTtl;
+    }
+
+    /**
+     * Time-to-live for cached introspection results in seconds
+     */
+    public void setIntrospectionCacheTtl(long introspectionCacheTtl) {
+        this.introspectionCacheTtl = introspectionCacheTtl;
     }
 
     public KeycloakConfiguration copy() {

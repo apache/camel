@@ -2669,6 +2669,423 @@ beans:
 ----
 ====
 
+=== OAuth 2.0 Token Introspection (RFC 7662)
+
+Token introspection provides real-time validation of access tokens by querying Keycloak's introspection endpoint. This enables detection of revoked tokens before their expiration time, providing enhanced security compared to local JWT validation.
+
+==== Overview
+
+The Keycloak security policy supports two token validation methods:
+
+1. **Local JWT Parsing** (default) - Fast, offline validation by parsing and verifying the JWT signature
+2. **Token Introspection** (RFC 7662) - Real-time validation via Keycloak's introspection endpoint
+
+Token introspection is particularly useful for:
+
+* **Token Revocation**: Detect tokens that have been revoked before their expiration
+* **Centralized Validation**: Ensure all services validate against the same source of truth
+* **Security-Critical Operations**: Add an extra layer of validation for sensitive endpoints
+* **Compliance Requirements**: Meet regulatory requirements for real-time token validation
+
+==== Configuration
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Enable token introspection
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+policy.setServerUrl("http://localhost:8080");
+policy.setRealm("my-realm");
+policy.setClientId("my-client");
+policy.setClientSecret("my-client-secret");
+policy.setRequiredRoles("admin");
+
+// Enable introspection with caching
+policy.setUseTokenIntrospection(true);
+policy.setIntrospectionCacheEnabled(true);
+policy.setIntrospectionCacheTtl(120); // 2 minutes
+
+from("direct:secure-endpoint")
+    .policy(policy)
+    .to("mock:result");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:secure-endpoint
+      steps:
+        - policy:
+            ref: introspectionPolicy
+        - to:
+            uri: mock:result
+
+# Bean definition
+beans:
+  - name: introspectionPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "my-realm"
+      clientId: "my-client"
+      clientSecret: "my-client-secret"
+      requiredRoles: "admin"
+      useTokenIntrospection: true
+      introspectionCacheEnabled: true
+      introspectionCacheTtl: 120
+----
+====
+
+==== Introspection Options
+
+[width="100%",cols="20%,10%,70%",options="header"]
+|===
+| Option | Default | Description
+
+| `useTokenIntrospection` | false | Enable OAuth 2.0 token introspection. When enabled, tokens are validated via Keycloak's introspection endpoint instead of local JWT parsing.
+| `introspectionCacheEnabled` | true | Enable caching of introspection results to reduce API calls to Keycloak. Highly recommended for production use.
+| `introspectionCacheTtl` | 60 | Time-to-live for cached introspection results in seconds. Balance between security (lower TTL) and performance (higher TTL).
+|===
+
+NOTE: Token introspection requires a confidential client with client credentials (client ID and client secret).
+
+==== Local JWT vs. Token Introspection
+
+[width="100%",cols="30%,35%,35%",options="header"]
+|===
+| Feature | Local JWT Parsing | Token Introspection
+
+| **Performance** | ⚡ Very Fast (local) | 🔄 Network call required
+| **Revocation Detection** | ❌ No | ✅ Yes (real-time)
+| **Offline Support** | ✅ Yes | ❌ Requires Keycloak connectivity
+| **Caching** | N/A | ✅ Configurable TTL
+| **Security** | Good | Excellent
+| **Best For** | High-throughput, trusted environments | Security-critical operations
+|===
+
+==== Usage Examples
+
+===== Security-Critical Endpoints
+
+Use introspection for endpoints that require the highest level of security:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// High security policy with introspection
+KeycloakSecurityPolicy paymentPolicy = new KeycloakSecurityPolicy();
+paymentPolicy.setServerUrl("http://localhost:8080");
+paymentPolicy.setRealm("production-realm");
+paymentPolicy.setClientId("payment-service");
+paymentPolicy.setClientSecret("payment-secret");
+paymentPolicy.setRequiredRoles("payment-processor");
+
+// Enable introspection for payment endpoints
+paymentPolicy.setUseTokenIntrospection(true);
+paymentPolicy.setIntrospectionCacheEnabled(true);
+paymentPolicy.setIntrospectionCacheTtl(30); // Short TTL for security
+
+// Standard policy with local JWT parsing for regular endpoints
+KeycloakSecurityPolicy standardPolicy = new KeycloakSecurityPolicy();
+standardPolicy.setServerUrl("http://localhost:8080");
+standardPolicy.setRealm("production-realm");
+standardPolicy.setClientId("api-service");
+standardPolicy.setClientSecret("api-secret");
+standardPolicy.setRequiredRoles("user");
+// useTokenIntrospection is false by default (local JWT parsing)
+
+// Apply stricter validation to payment endpoints
+from("rest:post:/payments/process")
+    .policy(paymentPolicy)
+    .to("bean:paymentService?method=processPayment");
+
+// Use faster local validation for regular API calls
+from("rest:get:/api/data")
+    .policy(standardPolicy)
+    .to("bean:dataService?method=getData");
+----
+
+YAML::
++
+[source,yaml]
+----
+# Payment endpoint with introspection
+- route:
+    from:
+      uri: rest:post:/payments/process
+      steps:
+        - policy:
+            ref: paymentPolicy
+        - to:
+            uri: bean:paymentService?method=processPayment
+
+# Regular endpoint with local JWT
+- route:
+    from:
+      uri: rest:get:/api/data
+      steps:
+        - policy:
+            ref: standardPolicy
+        - to:
+            uri: bean:dataService?method=getData
+
+# Security policies
+beans:
+  - name: paymentPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "production-realm"
+      clientId: "payment-service"
+      clientSecret: "payment-secret"
+      requiredRoles: "payment-processor"
+      useTokenIntrospection: true
+      introspectionCacheEnabled: true
+      introspectionCacheTtl: 30
+
+  - name: standardPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "production-realm"
+      clientId: "api-service"
+      clientSecret: "api-secret"
+      requiredRoles: "user"
+----
+====
+
+===== Hybrid Approach - Different Policies for Different Endpoints
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+public class HybridSecurityRoutes extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+
+        // Introspection for admin operations
+        KeycloakSecurityPolicy adminIntrospection = new KeycloakSecurityPolicy(
+            "{{keycloak.server-url}}", "{{keycloak.realm}}",
+            "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
+        adminIntrospection.setRequiredRoles("admin");
+        adminIntrospection.setUseTokenIntrospection(true);
+        adminIntrospection.setIntrospectionCacheTtl(60);
+
+        // Local JWT for read operations (faster)
+        KeycloakSecurityPolicy readPolicy = new KeycloakSecurityPolicy(
+            "{{keycloak.server-url}}", "{{keycloak.realm}}",
+            "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
+        readPolicy.setRequiredRoles("reader,user");
+        readPolicy.setAllRolesRequired(false);
+        // useTokenIntrospection = false (default, uses local JWT)
+
+        // Admin routes - use introspection for security
+        from("rest:delete:/users/{id}")
+            .policy(adminIntrospection)
+            .to("bean:userService?method=deleteUser");
+
+        from("rest:post:/roles/assign")
+            .policy(adminIntrospection)
+            .to("bean:roleService?method=assignRole");
+
+        // Read routes - use local JWT for performance
+        from("rest:get:/users")
+            .policy(readPolicy)
+            .to("bean:userService?method=listUsers");
+
+        from("rest:get:/profile")
+            .policy(readPolicy)
+            .to("bean:userService?method=getProfile");
+    }
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+# Admin routes with introspection
+- route:
+    from:
+      uri: rest:delete:/users/{id}
+      steps:
+        - policy:
+            ref: adminIntrospection
+        - to:
+            uri: bean:userService?method=deleteUser
+
+- route:
+    from:
+      uri: rest:post:/roles/assign
+      steps:
+        - policy:
+            ref: adminIntrospection
+        - to:
+            uri: bean:roleService?method=assignRole
+
+# Read routes with local JWT
+- route:
+    from:
+      uri: rest:get:/users
+      steps:
+        - policy:
+            ref: readPolicy
+        - to:
+            uri: bean:userService?method=listUsers
+
+- route:
+    from:
+      uri: rest:get:/profile
+      steps:
+        - policy:
+            ref: readPolicy
+        - to:
+            uri: bean:userService?method=getProfile
+
+# Security policies
+beans:
+  - name: adminIntrospection
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles: "admin"
+      useTokenIntrospection: true
+      introspectionCacheTtl: 60
+
+  - name: readPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles: "reader,user"
+      allRolesRequired: false
+----
+====
+
+==== Performance Tuning
+
+===== Cache Configuration
+
+The introspection cache significantly reduces the performance impact of API calls to Keycloak:
+
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+policy.setServerUrl("http://localhost:8080");
+policy.setRealm("my-realm");
+policy.setClientId("my-client");
+policy.setClientSecret("my-client-secret");
+policy.setUseTokenIntrospection(true);
+
+// Fine-tune cache settings based on your requirements
+policy.setIntrospectionCacheEnabled(true);
+
+// High-security environment: shorter TTL
+policy.setIntrospectionCacheTtl(30); // 30 seconds
+
+// High-performance environment: longer TTL
+// policy.setIntrospectionCacheTtl(300); // 5 minutes
+
+// Disable cache for maximum security (not recommended for production)
+// policy.setIntrospectionCacheEnabled(false);
+----
+
+===== Cache TTL Recommendations
+
+[width="100%",cols="30%,15%,55%",options="header"]
+|===
+| Use Case | Recommended TTL | Rationale
+
+| High-Security (e.g., payments) | 30-60 seconds | Minimizes window for revoked token use
+| Standard API | 60-120 seconds | Balances security and performance
+| High-Throughput | 120-300 seconds | Reduces Keycloak load
+| Internal Services | 300-600 seconds | Trusted environment, prioritize performance
+|===
+
+NOTE: When a token is introspected and cached, subsequent requests with the same token will use the cached result until the TTL expires. Balance security requirements with performance needs.
+
+==== Token Revocation Workflow
+
+When using token introspection, you can implement a complete token revocation workflow:
+
+[source,java]
+----
+// 1. Revoke token in Keycloak (via admin API)
+template.sendBodyAndHeader("keycloak:admin?operation=revokeSession", null,
+    KeycloakConstants.SESSION_ID, sessionId);
+
+// 2. Subsequent requests with the revoked token will be rejected
+// The introspection endpoint will return "active": false
+// The security policy will throw CamelAuthorizationException
+
+// 3. Handle revoked token gracefully
+onException(CamelAuthorizationException.class)
+    .handled(true)
+    .log("Token validation failed: ${exception.message}")
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(401))
+    .transform().constant("{\"error\": \"Token has been revoked\"}");
+----
+
+==== Best Practices
+
+1. **Use Introspection Selectively**: Enable introspection for security-critical endpoints while using local JWT parsing for high-throughput APIs.
+
+2. **Enable Caching**: Always enable caching in production to reduce load on Keycloak and improve performance.
+
+3. **Tune Cache TTL**: Set appropriate cache TTL based on your security requirements:
+   - Lower TTL (30-60s) for security-critical operations
+   - Higher TTL (2-5min) for regular operations
+
+4. **Monitor Performance**: Track introspection API call latency and adjust caching accordingly.
+
+5. **Handle Failures Gracefully**: Implement proper error handling for network failures or Keycloak downtime.
+
+6. **Use Circuit Breakers**: Consider implementing circuit breakers for the introspection endpoint to handle Keycloak unavailability.
+
+==== Security Considerations
+
+* **Client Secret Protection**: Introspection requires a client secret. Store it securely (environment variables, vault services).
+* **HTTPS in Production**: Always use HTTPS for introspection requests in production.
+* **Keycloak Availability**: Introspection requires Keycloak to be available. Plan for high availability.
+* **Rate Limiting**: Be aware of Keycloak's rate limits for introspection endpoints.
+* **Token Leakage**: Even with introspection, protect tokens from leakage as they remain valid until revoked.
+
+==== Troubleshooting
+
+**High Latency**:
+- Enable caching if disabled
+- Increase cache TTL
+- Check network latency to Keycloak
+- Consider using local JWT for non-critical endpoints
+
+**Cache Not Working**:
+- Verify `introspectionCacheEnabled` is set to `true`
+- Check that TTL is > 0
+- Ensure tokens are identical (including whitespace)
+
+**Introspection Failures**:
+- Verify client secret is correct
+- Ensure client has introspection permissions
+- Check Keycloak logs for errors
+- Verify network connectivity to Keycloak
+
 === Resource Owner Password Credentials
 
 [tabs]
@@ -3161,10 +3578,6 @@ YAML::
 
 === Configuration Properties
 
-[tabs]
-====
-Properties::
-+
 [source,properties]
 ----
 # application.properties

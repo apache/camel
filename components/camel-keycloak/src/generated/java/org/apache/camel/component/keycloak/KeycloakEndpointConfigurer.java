@@ -63,6 +63,10 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "introspectioncacheenabled":
+        case "introspectionCacheEnabled": target.getConfiguration().setIntrospectionCacheEnabled(property(camelContext, boolean.class, value)); return true;
+        case "introspectioncachettl":
+        case "introspectionCacheTtl": target.getConfiguration().setIntrospectionCacheTtl(property(camelContext, long.class, value)); return true;
         case "ipaddress":
         case "ipAddress": target.getConfiguration().setIpAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "keycloakclient":
@@ -102,6 +106,8 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
         case "types": target.getConfiguration().setTypes(property(camelContext, java.lang.String.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "usetokenintrospection":
+        case "useTokenIntrospection": target.getConfiguration().setUseTokenIntrospection(property(camelContext, boolean.class, value)); return true;
         case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -156,6 +162,10 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
+        case "introspectioncacheenabled":
+        case "introspectionCacheEnabled": return boolean.class;
+        case "introspectioncachettl":
+        case "introspectionCacheTtl": return long.class;
         case "ipaddress":
         case "ipAddress": return java.lang.String.class;
         case "keycloakclient":
@@ -195,6 +205,8 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
         case "types": return java.lang.String.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "usetokenintrospection":
+        case "useTokenIntrospection": return boolean.class;
         case "user": return java.lang.String.class;
         case "username": return java.lang.String.class;
         default: return null;
@@ -245,6 +257,10 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
+        case "introspectioncacheenabled":
+        case "introspectionCacheEnabled": return target.getConfiguration().isIntrospectionCacheEnabled();
+        case "introspectioncachettl":
+        case "introspectionCacheTtl": return target.getConfiguration().getIntrospectionCacheTtl();
         case "ipaddress":
         case "ipAddress": return target.getConfiguration().getIpAddress();
         case "keycloakclient":
@@ -284,6 +300,8 @@ public class KeycloakEndpointConfigurer extends PropertyConfigurerSupport implem
         case "types": return target.getConfiguration().getTypes();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "usetokenintrospection":
+        case "useTokenIntrospection": return target.getConfiguration().isUseTokenIntrospection();
         case "user": return target.getConfiguration().getUser();
         case "username": return target.getConfiguration().getUsername();
         default: return null;

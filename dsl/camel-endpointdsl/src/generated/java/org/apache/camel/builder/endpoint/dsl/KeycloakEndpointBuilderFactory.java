@@ -249,6 +249,68 @@ public interface KeycloakEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder introspectionCacheEnabled(boolean introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder introspectionCacheEnabled(String introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder introspectionCacheTtl(long introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder introspectionCacheTtl(String introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
+            return this;
+        }
+        /**
          * Filter events by IP address.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -498,6 +560,42 @@ public interface KeycloakEndpointBuilderFactory {
          */
         default KeycloakEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder useTokenIntrospection(boolean useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder useTokenIntrospection(String useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
             return this;
         }
         /**
@@ -1371,6 +1469,68 @@ public interface KeycloakEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder introspectionCacheEnabled(boolean introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder introspectionCacheEnabled(String introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder introspectionCacheTtl(long introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder introspectionCacheTtl(String introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
+            return this;
+        }
+        /**
          * Filter events by IP address.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1620,6 +1780,42 @@ public interface KeycloakEndpointBuilderFactory {
          */
         default KeycloakEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder useTokenIntrospection(boolean useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder useTokenIntrospection(String useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
             return this;
         }
     }
@@ -1897,6 +2093,68 @@ public interface KeycloakEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder introspectionCacheEnabled(boolean introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder introspectionCacheEnabled(String introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder introspectionCacheTtl(long introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder introspectionCacheTtl(String introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
+            return this;
+        }
+        /**
          * Filter events by IP address.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2146,6 +2404,42 @@ public interface KeycloakEndpointBuilderFactory {
          */
         default KeycloakEndpointBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder useTokenIntrospection(boolean useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder useTokenIntrospection(String useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
             return this;
         }
     }

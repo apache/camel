@@ -270,6 +270,41 @@ public interface KeycloakComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder introspectionCacheEnabled(boolean introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder introspectionCacheTtl(long introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
+            return this;
+        }
+    
         /**
          * Filter events by IP address.
          * 
@@ -478,6 +513,26 @@ public interface KeycloakComponentBuilderFactory {
     
         
         /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakComponentBuilder useTokenIntrospection(boolean useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
+            return this;
+        }
+    
+        
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will
@@ -585,6 +640,8 @@ public interface KeycloakComponentBuilderFactory {
             case "dateTo": getOrCreateConfiguration((KeycloakComponent) component).setDateTo((java.lang.String) value); return true;
             case "eventType": getOrCreateConfiguration((KeycloakComponent) component).setEventType((java.lang.String) value); return true;
             case "first": getOrCreateConfiguration((KeycloakComponent) component).setFirst((int) value); return true;
+            case "introspectionCacheEnabled": getOrCreateConfiguration((KeycloakComponent) component).setIntrospectionCacheEnabled((boolean) value); return true;
+            case "introspectionCacheTtl": getOrCreateConfiguration((KeycloakComponent) component).setIntrospectionCacheTtl((long) value); return true;
             case "ipAddress": getOrCreateConfiguration((KeycloakComponent) component).setIpAddress((java.lang.String) value); return true;
             case "keycloakClient": getOrCreateConfiguration((KeycloakComponent) component).setKeycloakClient((org.keycloak.admin.client.Keycloak) value); return true;
             case "maxResults": getOrCreateConfiguration((KeycloakComponent) component).setMaxResults((int) value); return true;
@@ -598,6 +655,7 @@ public interface KeycloakComponentBuilderFactory {
             case "types": getOrCreateConfiguration((KeycloakComponent) component).setTypes((java.lang.String) value); return true;
             case "user": getOrCreateConfiguration((KeycloakComponent) component).setUser((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((KeycloakComponent) component).setUsername((java.lang.String) value); return true;
+            case "useTokenIntrospection": getOrCreateConfiguration((KeycloakComponent) component).setUseTokenIntrospection((boolean) value); return true;
             case "bridgeErrorHandler": ((KeycloakComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((KeycloakComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((KeycloakComponent) component).setAutowiredEnabled((boolean) value); return true;
