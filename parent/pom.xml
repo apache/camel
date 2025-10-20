@@ -350,7 +350,7 @@
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.24.3</log4j2-version>
-        <logback-version>1.5.19</logback-version>
+        <logback-version>1.5.20</logback-version>
         <!-- This is exclusively required in camel-milvus as the dependency is leaking a build time annotation
             TODO: remove when this issue is solved https://github.com/milvus-io/milvus-sdk-java/issues/1651
         -->
