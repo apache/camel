@@ -13,8 +13,9 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "description": { "index": 1, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
-    "urn": { "index": 2, "kind": "attribute", "displayName": "Urn", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Set output type URN." },
-    "validate": { "index": 3, "kind": "attribute", "displayName": "Validate", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether if validation is required for this output type." }
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the note of this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "urn": { "index": 3, "kind": "attribute", "displayName": "Urn", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Set output type URN." },
+    "validate": { "index": 4, "kind": "attribute", "displayName": "Validate", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether if validation is required for this output type." }
   }
 }

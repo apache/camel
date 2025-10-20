@@ -29,7 +29,8 @@
     <jmxAgent id="jmx" disabled="true"/>
     <route>
       <from uri="direct:start"/>
-      <process ref="myProcessor"/>
+      <!-- each EIP can include optional description and notes -->
+      <process ref="myProcessor" description="Some description here" note="Some note here"/>
     </route>
   </camelContext>
 

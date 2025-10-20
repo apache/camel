@@ -470,6 +470,11 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition<RouteT
         } else {
             copy.setDescription(getDescription());
         }
+        if (route.getNote() != null) {
+            copy.setNote(route.getNote());
+        } else {
+            copy.setNote(getNote());
+        }
         copy.setPrecondition(route.getPrecondition());
         copy.setRouteConfigurationId(route.getRouteConfigurationId());
         copy.setTemplateParameters(shallowCopy(route.getTemplateParameters()));

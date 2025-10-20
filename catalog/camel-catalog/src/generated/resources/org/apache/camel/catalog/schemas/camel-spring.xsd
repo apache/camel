@@ -3675,6 +3675,15 @@ Sets the id of this node.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="note" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the note of this node.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="aggregateDefinition">
     <xs:complexContent>

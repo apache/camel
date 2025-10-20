@@ -77,6 +77,7 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         copy.setId(this.getId());
         copy.setCustomId(this.getCustomId());
         copy.setDescription(this.getDescription());
+        copy.setNote(this.getNote());
         copy.setLineNumber(this.getLineNumber());
         copy.setLocation(this.getLocation());
         return copy;

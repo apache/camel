@@ -501,17 +501,26 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             setProperty.addStatement("target.setDescription(val)");
             setProperty.addStatement("break");
             setProperty.endControlFlow();
+            setProperty.beginControlFlow("case $S:", "note");
+            setProperty.addStatement("String val = asText(node)");
+            setProperty.addStatement("target.setNote(val)");
+            setProperty.addStatement("break");
+            setProperty.endControlFlow();
 
             properties.add(
                     YamlProperties.annotation("id", "string")
                             .withDescription(descriptor.description("id"))
                             .withDisplayName(descriptor.displayName("id"))
                             .build());
-
             properties.add(
                     YamlProperties.annotation("description", "string")
                             .withDescription(descriptor.description("description"))
                             .withDisplayName(descriptor.displayName("description"))
+                            .build());
+            properties.add(
+                    YamlProperties.annotation("note", "string")
+                            .withDescription(descriptor.description("note"))
+                            .withDisplayName(descriptor.displayName("note"))
                             .build());
         }
 

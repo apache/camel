@@ -30,8 +30,9 @@ public class DefaultRouteFactory implements RouteFactory {
 
     @Override
     public Route createRoute(
-            CamelContext camelContext, NamedNode routeDefinition, String routeId, String routeDescription,
+            CamelContext camelContext, NamedNode routeDefinition, String routeId,
+            String routeDescription, String routeNote,
             Endpoint endpoint, Resource resource) {
-        return new DefaultRoute(camelContext, routeDefinition, routeId, routeDescription, endpoint, resource);
+        return new DefaultRoute(camelContext, routeDefinition, routeId, routeDescription, routeNote, endpoint, resource);
     }
 }

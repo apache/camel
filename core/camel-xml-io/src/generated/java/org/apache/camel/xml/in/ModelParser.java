@@ -149,6 +149,7 @@ public class ModelParser extends BaseParser {
             case "customId": def.setCustomId(Boolean.valueOf(val)); yield true;
             case "description": def.setDescription(val); yield true;
             case "id": def.setId(val); yield true;
+            case "note": def.setNote(val); yield true;
             default: yield false;
         };
     }

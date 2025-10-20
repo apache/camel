@@ -71,7 +71,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
     private static final String[] RESERVED_PROPERTIES = new String[] {
             Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY,
-            Route.DESCRIPTION_PROPERTY, Route.GROUP_PROPERTY, Route.NODE_PREFIX_ID_PROPERTY,
+            Route.DESCRIPTION_PROPERTY, Route.NOTE_PROPERTY,
+            Route.GROUP_PROPERTY, Route.NODE_PREFIX_ID_PROPERTY,
             Route.REST_PROPERTY, Route.CONFIGURATION_ID_PROPERTY };
 
     public RouteReifier(CamelContext camelContext, ProcessorDefinition<?> definition) {
@@ -113,9 +114,10 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // create route
         String id = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         String desc = definition.getDescriptionText();
+        String note = definition.getNote();
 
         Route route = PluginHelper.getRouteFactory(camelContext).createRoute(camelContext, definition, id,
-                desc, endpoint, definition.getResource());
+                desc, note, endpoint, definition.getResource());
 
         // configure error handler
         route.setErrorHandlerFactory(definition.getErrorHandlerFactory());
@@ -432,6 +434,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         routeProperties.put(Route.CUSTOM_ID_PROPERTY, Boolean.toString(definition.hasCustomIdAssigned()));
         routeProperties.put(Route.PARENT_PROPERTY, Integer.toHexString(definition.hashCode()));
         routeProperties.put(Route.DESCRIPTION_PROPERTY, definition.getDescriptionText());
+        routeProperties.put(Route.NOTE_PROPERTY, definition.getNote());
         if (definition.getGroup() != null) {
             routeProperties.put(Route.GROUP_PROPERTY, definition.getGroup());
         }

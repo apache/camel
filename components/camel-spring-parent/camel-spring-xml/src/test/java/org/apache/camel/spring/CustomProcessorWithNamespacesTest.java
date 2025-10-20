@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spring.example.MyProcessor;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -70,6 +71,10 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
         assertEquals(1, routes.size(), "Number of routes defined");
         Route route = routes.get(0);
         log.debug("Found route: {}", route);
+
+        ProcessorDefinition<?> def = context.getRouteDefinitions().get(0).getOutputs().get(0);
+        assertEquals("Some description here", def.getDescription());
+        assertEquals("Some note here", def.getNote());
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {
