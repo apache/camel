@@ -54,7 +54,7 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
         @Override
         public void process(Exchange exchange) throws Exception {
             String processor = processorDefinition.getId() + "-" + processorDefinition.getShortName();
-            if (!tracer.exclude(processor, exchange.getContext())) {
+            if (tracer.isTraceProcessors() && !tracer.exclude(processor, exchange.getContext())) {
                 tracer.beginProcessorSpan(exchange, processor);
                 try {
                     target.process(exchange);
@@ -62,6 +62,7 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
                     tracer.endProcessorSpan(exchange, processor);
                 }
             } else {
+                // We must always execute this
                 target.process(exchange);
             }
         }
