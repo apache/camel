@@ -108,10 +108,6 @@ If we move most of the logic into the abstraction, the implementation of a simpl
 
 The feature specific implementation should be therefore limited to the implementation of the abstract methods, as it would happen in the simple implementation. With this approach we are limiting to the bare minimum the maintenance of each specific technology. With this proposal we will need to rework massively on the reduction of code in the existing implementations (`camel-opentelemetry`).
 
-== Tracing refactoring POC
-
-In order to prove most of the above assumptions, I've developed a simple POC which I used as a https://github.com/squakez/camel/tree/feat/tracing_refactoring[base for this proposal]. Testing this against some application, we can see traces are managed correctly and in line with the structure proposed in this document.
-
 == Development
 
 This design proposals may introduce certain breaking compatibility changes, reason why we must clarify the scope and plan the work in order to avoid adding breaking compatibility within any non major version. We may work by adding a new abstract component which will be compliant with this new specification and once the new development is stable enough, we can deprecate the older `camel-tracing` and let the user replace with the newer one.
@@ -133,3 +129,7 @@ Developed concrete OpenTelemetry component implementing the `camel-telemetry` sp
 === `camel-micrometer-observability` component (2025-08-21)
 
 Developed concrete Micrometer Observability component implementing the `camel-telemetry` specification. This component will eventually replace `camel-observation` component.
+
+=== Inclusion of generated traces headers (2025-10-21)
+
+A new feature is available to add `TRACE_ID` and `SPAN_ID` Exchange headers. This is very useful in conjunction with MDC header usage. From now on we have a consistent setting of generated telemetry traces consumable from MDC mechanism.
