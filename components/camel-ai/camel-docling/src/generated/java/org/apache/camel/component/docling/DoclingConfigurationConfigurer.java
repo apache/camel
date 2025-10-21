@@ -35,6 +35,12 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "authenticationScheme": target.setAuthenticationScheme(property(camelContext, org.apache.camel.component.docling.AuthenticationScheme.class, value)); return true;
         case "authenticationtoken":
         case "authenticationToken": target.setAuthenticationToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "connectionrequesttimeout":
+        case "connectionRequestTimeout": target.setConnectionRequestTimeout(property(camelContext, int.class, value)); return true;
+        case "connectiontimetolive":
+        case "connectionTimeToLive": target.setConnectionTimeToLive(property(camelContext, long.class, value)); return true;
+        case "connectiontimeout":
+        case "connectionTimeout": target.setConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "contentinbody":
         case "contentInBody": target.setContentInBody(property(camelContext, boolean.class, value)); return true;
         case "convertendpoint":
@@ -45,10 +51,18 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "doclingServeUrl": target.setDoclingServeUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "enableocr":
         case "enableOCR": target.setEnableOCR(property(camelContext, boolean.class, value)); return true;
+        case "evictidleconnections":
+        case "evictIdleConnections": target.setEvictIdleConnections(property(camelContext, boolean.class, value)); return true;
         case "includelayoutinfo":
         case "includeLayoutInfo": target.setIncludeLayoutInfo(property(camelContext, boolean.class, value)); return true;
+        case "maxconnectionsperroute":
+        case "maxConnectionsPerRoute": target.setMaxConnectionsPerRoute(property(camelContext, int.class, value)); return true;
         case "maxfilesize":
         case "maxFileSize": target.setMaxFileSize(property(camelContext, long.class, value)); return true;
+        case "maxidletime":
+        case "maxIdleTime": target.setMaxIdleTime(property(camelContext, long.class, value)); return true;
+        case "maxtotalconnections":
+        case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
         case "ocrlanguage":
         case "ocrLanguage": target.setOcrLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.setOperation(property(camelContext, org.apache.camel.component.docling.DoclingOperations.class, value)); return true;
@@ -56,10 +70,14 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "outputFormat": target.setOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "processtimeout":
         case "processTimeout": target.setProcessTimeout(property(camelContext, long.class, value)); return true;
+        case "sockettimeout":
+        case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
         case "useasyncmode":
         case "useAsyncMode": target.setUseAsyncMode(property(camelContext, boolean.class, value)); return true;
         case "usedoclingserve":
         case "useDoclingServe": target.setUseDoclingServe(property(camelContext, boolean.class, value)); return true;
+        case "validateafterinactivity":
+        case "validateAfterInactivity": target.setValidateAfterInactivity(property(camelContext, int.class, value)); return true;
         case "workingdirectory":
         case "workingDirectory": target.setWorkingDirectory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -81,6 +99,12 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "authenticationScheme": return org.apache.camel.component.docling.AuthenticationScheme.class;
         case "authenticationtoken":
         case "authenticationToken": return java.lang.String.class;
+        case "connectionrequesttimeout":
+        case "connectionRequestTimeout": return int.class;
+        case "connectiontimetolive":
+        case "connectionTimeToLive": return long.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
         case "contentinbody":
         case "contentInBody": return boolean.class;
         case "convertendpoint":
@@ -91,10 +115,18 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "doclingServeUrl": return java.lang.String.class;
         case "enableocr":
         case "enableOCR": return boolean.class;
+        case "evictidleconnections":
+        case "evictIdleConnections": return boolean.class;
         case "includelayoutinfo":
         case "includeLayoutInfo": return boolean.class;
+        case "maxconnectionsperroute":
+        case "maxConnectionsPerRoute": return int.class;
         case "maxfilesize":
         case "maxFileSize": return long.class;
+        case "maxidletime":
+        case "maxIdleTime": return long.class;
+        case "maxtotalconnections":
+        case "maxTotalConnections": return int.class;
         case "ocrlanguage":
         case "ocrLanguage": return java.lang.String.class;
         case "operation": return org.apache.camel.component.docling.DoclingOperations.class;
@@ -102,10 +134,14 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "outputFormat": return java.lang.String.class;
         case "processtimeout":
         case "processTimeout": return long.class;
+        case "sockettimeout":
+        case "socketTimeout": return int.class;
         case "useasyncmode":
         case "useAsyncMode": return boolean.class;
         case "usedoclingserve":
         case "useDoclingServe": return boolean.class;
+        case "validateafterinactivity":
+        case "validateAfterInactivity": return int.class;
         case "workingdirectory":
         case "workingDirectory": return java.lang.String.class;
         default: return null;
@@ -128,6 +164,12 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "authenticationScheme": return target.getAuthenticationScheme();
         case "authenticationtoken":
         case "authenticationToken": return target.getAuthenticationToken();
+        case "connectionrequesttimeout":
+        case "connectionRequestTimeout": return target.getConnectionRequestTimeout();
+        case "connectiontimetolive":
+        case "connectionTimeToLive": return target.getConnectionTimeToLive();
+        case "connectiontimeout":
+        case "connectionTimeout": return target.getConnectionTimeout();
         case "contentinbody":
         case "contentInBody": return target.isContentInBody();
         case "convertendpoint":
@@ -138,10 +180,18 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "doclingServeUrl": return target.getDoclingServeUrl();
         case "enableocr":
         case "enableOCR": return target.isEnableOCR();
+        case "evictidleconnections":
+        case "evictIdleConnections": return target.isEvictIdleConnections();
         case "includelayoutinfo":
         case "includeLayoutInfo": return target.isIncludeLayoutInfo();
+        case "maxconnectionsperroute":
+        case "maxConnectionsPerRoute": return target.getMaxConnectionsPerRoute();
         case "maxfilesize":
         case "maxFileSize": return target.getMaxFileSize();
+        case "maxidletime":
+        case "maxIdleTime": return target.getMaxIdleTime();
+        case "maxtotalconnections":
+        case "maxTotalConnections": return target.getMaxTotalConnections();
         case "ocrlanguage":
         case "ocrLanguage": return target.getOcrLanguage();
         case "operation": return target.getOperation();
@@ -149,10 +199,14 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "outputFormat": return target.getOutputFormat();
         case "processtimeout":
         case "processTimeout": return target.getProcessTimeout();
+        case "sockettimeout":
+        case "socketTimeout": return target.getSocketTimeout();
         case "useasyncmode":
         case "useAsyncMode": return target.isUseAsyncMode();
         case "usedoclingserve":
         case "useDoclingServe": return target.isUseDoclingServe();
+        case "validateafterinactivity":
+        case "validateAfterInactivity": return target.getValidateAfterInactivity();
         case "workingdirectory":
         case "workingDirectory": return target.getWorkingDirectory();
         default: return null;
