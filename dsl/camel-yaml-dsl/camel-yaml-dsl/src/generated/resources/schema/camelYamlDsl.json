@@ -5823,6 +5823,9 @@
           "nodePrefixId" : {
             "type" : "string"
           },
+          "note" : {
+            "type" : "string"
+          },
           "outputType" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OutputTypeDefinition"
           },
@@ -5876,6 +5879,9 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.FromDefinition"
           },
           "id" : {
+            "type" : "string"
+          },
+          "note" : {
             "type" : "string"
           },
           "parameters" : {

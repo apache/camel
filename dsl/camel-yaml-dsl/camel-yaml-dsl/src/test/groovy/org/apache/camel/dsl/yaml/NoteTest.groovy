@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.model.RouteDefinition
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.spi.Resource
 import org.apache.camel.support.PluginHelper
@@ -32,8 +33,30 @@ class NoteTest extends YamlTestSupport {
                 description == 'some description here'
                 note == 'some note here'
             }
+            with(context.routeDefinitions[0], RouteDefinition) {
+                if (it.id == 'cheese') {
+                    description == 'some route description here'
+                    note == 'some route note here'
+                } else {
+                    description == null
+                    note == null
+                }
+            }
         where:
             resource << [
+                asResource('route', '''
+                    - route:
+                        id: cheese
+                        note: "some route note here"
+                        description: "some route description here"
+                        from:
+                          uri: "direct:start"
+                          steps:
+                            - to: 
+                                uri: "direct:start"
+                                note: "some note here"
+                                description: "some description here"
+                    '''),
                 asResource('uri', '''
                     - from:
                         uri: "direct:start"
