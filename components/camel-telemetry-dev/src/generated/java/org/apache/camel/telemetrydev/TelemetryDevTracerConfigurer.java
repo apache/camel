@@ -31,6 +31,8 @@ public class TelemetryDevTracerConfigurer extends org.apache.camel.support.compo
         case "spanLifecycleManager": target.setSpanLifecycleManager(property(camelContext, org.apache.camel.telemetry.SpanLifecycleManager.class, value)); return true;
         case "traceformat":
         case "traceFormat": target.setTraceFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "traceheadersinclusion":
+        case "traceHeadersInclusion": target.setTraceHeadersInclusion(property(camelContext, boolean.class, value)); return true;
         case "traceprocessors":
         case "traceProcessors": target.setTraceProcessors(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -48,6 +50,8 @@ public class TelemetryDevTracerConfigurer extends org.apache.camel.support.compo
         case "spanLifecycleManager": return org.apache.camel.telemetry.SpanLifecycleManager.class;
         case "traceformat":
         case "traceFormat": return java.lang.String.class;
+        case "traceheadersinclusion":
+        case "traceHeadersInclusion": return boolean.class;
         case "traceprocessors":
         case "traceProcessors": return boolean.class;
         default: return null;
@@ -66,6 +70,8 @@ public class TelemetryDevTracerConfigurer extends org.apache.camel.support.compo
         case "spanLifecycleManager": return target.getSpanLifecycleManager();
         case "traceformat":
         case "traceFormat": return target.getTraceFormat();
+        case "traceheadersinclusion":
+        case "traceHeadersInclusion": return target.isTraceHeadersInclusion();
         case "traceprocessors":
         case "traceProcessors": return target.isTraceProcessors();
         default: return null;

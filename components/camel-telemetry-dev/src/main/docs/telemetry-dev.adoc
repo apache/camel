@@ -26,10 +26,11 @@ The configuration properties for the Telemetry component are:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Option |Default |Description
-|`camel.telemetryDev.enabled`| false | Turn the tracing on/off.
-|`camel.telemetryDev.traceFormat`| default | The format used to trace in the log (default, tree, json).
-|`camel.telemetryDev.traceProcessors`| false | Trace inner processors.
-|`camel.telemetryDev.excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
+|`enabled`| false | Turn the tracing on/off.
+|`traceFormat`| default | The format used to trace in the log (default, tree, json).
+|`traceProcessors`| false | Trace inner processors.
+|`excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
+|`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
 
 == Tracing format
@@ -72,3 +73,7 @@ This format is suitable if you need to integrate with any third party. The outpu
 === Default
 
 Default is a very simple serialization into the default Java object `toString()` representation.
+
+=== MDC logging
+
+You can leverage the `traceHeadersInclusion` to include the generated `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` into the Camel Exchange and together with `camel-mdc` you can make those headers available in the MDC context (via `camel.mdc.customHeaders=CAMEL_TRACE_ID,CAMEL_SPAN_ID` configuration).

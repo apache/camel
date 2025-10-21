@@ -45,6 +45,9 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Tracer extends ServiceSupport implements CamelTracingService, RoutePolicyFactory, StaticService {
 
+    public static final String TRACE_HEADER = "CAMEL_TRACE_ID";
+    public static final String SPAN_HEADER = "CAMEL_SPAN_ID";
+
     private static final Logger LOG = LoggerFactory.getLogger(Tracer.class);
 
     private CamelContext camelContext;
@@ -53,6 +56,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
      */
     private String excludePatterns;
     private boolean traceProcessors;
+    private boolean traceHeadersInclusion;
 
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
     private final SpanStorageManager spanStorageManager = new SpanStorageManagerExchange();
@@ -82,6 +86,15 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
 
     public void setExcludePatterns(String excludePatterns) {
         this.excludePatterns = excludePatterns;
+    }
+
+    @ManagedAttribute
+    public boolean isTraceHeadersInclusion() {
+        return traceHeadersInclusion;
+    }
+
+    public void setTraceHeadersInclusion(boolean traceHeadersInclusion) {
+        this.traceHeadersInclusion = traceHeadersInclusion;
     }
 
     @ManagedAttribute
@@ -262,7 +275,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         spanDecorator.beforeTracingEvent(span, exchange, endpoint);
         spanLifecycleManager.activate(span);
         spanStorageManager.push(exchange, span);
-        spanLifecycleManager.inject(span, spanDecorator.getInjector(exchange));
+        spanLifecycleManager.inject(span, spanDecorator.getInjector(exchange), this.traceHeadersInclusion);
         LOG.debug("Started event span: {}", span);
     }
 
