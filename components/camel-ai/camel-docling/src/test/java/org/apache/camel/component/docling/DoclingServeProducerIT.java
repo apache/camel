@@ -437,7 +437,7 @@ public class DoclingServeProducerIT extends CamelTestSupport {
                         .stop()
                         .when(exchangeProperty("isFailed").isEqualTo(true))
                         .throwException(new RuntimeException("Conversion failed: ${exchangeProperty.errorMessage}"))
-                        .end()
+                        .endChoice()
                         .delay(1000) // Wait 1 second before next poll
                         .end()
                         // Step 3: Extract result
