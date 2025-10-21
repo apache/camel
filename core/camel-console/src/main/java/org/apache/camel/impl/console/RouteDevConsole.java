@@ -99,6 +99,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (mrb.getDescription() != null) {
                 sb.append(String.format("\n    Description: %s", mrb.getDescription()));
             }
+            if (mrb.getNote() != null) {
+                sb.append(String.format("\n    Note: %s", mrb.getNote()));
+            }
             sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
             sb.append(String.format("\n    Remote: %s", mrb.isRemoteEndpoint()));
             if (mrb.getSourceLocation() != null) {
@@ -205,6 +208,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (mp.getDescription() != null) {
                 sb.append(String.format("\n        Description: %s", mp.getDescription()));
             }
+            if (mp.getNote() != null) {
+                sb.append(String.format("\n        Note: %s", mp.getNote()));
+            }
             sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
             sb.append(String.format("\n        Level: %d", mp.getLevel()));
             if (mp.getSourceLocation() != null) {
@@ -270,6 +276,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             if (mrb.getDescription() != null) {
                 jo.put("description", mrb.getDescription());
+            }
+            if (mrb.getNote() != null) {
+                jo.put("note", mrb.getNote());
             }
             jo.put("from", mrb.getEndpointUri());
             jo.put("remote", mrb.isRemoteEndpoint());
@@ -372,6 +381,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             if (mp.getDescription() != null) {
                 jo.put("description", mp.getDescription());
+            }
+            if (mp.getNote() != null) {
+                jo.put("note", mp.getNote());
             }
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();

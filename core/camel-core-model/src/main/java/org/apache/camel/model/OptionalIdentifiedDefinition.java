@@ -42,6 +42,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     private String id;
     private Boolean customId;
     private String description;
+    private String note;
     private int lineNumber = -1;
     private String location;
 
@@ -53,6 +54,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         this.id = source.id;
         this.customId = source.customId;
         this.description = source.description;
+        this.note = source.note;
         this.lineNumber = source.lineNumber;
         this.location = source.location;
     }
@@ -119,6 +121,21 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         this.description = description;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    /**
+     * Sets the note of this node
+     *
+     * @param note sets the text note, use null to not set a text
+     */
+    @XmlAttribute
+    @Metadata(description = "The note for this node")
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public NamedNode getParent() {
         return null;
@@ -158,6 +175,18 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     @SuppressWarnings("unchecked")
     public T description(String description) {
         this.description = description;
+        return (T) this;
+    }
+
+    /**
+     * Sets the note of this node
+     *
+     * @param  note sets the text note, use null to not set a text
+     * @return      the builder
+     */
+    @SuppressWarnings("unchecked")
+    public T note(String note) {
+        this.note = note;
         return (T) this;
     }
 

@@ -505,6 +505,11 @@
             "description" : "If a correlation key cannot be successfully evaluated it will be ignored by logging a DEBUG and then just ignore the incoming Exchange.",
             "default" : "false"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "optimisticLockRetryPolicy" : {
             "title" : "Optimistic Lock Retry Policy",
             "description" : "Allows to configure retry settings when using optimistic locking.",
@@ -570,6 +575,11 @@
               "type" : "string",
               "title" : "Method",
               "description" : "Sets the method name on the bean to use"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             },
             "ref" : {
               "type" : "string",
@@ -692,6 +702,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "onWhen" : {
             "title" : "On When",
             "description" : "Used for triggering doCatch in specific situations",
@@ -726,6 +741,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "otherwise" : {
             "title" : "Otherwise",
@@ -779,6 +799,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "onFallback" : {
             "title" : "On Fallback",
@@ -839,6 +864,11 @@
             "type" : "string",
             "title" : "Key",
             "description" : "To use a specific key for claim check id (for dynamic keys use simple language syntax as the key)."
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "operation" : {
             "type" : "string",
@@ -914,6 +944,11 @@
               "description" : "When mandatory then the conversion must return a value (cannot be null), if this is not possible then NoTypeConversionAvailableException is thrown. Setting this to false could mean conversion is not possible and the value is null.",
               "default" : "true"
             },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
+            },
             "type" : {
               "type" : "string",
               "title" : "Type",
@@ -960,6 +995,11 @@
             "type" : "string",
             "title" : "Name",
             "description" : "Name of message header to convert its value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used."
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "toName" : {
             "type" : "string",
@@ -1011,6 +1051,11 @@
             "type" : "string",
             "title" : "Name",
             "description" : "Name of variable to convert its value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used."
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "toName" : {
             "type" : "string",
@@ -1146,6 +1191,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
@@ -1280,6 +1330,11 @@
             "title" : "Ignore Invalid Endpoints",
             "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
             "default" : "false"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "uriDelimiter" : {
             "type" : "string",
@@ -1454,6 +1509,11 @@
             "title" : "Ignore Invalid Endpoint",
             "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
             "default" : "false"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "shareUnitOfWork" : {
             "type" : "boolean",
@@ -2063,6 +2123,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "statusPropertyName" : {
             "type" : "string",
             "title" : "Status Property Name",
@@ -2125,6 +2190,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -2141,6 +2211,9 @@
             "type" : "string"
           },
           "id" : {
+            "type" : "string"
+          },
+          "note" : {
             "type" : "string"
           },
           "parameters" : {
@@ -2308,6 +2381,11 @@
             "title" : "Idempotent Repository",
             "description" : "Sets the reference name of the message id repository"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "removeOnFailure" : {
             "type" : "boolean",
             "title" : "Remove On Failure",
@@ -2372,6 +2450,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "urn" : {
             "type" : "string",
             "title" : "Urn",
@@ -2407,6 +2490,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "onWhen" : {
             "title" : "On When",
@@ -2445,6 +2533,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             },
             "onWhen" : {
               "title" : "On When",
@@ -2494,6 +2587,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             },
             "onWhen" : {
               "title" : "On When",
@@ -2642,6 +2740,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -2713,6 +2816,11 @@
               "type" : "string",
               "title" : "Message",
               "description" : "Sets the log message (uses simple language)"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             }
           }
         } ],
@@ -2830,6 +2938,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "onPrepare" : {
             "type" : "string",
@@ -3350,6 +3463,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "variableReceive" : {
             "type" : "string",
             "title" : "Variable Receive",
@@ -3450,6 +3568,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "onPrepare" : {
             "type" : "string",
             "title" : "On Prepare",
@@ -3540,6 +3663,11 @@
             "default" : "AfterConsumer",
             "enum" : [ "AfterConsumer", "BeforeConsumer" ]
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "onCompleteOnly" : {
             "type" : "boolean",
             "title" : "On Complete Only",
@@ -3617,6 +3745,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "onExceptionOccurredRef" : {
             "type" : "string",
             "title" : "On Exception Occurred Ref",
@@ -3688,6 +3821,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "steps" : {
             "type" : "array",
@@ -3785,6 +3923,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
@@ -3873,6 +4016,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -3892,6 +4040,9 @@
             "type" : "boolean"
           },
           "id" : {
+            "type" : "string"
+          },
+          "note" : {
             "type" : "string"
           },
           "steps" : {
@@ -3917,6 +4068,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "urn" : {
             "type" : "string",
@@ -3991,6 +4147,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "untilCheck" : {
             "type" : "string",
             "title" : "Until Check",
@@ -4021,6 +4182,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -4050,6 +4216,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "ref" : {
             "type" : "string",
@@ -4089,6 +4260,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             },
             "parameters" : {
               "type" : "object"
@@ -4252,6 +4428,11 @@
             "description" : "Ignore the invalidate endpoint exception when try to create a consumer with that endpoint",
             "default" : "false"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "timeout" : {
             "type" : "string",
             "title" : "Timeout",
@@ -4313,6 +4494,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "ref" : {
             "type" : "string",
@@ -4588,6 +4774,11 @@
             "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
             "default" : "false"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "onPrepare" : {
             "type" : "string",
             "title" : "On Prepare",
@@ -4850,6 +5041,11 @@
               "type" : "string",
               "title" : "Name",
               "description" : "Name of header to remove"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             }
           }
         } ],
@@ -4884,6 +5080,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             },
             "pattern" : {
               "type" : "string",
@@ -4924,6 +5125,11 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
+            },
             "pattern" : {
               "type" : "string",
               "title" : "Pattern",
@@ -4962,6 +5168,11 @@
               "type" : "string",
               "title" : "Name",
               "description" : "Name of property to remove."
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             }
           }
         } ],
@@ -4996,6 +5207,11 @@
               "type" : "string",
               "title" : "Name",
               "description" : "Name of variable to remove."
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             }
           }
         } ],
@@ -5121,6 +5337,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "steps" : {
             "type" : "array",
@@ -5365,6 +5586,11 @@
             "default" : "ERROR",
             "enum" : [ "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "OFF" ]
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "resumeStrategy" : {
             "type" : "string",
             "title" : "Resume Strategy",
@@ -5414,6 +5640,11 @@
               "type" : "string",
               "title" : "Message",
               "description" : "Message to use in rollback exception"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             }
           }
         } ]
@@ -5592,6 +5823,9 @@
           "nodePrefixId" : {
             "type" : "string"
           },
+          "note" : {
+            "type" : "string"
+          },
           "outputType" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.OutputTypeDefinition"
           },
@@ -5645,6 +5879,9 @@
             "$ref" : "#/items/definitions/org.apache.camel.model.FromDefinition"
           },
           "id" : {
+            "type" : "string"
+          },
+          "note" : {
             "type" : "string"
           },
           "parameters" : {
@@ -5798,6 +6035,11 @@
               "description" : "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
               "default" : "false"
             },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
+            },
             "uriDelimiter" : {
               "type" : "string",
               "title" : "Uri Delimiter",
@@ -5850,6 +6092,9 @@
             "id" : {
               "type" : "string"
             },
+            "note" : {
+              "type" : "string"
+            },
             "parameters" : {
               "type" : "object"
             },
@@ -5898,6 +6143,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "option" : {
             "type" : "array",
@@ -5961,6 +6211,11 @@
               "type" : "number",
               "title" : "Message Frequency",
               "description" : "Sets the sample message count which only a single Exchange will pass through after this many received."
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             },
             "samplePeriod" : {
               "type" : "string",
@@ -6065,6 +6320,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "constant" : { },
           "csimple" : { },
@@ -6190,6 +6450,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
@@ -6243,6 +6508,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             },
             "pattern" : {
               "type" : "string",
@@ -6353,6 +6623,11 @@
             "title" : "Name",
             "description" : "Name of message header to set a new value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used."
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
@@ -6412,6 +6687,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           }
         }
       },
@@ -6514,6 +6794,11 @@
             "type" : "string",
             "title" : "Name",
             "description" : "Name of exchange property to set a new value. The simple language can be used to define a dynamic evaluated exchange property name to be used. Otherwise a constant name will be used."
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "constant" : { },
           "csimple" : { },
@@ -6645,6 +6930,11 @@
             "title" : "Name",
             "description" : "Name of variable to set a new value The simple language can be used to define a dynamic evaluated variable name to be used. Otherwise a constant name will be used."
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "constant" : { },
           "csimple" : { },
           "datasonnet" : { },
@@ -6696,6 +6986,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "variables" : {
             "type" : "array",
@@ -6806,6 +7101,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "constant" : { },
           "csimple" : { },
@@ -6958,6 +7258,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "onPrepare" : {
             "type" : "string",
             "title" : "On Prepare",
@@ -7063,6 +7368,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -7092,6 +7402,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           }
         }
       },
@@ -7185,6 +7500,11 @@
             "title" : "Max Queue Size",
             "description" : "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "poolSize" : {
             "type" : "number",
             "title" : "Pool Size",
@@ -7257,6 +7577,11 @@
             "type" : "number",
             "title" : "Max Queue Size",
             "description" : "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "poolSize" : {
             "type" : "number",
@@ -7407,6 +7732,11 @@
             "default" : "TotalRequests",
             "enum" : [ "TotalRequests", "ConcurrentRequests" ]
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "rejectExecution" : {
             "type" : "boolean",
             "title" : "Reject Execution",
@@ -7480,6 +7810,11 @@
             "title" : "Message",
             "description" : "To create a new exception instance and use the given message as caused message (supports simple language)"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "ref" : {
             "type" : "string",
             "title" : "Ref",
@@ -7511,6 +7846,11 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             },
             "parameters" : {
               "type" : "object"
@@ -7588,6 +7928,11 @@
               "description" : "Whether to ignore invalid endpoint URIs and skip sending the message.",
               "default" : "false"
             },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
+            },
             "parameters" : {
               "type" : "object"
             },
@@ -7637,6 +7982,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "langChain4jCharacterTokenizer" : { },
           "langChain4jLineTokenizer" : { },
@@ -7732,6 +8082,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "ref" : {
             "type" : "string",
@@ -7846,6 +8201,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "toType" : {
             "type" : "string",
             "title" : "To Type",
@@ -7915,6 +8275,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -7950,6 +8315,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "variableReceive" : {
             "type" : "string",
@@ -8560,6 +8930,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "predicateExceptionFactory" : {
             "type" : "string",
             "title" : "Predicate Exception Factory",
@@ -8706,6 +9081,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "steps" : {
             "type" : "array",
             "items" : {
@@ -8802,6 +9182,11 @@
             "title" : "Ignore Invalid Endpoint",
             "description" : "Whether to ignore invalid endpoint URIs and skip sending the message.",
             "default" : "false"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "onPrepare" : {
             "type" : "string",
@@ -9852,6 +10237,11 @@
               "type" : "string",
               "title" : "Name",
               "description" : "Sets the name of the service to use"
+            },
+            "note" : {
+              "type" : "string",
+              "title" : "Note",
+              "description" : "Sets the note of this node"
             },
             "pattern" : {
               "type" : "string",
@@ -15045,6 +15435,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "outType" : {
             "type" : "string",
             "title" : "Out Type",
@@ -15183,6 +15578,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "outType" : {
             "type" : "string",
             "title" : "Out Type",
@@ -15320,6 +15720,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "outType" : {
             "type" : "string",
@@ -15495,6 +15900,11 @@
             "title" : "Mock Include Pattern",
             "description" : "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
             "default" : "classpath:camel-mock/**"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "routeId" : {
             "type" : "string",
@@ -15680,6 +16090,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "outType" : {
             "type" : "string",
             "title" : "Out Type",
@@ -15818,6 +16233,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "outType" : {
             "type" : "string",
             "title" : "Out Type",
@@ -15955,6 +16375,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "outType" : {
             "type" : "string",
@@ -16182,6 +16607,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "outType" : {
             "type" : "string",
@@ -16491,6 +16921,11 @@
             "title" : "Id",
             "description" : "Sets the id of this node"
           },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
           "openApi" : {
             "title" : "Open Api",
             "description" : "To use an existing OpenAPI specification as contract-first for Camel Rest DSL.",
@@ -16610,6 +17045,11 @@
             "type" : "string",
             "title" : "Id",
             "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
           },
           "rest" : {
             "type" : "array",

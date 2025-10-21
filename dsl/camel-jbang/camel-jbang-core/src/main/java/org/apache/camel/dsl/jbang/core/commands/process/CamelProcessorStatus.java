@@ -93,6 +93,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                         description = "Include description in the ID column (if available)")
     boolean description;
 
+    @CommandLine.Option(names = { "--note" },
+                        description = "Include note in the ID column (if available)")
+    boolean note;
+
     @CommandLine.Option(names = { "--show-group" },
                         description = "Include group column")
     boolean showGroup;
@@ -127,6 +131,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                             row.routeId = o.getString("routeId");
                             row.group = o.getString("group");
                             row.description = o.getString("description");
+                            row.note = o.getString("note");
                             row.nodePrefixId = o.getString("nodePrefixId");
                             row.processor = o.getString("from");
                             row.source = o.getString("source");
@@ -304,12 +309,12 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 new Column().header("GROUP").visible(showGroup).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getGroup),
-                new Column().header("ID").visible(!description).dataAlign(HorizontalAlign.LEFT)
+                new Column().header("ID").visible(!description && !note).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(40, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
-                new Column().header("ID").visible(description).dataAlign(HorizontalAlign.LEFT)
+                new Column().header("ID").visible(description || note).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(60, OverflowBehaviour.NEWLINE)
-                        .with(this::getIdAndDescription),
+                        .with(this::getIdAndNoteDescription),
                 new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT).minWidth(25)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getProcessor),
@@ -409,13 +414,20 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         return answer;
     }
 
-    protected String getIdAndDescription(Row r) {
+    protected String getIdAndNoteDescription(Row r) {
         String id = getId(r);
         if (description && r.description != null) {
             if (id != null) {
                 id = id + "\n  " + Strings.wrapWords(r.description, " ", "\n  ", 55, true);
             } else {
                 id = r.description;
+            }
+        }
+        if (note && r.note != null) {
+            if (id != null) {
+                id = id + "\n  " + Strings.wrapWords(r.note, " ", "\n  ", 55, true);
+            } else {
+                id = r.note;
             }
         }
         return id;
@@ -459,6 +471,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         String processorId;
         String processor;
         String description;
+        String note;
         int level;
         String source;
         String state;

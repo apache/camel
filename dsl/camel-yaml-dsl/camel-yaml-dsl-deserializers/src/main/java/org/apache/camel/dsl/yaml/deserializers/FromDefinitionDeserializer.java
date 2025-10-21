@@ -41,6 +41,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.getDeseri
                   @YamlProperty(name = "variableReceive", type = "string"),
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "description", type = "string"),
+                  @YamlProperty(name = "note", type = "string"),
                   @YamlProperty(name = "parameters", type = "object"),
                   @YamlProperty(name = "steps", type = "array:org.apache.camel.model.ProcessorDefinition", required = true)
           })
@@ -54,6 +55,7 @@ public class FromDefinitionDeserializer implements ConstructNode {
         }
 
         String desc = null;
+        String note = null;
         String id = null;
         String variableReceive = null;
         if (node.getNodeType() == NodeType.MAPPING) {
@@ -67,6 +69,8 @@ public class FromDefinitionDeserializer implements ConstructNode {
                     }
                 } else if ("description".equals(key)) {
                     desc = asText(tuple.getValueNode());
+                } else if ("note".equals(key)) {
+                    note = asText(tuple.getValueNode());
                 } else if ("id".equals(key)) {
                     id = asText(tuple.getValueNode());
                 } else if ("variableReceive".equals(key)) {
@@ -91,6 +95,9 @@ public class FromDefinitionDeserializer implements ConstructNode {
 
         if (desc != null) {
             target.setDescription(desc);
+        }
+        if (note != null) {
+            target.setNote(note);
         }
         if (id != null) {
             target.setId(id);

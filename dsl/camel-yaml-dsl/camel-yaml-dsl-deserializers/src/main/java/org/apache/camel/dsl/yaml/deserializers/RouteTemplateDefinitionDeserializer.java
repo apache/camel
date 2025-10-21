@@ -39,6 +39,7 @@ import org.snakeyaml.engine.v2.nodes.Node;
                                 type = "string",
                                 required = true),
                   @YamlProperty(name = "description", type = "string"),
+                  @YamlProperty(name = "note", type = "string"),
                   @YamlProperty(name = "route",
                                 type = "object:org.apache.camel.model.RouteDefinition"),
                   @YamlProperty(name = "from",
@@ -72,6 +73,10 @@ public class RouteTemplateDefinitionDeserializer extends YamlDeserializerBase<Ro
             }
             case "description": {
                 target.setDescription(asText(node));
+                break;
+            }
+            case "note": {
+                target.setNote(asText(node));
                 break;
             }
             case "route": {

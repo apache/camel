@@ -33,13 +33,14 @@ public interface RouteFactory {
      * @param  routeDefinition  the route definition
      * @param  routeId          the route id
      * @param  routeDescription the route description
+     * @param  routeNote        the route note
      * @param  endpoint         the input endpoint (consumer)
      * @param  resource         the source resource (if loaded via a DSL routes loader)
      * @return                  the created route
      */
     Route createRoute(
             CamelContext camelContext, NamedNode routeDefinition,
-            String routeId, String routeDescription, Endpoint endpoint,
-            Resource resource);
+            String routeId, String routeDescription, String routeNote,
+            Endpoint endpoint, Resource resource);
 
 }

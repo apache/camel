@@ -55,7 +55,7 @@ public class DefaultExceptionPolicyStrategyTest {
 
     private ExceptionPolicy exceptionPolicy(Class<? extends Throwable> exceptionClass) {
         CamelContext cc = new DefaultCamelContext();
-        Route context = new DefaultRoute(cc, null, null, null, null, null);
+        Route context = new DefaultRoute(cc, null, null, null, null, null, null);
         return new DefaultErrorHandlerReifier(context, null)
                 .createExceptionPolicy(new OnExceptionDefinition(exceptionClass));
     }

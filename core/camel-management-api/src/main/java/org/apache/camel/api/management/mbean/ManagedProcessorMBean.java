@@ -48,6 +48,9 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Processor Description")
     String getDescription();
 
+    @ManagedAttribute(description = "Processor Note")
+    String getNote();
+
     @ManagedAttribute(description = "Processor Index")
     Integer getIndex();
 

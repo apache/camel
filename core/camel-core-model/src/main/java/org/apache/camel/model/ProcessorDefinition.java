@@ -788,6 +788,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Set the route note for this route
+     *
+     * @param  note the route note
+     * @return      the builder
+     */
+    public Type routeNote(String note) {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            route.setNote(note);
+        }
+
+        return asType();
+    }
+
+    /**
      * Sets a prefix to use for all node ids (not route id).
      *
      * @param  prefixId the prefix
@@ -876,6 +893,81 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             } else {
                 // the output could be empty
                 setDescription(description);
+            }
+        }
+
+        return asType();
+    }
+
+    /**
+     * Sets the note of this node.
+     *
+     * @param  note the note
+     * @return      the builder
+     */
+    @Override
+    public Type note(String note) {
+        // special for choice otherwise
+        if (this instanceof ChoiceDefinition cbr) {
+            if (cbr.getOtherwise() != null) {
+                if (cbr.getOtherwise().getOutputs().isEmpty()) {
+                    cbr.getOtherwise().note(note);
+                } else {
+                    var last = cbr.getOtherwise().getOutputs().get(cbr.getOtherwise().getOutputs().size() - 1);
+                    last.note(note);
+                }
+            } else if (!cbr.getWhenClauses().isEmpty()) {
+                var last = cbr.getWhenClauses().get(cbr.getWhenClauses().size() - 1);
+                if (last.getOutputs().isEmpty()) {
+                    last.note(note);
+                } else {
+                    var p = last.getOutputs().get(last.getOutputs().size() - 1);
+                    p.note(note);
+                }
+            } else {
+                cbr.note(note);
+            }
+            return asType();
+        }
+
+        if (this instanceof OutputNode && getOutputs().isEmpty()) {
+            // set note on this
+            setNote(note);
+        } else {
+            List<ProcessorDefinition<?>> outputs = null;
+            if (this instanceof NoOutputDefinition<Type>) {
+                // this does not accept output so it should be on the parent
+                if (getParent() != null) {
+                    outputs = getParent().getOutputs();
+                }
+            } else if (this instanceof OutputExpressionNode) {
+                outputs = getOutputs();
+            } else if (this instanceof ExpressionNode) {
+                // this does not accept output so it should be on the parent
+                if (getParent() != null) {
+                    outputs = getParent().getOutputs();
+                }
+            } else {
+                outputs = getOutputs();
+            }
+
+            // set it on last output as this is what the user means to do
+            // for Block(s) with non empty getOutputs() the id probably refers
+            // to the last definition in the current Block
+            if (!blocks.isEmpty()) {
+                if (blocks.getLast() instanceof ProcessorDefinition) {
+                    ProcessorDefinition<?> block = (ProcessorDefinition<?>) blocks.getLast();
+                    if (!block.getOutputs().isEmpty()) {
+                        outputs = block.getOutputs();
+                    }
+                }
+            }
+            if (outputs != null && !outputs.isEmpty()) {
+                // set note on last output
+                outputs.get(outputs.size() - 1).setNote(note);
+            } else {
+                // the output could be empty
+                setNote(note);
             }
         }
 

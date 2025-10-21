@@ -13,7 +13,8 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "description": { "index": 1, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
-    "rests": { "index": 2, "kind": "element", "displayName": "Rests", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestDefinition>", "oneOf": [ "rest" ], "deprecated": false, "autowired": false, "secret": false, "description": "Contains the rest services defined using the rest-dsl" }
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the note of this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "rests": { "index": 3, "kind": "element", "displayName": "Rests", "group": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestDefinition>", "oneOf": [ "rest" ], "deprecated": false, "autowired": false, "secret": false, "description": "Contains the rest services defined using the rest-dsl" }
   }
 }

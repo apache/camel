@@ -79,6 +79,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     protected final Route route;
     protected final String description;
+    protected final String note;
     protected final String configurationId;
     protected final String sourceLocation;
     protected final String sourceLocationShort;
@@ -91,6 +92,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         this.route = route;
         this.context = context;
         this.description = route.getDescription();
+        this.note = route.getNote();
         this.configurationId = route.getConfigurationId();
         this.sourceLocation = route.getSourceLocation();
         this.sourceLocationShort = route.getSourceLocationShort();
@@ -170,6 +172,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String getNote() {
+        return note;
     }
 
     @Override

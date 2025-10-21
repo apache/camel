@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class ProcessorReifierTest {
     @Test
     public void testHandleCustomProcessorDefinition() {
-        Route ctx = new DefaultRoute(null, null, null, null, null, null);
+        Route ctx = new DefaultRoute(null, null, null, null, null, null, null);
         ProcessorReifier.registerReifier(MyProcessorDefinition.class, ProcessReifier::new);
         ProcessReifier ref = (ProcessReifier) ProcessorReifier.reifier(ctx, new MyProcessorDefinition());
         Assertions.assertInstanceOf(MyProcessorDefinition.class, ref.definition);

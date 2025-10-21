@@ -172,6 +172,9 @@ public final class YamlSupport {
                     case "description":
                         // ignore
                         break;
+                    case "note":
+                        // ignore
+                        break;
                     case "uri":
                         uri = asText(val);
                         break;

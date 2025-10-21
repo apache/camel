@@ -42,6 +42,7 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
           properties = {
                   @YamlProperty(name = "id", type = "string"),
                   @YamlProperty(name = "description", type = "string"),
+                  @YamlProperty(name = "note", type = "string"),
                   @YamlProperty(name = "group", type = "string"),
                   @YamlProperty(name = "nodePrefixId", type = "string"),
                   @YamlProperty(name = "precondition", type = "string"),
@@ -95,6 +96,9 @@ public class RouteDefinitionDeserializer extends YamlDeserializerBase<RouteDefin
                     break;
                 case "description":
                     target.setDescription(asText(val));
+                    break;
+                case "note":
+                    target.setNote(asText(val));
                     break;
                 case "precondition":
                     target.setPrecondition(asText(val));
