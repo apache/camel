@@ -59,6 +59,7 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
                 for (VertxWebsocketPeer peer : connectedPeers) {
                     sb.append(String.format("\n            ID: %s", peer.getConnectionKey()));
                     sb.append(String.format("\n            Path: %s", peer.getPath()));
+                    sb.append(String.format("\n            Raw Path: %s", peer.getRawPath()));
 
                     ServerWebSocket webSocket = peer.getWebSocket();
                     SocketAddress socketAddress = webSocket.localAddress();
@@ -99,6 +100,7 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
                     JsonObject peerJson = new JsonObject();
                     peerJson.put("id", peer.getConnectionKey());
                     peerJson.put("path", peer.getPath());
+                    peerJson.put("rawPath", peer.getRawPath());
 
                     ServerWebSocket webSocket = peer.getWebSocket();
                     SocketAddress socketAddress = webSocket.localAddress();
