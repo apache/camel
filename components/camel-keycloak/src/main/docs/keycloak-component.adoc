@@ -3724,6 +3724,7 @@ beans:
       requiredRoles: "user,admin"
       allRolesRequired: false
 ----
+====
 
 == Running Integration Tests
 
@@ -4057,3 +4058,4 @@ beans:
       allPermissionsRequired: false
 ----
 ====
+
