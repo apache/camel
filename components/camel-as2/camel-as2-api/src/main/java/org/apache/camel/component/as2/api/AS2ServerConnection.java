@@ -64,57 +64,84 @@ public class AS2ServerConnection {
     private static final String REQUEST_LISTENER_THREAD_NAME_PREFIX = "AS2Svr-";
     private static final String REQUEST_HANDLER_THREAD_NAME_PREFIX = "AS2Hdlr-";
 
-    class RequestListenerThread extends Thread {
+    private ServerSocket serversocket;
+    private RequestListenerService listenerService;
+    private RequestAcceptorThread acceptorThread;
+    private final Lock lock = new ReentrantLock();
 
-        private final ServerSocket serversocket;
+    private final String as2Version;
+    private final String originServer;
+    private final String serverFqdn;
+    private final Certificate[] signingCertificateChain;
+    private final PrivateKey signingPrivateKey;
+    private final PrivateKey decryptingPrivateKey;
+    private final Certificate[] validateSigningCertificateChain;
+    private final AS2SignatureAlgorithm signingAlgorithm;
+
+    class RequestListenerService {
+
         private final HttpService httpService;
         private final RequestHandlerRegistry registry;
-        private final HttpServerRequestHandler handler;
 
-        public RequestListenerThread(String as2Version,
-                                     String originServer,
-                                     String serverFqdn,
-                                     int port,
-                                     AS2SignatureAlgorithm signatureAlgorithm,
-                                     Certificate[] signingCertificateChain,
-                                     PrivateKey signingPrivateKey,
-                                     PrivateKey decryptingPrivateKey,
-                                     String mdnMessageTemplate,
-                                     Certificate[] validateSigningCertificateChain,
-                                     SSLContext sslContext)
-                                                            throws IOException {
+        public RequestListenerService(String as2Version,
+                                      String originServer,
+                                      String serverFqdn,
+                                      AS2SignatureAlgorithm signatureAlgorithm,
+                                      String mdnMessageTemplate,
+                                      Certificate[] validateSigningCertificateChain)
+                                                                                     throws IOException {
+
+            // Set up HTTP protocol processor for incoming connections
+            final HttpProcessor inhttpproc = initProtocolProcessor(as2Version, originServer, serverFqdn,
+                    null, null, null, null, mdnMessageTemplate,
+                    validateSigningCertificateChain);
+
+            registry = new RequestHandlerRegistry<>();
+            HttpServerRequestHandler handler = new BasicHttpServerRequestHandler(registry);
+
+            // Set up the HTTP service
+            httpService = new HttpService(inhttpproc, handler);
+        }
+
+        void registerHandler(String requestUriPattern, HttpRequestHandler httpRequestHandler) {
+            registry.register(null, requestUriPattern, httpRequestHandler);
+        }
+
+        void unregisterHandler(String requestUriPattern) {
+            // we cannot remove from http registry, but we can replace with a not found to simulate 404
+            registry.register(null, requestUriPattern, new NotFoundHttpRequestHandler());
+        }
+    }
+
+    class RequestAcceptorThread extends Thread {
+
+        private final RequestListenerService service;
+
+        public RequestAcceptorThread(int port, SSLContext sslContext, RequestListenerService service)
+                                                                                                      throws IOException {
             setName(REQUEST_LISTENER_THREAD_NAME_PREFIX + port);
+            this.service = service;
 
+            // 2. BIND THE PORT HERE! This happens only once.
             if (sslContext == null) {
                 serversocket = new ServerSocket(port);
             } else {
                 SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
                 serversocket = factory.createServerSocket(port);
             }
-
-            // Set up HTTP protocol processor for incoming connections
-            final HttpProcessor inhttpproc = initProtocolProcessor(as2Version, originServer, serverFqdn,
-                    signatureAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey, mdnMessageTemplate,
-                    validateSigningCertificateChain);
-
-            registry = new RequestHandlerRegistry<>();
-            handler = new BasicHttpServerRequestHandler(registry);
-
-            // Set up the HTTP service
-            httpService = new HttpService(inhttpproc, handler);
         }
 
         @Override
         public void run() {
-            LOG.info("Listening on port {}", this.serversocket.getLocalPort());
+            // serversocket is now a field of the outer AS2ServerConnection class
+            LOG.info("Listening on port {}", serversocket.getLocalPort());
             while (!Thread.interrupted()) {
                 try {
-
                     // Set up incoming HTTP connection
-                    final Socket inSocket = this.serversocket.accept();
+                    final Socket inSocket = serversocket.accept();
 
-                    // Start worker thread
-                    final Thread t = new RequestHandlerThread(this.httpService, inSocket);
+                    // Start worker thread, using the service's HttpService
+                    final Thread t = new RequestHandlerThread(this.service.httpService, inSocket);
                     t.setDaemon(true);
                     t.start();
                 } catch (final InterruptedIOException | SocketException ex) {
@@ -125,15 +152,6 @@ public class AS2ServerConnection {
                     break;
                 }
             }
-        }
-
-        void registerHandler(String requestUriPattern, HttpRequestHandler httpRequestHandler) {
-            registry.register(null, requestUriPattern, httpRequestHandler);
-        }
-
-        void unregisterHandler(String requestUriPattern) {
-            // we cannot remove from http registry, but we can replace with a not found to simulate 404
-            registry.register(null, requestUriPattern, new NotFoundHttpRequestHandler());
         }
     }
 
@@ -219,17 +237,6 @@ public class AS2ServerConnection {
 
     }
 
-    private RequestListenerThread listenerThread;
-    private final Lock lock = new ReentrantLock();
-    private final String as2Version;
-    private final String originServer;
-    private final String serverFqdn;
-    private final Certificate[] signingCertificateChain;
-    private final PrivateKey signingPrivateKey;
-    private final PrivateKey decryptingPrivateKey;
-    private final Certificate[] validateSigningCertificateChain;
-    private final AS2SignatureAlgorithm signingAlgorithm;
-
     public AS2ServerConnection(String as2Version,
                                String originServer,
                                String serverFqdn,
@@ -250,14 +257,15 @@ public class AS2ServerConnection {
         this.signingPrivateKey = signingPrivateKey;
         this.decryptingPrivateKey = decryptingPrivateKey;
         this.validateSigningCertificateChain = validateSigningCertificateChain;
-
         this.signingAlgorithm = signingAlgorithm;
-        listenerThread = new RequestListenerThread(
+
+        listenerService = new RequestListenerService(
                 this.as2Version, this.originServer, this.serverFqdn,
-                parserServerPortNumber, signingAlgorithm, this.signingCertificateChain, this.signingPrivateKey,
-                this.decryptingPrivateKey, mdnMessageTemplate, validateSigningCertificateChain, sslContext);
-        listenerThread.setDaemon(true);
-        listenerThread.start();
+                signingAlgorithm, mdnMessageTemplate, validateSigningCertificateChain);
+
+        acceptorThread = new RequestAcceptorThread(parserServerPortNumber, sslContext, listenerService);
+        acceptorThread.setDaemon(true);
+        acceptorThread.start();
     }
 
     public Certificate[] getValidateSigningCertificateChain() {
@@ -273,15 +281,19 @@ public class AS2ServerConnection {
     }
 
     public void close() {
-        if (listenerThread != null) {
+        if (acceptorThread != null) {
             lock.lock();
             try {
                 try {
-                    listenerThread.serversocket.close();
+                    // 3. Close the shared ServerSocket
+                    if (serversocket != null) {
+                        serversocket.close();
+                    }
                 } catch (IOException e) {
                     LOG.debug(e.getMessage(), e);
                 } finally {
-                    listenerThread = null;
+                    acceptorThread = null;
+                    listenerService = null;
                 }
             } finally {
                 lock.unlock();
@@ -290,10 +302,10 @@ public class AS2ServerConnection {
     }
 
     public void listen(String requestUri, HttpRequestHandler handler) {
-        if (listenerThread != null) {
+        if (listenerService != null) {
             lock.lock();
             try {
-                listenerThread.registerHandler(requestUri, handler);
+                listenerService.registerHandler(requestUri, handler);
             } finally {
                 lock.unlock();
             }
@@ -301,10 +313,10 @@ public class AS2ServerConnection {
     }
 
     public void unlisten(String requestUri) {
-        if (listenerThread != null) {
+        if (listenerService != null) {
             lock.lock();
             try {
-                listenerThread.unregisterHandler(requestUri);
+                listenerService.unregisterHandler(requestUri);
             } finally {
                 lock.unlock();
             }

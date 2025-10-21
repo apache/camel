@@ -198,6 +198,14 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         configuration.setSigningCertificateChain(signingCertificateChain);
     }
 
+    public Certificate[] getValidateSigningCertificateChain() {
+        return configuration.getValidateSigningCertificateChain();
+    }
+
+    public PrivateKey getDecryptingPrivateKey() {
+        return configuration.getDecryptingPrivateKey();
+    }
+
     public PrivateKey getSigningPrivateKey() {
         return configuration.getSigningPrivateKey();
     }
