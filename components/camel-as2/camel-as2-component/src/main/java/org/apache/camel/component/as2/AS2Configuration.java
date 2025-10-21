@@ -67,6 +67,8 @@ public class AS2Configuration {
     private Integer serverPortNumber;
     @UriParam(defaultValue = "/")
     private String requestUri = "/";
+    @UriParam(defaultValue = "/")
+    private String requestUriPattern;
     @UriParam
     private ContentType ediMessageType;
     @UriParam
@@ -256,6 +258,14 @@ public class AS2Configuration {
      */
     public void setRequestUri(String requestUri) {
         this.requestUri = requestUri;
+    }
+
+    public String getRequestUriPattern() {
+        return requestUriPattern;
+    }
+
+    public void setRequestUriPattern(String requestUriPattern) {
+        this.requestUriPattern = requestUriPattern;
     }
 
     public ContentType getEdiMessageType() {
