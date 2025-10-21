@@ -60,7 +60,7 @@ jobs:
         with:
           ref: ${{ env.pr_sha }}
           submodules: recursive
-      - uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
+      - uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
