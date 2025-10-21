@@ -28,12 +28,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +56,7 @@ public class DoclingServeClient {
     private final String baseUrl;
     private final ObjectMapper objectMapper;
     private final CloseableHttpClient httpClient;
+    private final PoolingHttpClientConnectionManager connectionManager;
     private final AuthenticationScheme authenticationScheme;
     private final String authenticationToken;
     private final String apiKeyHeader;
@@ -57,33 +65,123 @@ public class DoclingServeClient {
     private final long asyncTimeout;
 
     public DoclingServeClient(String baseUrl) {
-        this(baseUrl, AuthenticationScheme.NONE, null, "X-API-Key", DEFAULT_CONVERT_ENDPOINT, 2000, 300000);
+        this(baseUrl, AuthenticationScheme.NONE, null, "X-API-Key", DEFAULT_CONVERT_ENDPOINT, 2000, 300000,
+             20, 10, 30000, 60000, 30000, -1, 2000, true, 60000);
     }
 
     public DoclingServeClient(
                               String baseUrl, AuthenticationScheme authenticationScheme, String authenticationToken,
                               String apiKeyHeader) {
-        this(baseUrl, authenticationScheme, authenticationToken, apiKeyHeader, DEFAULT_CONVERT_ENDPOINT, 2000, 300000);
+        this(baseUrl, authenticationScheme, authenticationToken, apiKeyHeader, DEFAULT_CONVERT_ENDPOINT, 2000, 300000,
+             20, 10, 30000, 60000, 30000, -1, 2000, true, 60000);
     }
 
     public DoclingServeClient(
                               String baseUrl, AuthenticationScheme authenticationScheme, String authenticationToken,
                               String apiKeyHeader, String convertEndpoint) {
-        this(baseUrl, authenticationScheme, authenticationToken, apiKeyHeader, convertEndpoint, 2000, 300000);
+        this(baseUrl, authenticationScheme, authenticationToken, apiKeyHeader, convertEndpoint, 2000, 300000,
+             20, 10, 30000, 60000, 30000, -1, 2000, true, 60000);
     }
 
     public DoclingServeClient(
                               String baseUrl, AuthenticationScheme authenticationScheme, String authenticationToken,
                               String apiKeyHeader, String convertEndpoint, long asyncPollInterval, long asyncTimeout) {
+        this(baseUrl, authenticationScheme, authenticationToken, apiKeyHeader, convertEndpoint, asyncPollInterval,
+             asyncTimeout, 20, 10, 30000, 60000, 30000, -1, 2000, true, 60000);
+    }
+
+    public DoclingServeClient(
+                              String baseUrl, AuthenticationScheme authenticationScheme, String authenticationToken,
+                              String apiKeyHeader, String convertEndpoint, long asyncPollInterval, long asyncTimeout,
+                              int maxTotalConnections, int maxConnectionsPerRoute, int connectionTimeout,
+                              int socketTimeout, int connectionRequestTimeout, long connectionTimeToLive,
+                              int validateAfterInactivity, boolean evictIdleConnections, long maxIdleTime) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
         this.objectMapper = new ObjectMapper();
-        this.httpClient = HttpClients.createDefault();
         this.authenticationScheme = authenticationScheme != null ? authenticationScheme : AuthenticationScheme.NONE;
         this.authenticationToken = authenticationToken;
         this.apiKeyHeader = apiKeyHeader != null ? apiKeyHeader : "X-API-Key";
         this.convertEndpoint = convertEndpoint != null ? convertEndpoint : DEFAULT_CONVERT_ENDPOINT;
         this.asyncPollInterval = asyncPollInterval;
         this.asyncTimeout = asyncTimeout;
+
+        // Build connection pool and HTTP client with custom configuration
+        this.connectionManager = buildConnectionManager(maxTotalConnections, maxConnectionsPerRoute, connectionTimeout,
+                socketTimeout, connectionTimeToLive, validateAfterInactivity);
+        this.httpClient = buildHttpClient(connectionManager, connectionRequestTimeout, socketTimeout,
+                evictIdleConnections, maxIdleTime);
+
+        LOG.info(
+                "DoclingServeClient initialized with connection pool: maxTotal={}, maxPerRoute={}, connTimeout={}ms, socketTimeout={}ms",
+                maxTotalConnections, maxConnectionsPerRoute, connectionTimeout, socketTimeout);
+    }
+
+    /**
+     * Build a configured connection manager with pooling support.
+     */
+    private PoolingHttpClientConnectionManager buildConnectionManager(
+            int maxTotalConnections, int maxConnectionsPerRoute, int connectionTimeout,
+            int socketTimeout, long connectionTimeToLive, int validateAfterInactivity) {
+
+        // Configure socket settings
+        SocketConfig socketConfig = SocketConfig.custom()
+                .setSoTimeout(Timeout.ofMilliseconds(socketTimeout))
+                .build();
+
+        // Configure connection settings
+        ConnectionConfig connectionConfig = ConnectionConfig.custom()
+                .setConnectTimeout(Timeout.ofMilliseconds(connectionTimeout))
+                .setSocketTimeout(Timeout.ofMilliseconds(socketTimeout))
+                .setValidateAfterInactivity(TimeValue.ofMilliseconds(validateAfterInactivity))
+                .setTimeToLive(connectionTimeToLive > 0
+                        ? TimeValue.ofMilliseconds(connectionTimeToLive) : TimeValue.NEG_ONE_MILLISECOND)
+                .build();
+
+        // Build the pooling connection manager
+        PoolingHttpClientConnectionManager connManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setMaxConnTotal(maxTotalConnections)
+                .setMaxConnPerRoute(maxConnectionsPerRoute)
+                .setDefaultSocketConfig(socketConfig)
+                .setDefaultConnectionConfig(connectionConfig)
+                .build();
+
+        LOG.debug("Connection manager configured: maxTotal={}, maxPerRoute={}, validateAfterInactivity={}ms, ttl={}ms",
+                maxTotalConnections, maxConnectionsPerRoute, validateAfterInactivity,
+                connectionTimeToLive > 0 ? connectionTimeToLive : "infinite");
+
+        return connManager;
+    }
+
+    /**
+     * Build an HTTP client with the configured connection manager and request settings.
+     */
+    private CloseableHttpClient buildHttpClient(
+            PoolingHttpClientConnectionManager connectionManager, int connectionRequestTimeout,
+            int socketTimeout, boolean evictIdleConnections, long maxIdleTime) {
+
+        // Configure request settings
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(Timeout.ofMilliseconds(connectionRequestTimeout))
+                .setResponseTimeout(Timeout.ofMilliseconds(socketTimeout))
+                .build();
+
+        // Build the HTTP client
+        org.apache.hc.client5.http.impl.classic.HttpClientBuilder clientBuilder = HttpClients.custom()
+                .setConnectionManager(connectionManager)
+                .setDefaultRequestConfig(requestConfig);
+
+        // Enable idle connection eviction if configured
+        if (evictIdleConnections) {
+            clientBuilder.evictIdleConnections(TimeValue.ofMilliseconds(maxIdleTime));
+            LOG.debug("Idle connection eviction enabled: maxIdleTime={}ms", maxIdleTime);
+        }
+
+        CloseableHttpClient client = clientBuilder.build();
+
+        LOG.debug("HTTP client configured: connectionRequestTimeout={}ms, socketTimeout={}ms",
+                connectionRequestTimeout, socketTimeout);
+
+        return client;
     }
 
     /**
@@ -557,7 +655,31 @@ public class DoclingServeClient {
 
     public void close() throws IOException {
         if (httpClient != null) {
-            httpClient.close();
+            try {
+                httpClient.close();
+                LOG.debug("HTTP client closed successfully");
+            } catch (IOException e) {
+                LOG.warn("Error closing HTTP client", e);
+                throw e;
+            }
         }
+        if (connectionManager != null) {
+            connectionManager.close();
+            LOG.debug("Connection manager closed successfully");
+        }
+    }
+
+    /**
+     * Get connection pool statistics for monitoring.
+     *
+     * @return Connection pool statistics as a formatted string
+     */
+    public String getPoolStats() {
+        if (connectionManager != null) {
+            var stats = connectionManager.getTotalStats();
+            return String.format("ConnectionPool[available=%d, leased=%d, pending=%d, max=%d]",
+                    stats.getAvailable(), stats.getLeased(), stats.getPending(), stats.getMax());
+        }
+        return "ConnectionPool[not initialized]";
     }
 }

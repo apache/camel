@@ -61,12 +61,22 @@ public class DoclingProducer extends DefaultProducer {
                     configuration.getApiKeyHeader(),
                     configuration.getConvertEndpoint(),
                     configuration.getAsyncPollInterval(),
-                    configuration.getAsyncTimeout());
+                    configuration.getAsyncTimeout(),
+                    configuration.getMaxTotalConnections(),
+                    configuration.getMaxConnectionsPerRoute(),
+                    configuration.getConnectionTimeout(),
+                    configuration.getSocketTimeout(),
+                    configuration.getConnectionRequestTimeout(),
+                    configuration.getConnectionTimeToLive(),
+                    configuration.getValidateAfterInactivity(),
+                    configuration.isEvictIdleConnections(),
+                    configuration.getMaxIdleTime());
             LOG.info("DoclingProducer configured to use docling-serve API at: {}{} with authentication: {} (async mode: {})",
                     configuration.getDoclingServeUrl(),
                     configuration.getConvertEndpoint(),
                     configuration.getAuthenticationScheme(),
                     configuration.isUseAsyncMode());
+            LOG.debug("Connection pool stats: {}", doclingServeClient.getPoolStats());
         } else {
             LOG.info("DoclingProducer configured to use docling CLI command");
         }
@@ -76,8 +86,10 @@ public class DoclingProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         super.doStop();
         if (doclingServeClient != null) {
+            LOG.debug("Shutting down DoclingServeClient. Final pool stats: {}", doclingServeClient.getPoolStats());
             doclingServeClient.close();
             doclingServeClient = null;
+            LOG.info("DoclingServeClient closed successfully");
         }
     }
 
