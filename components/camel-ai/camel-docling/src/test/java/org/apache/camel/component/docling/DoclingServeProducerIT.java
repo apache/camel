@@ -395,6 +395,7 @@ public class DoclingServeProducerIT extends CamelTestSupport {
                         .log("Starting custom polling workflow for file: ${header.CamelDoclingInputFilePath}")
                         .to("docling:convert?operation=CONVERT_TO_MARKDOWN&contentInBody=true&" +
                             "useAsyncMode=true&asyncPollInterval=1000&asyncTimeout=120000");
+
             }
         };
     }
