@@ -489,6 +489,98 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * Connection request timeout in milliseconds (timeout when requesting
+         * connection from pool).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param connectionRequestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder connectionRequestTimeout(int connectionRequestTimeout) {
+            doSetProperty("connectionRequestTimeout", connectionRequestTimeout);
+            return this;
+        }
+        /**
+         * Connection request timeout in milliseconds (timeout when requesting
+         * connection from pool).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param connectionRequestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder connectionRequestTimeout(String connectionRequestTimeout) {
+            doSetProperty("connectionRequestTimeout", connectionRequestTimeout);
+            return this;
+        }
+        /**
+         * Connection timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder connectionTimeout(int connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Connection timeout in milliseconds.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder connectionTimeout(String connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Time to live for connections in milliseconds (-1 for infinite).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: -1
+         * Group: advanced
+         * 
+         * @param connectionTimeToLive the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder connectionTimeToLive(long connectionTimeToLive) {
+            doSetProperty("connectionTimeToLive", connectionTimeToLive);
+            return this;
+        }
+        /**
+         * Time to live for connections in milliseconds (-1 for infinite).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: -1
+         * Group: advanced
+         * 
+         * @param connectionTimeToLive the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder connectionTimeToLive(String connectionTimeToLive) {
+            doSetProperty("connectionTimeToLive", connectionTimeToLive);
+            return this;
+        }
+        /**
          * Docling-serve API convert endpoint path.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -515,6 +607,126 @@ public interface DoclingEndpointBuilderFactory {
          */
         default AdvancedDoclingEndpointBuilder doclingCommand(String doclingCommand) {
             doSetProperty("doclingCommand", doclingCommand);
+            return this;
+        }
+        /**
+         * Enable eviction of idle connections from the pool.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param evictIdleConnections the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder evictIdleConnections(boolean evictIdleConnections) {
+            doSetProperty("evictIdleConnections", evictIdleConnections);
+            return this;
+        }
+        /**
+         * Enable eviction of idle connections from the pool.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param evictIdleConnections the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder evictIdleConnections(String evictIdleConnections) {
+            doSetProperty("evictIdleConnections", evictIdleConnections);
+            return this;
+        }
+        /**
+         * Maximum connections per route in the connection pool.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: advanced
+         * 
+         * @param maxConnectionsPerRoute the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder maxConnectionsPerRoute(int maxConnectionsPerRoute) {
+            doSetProperty("maxConnectionsPerRoute", maxConnectionsPerRoute);
+            return this;
+        }
+        /**
+         * Maximum connections per route in the connection pool.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: advanced
+         * 
+         * @param maxConnectionsPerRoute the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder maxConnectionsPerRoute(String maxConnectionsPerRoute) {
+            doSetProperty("maxConnectionsPerRoute", maxConnectionsPerRoute);
+            return this;
+        }
+        /**
+         * Maximum idle time for connections in milliseconds before eviction.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param maxIdleTime the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder maxIdleTime(long maxIdleTime) {
+            doSetProperty("maxIdleTime", maxIdleTime);
+            return this;
+        }
+        /**
+         * Maximum idle time for connections in milliseconds before eviction.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param maxIdleTime the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder maxIdleTime(String maxIdleTime) {
+            doSetProperty("maxIdleTime", maxIdleTime);
+            return this;
+        }
+        /**
+         * Maximum total connections in the connection pool.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxTotalConnections the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder maxTotalConnections(int maxTotalConnections) {
+            doSetProperty("maxTotalConnections", maxTotalConnections);
+            return this;
+        }
+        /**
+         * Maximum total connections in the connection pool.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxTotalConnections the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder maxTotalConnections(String maxTotalConnections) {
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -548,6 +760,36 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * Socket timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder socketTimeout(int socketTimeout) {
+            doSetProperty("socketTimeout", socketTimeout);
+            return this;
+        }
+        /**
+         * Socket timeout in milliseconds.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder socketTimeout(String socketTimeout) {
+            doSetProperty("socketTimeout", socketTimeout);
+            return this;
+        }
+        /**
          * Use asynchronous conversion mode (docling-serve API only).
          * 
          * The option is a: <code>boolean</code> type.
@@ -575,6 +817,36 @@ public interface DoclingEndpointBuilderFactory {
          */
         default AdvancedDoclingEndpointBuilder useAsyncMode(String useAsyncMode) {
             doSetProperty("useAsyncMode", useAsyncMode);
+            return this;
+        }
+        /**
+         * Validate connections after inactivity in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param validateAfterInactivity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder validateAfterInactivity(int validateAfterInactivity) {
+            doSetProperty("validateAfterInactivity", validateAfterInactivity);
+            return this;
+        }
+        /**
+         * Validate connections after inactivity in milliseconds.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param validateAfterInactivity the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder validateAfterInactivity(String validateAfterInactivity) {
+            doSetProperty("validateAfterInactivity", validateAfterInactivity);
             return this;
         }
         /**
