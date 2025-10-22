@@ -34,7 +34,8 @@
 
     <properties>
         <firstVersion>3.18.0</firstVersion>
-        <camel.surefire.fork.vmargs>--add-opens java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</camel.surefire.fork.vmargs>
+        <!-- Make use of native access during test execution only -->
+        <camel.surefire.fork.vmargs>--enable-native-access=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</camel.surefire.fork.vmargs>
         <camel.surefire.forkTimeout>300</camel.surefire.forkTimeout>
         <camel.surefire.reuseForks>false</camel.surefire.reuseForks>
     </properties>
