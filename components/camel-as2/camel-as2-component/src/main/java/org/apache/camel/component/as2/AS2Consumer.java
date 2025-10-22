@@ -34,6 +34,7 @@ import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.support.component.AbstractApiConsumer;
 import org.apache.camel.support.component.ApiConsumerHelper;
 import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntityContainer;
@@ -109,7 +110,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
         if (as2ServerConnection != null) {
             // Resolve the unique URI pattern for this consumer
             String requestUriPattern = getEndpoint().getConfiguration().getRequestUriPattern();
-            String uri = (requestUriPattern != null && !requestUriPattern.isEmpty()) ? requestUriPattern : "/";
+            String uri = (ObjectHelper.isNotEmpty(requestUriPattern)) ? requestUriPattern : "/";
 
             // Unregister this consumer from the shared AS2ServerConnection
             as2ServerConnection.unlisten(uri);
