@@ -3021,6 +3021,238 @@ policy.setIntrospectionCacheTtl(30); // 30 seconds
 
 NOTE: When a token is introspected and cached, subsequent requests with the same token will use the cached result until the TTL expires. Balance security requirements with performance needs.
 
+==== Pluggable Cache Implementation
+
+The token introspection feature supports pluggable cache implementations for flexible caching strategies. This allows you to choose the best caching solution for your performance and scalability requirements.
+
+===== Available Cache Types
+
+The component provides three cache implementations:
+
+1. **ConcurrentMap Cache** (default) - Simple in-memory cache using `ConcurrentHashMap`
+   - Time-based expiration (TTL)
+   - No external dependencies
+   - Suitable for basic use cases and backward compatibility
+
+2. **Caffeine Cache** (recommended for production) - High-performance cache with advanced features
+   - Time-based expiration
+   - Size-based eviction
+   - Detailed statistics (hit rate, miss rate, evictions)
+   - Optimized for high throughput
+   - Requires `caffeine` dependency (marked as optional)
+
+3. **No Cache** - Disables caching completely
+   - Every token is introspected on each request
+   - Useful for testing or strict security requirements
+
+===== Using Caffeine Cache
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+import org.apache.camel.component.keycloak.security.cache.TokenCacheType;
+
+// Create introspector with Caffeine cache for high performance
+KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+    serverUrl,
+    realm,
+    clientId,
+    clientSecret,
+    TokenCacheType.CAFFEINE,
+    300,         // TTL in seconds (5 minutes)
+    10000,       // max cache size (0 for unlimited)
+    true         // record statistics
+);
+
+// Check cache statistics
+TokenCache.CacheStats stats = introspector.getCacheStats();
+if (stats != null) {
+    System.out.println("Cache hit rate: " + stats.getHitRate());
+    System.out.println("Total hits: " + stats.getHitCount());
+    System.out.println("Total misses: " + stats.getMissCount());
+    System.out.println("Evictions: " + stats.getEvictionCount());
+}
+
+// Get current cache size
+long size = introspector.getCacheSize();
+System.out.println("Cached tokens: " + size);
+----
+====
+
+===== Custom Cache Configuration
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+import org.apache.camel.component.keycloak.security.cache.TokenCache;
+import org.apache.camel.component.keycloak.security.cache.CaffeineTokenCache;
+
+// Create a custom cache with specific settings
+TokenCache customCache = new CaffeineTokenCache(
+    600,         // 10 minutes TTL
+    50000,       // max 50k entries
+    true         // enable stats
+);
+
+// Use the custom cache instance
+KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+    serverUrl,
+    realm,
+    clientId,
+    clientSecret,
+    customCache
+);
+----
+====
+
+===== Cache Configuration in Security Policy
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// High-performance policy with Caffeine cache
+KeycloakSecurityPolicy highPerfPolicy = new KeycloakSecurityPolicy();
+highPerfPolicy.setServerUrl("http://localhost:8080");
+highPerfPolicy.setRealm("production-realm");
+highPerfPolicy.setClientId("api-service");
+highPerfPolicy.setClientSecret("api-secret");
+highPerfPolicy.setRequiredRoles("user");
+
+// Enable introspection with Caffeine cache
+highPerfPolicy.setUseTokenIntrospection(true);
+highPerfPolicy.setIntrospectionCacheType(TokenCacheType.CAFFEINE);
+highPerfPolicy.setIntrospectionCacheTtl(120);  // 2 minutes
+highPerfPolicy.setIntrospectionCacheMaxSize(5000);  // max 5k tokens
+highPerfPolicy.setIntrospectionCacheStats(true);  // enable statistics
+
+from("rest:get:/api/data")
+    .policy(highPerfPolicy)
+    .to("bean:dataService?method=getData");
+----
+
+YAML::
++
+[source,yaml]
+----
+# Bean definition with Caffeine cache
+beans:
+  - name: highPerfPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "production-realm"
+      clientId: "api-service"
+      clientSecret: "api-secret"
+      requiredRoles: "user"
+      useTokenIntrospection: true
+      introspectionCacheType: "CAFFEINE"
+      introspectionCacheTtl: 120
+      introspectionCacheMaxSize: 5000
+      introspectionCacheStats: true
+----
+====
+
+===== Maven Dependency for Caffeine
+
+To use Caffeine cache, add the following dependency to your project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.github.ben-manes.caffeine</groupId>
+    <artifactId>caffeine</artifactId>
+</dependency>
+----
+
+NOTE: Caffeine is marked as optional in the camel-keycloak component, so you must explicitly add it to your project to use the Caffeine cache implementation.
+
+===== Cache Performance Monitoring
+
+For production systems, monitor cache performance to optimize TTL and size settings:
+
+[source,java]
+----
+// Periodically check cache performance
+TokenCache.CacheStats stats = introspector.getCacheStats();
+
+if (stats != null) {
+    logger.info("Token cache performance: " + stats.toString());
+    // Output: CacheStats{hits=1000, misses=100, hitRate=90.91%, evictions=50}
+
+    // Alert if hit rate is too low
+    if (stats.getHitRate() < 0.7) {
+        logger.warn("Low cache hit rate: " + stats.getHitRate());
+        logger.warn("Consider increasing cache TTL or size");
+    }
+
+    // Monitor evictions
+    if (stats.getEvictionCount() > threshold) {
+        logger.info("High eviction count: " + stats.getEvictionCount());
+        logger.info("Consider increasing cache max size");
+    }
+}
+----
+
+===== Cache Selection Guidelines
+
+[width="100%",cols="30%,35%,35%",options="header"]
+|===
+| Use Case | Recommended Cache | Configuration
+
+| **Development/Testing** | ConcurrentMap | TTL: 60s, Default settings
+| **Production (Low-Medium Traffic)** | ConcurrentMap | TTL: 120s, Monitor size
+| **Production (High Traffic)** | Caffeine | TTL: 300s, maxSize: 10000+, stats enabled
+| **Very High Traffic** | Caffeine | TTL: 300s, maxSize: 50000+, stats enabled
+| **Strict Security** | NONE or low TTL | TTL: 30s or disable caching
+| **Testing/Debugging** | NONE | Disable caching for fresh validation
+|===
+
+===== Best Practices
+
+1. **TTL Configuration**: Set TTL slightly shorter than your token expiration time to balance security and performance
+
+2. **Cache Size**: For Caffeine, set `maxSize` based on expected concurrent users:
+   - Small deployments (< 1000 users): 1000-5000 entries
+   - Medium deployments (1000-10000 users): 10000-25000 entries
+   - Large deployments (> 10000 users): 50000+ entries
+
+3. **Statistics**: Enable statistics in production environments for monitoring and tuning
+
+4. **Cleanup**: Always call `introspector.close()` when shutting down to release resources properly
+
+5. **Different Policies for Different Endpoints**: Use Caffeine cache for high-traffic endpoints and stricter settings for security-critical endpoints
+
+[source,java]
+----
+// High-traffic endpoint - use Caffeine with longer TTL
+KeycloakSecurityPolicy highTrafficPolicy = new KeycloakSecurityPolicy();
+highTrafficPolicy.setUseTokenIntrospection(true);
+highTrafficPolicy.setIntrospectionCacheType(TokenCacheType.CAFFEINE);
+highTrafficPolicy.setIntrospectionCacheTtl(300); // 5 minutes
+
+// Security-critical endpoint - shorter TTL or no cache
+KeycloakSecurityPolicy criticalPolicy = new KeycloakSecurityPolicy();
+criticalPolicy.setUseTokenIntrospection(true);
+criticalPolicy.setIntrospectionCacheType(TokenCacheType.NONE); // No caching
+
+from("rest:get:/api/users")
+    .policy(highTrafficPolicy)  // Cached validation
+    .to("bean:userService");
+
+from("rest:post:/payments")
+    .policy(criticalPolicy)  // Real-time validation
+    .to("bean:paymentService");
+----
+
 ==== Token Revocation Workflow
 
 When using token introspection, you can implement a complete token revocation workflow:
