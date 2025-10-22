@@ -29,6 +29,7 @@ public class VaultConfiguration {
     private KubernetesConfigMapVaultConfiguration kubernetesConfigmaps;
     private IBMSecretsManagerVaultConfiguration ibmSecretsManager;
     private SpringCloudConfigConfiguration springConfig;
+    private CyberArkVaultConfiguration cyberark;
 
     /**
      * AWS Vault Configuration
@@ -107,6 +108,16 @@ public class VaultConfiguration {
         return springConfig;
     }
 
+    /**
+     * CyberArk Vault Configuration
+     */
+    public CyberArkVaultConfiguration cyberark() {
+        if (cyberark == null) {
+            cyberark = new CyberArkVaultConfiguration();
+        }
+        return cyberark;
+    }
+
     public AwsVaultConfiguration getAwsVaultConfiguration() {
         return aws;
     }
@@ -169,5 +180,13 @@ public class VaultConfiguration {
 
     public void setSpringCloudConfigConfiguration(SpringCloudConfigConfiguration springCloudConfigConfiguration) {
         this.springConfig = springCloudConfigConfiguration;
+    }
+
+    public CyberArkVaultConfiguration getCyberArkVaultConfiguration() {
+        return cyberark;
+    }
+
+    public void setCyberArkVaultConfiguration(CyberArkVaultConfiguration cyberark) {
+        this.cyberark = cyberark;
     }
 }

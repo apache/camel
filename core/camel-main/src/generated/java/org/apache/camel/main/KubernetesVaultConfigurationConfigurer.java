@@ -27,6 +27,8 @@ public class KubernetesVaultConfigurationConfigurer extends org.apache.camel.sup
         case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": target.setCyberArkVaultConfiguration(property(camelContext, org.apache.camel.vault.CyberArkVaultConfiguration.class, value)); return true;
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": target.setGcpVaultConfiguration(property(camelContext, org.apache.camel.vault.GcpVaultConfiguration.class, value)); return true;
         case "hashicorpvaultconfiguration":
@@ -53,6 +55,8 @@ public class KubernetesVaultConfigurationConfigurer extends org.apache.camel.sup
         case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": return org.apache.camel.vault.CyberArkVaultConfiguration.class;
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": return org.apache.camel.vault.GcpVaultConfiguration.class;
         case "hashicorpvaultconfiguration":
@@ -80,6 +84,8 @@ public class KubernetesVaultConfigurationConfigurer extends org.apache.camel.sup
         case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": return target.getCyberArkVaultConfiguration();
         case "gcpvaultconfiguration":
         case "gcpVaultConfiguration": return target.getGcpVaultConfiguration();
         case "hashicorpvaultconfiguration":

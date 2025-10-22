@@ -2056,6 +2056,9 @@ public abstract class BaseMainSupport extends BaseService {
             if ("ibm".equalsIgnoreCase(name)) {
                 target = target.ibmSecretsManager();
             }
+            if ("cyberark".equalsIgnoreCase(name)) {
+                target = target.cyberark();
+            }
             // configure all the properties on the vault at once (to ensure they are configured in right order)
             OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");
             setPropertiesOnTarget(camelContext, target, config, "camel.vault." + name + ".", failIfNotSet, true,

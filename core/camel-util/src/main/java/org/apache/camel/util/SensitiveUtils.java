@@ -43,6 +43,7 @@ public final class SensitiveUtils {
                     "authenticationtoken",
                     "authkey",
                     "authorizationtoken",
+                    "authtoken",
                     "blobaccesskey",
                     "blobstoragesharedkeycredential",
                     "certresourcepassword",
@@ -129,6 +130,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qauthenticationtoken\\E"
                                                     + "|\\Qauthkey\\E"
                                                     + "|\\Qauthorizationtoken\\E"
+                                                    + "|\\Qauthtoken\\E"
                                                     + "|\\Qblobaccesskey\\E"
                                                     + "|\\Qblobstoragesharedkeycredential\\E"
                                                     + "|\\Qcertresourcepassword\\E"

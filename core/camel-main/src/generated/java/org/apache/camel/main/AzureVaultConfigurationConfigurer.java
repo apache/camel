@@ -39,6 +39,8 @@ public class AzureVaultConfigurationConfigurer extends org.apache.camel.support.
         case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": target.setCyberArkVaultConfiguration(property(camelContext, org.apache.camel.vault.CyberArkVaultConfiguration.class, value)); return true;
         case "eventhubconnectionstring":
         case "eventhubConnectionString": target.setEventhubConnectionString(property(camelContext, java.lang.String.class, value)); return true;
         case "gcpvaultconfiguration":
@@ -85,6 +87,8 @@ public class AzureVaultConfigurationConfigurer extends org.apache.camel.support.
         case "clientId": return java.lang.String.class;
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": return org.apache.camel.vault.CyberArkVaultConfiguration.class;
         case "eventhubconnectionstring":
         case "eventhubConnectionString": return java.lang.String.class;
         case "gcpvaultconfiguration":
@@ -132,6 +136,8 @@ public class AzureVaultConfigurationConfigurer extends org.apache.camel.support.
         case "clientId": return target.getClientId();
         case "clientsecret":
         case "clientSecret": return target.getClientSecret();
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": return target.getCyberArkVaultConfiguration();
         case "eventhubconnectionstring":
         case "eventhubConnectionString": return target.getEventhubConnectionString();
         case "gcpvaultconfiguration":

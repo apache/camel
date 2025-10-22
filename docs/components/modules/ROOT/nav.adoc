@@ -310,6 +310,7 @@
 ** xref:scheduler-component.adoc[Scheduler]
 ** xref:schematron-component.adoc[Schematron]
 ** xref:scp-component.adoc[SCP]
+*** xref:cyberark-vault-component.adoc[CyberArk Vault]
 ** xref:seda-component.adoc[SEDA]
 ** xref:service-component.adoc[Service]
 ** xref:servicenow-component.adoc[ServiceNow]

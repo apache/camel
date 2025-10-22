@@ -29,6 +29,8 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": target.setCyberArkVaultConfiguration(property(camelContext, org.apache.camel.vault.CyberArkVaultConfiguration.class, value)); return true;
         case "defaultcredentialsprovider":
         case "defaultCredentialsProvider": target.setDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "gcpvaultconfiguration":
@@ -76,6 +78,8 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": return org.apache.camel.vault.CyberArkVaultConfiguration.class;
         case "defaultcredentialsprovider":
         case "defaultCredentialsProvider": return boolean.class;
         case "gcpvaultconfiguration":
@@ -124,6 +128,8 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
         case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": return target.getCyberArkVaultConfiguration();
         case "defaultcredentialsprovider":
         case "defaultCredentialsProvider": return target.isDefaultCredentialsProvider();
         case "gcpvaultconfiguration":
