@@ -3039,7 +3039,6 @@ The component provides three cache implementations:
    - Size-based eviction
    - Detailed statistics (hit rate, miss rate, evictions)
    - Optimized for high throughput
-   - Requires `caffeine` dependency (marked as optional)
 
 3. **No Cache** - Disables caching completely
    - Every token is introspected on each request
@@ -3160,20 +3159,6 @@ beans:
       introspectionCacheStats: true
 ----
 ====
-
-===== Maven Dependency for Caffeine
-
-To use Caffeine cache, add the following dependency to your project:
-
-[source,xml]
-----
-<dependency>
-    <groupId>com.github.ben-manes.caffeine</groupId>
-    <artifactId>caffeine</artifactId>
-</dependency>
-----
-
-NOTE: Caffeine is marked as optional in the camel-keycloak component, so you must explicitly add it to your project to use the Caffeine cache implementation.
 
 ===== Cache Performance Monitoring
 

@@ -65,9 +65,8 @@
             <version>${httpclient-version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-            <optional>true</optional>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-caffeine</artifactId>
         </dependency>
 
         <!-- test dependencies -->
