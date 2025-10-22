@@ -264,6 +264,10 @@ public class AS2Configuration {
         return requestUriPattern;
     }
 
+    /**
+     * URI pattern for inbound AS2 messages. This is used to map the route to a specific path on the AS2 server
+     * connection (e.g., "/as2/edi"). Defaults to "/".
+     */
     public void setRequestUriPattern(String requestUriPattern) {
         this.requestUriPattern = requestUriPattern;
     }
