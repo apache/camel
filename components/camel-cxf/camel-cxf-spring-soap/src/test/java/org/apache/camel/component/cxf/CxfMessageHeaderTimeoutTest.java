@@ -34,6 +34,8 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -41,6 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMessageHeaderTimeoutTest.class);
+
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
     protected static final String SERVER_ADDRESS
@@ -61,7 +66,8 @@ public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
         assertNotNull(e, "We should get the exception cause here");
-        assertTrue(e instanceof HttpTimeoutException, "We should get an http time out exception here");
+        assertTrue(e instanceof HttpTimeoutException,
+                String.format("Expected HttpTimeoutException, but got %s", e.getClass().getName()));
     }
 
     protected Exchange sendJaxWsMessage(String endpointUri) throws InterruptedException {
