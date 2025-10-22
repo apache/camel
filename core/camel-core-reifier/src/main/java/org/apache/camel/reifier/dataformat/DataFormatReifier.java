@@ -196,6 +196,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new ParquetAvroDataFormatReifier(camelContext, definition);
         } else if (definition instanceof PGPDataFormat) {
             return new PGPDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof PQCDataFormat) {
+            return new PQCDataFormatReifier(camelContext, definition);
         } else if (definition instanceof ProtobufDataFormat) {
             return new ProtobufDataFormatReifier(camelContext, definition);
         } else if (definition instanceof RssDataFormat) {

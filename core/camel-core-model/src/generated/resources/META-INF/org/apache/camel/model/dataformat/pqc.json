@@ -1,19 +1,16 @@
 {
-  "dataformat": {
-    "kind": "dataformat",
+  "model": {
+    "kind": "model",
     "name": "pqc",
     "title": "PQC (Post-Quantum Cryptography)",
     "description": "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).",
     "deprecated": false,
     "firstVersion": "4.16.0",
     "label": "dataformat,transformation,security",
-    "javaType": "org.apache.camel.component.pqc.PQCDataFormat",
-    "supportLevel": "Preview",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-pqc",
-    "version": "4.16.0-SNAPSHOT",
-    "modelName": "pqc",
-    "modelJavaType": "org.apache.camel.model.dataformat.PQCDataFormat"
+    "javaType": "org.apache.camel.model.dataformat.PQCDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },

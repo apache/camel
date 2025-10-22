@@ -528,6 +528,9 @@ public class ModelWriter extends BaseWriter {
     public void writePGPDataFormat(PGPDataFormat def) throws IOException {
         doWritePGPDataFormat("pgp", def);
     }
+    public void writePQCDataFormat(PQCDataFormat def) throws IOException {
+        doWritePQCDataFormat("pqc", def);
+    }
     public void writeParquetAvroDataFormat(ParquetAvroDataFormat def) throws IOException {
         doWriteParquetAvroDataFormat("parquetAvro", def);
     }
@@ -2801,6 +2804,18 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("signatureKeyFileName", def.getSignatureKeyFileName(), null);
         doWriteAttribute("hashAlgorithm", def.getHashAlgorithm(), null);
         doWriteAttribute("algorithm", def.getAlgorithm(), null);
+        endElement(name);
+    }
+    protected void doWritePQCDataFormat(String name, PQCDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("provider", def.getProvider(), null);
+        doWriteAttribute("symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
+        doWriteAttribute("keyGenerator", def.getKeyGenerator(), null);
+        doWriteAttribute("keyPair", def.getKeyPair(), null);
+        doWriteAttribute("bufferSize", def.getBufferSize(), "4096");
+        doWriteAttribute("symmetricKeyLength", def.getSymmetricKeyLength(), "128");
+        doWriteAttribute("keyEncapsulationAlgorithm", def.getKeyEncapsulationAlgorithm(), "MLKEM");
         endElement(name);
     }
     protected void doWriteParquetAvroDataFormat(String name, ParquetAvroDataFormat def) throws IOException {

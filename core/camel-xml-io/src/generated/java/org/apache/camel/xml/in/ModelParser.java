@@ -2101,6 +2101,18 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
+    protected PQCDataFormat doParsePQCDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new PQCDataFormat(), (def, key, val) -> switch (key) {
+                case "bufferSize": def.setBufferSize(val); yield true;
+                case "keyEncapsulationAlgorithm": def.setKeyEncapsulationAlgorithm(val); yield true;
+                case "keyGenerator": def.setKeyGenerator(val); yield true;
+                case "keyPair": def.setKeyPair(val); yield true;
+                case "provider": def.setProvider(val); yield true;
+                case "symmetricKeyAlgorithm": def.setSymmetricKeyAlgorithm(val); yield true;
+                case "symmetricKeyLength": def.setSymmetricKeyLength(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
     protected ParquetAvroDataFormat doParseParquetAvroDataFormat() throws IOException, XmlPullParserException {
         return doParse(new ParquetAvroDataFormat(), (def, key, val) -> switch (key) {
                 case "compressionCodecName": def.setCompressionCodecName(val); yield true;
@@ -2968,6 +2980,7 @@ public class ModelParser extends BaseParser {
             case "lzf": return doParseLZFDataFormat();
             case "mimeMultipart": return doParseMimeMultipartDataFormat();
             case "pgp": return doParsePGPDataFormat();
+            case "pqc": return doParsePQCDataFormat();
             case "parquetAvro": return doParseParquetAvroDataFormat();
             case "protobuf": return doParseProtobufDataFormat();
             case "rss": return doParseRssDataFormat();
