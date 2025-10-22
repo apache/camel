@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.servicebus.ServiceBusConstants;
@@ -47,6 +48,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     private static final String DIRECT_SEND_TO_SESSION_QUEUE_URI = "direct:sendToQueueSessions";
     private static final Map<String, Object> PROPAGATED_HEADERS = new HashMap<>();
     private static final Pattern MESSAGE_BODY_PATTERN = Pattern.compile("^message-[0-4]$");
+    private static final String APPLICATION_JSON_CONTENT_TYPE = "application/json";
 
     static {
         PROPAGATED_HEADERS.put("booleanHeader", true);
@@ -60,6 +62,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
         PROPAGATED_HEADERS.put("stringHeader", "stringHeader");
         PROPAGATED_HEADERS.put("timestampHeader", new Date());
         PROPAGATED_HEADERS.put("uuidHeader", UUID.randomUUID());
+        PROPAGATED_HEADERS.put(Exchange.CONTENT_TYPE, APPLICATION_JSON_CONTENT_TYPE);
     }
 
     private ProducerTemplate producerTemplate;
@@ -120,6 +123,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
                 assertEquals(PROPAGATED_HEADERS, applicationProperties);
+                assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
             });
         }
     }
@@ -148,6 +152,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
                 assertEquals(PROPAGATED_HEADERS, applicationProperties);
+                assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
             });
         }
     }
@@ -170,6 +175,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
                 assertEquals(PROPAGATED_HEADERS, applicationProperties);
+                assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
             });
         }
     }
@@ -194,6 +200,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
                 assertEquals(PROPAGATED_HEADERS, applicationProperties);
+                assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
                 assertInstanceOf(OffsetDateTime.class, message.getScheduledEnqueueTime());
             });
         }
@@ -225,6 +232,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
                 assertEquals(PROPAGATED_HEADERS, applicationProperties);
+                assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
                 assertInstanceOf(OffsetDateTime.class, message.getScheduledEnqueueTime());
             });
         }
@@ -252,6 +260,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
                 assertEquals(PROPAGATED_HEADERS, applicationProperties);
+                assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
             });
         }
     }
@@ -280,6 +289,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
                 assertEquals(PROPAGATED_HEADERS, applicationProperties);
+                assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
             });
         }
     }
@@ -324,6 +334,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
                 assertEquals(PROPAGATED_HEADERS, applicationProperties);
+                assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
                 assertInstanceOf(OffsetDateTime.class, message.getScheduledEnqueueTime());
             });
         }
@@ -355,6 +366,7 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
                 assertTrue(MESSAGE_BODY_PATTERN.matcher(messageBody).matches());
                 Map<String, Object> applicationProperties = message.getApplicationProperties();
                 assertEquals(PROPAGATED_HEADERS, applicationProperties);
+                assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
                 assertInstanceOf(OffsetDateTime.class, message.getScheduledEnqueueTime());
             });
         }
