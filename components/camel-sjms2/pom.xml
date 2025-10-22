@@ -34,6 +34,8 @@
 
     <properties>
         <camel.surefire.forkTimeout>6000</camel.surefire.forkTimeout>
+        <!-- Make use of native access during test execution only -->
+        <camel.surefire.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
