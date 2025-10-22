@@ -164,6 +164,7 @@ import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
+import org.apache.camel.model.dataformat.PQCDataFormat;
 import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
@@ -11729,6 +11730,87 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "signatureVerificationOption": {
                     String val = asText(node);
                     target.setSignatureVerificationOption(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "pqc",
+            types = org.apache.camel.model.dataformat.PQCDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "PQC (Post-Quantum Cryptography)",
+            description = "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "bufferSize", type = "number", defaultValue = "4096", description = "The size of the buffer used for streaming encryption/decryption.", displayName = "Buffer Size"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "keyEncapsulationAlgorithm", type = "string", defaultValue = "MLKEM", description = "The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO, NTRU, NTRULPRime, SNTRUPrime, KYBER", displayName = "Key Encapsulation Algorithm"),
+                    @YamlProperty(name = "keyGenerator", type = "string", description = "Refers to a custom KeyGenerator to lookup from the register for KEM operations.", displayName = "Key Generator"),
+                    @YamlProperty(name = "keyPair", type = "string", description = "Refers to the KeyPair to lookup from the register to use for KEM operations.", displayName = "Key Pair"),
+                    @YamlProperty(name = "provider", type = "string", description = "The JCE security provider to use.", displayName = "Provider"),
+                    @YamlProperty(name = "symmetricKeyAlgorithm", type = "string", defaultValue = "AES", description = "The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA, CAST5, CAST6, CHACHA7539, etc.", displayName = "Symmetric Key Algorithm"),
+                    @YamlProperty(name = "symmetricKeyLength", type = "number", defaultValue = "128", description = "The length (in bits) of the symmetric key.", displayName = "Symmetric Key Length")
+            }
+    )
+    public static class PQCDataFormatDeserializer extends YamlDeserializerBase<PQCDataFormat> {
+        public PQCDataFormatDeserializer() {
+            super(PQCDataFormat.class);
+        }
+
+        @Override
+        protected PQCDataFormat newInstance() {
+            return new PQCDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(PQCDataFormat target, String propertyKey, String propertyName,
+                Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "bufferSize": {
+                    String val = asText(node);
+                    target.setBufferSize(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "keyEncapsulationAlgorithm": {
+                    String val = asText(node);
+                    target.setKeyEncapsulationAlgorithm(val);
+                    break;
+                }
+                case "keyGenerator": {
+                    String val = asText(node);
+                    target.setKeyGenerator(val);
+                    break;
+                }
+                case "keyPair": {
+                    String val = asText(node);
+                    target.setKeyPair(val);
+                    break;
+                }
+                case "provider": {
+                    String val = asText(node);
+                    target.setProvider(val);
+                    break;
+                }
+                case "symmetricKeyAlgorithm": {
+                    String val = asText(node);
+                    target.setSymmetricKeyAlgorithm(val);
+                    break;
+                }
+                case "symmetricKeyLength": {
+                    String val = asText(node);
+                    target.setSymmetricKeyLength(val);
                     break;
                 }
                 default: {

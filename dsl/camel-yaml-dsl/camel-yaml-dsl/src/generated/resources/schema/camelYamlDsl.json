@@ -12410,6 +12410,58 @@
           }
         }
       },
+      "org.apache.camel.model.dataformat.PQCDataFormat" : {
+        "title" : "PQC (Post-Quantum Cryptography)",
+        "description" : "Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "bufferSize" : {
+            "type" : "number",
+            "title" : "Buffer Size",
+            "description" : "The size of the buffer used for streaming encryption/decryption.",
+            "default" : "4096"
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "keyEncapsulationAlgorithm" : {
+            "type" : "string",
+            "title" : "Key Encapsulation Algorithm",
+            "description" : "The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO, NTRU, NTRULPRime, SNTRUPrime, KYBER",
+            "default" : "MLKEM"
+          },
+          "keyGenerator" : {
+            "type" : "string",
+            "title" : "Key Generator",
+            "description" : "Refers to a custom KeyGenerator to lookup from the register for KEM operations."
+          },
+          "keyPair" : {
+            "type" : "string",
+            "title" : "Key Pair",
+            "description" : "Refers to the KeyPair to lookup from the register to use for KEM operations."
+          },
+          "provider" : {
+            "type" : "string",
+            "title" : "Provider",
+            "description" : "The JCE security provider to use."
+          },
+          "symmetricKeyAlgorithm" : {
+            "type" : "string",
+            "title" : "Symmetric Key Algorithm",
+            "description" : "The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA, CAST5, CAST6, CHACHA7539, etc.",
+            "default" : "AES"
+          },
+          "symmetricKeyLength" : {
+            "type" : "number",
+            "title" : "Symmetric Key Length",
+            "description" : "The length (in bits) of the symmetric key.",
+            "default" : "128"
+          }
+        }
+      },
       "org.apache.camel.model.dataformat.ParquetAvroDataFormat" : {
         "title" : "Parquet File",
         "description" : "Parquet Avro serialization and de-serialization.",
