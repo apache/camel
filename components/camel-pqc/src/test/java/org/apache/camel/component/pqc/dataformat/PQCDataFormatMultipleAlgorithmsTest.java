@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pqc;
+package org.apache.camel.component.pqc.dataformat;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
@@ -30,6 +30,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;

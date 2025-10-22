@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pqc;
+package org.apache.camel.component.pqc.dataformat;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -30,6 +30,8 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.component.pqc.PQCSymmetricAlgorithms;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
