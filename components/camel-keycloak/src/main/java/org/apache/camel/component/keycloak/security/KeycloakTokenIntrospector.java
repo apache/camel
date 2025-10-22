@@ -19,9 +19,11 @@ package org.apache.camel.component.keycloak.security;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.component.keycloak.security.cache.TokenCache;
+import org.apache.camel.component.keycloak.security.cache.TokenCacheFactory;
+import org.apache.camel.component.keycloak.security.cache.TokenCacheType;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
@@ -37,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Token introspection client for Keycloak OAuth 2.0 Token Introspection (RFC 7662). This class handles communication
  * with Keycloak's introspection endpoint to validate tokens in real-time, including detecting revoked tokens before
- * their expiration.
+ * their expiration. Supports pluggable cache implementations for flexible caching strategies.
  */
 public class KeycloakTokenIntrospector {
     private static final Logger LOG = LoggerFactory.getLogger(KeycloakTokenIntrospector.class);
@@ -48,21 +50,62 @@ public class KeycloakTokenIntrospector {
     private final String clientId;
     private final String clientSecret;
     private final CloseableHttpClient httpClient;
-    private final Map<String, CachedIntrospectionResult> cache;
-    private final boolean cacheEnabled;
-    private final long cacheTtlMillis;
+    private final TokenCache cache;
 
+    /**
+     * Creates a new token introspector with the specified cache configuration.
+     *
+     * @param serverUrl       the Keycloak server URL
+     * @param realm           the realm name
+     * @param clientId        the client ID
+     * @param clientSecret    the client secret
+     * @param cacheEnabled    whether to enable caching
+     * @param cacheTtlSeconds cache time-to-live in seconds
+     */
     public KeycloakTokenIntrospector(
                                      String serverUrl, String realm, String clientId, String clientSecret,
                                      boolean cacheEnabled, long cacheTtlSeconds) {
+        this(serverUrl, realm, clientId, clientSecret,
+             cacheEnabled ? TokenCacheFactory.createCache(cacheTtlSeconds) : null);
+    }
+
+    /**
+     * Creates a new token introspector with advanced cache configuration.
+     *
+     * @param serverUrl       the Keycloak server URL
+     * @param realm           the realm name
+     * @param clientId        the client ID
+     * @param clientSecret    the client secret
+     * @param cacheType       the type of cache to use
+     * @param cacheTtlSeconds cache time-to-live in seconds
+     * @param maxCacheSize    maximum cache size (only for CAFFEINE type, 0 for unlimited)
+     * @param recordStats     whether to record cache statistics (only for CAFFEINE type)
+     */
+    public KeycloakTokenIntrospector(
+                                     String serverUrl, String realm, String clientId, String clientSecret,
+                                     TokenCacheType cacheType, long cacheTtlSeconds, long maxCacheSize, boolean recordStats) {
+        this(serverUrl, realm, clientId, clientSecret,
+             TokenCacheFactory.createCache(cacheType, cacheTtlSeconds, maxCacheSize, recordStats));
+    }
+
+    /**
+     * Creates a new token introspector with a custom cache implementation.
+     *
+     * @param serverUrl    the Keycloak server URL
+     * @param realm        the realm name
+     * @param clientId     the client ID
+     * @param clientSecret the client secret
+     * @param cache        the cache implementation to use (null to disable caching)
+     */
+    public KeycloakTokenIntrospector(
+                                     String serverUrl, String realm, String clientId, String clientSecret,
+                                     TokenCache cache) {
         this.serverUrl = serverUrl;
         this.realm = realm;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.httpClient = HttpClients.createDefault();
-        this.cacheEnabled = cacheEnabled;
-        this.cacheTtlMillis = cacheTtlSeconds * 1000;
-        this.cache = cacheEnabled ? new ConcurrentHashMap<>() : null;
+        this.cache = cache;
     }
 
     /**
@@ -78,13 +121,11 @@ public class KeycloakTokenIntrospector {
         }
 
         // Check cache first
-        if (cacheEnabled) {
-            CachedIntrospectionResult cached = cache.get(token);
-            if (cached != null && !cached.isExpired()) {
+        if (cache != null) {
+            IntrospectionResult cached = cache.get(token);
+            if (cached != null) {
                 LOG.debug("Returning cached introspection result for token");
-                return cached.result;
-            } else if (cached != null) {
-                cache.remove(token);
+                return cached;
             }
         }
 
@@ -113,9 +154,8 @@ public class KeycloakTokenIntrospector {
             });
 
             // Cache the result
-            if (cacheEnabled && result != null) {
-                cache.put(token, new CachedIntrospectionResult(result, cacheTtlMillis));
-                cleanupExpiredCacheEntries();
+            if (cache != null && result != null) {
+                cache.put(token, result);
             }
 
             return result;
@@ -148,33 +188,36 @@ public class KeycloakTokenIntrospector {
         }
     }
 
-    private void cleanupExpiredCacheEntries() {
-        if (!cacheEnabled || cache.isEmpty()) {
-            return;
-        }
-
-        // Cleanup expired entries (max 100 at a time to avoid performance issues)
-        cache.entrySet().removeIf(entry -> {
-            if (entry.getValue().isExpired()) {
-                LOG.trace("Removing expired cache entry");
-                return true;
-            }
-            return false;
-        });
-    }
-
     /**
      * Clears the introspection cache.
      */
     public void clearCache() {
-        if (cacheEnabled) {
+        if (cache != null) {
             cache.clear();
             LOG.debug("Introspection cache cleared");
         }
     }
 
     /**
-     * Closes the HTTP client.
+     * Returns cache statistics if available.
+     *
+     * @return cache statistics, or null if not available
+     */
+    public TokenCache.CacheStats getCacheStats() {
+        return cache != null ? cache.getStats() : null;
+    }
+
+    /**
+     * Returns the current cache size.
+     *
+     * @return the number of entries in the cache, or 0 if caching is disabled
+     */
+    public long getCacheSize() {
+        return cache != null ? cache.size() : 0;
+    }
+
+    /**
+     * Closes the HTTP client and cache.
      */
     public void close() {
         try {
@@ -183,6 +226,9 @@ public class KeycloakTokenIntrospector {
             }
         } catch (IOException e) {
             LOG.warn("Error closing HTTP client", e);
+        }
+        if (cache != null) {
+            cache.close();
         }
     }
 
@@ -294,23 +340,6 @@ public class KeycloakTokenIntrospector {
          */
         public Object getClaim(String claimName) {
             return claims.get(claimName);
-        }
-    }
-
-    /**
-     * Internal class to hold cached introspection results with expiration.
-     */
-    private static class CachedIntrospectionResult {
-        private final IntrospectionResult result;
-        private final long expirationTime;
-
-        public CachedIntrospectionResult(IntrospectionResult result, long ttlMillis) {
-            this.result = result;
-            this.expirationTime = System.currentTimeMillis() + ttlMillis;
-        }
-
-        public boolean isExpired() {
-            return System.currentTimeMillis() >= expirationTime;
         }
     }
 }

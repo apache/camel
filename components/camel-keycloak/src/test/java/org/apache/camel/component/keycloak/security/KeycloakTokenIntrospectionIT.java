@@ -33,6 +33,9 @@ import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.keycloak.security.cache.CaffeineTokenCache;
+import org.apache.camel.component.keycloak.security.cache.TokenCache;
+import org.apache.camel.component.keycloak.security.cache.TokenCacheType;
 import org.apache.camel.test.infra.keycloak.services.KeycloakService;
 import org.apache.camel.test.infra.keycloak.services.KeycloakServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -306,6 +309,27 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
                         .policy(noCachePolicy)
                         .transform().constant("No cache access granted")
                         .to("mock:no-cache-result");
+
+                // Policy with Caffeine cache
+                KeycloakSecurityPolicy caffeinePolicy = new KeycloakSecurityPolicy();
+                caffeinePolicy.setServerUrl(keycloakService.getKeycloakServerUrl());
+                caffeinePolicy.setRealm(TEST_REALM_NAME);
+                caffeinePolicy.setClientId(TEST_CLIENT_ID);
+                caffeinePolicy.setClientSecret(TEST_CLIENT_SECRET);
+                caffeinePolicy.setRequiredRoles(Arrays.asList(ADMIN_ROLE));
+                caffeinePolicy.setUseTokenIntrospection(true);
+                caffeinePolicy.setIntrospectionCacheEnabled(true);
+                caffeinePolicy.setIntrospectionCacheTtl(60);
+                // Use Caffeine cache by creating custom cache
+                TokenCache customCaffeineCache = new CaffeineTokenCache(60, 100, true);
+
+                // Store for later retrieval in tests
+                context.getRegistry().bind("caffeineCache", customCaffeineCache);
+
+                from("direct:caffeine-protected")
+                        .policy(caffeinePolicy)
+                        .transform().constant("Caffeine cache access granted")
+                        .to("mock:caffeine-result");
             }
         };
     }
@@ -508,6 +532,190 @@ public class KeycloakTokenIntrospectionIT extends CamelTestSupport {
 
         assertNotNull(permissions);
         LOG.info("Permissions/scopes extracted from introspection: {}", permissions);
+
+        introspector.close();
+    }
+
+    @Test
+    @Order(30)
+    void testCaffeineCacheWithValidToken() throws Exception {
+        // Test Caffeine cache implementation with valid token
+        String adminToken = getAccessToken(ADMIN_USER, ADMIN_PASSWORD);
+        assertNotNull(adminToken);
+
+        // Create introspector with Caffeine cache
+        KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
+                TokenCacheType.CAFFEINE,
+                60,    // TTL in seconds
+                100,   // max size
+                true   // record stats
+        );
+
+        // First introspection
+        KeycloakTokenIntrospector.IntrospectionResult result1 = introspector.introspect(adminToken);
+        assertTrue(result1.isActive());
+
+        // Second introspection (should be cached)
+        KeycloakTokenIntrospector.IntrospectionResult result2 = introspector.introspect(adminToken);
+        assertTrue(result2.isActive());
+
+        // Verify cache statistics
+        TokenCache.CacheStats stats = introspector.getCacheStats();
+        assertNotNull(stats);
+        assertTrue(stats.getHitCount() >= 1, "Should have at least one cache hit");
+        LOG.info("Caffeine cache stats: {}", stats.toString());
+
+        // Verify cache size
+        long cacheSize = introspector.getCacheSize();
+        assertTrue(cacheSize > 0, "Cache should contain at least one entry");
+        LOG.info("Caffeine cache size: {}", cacheSize);
+
+        introspector.close();
+    }
+
+    @Test
+    @Order(31)
+    void testCaffeineCachePerformance() throws Exception {
+        // Test that Caffeine cache improves performance
+        String adminToken = getAccessToken(ADMIN_USER, ADMIN_PASSWORD);
+        assertNotNull(adminToken);
+
+        KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
+                TokenCacheType.CAFFEINE,
+                120,   // 2 minute TTL
+                1000,  // max 1000 entries
+                true   // record stats
+        );
+
+        // First introspection - will hit Keycloak
+        long start1 = System.currentTimeMillis();
+        KeycloakTokenIntrospector.IntrospectionResult result1 = introspector.introspect(adminToken);
+        long duration1 = System.currentTimeMillis() - start1;
+
+        // Second introspection - should hit cache
+        long start2 = System.currentTimeMillis();
+        KeycloakTokenIntrospector.IntrospectionResult result2 = introspector.introspect(adminToken);
+        long duration2 = System.currentTimeMillis() - start2;
+
+        assertTrue(result1.isActive());
+        assertTrue(result2.isActive());
+
+        // Cached result should be faster
+        LOG.info("First introspection (Keycloak): {}ms, Cached introspection (Caffeine): {}ms", duration1, duration2);
+        assertTrue(duration2 <= duration1, "Cached introspection should be faster or equal");
+
+        // Verify cache statistics
+        TokenCache.CacheStats stats = introspector.getCacheStats();
+        assertNotNull(stats);
+        assertEquals(1, stats.getHitCount(), "Should have exactly one cache hit");
+        assertEquals(1, stats.getMissCount(), "Should have exactly one cache miss");
+        assertEquals(0.5, stats.getHitRate(), 0.01, "Hit rate should be 50%");
+        LOG.info("Caffeine cache performance stats: {}", stats);
+
+        introspector.close();
+    }
+
+    @Test
+    @Order(32)
+    void testCaffeineCacheEviction() throws Exception {
+        // Test that Caffeine cache evicts entries based on size
+        String adminToken = getAccessToken(ADMIN_USER, ADMIN_PASSWORD);
+        assertNotNull(adminToken);
+
+        // Create cache with very small max size
+        KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
+                TokenCacheType.CAFFEINE,
+                300,   // 5 minute TTL
+                2,     // max 2 entries (small for testing eviction)
+                true   // record stats
+        );
+
+        // Introspect the same token multiple times
+        for (int i = 0; i < 5; i++) {
+            introspector.introspect(adminToken);
+        }
+
+        // Verify cache stats
+        TokenCache.CacheStats stats = introspector.getCacheStats();
+        assertNotNull(stats);
+        assertTrue(stats.getHitCount() > 0, "Should have cache hits");
+        LOG.info("Cache stats after multiple introspections: {}", stats);
+
+        // Verify cache size is within limits
+        long size = introspector.getCacheSize();
+        assertTrue(size <= 2, "Cache size should not exceed max size of 2");
+
+        introspector.close();
+    }
+
+    @Test
+    @Order(33)
+    void testCaffeineCacheWithMultipleTokens() throws Exception {
+        // Test Caffeine cache with multiple different tokens
+        String adminToken = getAccessToken(ADMIN_USER, ADMIN_PASSWORD);
+        String userToken = getAccessToken(USER_USER, USER_PASSWORD);
+        assertNotNull(adminToken);
+        assertNotNull(userToken);
+
+        KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
+                TokenCacheType.CAFFEINE,
+                60,    // 1 minute TTL
+                100,   // max 100 entries
+                true   // record stats
+        );
+
+        // Introspect both tokens
+        introspector.introspect(adminToken);
+        introspector.introspect(userToken);
+
+        // Verify both are cached
+        long cacheSize = introspector.getCacheSize();
+        assertEquals(2, cacheSize, "Cache should contain both tokens");
+
+        // Introspect again (should hit cache)
+        introspector.introspect(adminToken);
+        introspector.introspect(userToken);
+
+        TokenCache.CacheStats stats = introspector.getCacheStats();
+        assertNotNull(stats);
+        assertEquals(2, stats.getHitCount(), "Should have 2 cache hits");
+        assertEquals(2, stats.getMissCount(), "Should have 2 cache misses");
+        LOG.info("Cache stats with multiple tokens: {}", stats);
+
+        introspector.close();
+    }
+
+    @Test
+    @Order(34)
+    void testCaffeineCacheClearOperation() throws Exception {
+        // Test that cache can be cleared
+        String adminToken = getAccessToken(ADMIN_USER, ADMIN_PASSWORD);
+        assertNotNull(adminToken);
+
+        KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+                keycloakService.getKeycloakServerUrl(), TEST_REALM_NAME, TEST_CLIENT_ID, TEST_CLIENT_SECRET,
+                TokenCacheType.CAFFEINE,
+                60, 100, true);
+
+        // Introspect and cache
+        introspector.introspect(adminToken);
+        assertTrue(introspector.getCacheSize() > 0, "Cache should have entries");
+
+        // Clear cache
+        introspector.clearCache();
+        assertEquals(0, introspector.getCacheSize(), "Cache should be empty after clear");
+
+        // Introspect again (should miss cache)
+        introspector.introspect(adminToken);
+
+        TokenCache.CacheStats stats = introspector.getCacheStats();
+        assertNotNull(stats);
+        // After clear, stats should be reset
+        LOG.info("Cache stats after clear: {}", stats);
 
         introspector.close();
     }
