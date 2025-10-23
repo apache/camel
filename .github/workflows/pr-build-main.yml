@@ -29,7 +29,7 @@ on:
       - Jenkinsfile.*
       - NOTICE.txt
 
-permissions: 
+permissions:
   contents: read
 
 jobs:
@@ -63,6 +63,11 @@ jobs:
           cache: 'maven'
       - name: maven build
         run: ./etc/scripts/regen.sh
+      # TODO here only for troubleshooting
+      - name: Temp df
+        id: df
+        run: |
+          df -h
       - name: archive logs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
@@ -73,6 +78,11 @@ jobs:
         shell: bash
         run: |
           [[ -z $(git status --porcelain) ]] || { echo 'There are uncommitted changes'; git status; echo; echo; git diff; exit 1; }
+      # TODO here only for troubleshooting
+      - name: Temp df
+        id: df
+        run: |
+          df -h
       - name: mvn test
         uses: ./.github/actions/incremental-build
         with:

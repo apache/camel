@@ -71,7 +71,6 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     @Override
     public boolean hasNext() {
         boolean answer = doHasNext();
-        LOG.trace("hasNext: {}", answer);
         return answer;
     }
 
