@@ -46,11 +46,32 @@
             <artifactId>camel-jbang-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel.kamelets</groupId>
+            <artifactId>camel-kamelets-catalog</artifactId>
+            <version>${camel-kamelets-catalog-version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.camel-tooling</groupId>
             <artifactId>camel-lsp-server</artifactId>
             <version>${camel-lsp-version}</version>
             <classifier>original</classifier>
             <exclusions>
+                <exclusion>
+                    <groupId>org.apache.camel.kamelets</groupId>
+                    <artifactId>camel-kamelets-catalog</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.camel.springboot</groupId>
+                    <artifactId>camel-catalog-provider-springboot</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.camel.quarkus</groupId>
+                    <artifactId>camel-quarkus-catalog</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.glassfish.tyrus</groupId>
                     <artifactId>tyrus-server</artifactId>

@@ -91,7 +91,9 @@
         <caffeine-version>3.2.2</caffeine-version>
         <californium-version>3.14.0</californium-version>
         <californium-scandium-version>3.11.0</californium-scandium-version>
+        <!-- jbang edit command which uses embedded kamelets catalog -->
         <camel-lsp-version>1.34.0</camel-lsp-version>
+        <camel-kamelets-catalog-version>4.15.0</camel-kamelets-catalog-version>
         <camunda-version>7.24.0</camunda-version>
         <cassandra-driver-version>4.19.1</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
