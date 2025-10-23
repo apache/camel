@@ -852,6 +852,10 @@ Headers can be used to override batch configuration per-message:
 | Boolean
 | Override fail-on-first-error setting
 
+| `CamelDoclingBatchTimeout`
+| Long
+| Override batch timeout in milliseconds
+
 | `CamelDoclingBatchTotalDocuments`
 | Integer
 | Total documents in batch (output header)

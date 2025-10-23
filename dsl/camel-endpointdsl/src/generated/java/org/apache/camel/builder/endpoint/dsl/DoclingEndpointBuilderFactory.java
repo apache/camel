@@ -1268,6 +1268,18 @@ public interface DoclingEndpointBuilderFactory {
             return "CamelDoclingBatchFailOnFirstError";
         }
         /**
+         * Override batch timeout for this operation in milliseconds.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingBatchTimeout}.
+         */
+        public String doclingBatchTimeout() {
+            return "CamelDoclingBatchTimeout";
+        }
+        /**
          * Total number of documents in the batch.
          * 
          * The option is a: {@code Integer} type.

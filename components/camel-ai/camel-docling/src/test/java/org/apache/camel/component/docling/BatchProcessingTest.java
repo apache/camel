@@ -141,6 +141,22 @@ public class BatchProcessingTest extends CamelTestSupport {
         assertTrue(config.isSplitBatchResults());
     }
 
+    @Test
+    public void testBatchTimeoutConfiguration() {
+        DoclingConfiguration config = new DoclingConfiguration();
+
+        // Test default timeout
+        assertEquals(300000, config.getBatchTimeout());
+
+        // Test custom timeout
+        config.setBatchTimeout(120000);
+        assertEquals(120000, config.getBatchTimeout());
+
+        // Test minimum reasonable timeout
+        config.setBatchTimeout(5000);
+        assertEquals(5000, config.getBatchTimeout());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

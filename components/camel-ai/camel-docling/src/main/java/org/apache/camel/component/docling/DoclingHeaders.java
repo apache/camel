@@ -65,6 +65,9 @@ public final class DoclingHeaders {
     @Metadata(description = "Override batch fail on first error setting for this operation", javaType = "Boolean")
     public static final String BATCH_FAIL_ON_FIRST_ERROR = "CamelDoclingBatchFailOnFirstError";
 
+    @Metadata(description = "Override batch timeout for this operation in milliseconds", javaType = "Long")
+    public static final String BATCH_TIMEOUT = "CamelDoclingBatchTimeout";
+
     @Metadata(description = "Total number of documents in the batch", javaType = "Integer")
     public static final String BATCH_TOTAL_DOCUMENTS = "CamelDoclingBatchTotalDocuments";
 

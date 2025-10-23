@@ -25,12 +25,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -671,29 +671,41 @@ public class DoclingServeClient {
      * @param  parallelism      Number of parallel threads to use
      * @param  failOnFirstError Whether to fail entire batch on first error
      * @param  useAsync         Whether to use async mode for individual conversions
+     * @param  batchTimeout     Maximum time to wait for batch completion in milliseconds
      * @return                  BatchProcessingResults containing all conversion results
      */
     public BatchProcessingResults convertDocumentsBatch(
             List<String> inputSources, String outputFormat, int batchSize, int parallelism,
-            boolean failOnFirstError, boolean useAsync) {
+            boolean failOnFirstError, boolean useAsync, long batchTimeout) {
 
-        LOG.info("Starting batch conversion of {} documents with parallelism={}, failOnFirstError={}",
-                inputSources.size(), parallelism, failOnFirstError);
+        LOG.info("Starting batch conversion of {} documents with parallelism={}, failOnFirstError={}, timeout={}ms",
+                inputSources.size(), parallelism, failOnFirstError, batchTimeout);
 
         BatchProcessingResults results = new BatchProcessingResults();
         results.setStartTimeMs(System.currentTimeMillis());
 
         ExecutorService executor = Executors.newFixedThreadPool(parallelism);
-        List<Future<BatchConversionResult>> futures = new ArrayList<>();
         AtomicInteger index = new AtomicInteger(0);
+        AtomicBoolean shouldCancel = new AtomicBoolean(false);
 
         try {
-            // Submit all conversion tasks
+            // Create CompletableFutures for all conversion tasks
+            List<CompletableFuture<BatchConversionResult>> futures = new ArrayList<>();
+
             for (String inputSource : inputSources) {
                 final int currentIndex = index.getAndIncrement();
                 final String documentId = "doc-" + currentIndex;
 
-                Callable<BatchConversionResult> task = () -> {
+                CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
+                    // Check if we should skip this task due to early termination
+                    if (failOnFirstError && shouldCancel.get()) {
+                        BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
+                        cancelledResult.setBatchIndex(currentIndex);
+                        cancelledResult.setSuccess(false);
+                        cancelledResult.setErrorMessage("Cancelled due to previous failure");
+                        return cancelledResult;
+                    }
+
                     BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
                     result.setBatchIndex(currentIndex);
                     long startTime = System.currentTimeMillis();
@@ -712,7 +724,8 @@ public class DoclingServeClient {
                         result.setSuccess(true);
                         result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
 
-                        LOG.debug("Successfully processed document {} in {}ms", documentId, result.getProcessingTimeMs());
+                        LOG.debug("Successfully processed document {} in {}ms", documentId,
+                                result.getProcessingTimeMs());
 
                     } catch (Exception e) {
                         result.setSuccess(false);
@@ -721,48 +734,66 @@ public class DoclingServeClient {
 
                         LOG.error("Failed to process document {} (index {}): {}", documentId, currentIndex,
                                 e.getMessage(), e);
+
+                        // Signal other tasks to cancel if failOnFirstError is enabled
+                        if (failOnFirstError) {
+                            shouldCancel.set(true);
+                        }
                     }
 
                     return result;
-                };
+                }, executor);
 
-                futures.add(executor.submit(task));
+                futures.add(future);
             }
 
-            // Collect results
-            for (Future<BatchConversionResult> future : futures) {
+            // Wait for all futures to complete with timeout
+            CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+
+            try {
+                allOf.get(batchTimeout, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException e) {
+                LOG.error("Batch processing timed out after {}ms", batchTimeout);
+                // Cancel all incomplete futures
+                futures.forEach(f -> f.cancel(true));
+                throw new RuntimeException("Batch processing timed out after " + batchTimeout + "ms", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOG.error("Batch processing interrupted", e);
+                futures.forEach(f -> f.cancel(true));
+                throw new RuntimeException("Batch processing interrupted", e);
+            } catch (Exception e) {
+                LOG.error("Batch processing failed", e);
+                futures.forEach(f -> f.cancel(true));
+                throw new RuntimeException("Batch processing failed", e);
+            }
+
+            // Collect all results
+            for (CompletableFuture<BatchConversionResult> future : futures) {
                 try {
-                    BatchConversionResult result = future.get();
-                    results.addResult(result);
+                    BatchConversionResult result = future.getNow(null);
+                    if (result != null) {
+                        results.addResult(result);
 
-                    // If failOnFirstError is true and we have a failure, cancel remaining tasks
-                    if (failOnFirstError && !result.isSuccess()) {
-                        LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
-                                result.getErrorMessage());
-
-                        // Cancel all pending futures
-                        for (Future<BatchConversionResult> f : futures) {
-                            f.cancel(true);
+                        // If failOnFirstError and we hit a failure, stop adding more results
+                        if (failOnFirstError && !result.isSuccess()) {
+                            LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
+                                    result.getErrorMessage());
+                            break;
                         }
-
-                        break;
                     }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    LOG.error("Batch processing interrupted", e);
-                    throw new RuntimeException("Batch processing interrupted", e);
-                } catch (ExecutionException e) {
-                    LOG.error("Task execution failed", e);
-                    if (failOnFirstError) {
-                        throw new RuntimeException("Batch processing failed", e.getCause());
-                    }
+                } catch (Exception e) {
+                    LOG.error("Error retrieving result", e);
                 }
             }
 
         } finally {
             executor.shutdown();
             try {
-                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                // Allow 10 seconds grace period for executor shutdown
+                long shutdownTimeout = Math.max(10000, batchTimeout / 10);
+                if (!executor.awaitTermination(shutdownTimeout, TimeUnit.MILLISECONDS)) {
+                    LOG.warn("Executor did not terminate within {}ms, forcing shutdown", shutdownTimeout);
                     executor.shutdownNow();
                 }
             } catch (InterruptedException e) {
@@ -776,6 +807,14 @@ public class DoclingServeClient {
         LOG.info("Batch conversion completed: total={}, success={}, failed={}, time={}ms",
                 results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount(),
                 results.getTotalProcessingTimeMs());
+
+        // If failOnFirstError is true and we have failures, throw exception
+        if (failOnFirstError && results.hasAnyFailures()) {
+            BatchConversionResult firstFailure = results.getFailed().get(0);
+            throw new RuntimeException(
+                    "Batch processing failed for document: " + firstFailure.getOriginalPath() + " - "
+                                       + firstFailure.getErrorMessage());
+        }
 
         return results;
     }

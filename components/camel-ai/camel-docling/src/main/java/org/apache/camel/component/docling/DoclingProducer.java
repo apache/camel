@@ -302,6 +302,8 @@ public class DoclingProducer extends DefaultProducer {
                         Integer.class);
         boolean failOnFirstError = exchange.getIn().getHeader(DoclingHeaders.BATCH_FAIL_ON_FIRST_ERROR,
                 configuration.isBatchFailOnFirstError(), Boolean.class);
+        long batchTimeout = exchange.getIn().getHeader(DoclingHeaders.BATCH_TIMEOUT, configuration.getBatchTimeout(),
+                Long.class);
 
         // Check if we should use async mode for individual conversions
         boolean useAsync = configuration.isUseAsyncMode();
@@ -312,11 +314,11 @@ public class DoclingProducer extends DefaultProducer {
 
         // Process batch using DoclingServeClient
         BatchProcessingResults results = doclingServeClient.convertDocumentsBatch(
-                documentPaths, outputFormat, batchSize, parallelism, failOnFirstError, useAsync);
+                documentPaths, outputFormat, batchSize, parallelism, failOnFirstError, useAsync, batchTimeout);
 
         // Check if we should split results into individual exchanges
         boolean splitResults = configuration.isSplitBatchResults();
-        Boolean splitResultsHeader = exchange.getIn().getHeader("CamelDoclingBatchSplitResults", Boolean.class);
+        Boolean splitResultsHeader = exchange.getIn().getHeader(DoclingHeaders.BATCH_SPLIT_RESULTS, Boolean.class);
         if (splitResultsHeader != null) {
             splitResults = splitResultsHeader;
         }
@@ -341,13 +343,7 @@ public class DoclingProducer extends DefaultProducer {
                     results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount());
         }
 
-        // If failOnFirstError is true and we have failures, throw exception
-        if (failOnFirstError && results.hasAnyFailures()) {
-            BatchConversionResult firstFailure = results.getFailed().get(0);
-            throw new RuntimeException(
-                    "Batch processing failed for document: " + firstFailure.getOriginalPath() + " - "
-                                       + firstFailure.getErrorMessage());
-        }
+        // Note: Exception is thrown in DoclingServeClient if failOnFirstError=true
     }
 
     @SuppressWarnings("unchecked")
