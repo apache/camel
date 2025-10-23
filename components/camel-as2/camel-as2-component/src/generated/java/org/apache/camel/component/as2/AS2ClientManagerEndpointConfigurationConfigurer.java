@@ -49,7 +49,6 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("MethodName", java.lang.String.class);
         map.put("ReceiptDeliveryOption", java.lang.String.class);
         map.put("RequestUri", java.lang.String.class);
-        map.put("RequestUriPattern", java.lang.String.class);
         map.put("Server", java.lang.String.class);
         map.put("ServerFqdn", java.lang.String.class);
         map.put("ServerPortNumber", java.lang.Integer.class);
@@ -123,8 +122,6 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "receiptDeliveryOption": target.setReceiptDeliveryOption(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturi":
         case "requestUri": target.setRequestUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "requesturipattern":
-        case "requestUriPattern": target.setRequestUriPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "server": target.setServer(property(camelContext, java.lang.String.class, value)); return true;
         case "serverfqdn":
         case "serverFqdn": target.setServerFqdn(property(camelContext, java.lang.String.class, value)); return true;
@@ -214,8 +211,6 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "receiptDeliveryOption": return java.lang.String.class;
         case "requesturi":
         case "requestUri": return java.lang.String.class;
-        case "requesturipattern":
-        case "requestUriPattern": return java.lang.String.class;
         case "server": return java.lang.String.class;
         case "serverfqdn":
         case "serverFqdn": return java.lang.String.class;
@@ -301,8 +296,6 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
         case "receiptDeliveryOption": return target.getReceiptDeliveryOption();
         case "requesturi":
         case "requestUri": return target.getRequestUri();
-        case "requesturipattern":
-        case "requestUriPattern": return target.getRequestUriPattern();
         case "server": return target.getServer();
         case "serverfqdn":
         case "serverFqdn": return target.getServerFqdn();

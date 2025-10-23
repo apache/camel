@@ -67,8 +67,6 @@ public class AS2Configuration {
     private Integer serverPortNumber;
     @UriParam(defaultValue = "/")
     private String requestUri = "/";
-    @UriParam(defaultValue = "/")
-    private String requestUriPattern;
     @UriParam
     private ContentType ediMessageType;
     @UriParam
@@ -258,18 +256,6 @@ public class AS2Configuration {
      */
     public void setRequestUri(String requestUri) {
         this.requestUri = requestUri;
-    }
-
-    public String getRequestUriPattern() {
-        return requestUriPattern;
-    }
-
-    /**
-     * URI pattern for inbound AS2 messages. This is used to map the route to a specific path on the AS2 server
-     * connection (e.g., "/as2/edi"). Defaults to "/".
-     */
-    public void setRequestUriPattern(String requestUriPattern) {
-        this.requestUriPattern = requestUriPattern;
     }
 
     public ContentType getEdiMessageType() {

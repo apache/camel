@@ -45,7 +45,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("MdnMessageTemplate", java.lang.String.class);
         map.put("ReceiptDeliveryOption", java.lang.String.class);
         map.put("RequestUri", java.lang.String.class);
-        map.put("RequestUriPattern", java.lang.String.class);
         map.put("Server", java.lang.String.class);
         map.put("ServerFqdn", java.lang.String.class);
         map.put("ServerPortNumber", java.lang.Integer.class);
@@ -125,8 +124,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "receiptDeliveryOption": target.getConfiguration().setReceiptDeliveryOption(property(camelContext, java.lang.String.class, value)); return true;
         case "requesturi":
         case "requestUri": target.getConfiguration().setRequestUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "requesturipattern":
-        case "requestUriPattern": target.getConfiguration().setRequestUriPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "server": target.getConfiguration().setServer(property(camelContext, java.lang.String.class, value)); return true;
         case "serverfqdn":
         case "serverFqdn": target.getConfiguration().setServerFqdn(property(camelContext, java.lang.String.class, value)); return true;
@@ -216,8 +213,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "receiptDeliveryOption": return java.lang.String.class;
         case "requesturi":
         case "requestUri": return java.lang.String.class;
-        case "requesturipattern":
-        case "requestUriPattern": return java.lang.String.class;
         case "server": return java.lang.String.class;
         case "serverfqdn":
         case "serverFqdn": return java.lang.String.class;
@@ -303,8 +298,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "receiptDeliveryOption": return target.getConfiguration().getReceiptDeliveryOption();
         case "requesturi":
         case "requestUri": return target.getConfiguration().getRequestUri();
-        case "requesturipattern":
-        case "requestUriPattern": return target.getConfiguration().getRequestUriPattern();
         case "server": return target.getConfiguration().getServer();
         case "serverfqdn":
         case "serverFqdn": return target.getConfiguration().getServerFqdn();
