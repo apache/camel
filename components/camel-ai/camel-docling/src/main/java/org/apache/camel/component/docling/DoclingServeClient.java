@@ -19,10 +19,19 @@ package org.apache.camel.component.docling;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -651,6 +660,124 @@ public class DoclingServeClient {
                         "Failed to fetch task result. Status code: " + statusCode + ", Response: " + responseBody);
             }
         }
+    }
+
+    /**
+     * Convert multiple documents in batch using parallel processing.
+     *
+     * @param  inputSources     List of file paths or URLs to documents
+     * @param  outputFormat     Output format (md, json, html, text)
+     * @param  batchSize        Maximum number of documents in this batch
+     * @param  parallelism      Number of parallel threads to use
+     * @param  failOnFirstError Whether to fail entire batch on first error
+     * @param  useAsync         Whether to use async mode for individual conversions
+     * @return                  BatchProcessingResults containing all conversion results
+     */
+    public BatchProcessingResults convertDocumentsBatch(
+            List<String> inputSources, String outputFormat, int batchSize, int parallelism,
+            boolean failOnFirstError, boolean useAsync) {
+
+        LOG.info("Starting batch conversion of {} documents with parallelism={}, failOnFirstError={}",
+                inputSources.size(), parallelism, failOnFirstError);
+
+        BatchProcessingResults results = new BatchProcessingResults();
+        results.setStartTimeMs(System.currentTimeMillis());
+
+        ExecutorService executor = Executors.newFixedThreadPool(parallelism);
+        List<Future<BatchConversionResult>> futures = new ArrayList<>();
+        AtomicInteger index = new AtomicInteger(0);
+
+        try {
+            // Submit all conversion tasks
+            for (String inputSource : inputSources) {
+                final int currentIndex = index.getAndIncrement();
+                final String documentId = "doc-" + currentIndex;
+
+                Callable<BatchConversionResult> task = () -> {
+                    BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
+                    result.setBatchIndex(currentIndex);
+                    long startTime = System.currentTimeMillis();
+
+                    try {
+                        LOG.debug("Processing document {} (index {}): {}", documentId, currentIndex, inputSource);
+
+                        String converted;
+                        if (useAsync) {
+                            converted = convertDocumentAsyncAndWait(inputSource, outputFormat);
+                        } else {
+                            converted = convertDocument(inputSource, outputFormat);
+                        }
+
+                        result.setResult(converted);
+                        result.setSuccess(true);
+                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+
+                        LOG.debug("Successfully processed document {} in {}ms", documentId, result.getProcessingTimeMs());
+
+                    } catch (Exception e) {
+                        result.setSuccess(false);
+                        result.setErrorMessage(e.getMessage());
+                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+
+                        LOG.error("Failed to process document {} (index {}): {}", documentId, currentIndex,
+                                e.getMessage(), e);
+                    }
+
+                    return result;
+                };
+
+                futures.add(executor.submit(task));
+            }
+
+            // Collect results
+            for (Future<BatchConversionResult> future : futures) {
+                try {
+                    BatchConversionResult result = future.get();
+                    results.addResult(result);
+
+                    // If failOnFirstError is true and we have a failure, cancel remaining tasks
+                    if (failOnFirstError && !result.isSuccess()) {
+                        LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
+                                result.getErrorMessage());
+
+                        // Cancel all pending futures
+                        for (Future<BatchConversionResult> f : futures) {
+                            f.cancel(true);
+                        }
+
+                        break;
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    LOG.error("Batch processing interrupted", e);
+                    throw new RuntimeException("Batch processing interrupted", e);
+                } catch (ExecutionException e) {
+                    LOG.error("Task execution failed", e);
+                    if (failOnFirstError) {
+                        throw new RuntimeException("Batch processing failed", e.getCause());
+                    }
+                }
+            }
+
+        } finally {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        results.setEndTimeMs(System.currentTimeMillis());
+
+        LOG.info("Batch conversion completed: total={}, success={}, failed={}, time={}ms",
+                results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount(),
+                results.getTotalProcessingTimeMs());
+
+        return results;
     }
 
     public void close() throws IOException {

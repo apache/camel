@@ -248,6 +248,162 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * Fail entire batch on first error (true) or continue processing
+         * remaining documents (false).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: batch
+         * 
+         * @param batchFailOnFirstError the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder batchFailOnFirstError(boolean batchFailOnFirstError) {
+            doSetProperty("batchFailOnFirstError", batchFailOnFirstError);
+            return this;
+        }
+        /**
+         * Fail entire batch on first error (true) or continue processing
+         * remaining documents (false).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: batch
+         * 
+         * @param batchFailOnFirstError the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder batchFailOnFirstError(String batchFailOnFirstError) {
+            doSetProperty("batchFailOnFirstError", batchFailOnFirstError);
+            return this;
+        }
+        /**
+         * Number of parallel threads for batch processing.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 4
+         * Group: batch
+         * 
+         * @param batchParallelism the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder batchParallelism(int batchParallelism) {
+            doSetProperty("batchParallelism", batchParallelism);
+            return this;
+        }
+        /**
+         * Number of parallel threads for batch processing.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 4
+         * Group: batch
+         * 
+         * @param batchParallelism the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder batchParallelism(String batchParallelism) {
+            doSetProperty("batchParallelism", batchParallelism);
+            return this;
+        }
+        /**
+         * Maximum number of documents to process in a single batch (batch
+         * operations only).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: batch
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * Maximum number of documents to process in a single batch (batch
+         * operations only).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10
+         * Group: batch
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder batchSize(String batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * Maximum time to wait for batch completion in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: batch
+         * 
+         * @param batchTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder batchTimeout(long batchTimeout) {
+            doSetProperty("batchTimeout", batchTimeout);
+            return this;
+        }
+        /**
+         * Maximum time to wait for batch completion in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 300000
+         * Group: batch
+         * 
+         * @param batchTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder batchTimeout(String batchTimeout) {
+            doSetProperty("batchTimeout", batchTimeout);
+            return this;
+        }
+        /**
+         * Split batch results into individual exchanges (one per document)
+         * instead of single BatchProcessingResults.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: batch
+         * 
+         * @param splitBatchResults the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder splitBatchResults(boolean splitBatchResults) {
+            doSetProperty("splitBatchResults", splitBatchResults);
+            return this;
+        }
+        /**
+         * Split batch results into individual exchanges (one per document)
+         * instead of single BatchProcessingResults.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: batch
+         * 
+         * @param splitBatchResults the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder splitBatchResults(String splitBatchResults) {
+            doSetProperty("splitBatchResults", splitBatchResults);
+            return this;
+        }
+        /**
          * Header name for API key authentication.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1074,6 +1230,103 @@ public interface DoclingEndpointBuilderFactory {
          */
         public String doclingTaskId() {
             return "CamelDoclingTaskId";
+        }
+        /**
+         * Override batch size for this operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingBatchSize}.
+         */
+        public String doclingBatchSize() {
+            return "CamelDoclingBatchSize";
+        }
+        /**
+         * Override batch parallelism for this operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingBatchParallelism}.
+         */
+        public String doclingBatchParallelism() {
+            return "CamelDoclingBatchParallelism";
+        }
+        /**
+         * Override batch fail on first error setting for this operation.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingBatchFailOnFirstError}.
+         */
+        public String doclingBatchFailOnFirstError() {
+            return "CamelDoclingBatchFailOnFirstError";
+        }
+        /**
+         * Total number of documents in the batch.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingBatchTotalDocuments}.
+         */
+        public String doclingBatchTotalDocuments() {
+            return "CamelDoclingBatchTotalDocuments";
+        }
+        /**
+         * Number of successfully processed documents in the batch.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingBatchSuccessCount}.
+         */
+        public String doclingBatchSuccessCount() {
+            return "CamelDoclingBatchSuccessCount";
+        }
+        /**
+         * Number of failed documents in the batch.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingBatchFailureCount}.
+         */
+        public String doclingBatchFailureCount() {
+            return "CamelDoclingBatchFailureCount";
+        }
+        /**
+         * Total processing time for the batch in milliseconds.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingBatchProcessingTime}.
+         */
+        public String doclingBatchProcessingTime() {
+            return "CamelDoclingBatchProcessingTime";
+        }
+        /**
+         * Split batch results into individual exchanges instead of single
+         * BatchProcessingResults.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingBatchSplitResults}.
+         */
+        public String doclingBatchSplitResults() {
+            return "CamelDoclingBatchSplitResults";
         }
     }
     static DoclingEndpointBuilder endpointBuilder(String componentName, String path) {

@@ -56,6 +56,31 @@ public final class DoclingHeaders {
     @Metadata(description = "Task ID for checking async conversion status", javaType = "String")
     public static final String TASK_ID = "CamelDoclingTaskId";
 
+    @Metadata(description = "Override batch size for this operation", javaType = "Integer")
+    public static final String BATCH_SIZE = "CamelDoclingBatchSize";
+
+    @Metadata(description = "Override batch parallelism for this operation", javaType = "Integer")
+    public static final String BATCH_PARALLELISM = "CamelDoclingBatchParallelism";
+
+    @Metadata(description = "Override batch fail on first error setting for this operation", javaType = "Boolean")
+    public static final String BATCH_FAIL_ON_FIRST_ERROR = "CamelDoclingBatchFailOnFirstError";
+
+    @Metadata(description = "Total number of documents in the batch", javaType = "Integer")
+    public static final String BATCH_TOTAL_DOCUMENTS = "CamelDoclingBatchTotalDocuments";
+
+    @Metadata(description = "Number of successfully processed documents in the batch", javaType = "Integer")
+    public static final String BATCH_SUCCESS_COUNT = "CamelDoclingBatchSuccessCount";
+
+    @Metadata(description = "Number of failed documents in the batch", javaType = "Integer")
+    public static final String BATCH_FAILURE_COUNT = "CamelDoclingBatchFailureCount";
+
+    @Metadata(description = "Total processing time for the batch in milliseconds", javaType = "Long")
+    public static final String BATCH_PROCESSING_TIME = "CamelDoclingBatchProcessingTime";
+
+    @Metadata(description = "Split batch results into individual exchanges instead of single BatchProcessingResults",
+              javaType = "Boolean")
+    public static final String BATCH_SPLIT_RESULTS = "CamelDoclingBatchSplitResults";
+
     private DoclingHeaders() {
     }
 

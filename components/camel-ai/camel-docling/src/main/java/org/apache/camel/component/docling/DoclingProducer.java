@@ -24,8 +24,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -120,6 +122,21 @@ public class DoclingProducer extends DefaultProducer {
                 break;
             case CHECK_CONVERSION_STATUS:
                 processCheckConversionStatus(exchange);
+                break;
+            case BATCH_CONVERT_TO_MARKDOWN:
+                processBatchConversion(exchange, "markdown");
+                break;
+            case BATCH_CONVERT_TO_HTML:
+                processBatchConversion(exchange, "html");
+                break;
+            case BATCH_CONVERT_TO_JSON:
+                processBatchConversion(exchange, "json");
+                break;
+            case BATCH_EXTRACT_TEXT:
+                processBatchConversion(exchange, "text");
+                break;
+            case BATCH_EXTRACT_STRUCTURED_DATA:
+                processBatchConversion(exchange, "json");
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
@@ -259,6 +276,164 @@ public class DoclingProducer extends DefaultProducer {
         if (status.isFailed() && status.getErrorMessage() != null) {
             exchange.getIn().setHeader("CamelDoclingErrorMessage", status.getErrorMessage());
         }
+    }
+
+    private void processBatchConversion(Exchange exchange, String outputFormat) throws Exception {
+        LOG.debug("DoclingProducer processing batch conversion with format: {}", outputFormat);
+
+        if (!configuration.isUseDoclingServe()) {
+            throw new IllegalStateException(
+                    "Batch operations require docling-serve mode (useDoclingServe=true)");
+        }
+
+        // Extract document list from body
+        List<String> documentPaths = extractDocumentList(exchange);
+
+        if (documentPaths.isEmpty()) {
+            throw new IllegalArgumentException("No documents provided for batch processing");
+        }
+
+        LOG.debug("Processing batch of {} documents", documentPaths.size());
+
+        // Get batch configuration from headers or use defaults
+        int batchSize = exchange.getIn().getHeader(DoclingHeaders.BATCH_SIZE, configuration.getBatchSize(), Integer.class);
+        int parallelism
+                = exchange.getIn().getHeader(DoclingHeaders.BATCH_PARALLELISM, configuration.getBatchParallelism(),
+                        Integer.class);
+        boolean failOnFirstError = exchange.getIn().getHeader(DoclingHeaders.BATCH_FAIL_ON_FIRST_ERROR,
+                configuration.isBatchFailOnFirstError(), Boolean.class);
+
+        // Check if we should use async mode for individual conversions
+        boolean useAsync = configuration.isUseAsyncMode();
+        Boolean asyncModeHeader = exchange.getIn().getHeader(DoclingHeaders.USE_ASYNC_MODE, Boolean.class);
+        if (asyncModeHeader != null) {
+            useAsync = asyncModeHeader;
+        }
+
+        // Process batch using DoclingServeClient
+        BatchProcessingResults results = doclingServeClient.convertDocumentsBatch(
+                documentPaths, outputFormat, batchSize, parallelism, failOnFirstError, useAsync);
+
+        // Check if we should split results into individual exchanges
+        boolean splitResults = configuration.isSplitBatchResults();
+        Boolean splitResultsHeader = exchange.getIn().getHeader("CamelDoclingBatchSplitResults", Boolean.class);
+        if (splitResultsHeader != null) {
+            splitResults = splitResultsHeader;
+        }
+
+        // Set summary headers (always set these regardless of split mode)
+        exchange.getIn().setHeader(DoclingHeaders.BATCH_TOTAL_DOCUMENTS, results.getTotalDocuments());
+        exchange.getIn().setHeader(DoclingHeaders.BATCH_SUCCESS_COUNT, results.getSuccessCount());
+        exchange.getIn().setHeader(DoclingHeaders.BATCH_FAILURE_COUNT, results.getFailureCount());
+        exchange.getIn().setHeader(DoclingHeaders.BATCH_PROCESSING_TIME, results.getTotalProcessingTimeMs());
+
+        // Set results in exchange body based on split mode
+        if (splitResults) {
+            // Return list of individual results for splitting
+            exchange.getIn().setBody(results.getResults());
+            LOG.info(
+                    "Batch conversion completed: {} documents, {} succeeded, {} failed - returning individual results for splitting",
+                    results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount());
+        } else {
+            // Return complete BatchProcessingResults object
+            exchange.getIn().setBody(results);
+            LOG.info("Batch conversion completed: {} documents, {} succeeded, {} failed",
+                    results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount());
+        }
+
+        // If failOnFirstError is true and we have failures, throw exception
+        if (failOnFirstError && results.hasAnyFailures()) {
+            BatchConversionResult firstFailure = results.getFailed().get(0);
+            throw new RuntimeException(
+                    "Batch processing failed for document: " + firstFailure.getOriginalPath() + " - "
+                                       + firstFailure.getErrorMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> extractDocumentList(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+
+        // Handle List<String>
+        if (body instanceof List) {
+            List<?> list = (List<?>) body;
+            if (list.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            // Check if it's a List<String>
+            if (list.get(0) instanceof String) {
+                return (List<String>) list;
+            }
+
+            // Check if it's a List<File>
+            if (list.get(0) instanceof File) {
+                return ((List<File>) list).stream()
+                        .map(File::getAbsolutePath)
+                        .collect(Collectors.toList());
+            }
+
+            // Try to convert to string
+            return list.stream()
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+        }
+
+        // Handle Collection
+        if (body instanceof Collection) {
+            Collection<?> collection = (Collection<?>) body;
+            return collection.stream()
+                    .map(obj -> {
+                        if (obj instanceof String) {
+                            return (String) obj;
+                        } else if (obj instanceof File) {
+                            return ((File) obj).getAbsolutePath();
+                        } else {
+                            return obj.toString();
+                        }
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        // Handle String array
+        if (body instanceof String[]) {
+            return List.of((String[]) body);
+        }
+
+        // Handle File array
+        if (body instanceof File[]) {
+            File[] files = (File[]) body;
+            List<String> paths = new ArrayList<>();
+            for (File file : files) {
+                paths.add(file.getAbsolutePath());
+            }
+            return paths;
+        }
+
+        // Handle single String (directory path to scan)
+        if (body instanceof String) {
+            String path = (String) body;
+            File dir = new File(path);
+            if (dir.isDirectory()) {
+                File[] files = dir.listFiles();
+                if (files != null) {
+                    List<String> paths = new ArrayList<>();
+                    for (File file : files) {
+                        if (file.isFile()) {
+                            paths.add(file.getAbsolutePath());
+                        }
+                    }
+                    return paths;
+                }
+            } else {
+                // Single file path
+                return List.of(path);
+            }
+        }
+
+        throw new IllegalArgumentException(
+                "Unsupported body type for batch processing: " + (body != null ? body.getClass().getName() : "null")
+                                           + ". Expected List<String>, List<File>, String[], File[], or directory path");
     }
 
     private String convertUsingDoclingServe(String inputPath, String outputFormat) throws Exception {
