@@ -65,11 +65,7 @@
         </dependency>
 
         <!-- Pre-installed plugins -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jbang-plugin-edit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- the edit plugin is not pre-installed -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-plugin-generate</artifactId>

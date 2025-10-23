@@ -51,6 +51,10 @@ Should use the https://infinispan.org/docs/stable/titles/query/query.html#ickle-
             = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE 'CQ%'");
 ----
 
+=== camel-jbang
+
+The `camel-launcher` binary no longer include the `edit` plugin commands.
+
 === camel-milo
 
 The camel-milo component has been upgraded to use Eclipse Milo 1.0.5, which includes several breaking API changes:
