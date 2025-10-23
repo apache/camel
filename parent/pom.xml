@@ -286,7 +286,7 @@
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>6.1.0</jedis-client-version>
-        <jetty-version>12.0.27</jetty-version>
+        <jetty-version>12.0.29</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -396,7 +396,7 @@
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>5.28.9</neo4j-version>
-        <netty-version>4.1.127.Final</netty-version>
+        <netty-version>4.1.128.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.8</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.4.2</nimbus-jose-jwt>
@@ -478,9 +478,9 @@
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
         <spring-cloud-config-version>4.3.0</spring-cloud-config-version>
-        <spring-batch-version>5.2.3</spring-batch-version>
-        <spring-data-redis-version>3.5.4</spring-data-redis-version>
-        <spring-ldap-version>3.3.3</spring-ldap-version>
+        <spring-batch-version>5.2.4</spring-batch-version>
+        <spring-data-redis-version>3.5.5</spring-data-redis-version>
+        <spring-ldap-version>3.3.4</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
         <spring-version>6.2.12</spring-version>
         <spring-rabbitmq-version>3.2.6</spring-rabbitmq-version>
@@ -506,7 +506,7 @@
         <tika-version>2.9.4</tika-version>
         <twilio-version>10.9.2</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
-        <undertow-version>2.3.19.Final</undertow-version>
+        <undertow-version>2.3.20.Final</undertow-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.7</vavr-version>
