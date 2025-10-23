@@ -38,7 +38,8 @@ public class PQCDefaultFalconMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.FALCON.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.FALCON.getAlgorithm(),
+                    PQCSignatureAlgorithms.FALCON.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

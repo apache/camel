@@ -91,8 +91,9 @@ public class PQCSignatureXMSSMTTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Signer")
-    public Signature getSigner() throws NoSuchAlgorithmException {
-        Signature xmssmtSig = Signature.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm());
+    public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
+        Signature xmssmtSig = Signature.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm(),
+                PQCSignatureAlgorithms.XMSSMT.getBcProvider());
         return xmssmtSig;
     }
 }

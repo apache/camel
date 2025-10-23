@@ -41,7 +41,8 @@ public class PQCDefaultHSSMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.HSS.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.HSS.getAlgorithm(),
+                    PQCSignatureAlgorithms.HSS.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

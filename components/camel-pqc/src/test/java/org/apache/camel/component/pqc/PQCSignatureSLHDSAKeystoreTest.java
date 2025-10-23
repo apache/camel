@@ -122,6 +122,7 @@ public class PQCSignatureSLHDSAKeystoreTest extends CamelTestSupport {
                 kp.getPublic());
 
         ContentSigner contentSigner = new JcaContentSignerBuilder(PQCSignatureAlgorithms.SLHDSA.getAlgorithm())
+                .setProvider(PQCSignatureAlgorithms.SLHDSA.getBcProvider())
                 .build(kp.getPrivate());
 
         X509Certificate certificate = new JcaX509CertificateConverter()
@@ -141,8 +142,9 @@ public class PQCSignatureSLHDSAKeystoreTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Signer")
-    public Signature getSigner() throws NoSuchAlgorithmException {
-        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.SLHDSA.getAlgorithm());
+    public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
+        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.SLHDSA.getAlgorithm(),
+                PQCSignatureAlgorithms.SLHDSA.getBcProvider());
         return mlDsa;
     }
 }

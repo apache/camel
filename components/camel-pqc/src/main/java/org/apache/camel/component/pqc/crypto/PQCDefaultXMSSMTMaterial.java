@@ -38,7 +38,8 @@ public class PQCDefaultXMSSMTMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.XMSSMT.getAlgorithm(),
+                    PQCSignatureAlgorithms.XMSSMT.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

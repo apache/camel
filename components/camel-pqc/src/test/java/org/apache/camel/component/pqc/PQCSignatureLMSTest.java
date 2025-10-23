@@ -90,8 +90,9 @@ public class PQCSignatureLMSTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Signer")
-    public Signature getSigner() throws NoSuchAlgorithmException {
-        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm());
+    public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
+        Signature mlDsa
+                = Signature.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm(), PQCSignatureAlgorithms.LMS.getBcProvider());
         return mlDsa;
     }
 }

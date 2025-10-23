@@ -40,7 +40,8 @@ public class PQCDefaultLMSMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.LMS.getAlgorithm(),
+                    PQCSignatureAlgorithms.LMS.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
