@@ -33,7 +33,8 @@
     <description>Camel RobotFramework Support</description>
 
     <properties>
-        <camel.surefire.fork.additional-vmargs>--add-opens java.base/java.io=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
+        <!-- Make use of native access during test execution only -->
+        <camel.surefire.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
     </properties>
     <dependencies>
         <dependency>
