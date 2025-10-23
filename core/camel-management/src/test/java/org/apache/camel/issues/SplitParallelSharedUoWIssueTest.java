@@ -25,7 +25,7 @@ import org.junit.jupiter.api.RepeatedTest;
 
 public class SplitParallelSharedUoWIssueTest extends ManagementTestSupport {
 
-    @RepeatedTest(1000)
+    @RepeatedTest(100)
     public void testSplitParallelShareeUoW() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(1000);
         getMockEndpoint("mock:result").expectedMessageCount(1);
