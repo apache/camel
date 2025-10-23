@@ -38,7 +38,8 @@ public class PQCDefaultDILITHIUMMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.XMSS.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.DILITHIUM.getAlgorithm(),
+                    PQCSignatureAlgorithms.DILITHIUM.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

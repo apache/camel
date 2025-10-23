@@ -38,7 +38,8 @@ public class PQCDefaultSNOVAMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.SNOVA.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.SNOVA.getAlgorithm(),
+                    PQCSignatureAlgorithms.SNOVA.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

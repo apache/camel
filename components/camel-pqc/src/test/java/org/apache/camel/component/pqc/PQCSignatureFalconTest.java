@@ -90,8 +90,9 @@ public class PQCSignatureFalconTest extends CamelTestSupport {
     }
 
     @BindToRegistry("Signer")
-    public Signature getSigner() throws NoSuchAlgorithmException {
-        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.FALCON.getAlgorithm());
+    public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
+        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.FALCON.getAlgorithm(),
+                PQCSignatureAlgorithms.FALCON.getBcProvider());
         return mlDsa;
     }
 }

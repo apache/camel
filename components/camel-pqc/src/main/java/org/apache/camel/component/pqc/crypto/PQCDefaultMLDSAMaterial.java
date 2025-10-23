@@ -38,7 +38,8 @@ public class PQCDefaultMLDSAMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.MLDSA.getAlgorithm(),
+                    PQCSignatureAlgorithms.MLDSA.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -38,7 +38,8 @@ public class PQCDefaultSLHDSAMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.SLHDSA.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.SLHDSA.getAlgorithm(),
+                    PQCSignatureAlgorithms.SLHDSA.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

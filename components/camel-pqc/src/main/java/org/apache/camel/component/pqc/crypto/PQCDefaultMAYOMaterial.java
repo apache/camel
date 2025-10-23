@@ -38,7 +38,8 @@ public class PQCDefaultMAYOMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.MAYO.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.MAYO.getAlgorithm(),
+                    PQCSignatureAlgorithms.MAYO.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
