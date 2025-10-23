@@ -31,40 +31,11 @@ import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
+public class WebsocketRoute3Test extends WebsocketCamelRouterTestSupport {
     private static final String RESPONSE_GREETING = "Hola ";
     private static final byte[] RESPONSE_GREETING_BYTES = { 0x48, 0x6f, 0x6c, 0x61, 0x20 };
-
-    @Test
-    void testWebsocketSingleClient() throws Exception {
-        WebsocketTestClient wsclient = new WebsocketTestClient("ws://localhost:" + PORT + "/hola");
-        wsclient.connect();
-
-        wsclient.sendTextMessage("Cerveza");
-
-        assertTrue(wsclient.await(10));
-        List<String> received = wsclient.getReceived(String.class);
-        assertEquals(1, received.size());
-        assertEquals("Hola Cerveza", received.get(0));
-        wsclient.close();
-    }
-
-    @Test
-    void testWebsocketSingleClientForBytes() throws Exception {
-        WebsocketTestClient wsclient = new WebsocketTestClient("ws://localhost:" + PORT + "/hola");
-        wsclient.connect();
-
-        wsclient.sendBytesMessage("Cerveza".getBytes("UTF-8"));
-
-        assertTrue(wsclient.await(10));
-        List<String> received = wsclient.getReceived(String.class);
-        assertEquals(1, received.size());
-        assertEquals("Hola Cerveza", received.get(0));
-        wsclient.close();
-    }
 
     @Test
     void testWebsocketSingleClientForReader() throws Exception {
@@ -94,74 +65,17 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
         wsclient.close();
     }
 
-    @Test
-    void testWebsocketBroadcastClient() throws Exception {
-        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/broadcast", 2);
-        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/broadcast", 2);
-        wsclient1.connect();
-        wsclient2.connect();
-
-        wsclient1.sendTextMessage("Gambas");
-        wsclient2.sendTextMessage("Calamares");
-
-        assertTrue(wsclient1.await(10));
-        assertTrue(wsclient2.await(10));
-
-        List<String> received1 = wsclient1.getReceived(String.class);
-        assertEquals(2, received1.size());
-
-        assertTrue(received1.contains("Hola Gambas"));
-        assertTrue(received1.contains("Hola Calamares"));
-
-        List<String> received2 = wsclient2.getReceived(String.class);
-        assertEquals(2, received2.size());
-        assertTrue(received2.contains("Hola Gambas"));
-        assertTrue(received2.contains("Hola Calamares"));
-
-        wsclient1.close();
-        wsclient2.close();
-    }
-
-    @Test
-    void testWebsocketEventsResendingDisabled() throws Exception {
-        WebsocketTestClient wsclient = new WebsocketTestClient("ws://localhost:" + PORT + "/hola4");
-        wsclient.connect();
-        assertFalse(wsclient.await(10));
-        wsclient.close();
-    }
-
     // START SNIPPET: payload
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // route for a single line
-                from("atmosphere-websocket:///hola").to("log:info").process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        createResponse(exchange, false);
-                    }
-                }).to("atmosphere-websocket:///hola");
-
-                // route for a broadcast line
-                from("atmosphere-websocket:///broadcast").to("log:info").process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        createResponse(exchange, false);
-                    }
-                }).to("atmosphere-websocket:///broadcast?sendToAll=true");
-
                 // route for a single stream line
                 from("atmosphere-websocket:///hola3?useStreaming=true").to("log:info").process(new Processor() {
                     public void process(final Exchange exchange) {
                         createResponse(exchange, true);
                     }
                 }).to("atmosphere-websocket:///hola3");
-
-                // route for events resending disabled
-                from("atmosphere-websocket:///hola4").to("log:info").process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        checkEventsResendingDisabled(exchange);
-                    }
-                }).to("atmosphere-websocket:///hola4");
             }
         };
     }
