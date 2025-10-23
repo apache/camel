@@ -86,14 +86,18 @@ public class AS2ServerConnection {
         public RequestListenerService(String as2Version,
                                       String originServer,
                                       String serverFqdn,
-                                      AS2SignatureAlgorithm signatureAlgorithm,
                                       String mdnMessageTemplate,
                                       Certificate[] validateSigningCertificateChain)
                                                                                      throws IOException {
 
             // Set up HTTP protocol processor for incoming connections
-            final HttpProcessor inhttpproc = initProtocolProcessor(as2Version, originServer, serverFqdn,
-                    null, null, null, null, mdnMessageTemplate,
+            final HttpProcessor inhttpproc = initProtocolProcessor(
+                    as2Version, originServer, serverFqdn,
+                    AS2ServerConnection.this.signingAlgorithm,
+                    AS2ServerConnection.this.signingCertificateChain,
+                    AS2ServerConnection.this.signingPrivateKey,
+                    AS2ServerConnection.this.decryptingPrivateKey,
+                    mdnMessageTemplate,
                     validateSigningCertificateChain);
 
             registry = new RequestHandlerRegistry<>();
@@ -193,12 +197,18 @@ public class AS2ServerConnection {
                                 AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN,
                                 DispositionNotificationMultipartReportEntity.class);
                         AS2AsynchronousMDNManager asynchronousMDNManager = new AS2AsynchronousMDNManager(
-                                as2Version,
-                                originServer, serverFqdn, signingCertificateChain, signingPrivateKey);
+                                AS2ServerConnection.this.as2Version,
+                                AS2ServerConnection.this.originServer,
+                                AS2ServerConnection.this.serverFqdn,
+                                AS2ServerConnection.this.signingCertificateChain,
+                                AS2ServerConnection.this.signingPrivateKey);
 
                         HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
                         AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
-                                request, signingAlgorithm, signingCertificateChain, signingPrivateKey);
+                                request,
+                                AS2ServerConnection.this.signingAlgorithm,
+                                AS2ServerConnection.this.signingCertificateChain,
+                                AS2ServerConnection.this.signingPrivateKey);
 
                         MultipartMimeEntity asyncReceipt = multipartReportEntity;
                         if (gen != null) {
@@ -260,8 +270,11 @@ public class AS2ServerConnection {
         this.signingAlgorithm = signingAlgorithm;
 
         listenerService = new RequestListenerService(
-                this.as2Version, this.originServer, this.serverFqdn,
-                signingAlgorithm, mdnMessageTemplate, validateSigningCertificateChain);
+                this.as2Version,
+                this.originServer,
+                this.serverFqdn,
+                mdnMessageTemplate,
+                validateSigningCertificateChain);
 
         acceptorThread = new RequestAcceptorThread(parserServerPortNumber, sslContext, listenerService);
         acceptorThread.setDaemon(true);
