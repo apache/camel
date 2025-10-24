@@ -31,7 +31,7 @@ public class DoclingConfiguration implements Cloneable {
 
     @UriParam
     @Metadata(required = true, defaultValue = "CONVERT_TO_MARKDOWN", description = "The operation to perform",
-              enums = "CONVERT_TO_MARKDOWN,CONVERT_TO_HTML,CONVERT_TO_JSON,EXTRACT_TEXT,EXTRACT_STRUCTURED_DATA")
+              enums = "CONVERT_TO_MARKDOWN,CONVERT_TO_HTML,CONVERT_TO_JSON,EXTRACT_TEXT,EXTRACT_STRUCTURED_DATA,SUBMIT_ASYNC_CONVERSION,CHECK_CONVERSION_STATUS,BATCH_CONVERT_TO_MARKDOWN,BATCH_CONVERT_TO_HTML,BATCH_CONVERT_TO_JSON,BATCH_EXTRACT_TEXT,BATCH_EXTRACT_STRUCTURED_DATA")
     private DoclingOperations operation = DoclingOperations.CONVERT_TO_MARKDOWN;
 
     @UriParam(label = "advanced")
@@ -150,6 +150,29 @@ public class DoclingConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     @Metadata(description = "Maximum idle time for connections in milliseconds before eviction", defaultValue = "60000")
     private long maxIdleTime = 60000;
+
+    @UriParam(label = "batch")
+    @Metadata(description = "Maximum number of documents to process in a single batch (batch operations only)",
+              defaultValue = "10")
+    private int batchSize = 10;
+
+    @UriParam(label = "batch")
+    @Metadata(description = "Maximum time to wait for batch completion in milliseconds", defaultValue = "300000")
+    private long batchTimeout = 300000;
+
+    @UriParam(label = "batch")
+    @Metadata(description = "Number of parallel threads for batch processing", defaultValue = "4")
+    private int batchParallelism = 4;
+
+    @UriParam(label = "batch")
+    @Metadata(description = "Fail entire batch on first error (true) or continue processing remaining documents (false)",
+              defaultValue = "true")
+    private boolean batchFailOnFirstError = true;
+
+    @UriParam(label = "batch")
+    @Metadata(description = "Split batch results into individual exchanges (one per document) instead of single BatchProcessingResults",
+              defaultValue = "false")
+    private boolean splitBatchResults = false;
 
     public DoclingOperations getOperation() {
         return operation;
@@ -381,6 +404,46 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setMaxIdleTime(long maxIdleTime) {
         this.maxIdleTime = maxIdleTime;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public long getBatchTimeout() {
+        return batchTimeout;
+    }
+
+    public void setBatchTimeout(long batchTimeout) {
+        this.batchTimeout = batchTimeout;
+    }
+
+    public int getBatchParallelism() {
+        return batchParallelism;
+    }
+
+    public void setBatchParallelism(int batchParallelism) {
+        this.batchParallelism = batchParallelism;
+    }
+
+    public boolean isBatchFailOnFirstError() {
+        return batchFailOnFirstError;
+    }
+
+    public void setBatchFailOnFirstError(boolean batchFailOnFirstError) {
+        this.batchFailOnFirstError = batchFailOnFirstError;
+    }
+
+    public boolean isSplitBatchResults() {
+        return splitBatchResults;
+    }
+
+    public void setSplitBatchResults(boolean splitBatchResults) {
+        this.splitBatchResults = splitBatchResults;
     }
 
     public DoclingConfiguration copy() {

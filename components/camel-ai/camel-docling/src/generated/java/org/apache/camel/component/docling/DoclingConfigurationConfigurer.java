@@ -35,6 +35,14 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "authenticationScheme": target.setAuthenticationScheme(property(camelContext, org.apache.camel.component.docling.AuthenticationScheme.class, value)); return true;
         case "authenticationtoken":
         case "authenticationToken": target.setAuthenticationToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "batchfailonfirsterror":
+        case "batchFailOnFirstError": target.setBatchFailOnFirstError(property(camelContext, boolean.class, value)); return true;
+        case "batchparallelism":
+        case "batchParallelism": target.setBatchParallelism(property(camelContext, int.class, value)); return true;
+        case "batchsize":
+        case "batchSize": target.setBatchSize(property(camelContext, int.class, value)); return true;
+        case "batchtimeout":
+        case "batchTimeout": target.setBatchTimeout(property(camelContext, long.class, value)); return true;
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": target.setConnectionRequestTimeout(property(camelContext, int.class, value)); return true;
         case "connectiontimetolive":
@@ -72,6 +80,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "processTimeout": target.setProcessTimeout(property(camelContext, long.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "splitbatchresults":
+        case "splitBatchResults": target.setSplitBatchResults(property(camelContext, boolean.class, value)); return true;
         case "useasyncmode":
         case "useAsyncMode": target.setUseAsyncMode(property(camelContext, boolean.class, value)); return true;
         case "usedoclingserve":
@@ -99,6 +109,14 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "authenticationScheme": return org.apache.camel.component.docling.AuthenticationScheme.class;
         case "authenticationtoken":
         case "authenticationToken": return java.lang.String.class;
+        case "batchfailonfirsterror":
+        case "batchFailOnFirstError": return boolean.class;
+        case "batchparallelism":
+        case "batchParallelism": return int.class;
+        case "batchsize":
+        case "batchSize": return int.class;
+        case "batchtimeout":
+        case "batchTimeout": return long.class;
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": return int.class;
         case "connectiontimetolive":
@@ -136,6 +154,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "processTimeout": return long.class;
         case "sockettimeout":
         case "socketTimeout": return int.class;
+        case "splitbatchresults":
+        case "splitBatchResults": return boolean.class;
         case "useasyncmode":
         case "useAsyncMode": return boolean.class;
         case "usedoclingserve":
@@ -164,6 +184,14 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "authenticationScheme": return target.getAuthenticationScheme();
         case "authenticationtoken":
         case "authenticationToken": return target.getAuthenticationToken();
+        case "batchfailonfirsterror":
+        case "batchFailOnFirstError": return target.isBatchFailOnFirstError();
+        case "batchparallelism":
+        case "batchParallelism": return target.getBatchParallelism();
+        case "batchsize":
+        case "batchSize": return target.getBatchSize();
+        case "batchtimeout":
+        case "batchTimeout": return target.getBatchTimeout();
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": return target.getConnectionRequestTimeout();
         case "connectiontimetolive":
@@ -201,6 +229,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "processTimeout": return target.getProcessTimeout();
         case "sockettimeout":
         case "socketTimeout": return target.getSocketTimeout();
+        case "splitbatchresults":
+        case "splitBatchResults": return target.isSplitBatchResults();
         case "useasyncmode":
         case "useAsyncMode": return target.isUseAsyncMode();
         case "usedoclingserve":

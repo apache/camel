@@ -44,6 +44,14 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "authenticationToken": getOrCreateConfiguration(target).setAuthenticationToken(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "batchfailonfirsterror":
+        case "batchFailOnFirstError": getOrCreateConfiguration(target).setBatchFailOnFirstError(property(camelContext, boolean.class, value)); return true;
+        case "batchparallelism":
+        case "batchParallelism": getOrCreateConfiguration(target).setBatchParallelism(property(camelContext, int.class, value)); return true;
+        case "batchsize":
+        case "batchSize": getOrCreateConfiguration(target).setBatchSize(property(camelContext, int.class, value)); return true;
+        case "batchtimeout":
+        case "batchTimeout": getOrCreateConfiguration(target).setBatchTimeout(property(camelContext, long.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.docling.DoclingConfiguration.class, value)); return true;
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": getOrCreateConfiguration(target).setConnectionRequestTimeout(property(camelContext, int.class, value)); return true;
@@ -84,6 +92,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "processTimeout": getOrCreateConfiguration(target).setProcessTimeout(property(camelContext, long.class, value)); return true;
         case "sockettimeout":
         case "socketTimeout": getOrCreateConfiguration(target).setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "splitbatchresults":
+        case "splitBatchResults": getOrCreateConfiguration(target).setSplitBatchResults(property(camelContext, boolean.class, value)); return true;
         case "useasyncmode":
         case "useAsyncMode": getOrCreateConfiguration(target).setUseAsyncMode(property(camelContext, boolean.class, value)); return true;
         case "usedoclingserve":
@@ -113,6 +123,14 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "authenticationToken": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "batchfailonfirsterror":
+        case "batchFailOnFirstError": return boolean.class;
+        case "batchparallelism":
+        case "batchParallelism": return int.class;
+        case "batchsize":
+        case "batchSize": return int.class;
+        case "batchtimeout":
+        case "batchTimeout": return long.class;
         case "configuration": return org.apache.camel.component.docling.DoclingConfiguration.class;
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": return int.class;
@@ -153,6 +171,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "processTimeout": return long.class;
         case "sockettimeout":
         case "socketTimeout": return int.class;
+        case "splitbatchresults":
+        case "splitBatchResults": return boolean.class;
         case "useasyncmode":
         case "useAsyncMode": return boolean.class;
         case "usedoclingserve":
@@ -183,6 +203,14 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "authenticationToken": return getOrCreateConfiguration(target).getAuthenticationToken();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "batchfailonfirsterror":
+        case "batchFailOnFirstError": return getOrCreateConfiguration(target).isBatchFailOnFirstError();
+        case "batchparallelism":
+        case "batchParallelism": return getOrCreateConfiguration(target).getBatchParallelism();
+        case "batchsize":
+        case "batchSize": return getOrCreateConfiguration(target).getBatchSize();
+        case "batchtimeout":
+        case "batchTimeout": return getOrCreateConfiguration(target).getBatchTimeout();
         case "configuration": return target.getConfiguration();
         case "connectionrequesttimeout":
         case "connectionRequestTimeout": return getOrCreateConfiguration(target).getConnectionRequestTimeout();
@@ -223,6 +251,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "processTimeout": return getOrCreateConfiguration(target).getProcessTimeout();
         case "sockettimeout":
         case "socketTimeout": return getOrCreateConfiguration(target).getSocketTimeout();
+        case "splitbatchresults":
+        case "splitBatchResults": return getOrCreateConfiguration(target).isSplitBatchResults();
         case "useasyncmode":
         case "useAsyncMode": return getOrCreateConfiguration(target).isUseAsyncMode();
         case "usedoclingserve":

@@ -23,13 +23,17 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(31);
+        Set<String> props = new HashSet<>(36);
         props.add("apiKeyHeader");
         props.add("apiTimeout");
         props.add("asyncPollInterval");
         props.add("asyncTimeout");
         props.add("authenticationScheme");
         props.add("authenticationToken");
+        props.add("batchFailOnFirstError");
+        props.add("batchParallelism");
+        props.add("batchSize");
+        props.add("batchTimeout");
         props.add("connectionRequestTimeout");
         props.add("connectionTimeToLive");
         props.add("connectionTimeout");
@@ -51,6 +55,7 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
         props.add("outputFormat");
         props.add("processTimeout");
         props.add("socketTimeout");
+        props.add("splitBatchResults");
         props.add("useAsyncMode");
         props.add("useDoclingServe");
         props.add("validateAfterInactivity");

@@ -51,6 +51,31 @@ public enum DoclingOperations {
     /**
      * Check the status of an async conversion task (docling-serve only)
      */
-    CHECK_CONVERSION_STATUS
+    CHECK_CONVERSION_STATUS,
+
+    /**
+     * Convert multiple documents to markdown format in a batch (docling-serve only)
+     */
+    BATCH_CONVERT_TO_MARKDOWN,
+
+    /**
+     * Convert multiple documents to HTML format in a batch (docling-serve only)
+     */
+    BATCH_CONVERT_TO_HTML,
+
+    /**
+     * Convert multiple documents to JSON format in a batch (docling-serve only)
+     */
+    BATCH_CONVERT_TO_JSON,
+
+    /**
+     * Extract text content from multiple documents in a batch (docling-serve only)
+     */
+    BATCH_EXTRACT_TEXT,
+
+    /**
+     * Extract structured data from multiple documents in a batch (docling-serve only)
+     */
+    BATCH_EXTRACT_STRUCTURED_DATA
 
 }

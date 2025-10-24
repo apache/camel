@@ -539,6 +539,94 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * Fail entire batch on first error (true) or continue processing
+         * remaining documents (false).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: batch
+         * 
+         * @param batchFailOnFirstError the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder batchFailOnFirstError(boolean batchFailOnFirstError) {
+            doSetProperty("batchFailOnFirstError", batchFailOnFirstError);
+            return this;
+        }
+    
+        
+        /**
+         * Number of parallel threads for batch processing.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 4
+         * Group: batch
+         * 
+         * @param batchParallelism the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder batchParallelism(int batchParallelism) {
+            doSetProperty("batchParallelism", batchParallelism);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum number of documents to process in a single batch (batch
+         * operations only).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: batch
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum time to wait for batch completion in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 300000
+         * Group: batch
+         * 
+         * @param batchTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder batchTimeout(long batchTimeout) {
+            doSetProperty("batchTimeout", batchTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Split batch results into individual exchanges (one per document)
+         * instead of single BatchProcessingResults.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: batch
+         * 
+         * @param splitBatchResults the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder splitBatchResults(boolean splitBatchResults) {
+            doSetProperty("splitBatchResults", splitBatchResults);
+            return this;
+        }
+    
+        
+        /**
          * Header name for API key authentication.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -652,6 +740,11 @@ public interface DoclingComponentBuilderFactory {
             case "useAsyncMode": getOrCreateConfiguration((DoclingComponent) component).setUseAsyncMode((boolean) value); return true;
             case "validateAfterInactivity": getOrCreateConfiguration((DoclingComponent) component).setValidateAfterInactivity((int) value); return true;
             case "workingDirectory": getOrCreateConfiguration((DoclingComponent) component).setWorkingDirectory((java.lang.String) value); return true;
+            case "batchFailOnFirstError": getOrCreateConfiguration((DoclingComponent) component).setBatchFailOnFirstError((boolean) value); return true;
+            case "batchParallelism": getOrCreateConfiguration((DoclingComponent) component).setBatchParallelism((int) value); return true;
+            case "batchSize": getOrCreateConfiguration((DoclingComponent) component).setBatchSize((int) value); return true;
+            case "batchTimeout": getOrCreateConfiguration((DoclingComponent) component).setBatchTimeout((long) value); return true;
+            case "splitBatchResults": getOrCreateConfiguration((DoclingComponent) component).setSplitBatchResults((boolean) value); return true;
             case "apiKeyHeader": getOrCreateConfiguration((DoclingComponent) component).setApiKeyHeader((java.lang.String) value); return true;
             case "authenticationScheme": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationScheme((org.apache.camel.component.docling.AuthenticationScheme) value); return true;
             case "authenticationToken": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationToken((java.lang.String) value); return true;
