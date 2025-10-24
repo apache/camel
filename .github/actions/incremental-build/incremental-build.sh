@@ -151,14 +151,14 @@ function main() {
         for w in $pl; do
           echo "$w"
         done
-        $mavenBinary -l $log $MVND_OPTS install -pl "$pl"
+        $mavenBinary -l $log $MVND_OPTS test -pl "$pl"
         ret=$?
       else
         echo "Testing the affected projects and the projects that depend on them:"
         for w in $pl; do
           echo "$w"
         done
-        $mavenBinary -l $log $MVND_OPTS install -pl "$pl" -amd
+        $mavenBinary -l $log $MVND_OPTS test -pl "$pl" -amd
         ret=$?
       fi
     fi
