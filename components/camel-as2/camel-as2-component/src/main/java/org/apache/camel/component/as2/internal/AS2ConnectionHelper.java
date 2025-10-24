@@ -103,12 +103,9 @@ public final class AS2ConnectionHelper {
                                     configuration.getAs2Version(), configuration.getServer(),
                                     configuration.getServerFqdn(), configuration.getServerPortNumber(),
                                     configuration.getSigningAlgorithm(),
-                                    configuration.getSigningCertificateChain(),
-                                    configuration.getSigningPrivateKey(),
-                                    configuration.getDecryptingPrivateKey(),
-                                    configuration.getMdnMessageTemplate(),
-                                    configuration.getValidateSigningCertificateChain(),
-                                    configuration.getSslContext());
+                                    configuration.getSigningCertificateChain(), configuration.getSigningPrivateKey(),
+                                    configuration.getDecryptingPrivateKey(), configuration.getMdnMessageTemplate(),
+                                    configuration.getValidateSigningCertificateChain(), configuration.getSslContext());
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
                         }
