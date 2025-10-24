@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.docling;
+package org.apache.camel.component.docling.integration;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -22,10 +22,16 @@ import java.nio.file.Path;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.docling.ConversionStatus;
+import org.apache.camel.component.docling.DoclingComponent;
+import org.apache.camel.component.docling.DoclingConfiguration;
+import org.apache.camel.component.docling.DoclingHeaders;
+import org.apache.camel.component.docling.DoclingOperations;
 import org.apache.camel.test.infra.docling.services.DoclingService;
 import org.apache.camel.test.infra.docling.services.DoclingServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
@@ -41,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * This test demonstrates how to use the camel-test-infra-docling module to automatically spin up a Docling-Serve
  * container for testing without manual setup.
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
 public class DoclingServeProducerIT extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DoclingServeProducerIT.class);
