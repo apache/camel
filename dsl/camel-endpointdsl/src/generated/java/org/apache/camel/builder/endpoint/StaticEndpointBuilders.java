@@ -6925,6 +6925,46 @@ public class StaticEndpointBuilders {
         return SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM Cloud Object Storage (camel-ibm-cos)
+     * Store and retrieve objects from IBM Cloud Object Storage.
+     * 
+     * Category: cloud,file
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-cos
+     * 
+     * Syntax: <code>ibm-cos:bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name
+     * 
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static IBMCOSEndpointBuilderFactory.IBMCOSEndpointBuilder ibmCos(String path) {
+        return ibmCos("ibm-cos", path);
+    }
+    /**
+     * IBM Cloud Object Storage (camel-ibm-cos)
+     * Store and retrieve objects from IBM Cloud Object Storage.
+     * 
+     * Category: cloud,file
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-cos
+     * 
+     * Syntax: <code>ibm-cos:bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static IBMCOSEndpointBuilderFactory.IBMCOSEndpointBuilder ibmCos(String componentName, String path) {
+        return IBMCOSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
      * 

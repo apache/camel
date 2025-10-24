@@ -59,6 +59,7 @@
   "secret",
   "secretkey",
   "securerandom",
+  "serviceinstanceid",
   "sessiontoken",
   "sharedaccesskey",
   "sourceblobaccesskey",

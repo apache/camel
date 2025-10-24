@@ -88,6 +88,7 @@ public final class SensitiveUtils {
                     "secret",
                     "secretkey",
                     "securerandom",
+                    "serviceinstanceid",
                     "sessiontoken",
                     "sharedaccesskey",
                     "sourceblobaccesskey",
@@ -173,6 +174,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qsecret\\E"
                                                     + "|\\Qsecretkey\\E"
                                                     + "|\\Qsecurerandom\\E"
+                                                    + "|\\Qserviceinstanceid\\E"
                                                     + "|\\Qsessiontoken\\E"
                                                     + "|\\Qsharedaccesskey\\E"
                                                     + "|\\Qsourceblobaccesskey\\E"

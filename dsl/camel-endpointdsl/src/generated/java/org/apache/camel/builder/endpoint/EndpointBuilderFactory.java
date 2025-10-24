@@ -162,6 +162,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.HttpEndpointBuilderFactory.HttpBuilders,
             org.apache.camel.builder.endpoint.dsl.IAM2EndpointBuilderFactory.IAM2Builders,
             org.apache.camel.builder.endpoint.dsl.IAMEndpointBuilderFactory.IAMBuilders,
+            org.apache.camel.builder.endpoint.dsl.IBMCOSEndpointBuilderFactory.IBMCOSBuilders,
             org.apache.camel.builder.endpoint.dsl.IBMSecretsManagerEndpointBuilderFactory.IBMSecretsManagerBuilders,
             org.apache.camel.builder.endpoint.dsl.IgniteCacheEndpointBuilderFactory.IgniteCacheBuilders,
             org.apache.camel.builder.endpoint.dsl.IgniteComputeEndpointBuilderFactory.IgniteComputeBuilders,
