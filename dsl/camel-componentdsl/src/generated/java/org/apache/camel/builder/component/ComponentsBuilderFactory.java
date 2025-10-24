@@ -2132,6 +2132,19 @@ public interface ComponentsBuilderFactory {
         return HwcloudSmnComponentBuilderFactory.hwcloudSmn();
     }
     /**
+     * IBM Cloud Object Storage (camel-ibm-cos)
+     * Store and retrieve objects from IBM Cloud Object Storage.
+     * 
+     * Category: cloud,file
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-cos
+     * 
+     * @return the dsl builder
+     */
+    static IbmCosComponentBuilderFactory.IbmCosComponentBuilder ibmCos() {
+        return IbmCosComponentBuilderFactory.ibmCos();
+    }
+    /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
      * 
