@@ -11750,11 +11750,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "bufferSize", type = "number", defaultValue = "4096", description = "The size of the buffer used for streaming encryption/decryption.", displayName = "Buffer Size"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
-                    @YamlProperty(name = "keyEncapsulationAlgorithm", type = "string", defaultValue = "MLKEM", description = "The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO, NTRU, NTRULPRime, SNTRUPrime, KYBER", displayName = "Key Encapsulation Algorithm"),
+                    @YamlProperty(name = "keyEncapsulationAlgorithm", type = "enum:MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER", defaultValue = "MLKEM", description = "The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO, NTRU, NTRULPRime, SNTRUPrime, KYBER", displayName = "Key Encapsulation Algorithm"),
                     @YamlProperty(name = "keyGenerator", type = "string", description = "Refers to a custom KeyGenerator to lookup from the register for KEM operations.", displayName = "Key Generator"),
                     @YamlProperty(name = "keyPair", type = "string", description = "Refers to the KeyPair to lookup from the register to use for KEM operations.", displayName = "Key Pair"),
                     @YamlProperty(name = "provider", type = "string", description = "The JCE security provider to use.", displayName = "Provider"),
-                    @YamlProperty(name = "symmetricKeyAlgorithm", type = "string", defaultValue = "AES", description = "The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA, CAST5, CAST6, CHACHA7539, etc.", displayName = "Symmetric Key Algorithm"),
+                    @YamlProperty(name = "symmetricKeyAlgorithm", type = "enum:AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE", defaultValue = "AES", description = "The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA, CAST5, CAST6, CHACHA7539, etc.", displayName = "Symmetric Key Algorithm"),
                     @YamlProperty(name = "symmetricKeyLength", type = "number", defaultValue = "128", description = "The length (in bits) of the symmetric key.", displayName = "Symmetric Key Length")
             }
     )
