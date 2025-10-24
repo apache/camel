@@ -12431,7 +12431,8 @@
             "type" : "string",
             "title" : "Key Encapsulation Algorithm",
             "description" : "The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO, NTRU, NTRULPRime, SNTRUPrime, KYBER",
-            "default" : "MLKEM"
+            "default" : "MLKEM",
+            "enum" : [ "MLKEM", "BIKE", "HQC", "CMCE", "SABER", "FRODO", "NTRU", "NTRULPRime", "SNTRUPrime", "KYBER" ]
           },
           "keyGenerator" : {
             "type" : "string",
@@ -12452,7 +12453,8 @@
             "type" : "string",
             "title" : "Symmetric Key Algorithm",
             "description" : "The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA, CAST5, CAST6, CHACHA7539, etc.",
-            "default" : "AES"
+            "default" : "AES",
+            "enum" : [ "AES", "ARIA", "RC2", "RC5", "CAMELLIA", "CAST5", "CAST6", "CHACHA7539", "DSTU7624", "GOST28147", "GOST3412_2015", "GRAIN128", "HC128", "HC256", "SALSA20", "SEED", "SM4", "DESEDE" ]
           },
           "symmetricKeyLength" : {
             "type" : "number",

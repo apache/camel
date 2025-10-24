@@ -35,11 +35,12 @@ import org.apache.camel.spi.Metadata;
 public class PQCDataFormat extends DataFormatDefinition {
 
     @XmlAttribute
-    @Metadata(defaultValue = "MLKEM")
-    private String keyEncapsulationAlgorithm = "MLKEM";
+    @Metadata(defaultValue = "MLKEM", enums = "MLKEM,BIKE,HQC,CMCE,SABER,FRODO,NTRU,NTRULPRime,SNTRUPrime,KYBER")
+    private String keyEncapsulationAlgorithm;
     @XmlAttribute
-    @Metadata(defaultValue = "AES")
-    private String symmetricKeyAlgorithm = "AES";
+    @Metadata(defaultValue = "AES",
+              enums = "AES,ARIA,RC2,RC5,CAMELLIA,CAST5,CAST6,CHACHA7539,DSTU7624,GOST28147,GOST3412_2015,GRAIN128,HC128,HC256,SALSA20,SEED,SM4,DESEDE")
+    private String symmetricKeyAlgorithm;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer", defaultValue = "128")
     private String symmetricKeyLength;
