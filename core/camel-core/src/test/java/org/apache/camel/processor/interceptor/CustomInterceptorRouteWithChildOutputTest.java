@@ -52,10 +52,10 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
         assertEquals(4, myInterceptor.getDefs().size());
         assertIsInstanceOf(LogDefinition.class, myInterceptor.getDefs().get(0));
         assertIsInstanceOf(ToDefinition.class, myInterceptor.getDefs().get(1));
-        assertEquals("mock:child", myInterceptor.getDefs().get(1).getLabel());
+        assertEquals("to[mock:child]", myInterceptor.getDefs().get(1).getLabel());
         assertIsInstanceOf(SplitDefinition.class, myInterceptor.getDefs().get(2));
         assertIsInstanceOf(ToDefinition.class, myInterceptor.getDefs().get(3));
-        assertEquals("mock:result", myInterceptor.getDefs().get(3).getLabel());
+        assertEquals("to[mock:result]", myInterceptor.getDefs().get(3).getLabel());
     }
 
     @Override

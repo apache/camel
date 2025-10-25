@@ -88,7 +88,12 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
 
     @Override
     public String getLabel() {
-        return "log";
+        String m = message;
+        if (m != null) {
+            // log messages may have new lines so replace them with a space as we want the label to be in a single line
+            m = m.replace('\n', ' ');
+        }
+        return "log[" + m + "]";
     }
 
     public Logger getLoggerBean() {

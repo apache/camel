@@ -78,4 +78,14 @@ public interface ModelToYAMLDumper {
      */
     String dumpDataFormatsAsYaml(CamelContext context, Map<String, Object> dataFormats) throws Exception;
 
+    /**
+     * Dumps the definition (structure only) as YAML
+     *
+     * @param  context    the CamelContext
+     * @param  definition the definition, such as a {@link NamedNode}
+     * @return            the output in YAML (is formatted)
+     * @throws Exception  is throw if error marshalling to YAML
+     */
+    String dumpStructureModelAsYaml(CamelContext context, NamedNode definition) throws Exception;
+
 }

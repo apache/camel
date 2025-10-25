@@ -36,7 +36,7 @@ public class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
             FailedToCreateRouteException ftce = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftce.getCause());
             assertEquals(
-                    "This doCatch should have a doTry as its parent on DoCatch[ [class java.io.IOException] -> [To[mock:fail]]]",
+                    "This doCatch should have a doTry as its parent on DoCatch[ [class java.io.IOException] -> [to[mock:fail]]]",
                     iae.getMessage());
         }
 
@@ -46,7 +46,7 @@ public class SpringTryCatchMisconfiguredTest extends ContextTestSupport {
         } catch (Exception e) {
             FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftcre.getCause());
-            assertEquals("This doFinally should have a doTry as its parent on DoFinally[[To[mock:finally]]]", iae.getMessage());
+            assertEquals("This doFinally should have a doTry as its parent on DoFinally[[to[mock:finally]]]", iae.getMessage());
         }
 
         // return a working context instead, to let this test pass

@@ -38,7 +38,7 @@ import org.apache.camel.util.json.JsonObject;
 public class RouteDumpDevConsole extends AbstractDevConsole {
 
     /**
-     * To use either xml or yaml output format
+     * To output in either xml, yaml, or text format
      */
     public static final String FORMAT = "format";
 
@@ -57,6 +57,11 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
      */
     public static final String URI_AS_PARAMETERS = "uriAsParameters";
 
+    /**
+     * Whether to dump in brief mode (only overall structure, and no detailed options or expressions)
+     */
+    public static final String BRIEF = "brief";
+
     public RouteDumpDevConsole() {
         super("camel", "route-dump", "Route Dump", "Dump route in XML or YAML format");
     }
@@ -64,6 +69,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     @Override
     protected String doCallText(Map<String, Object> options) {
         final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
+        final String brief = (String) options.getOrDefault(BRIEF, "false");
 
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
@@ -71,9 +77,19 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
             try {
                 String format = (String) options.get(FORMAT);
                 if (format == null || "xml".equals(format)) {
-                    dump = mrb.dumpRouteAsXml();
+                    if ("true".equals(brief)) {
+                        dump = mrb.dumpStructureRouteAsXml();
+                    } else {
+                        dump = mrb.dumpRouteAsXml(true);
+                    }
                 } else if ("yaml".equals(format)) {
-                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
+                    if ("true".equals(brief)) {
+                        dump = mrb.dumpStructureRouteAsYaml();
+                    } else {
+                        dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
+                    }
+                } else if ("text".equals(format)) {
+                    dump = mrb.dumpStructureRouteAsText("true".equals(brief));
                 }
             } catch (Exception e) {
                 // ignore
@@ -100,6 +116,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
         final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
+        final String brief = (String) options.getOrDefault(BRIEF, "false");
 
         final JsonObject root = new JsonObject();
         final List<JsonObject> list = new ArrayList<>();
@@ -119,10 +136,20 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                 String format = (String) options.get(FORMAT);
                 if (format == null || "xml".equals(format)) {
                     jo.put("format", "xml");
-                    dump = mrb.dumpRouteAsXml();
+                    if ("true".equals(brief)) {
+                        dump = mrb.dumpStructureRouteAsXml();
+                    } else {
+                        dump = mrb.dumpRouteAsXml(true);
+                    }
                 } else if ("yaml".equals(format)) {
                     jo.put("format", "yaml");
-                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
+                    if ("true".equals(brief)) {
+                        dump = mrb.dumpStructureRouteAsYaml();
+                    } else {
+                        dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
+                    }
+                } else if ("text".equals(format)) {
+                    dump = mrb.dumpStructureRouteAsText("true".equals(brief));
                 }
                 if (dump != null) {
                     List<JsonObject> code = ConsoleHelper.loadSourceAsJson(new StringReader(dump), null);

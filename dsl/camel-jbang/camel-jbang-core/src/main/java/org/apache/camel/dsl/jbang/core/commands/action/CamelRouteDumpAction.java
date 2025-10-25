@@ -51,16 +51,32 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
 
     }
 
+    public static class FormatCompletionCandidates implements Iterable<String> {
+
+        public FormatCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("yaml", "xml", "text").iterator();
+        }
+
+    }
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--format" },
-                        description = "Output format (xml or yaml)", defaultValue = "yaml")
+    @CommandLine.Option(names = { "--format" }, completionCandidates = FormatCompletionCandidates.class,
+                        description = "Output format (xml, yaml, or text)", defaultValue = "yaml")
     String format;
 
     @CommandLine.Option(names = { "--raw" },
                         description = "To output raw without metadata")
     boolean raw;
+
+    @CommandLine.Option(names = { "--brief" },
+                        description = "To output route structure only (without options) and only applicable for xml or yaml format")
+    boolean brief;
 
     @CommandLine.Option(names = { "--uri-as-parameters" },
                         description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)",
@@ -68,7 +84,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
     boolean uriAsParameters;
 
     @CommandLine.Option(names = { "--filter" },
-                        description = "Filter route by filename (multiple names can be separated by comma)")
+                        description = "Filter route by filename or route id (multiple names can be separated by comma)")
     String filter;
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = NameIdCompletionCandidates.class,
@@ -104,6 +120,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
         root.put("action", "route-dump");
         root.put("filter", "*");
         root.put("format", format);
+        root.put("brief", brief);
         root.put("uriAsParameters", uriAsParameters);
         Path file = getActionFile(Long.toString(pid));
         try {
@@ -141,7 +158,8 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
                         if (!f.endsWith("*")) {
                             f += "*";
                         }
-                        boolean match = PatternHelper.matchPattern(row.location, f);
+                        boolean match
+                                = PatternHelper.matchPattern(row.location, f) || PatternHelper.matchPattern(row.routeId, f);
                         if (negate) {
                             match = !match;
                         }

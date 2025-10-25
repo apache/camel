@@ -76,4 +76,14 @@ public interface ModelToXMLDumper {
      */
     String dumpDataFormatsAsXml(CamelContext context, Map<String, Object> dataFormats) throws Exception;
 
+    /**
+     * Dumps the definition (structure only) as XML
+     *
+     * @param  context    the CamelContext
+     * @param  definition the definition, such as a {@link NamedNode}
+     * @return            the output in XML (is formatted)
+     * @throws Exception  is throw if error marshalling to XML
+     */
+    String dumpStructureModelAsXml(CamelContext context, NamedNode definition) throws Exception;
+
 }

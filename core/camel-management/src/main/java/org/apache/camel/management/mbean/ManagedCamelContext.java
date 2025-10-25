@@ -586,6 +586,55 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     @Override
+    public String dumpStructureRoutesAsYaml() throws Exception {
+        List<RouteDefinition> routes = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinitions();
+        if (routes.isEmpty()) {
+            return null;
+        }
+
+        // use routes definition to dump the routes
+        RoutesDefinition def = new RoutesDefinition();
+        def.setRoutes(routes);
+
+        return PluginHelper.getModelToYAMLDumper(context).dumpStructureModelAsYaml(context, def);
+    }
+
+    @Override
+    public String dumpStructureRoutesAsXml() throws Exception {
+        List<RouteDefinition> routes = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinitions();
+        if (routes.isEmpty()) {
+            return null;
+        }
+
+        // use routes definition to dump the routes
+        RoutesDefinition def = new RoutesDefinition();
+        def.setRoutes(routes);
+
+        return PluginHelper.getModelToXMLDumper(context).dumpStructureModelAsXml(context, def);
+    }
+
+    @Override
+    public String dumpStructureRoutesAsText(boolean brief) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        if (server != null) {
+            // gather all the routes for this CamelContext, which requires JMX
+            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            ObjectName query = ObjectName
+                    .getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
+            Set<ObjectName> routes = server.queryNames(query, null);
+            for (ObjectName on : routes) {
+                ManagedRouteMBean route
+                        = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+                String dump = route.dumpStructureRouteAsText(brief);
+                sb.append(dump);
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
     public String dumpRoutesAsYaml() throws Exception {
         return dumpRoutesAsYaml(false, false);
     }

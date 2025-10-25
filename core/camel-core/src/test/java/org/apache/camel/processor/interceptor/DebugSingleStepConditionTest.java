@@ -71,8 +71,8 @@ public class DebugSingleStepConditionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(2, logs.size());
-        assertEquals("Single stepping at log:beer with body: Carlsberg", logs.get(0));
-        assertEquals("Single stepping at mock:result with body: Carlsberg", logs.get(1));
+        assertEquals("Single stepping at to[log:beer] with body: Carlsberg", logs.get(0));
+        assertEquals("Single stepping at to[mock:result] with body: Carlsberg", logs.get(1));
     }
 
     @Override

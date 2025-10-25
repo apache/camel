@@ -206,6 +206,11 @@ public class ManagedProcessor extends ManagedPerformanceCounter
     }
 
     @Override
+    public String getModelLabel() {
+        return definition.getLabel();
+    }
+
+    @Override
     public String getNote() {
         return definition.getNote();
     }

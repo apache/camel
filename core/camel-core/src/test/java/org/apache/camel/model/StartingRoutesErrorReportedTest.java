@@ -56,7 +56,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         });
 
         assertTrue(
-                e.getMessage().startsWith("Failed to create route: route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
+                e.getMessage().startsWith("Failed to create route: route2 at: >>> to[direct:result?foo=bar] <<< in route:"));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         });
 
         assertTrue(
-                e.getMessage().startsWith("Failed to create route: route2 at: >>> To[direct:result?foo=bar] <<< in route:"));
+                e.getMessage().startsWith("Failed to create route: route2 at: >>> to[direct:result?foo=bar] <<< in route:"));
     }
 
     @Test
