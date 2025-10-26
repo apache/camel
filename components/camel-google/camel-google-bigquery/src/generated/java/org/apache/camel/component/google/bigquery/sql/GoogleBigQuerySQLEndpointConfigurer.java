@@ -27,6 +27,10 @@ public class GoogleBigQuerySQLEndpointConfigurer extends PropertyConfigurerSuppo
         case "connectionFactory": target.getConfiguration().setConnectionFactory(property(camelContext, org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "outputtype":
+        case "outputType": target.getConfiguration().setOutputType(property(camelContext, org.apache.camel.component.google.bigquery.sql.OutputType.class, value)); return true;
+        case "pagesize":
+        case "pageSize": target.getConfiguration().setPageSize(property(camelContext, long.class, value)); return true;
         case "pagetoken":
         case "pageToken": target.getConfiguration().setPageToken(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceaccountkey":
@@ -47,6 +51,10 @@ public class GoogleBigQuerySQLEndpointConfigurer extends PropertyConfigurerSuppo
         case "connectionFactory": return org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "outputtype":
+        case "outputType": return org.apache.camel.component.google.bigquery.sql.OutputType.class;
+        case "pagesize":
+        case "pageSize": return long.class;
         case "pagetoken":
         case "pageToken": return java.lang.String.class;
         case "serviceaccountkey":
@@ -63,6 +71,10 @@ public class GoogleBigQuerySQLEndpointConfigurer extends PropertyConfigurerSuppo
         case "connectionFactory": return target.getConfiguration().getConnectionFactory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "outputtype":
+        case "outputType": return target.getConfiguration().getOutputType();
+        case "pagesize":
+        case "pageSize": return target.getConfiguration().getPageSize();
         case "pagetoken":
         case "pageToken": return target.getConfiguration().getPageToken();
         case "serviceaccountkey":

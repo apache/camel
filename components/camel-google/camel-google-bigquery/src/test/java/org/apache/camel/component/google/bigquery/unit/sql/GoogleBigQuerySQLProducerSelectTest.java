@@ -20,16 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.google.cloud.bigquery.BigQuery;
-import com.google.cloud.bigquery.Field;
-import com.google.cloud.bigquery.FieldList;
-import com.google.cloud.bigquery.FieldValue;
-import com.google.cloud.bigquery.FieldValueList;
-import com.google.cloud.bigquery.JobInfo;
-import com.google.cloud.bigquery.QueryJobConfiguration;
-import com.google.cloud.bigquery.Schema;
-import com.google.cloud.bigquery.StandardSQLTypeName;
-import com.google.cloud.bigquery.TableResult;
+import com.google.cloud.bigquery.*;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
@@ -79,6 +70,7 @@ public class GoogleBigQuerySQLProducerSelectTest extends GoogleBigQuerySQLProduc
         assertEquals("Bob", secondRow.get("name"));
 
         assertEquals("PAGE_TWO_TOKEN", message.getHeader(GoogleBigQueryConstants.NEXT_PAGE_TOKEN));
+        assertEquals(JobId.of("JOB_ID"), message.getHeader(GoogleBigQueryConstants.JOB_ID));
     }
 
     @Test
@@ -107,6 +99,7 @@ public class GoogleBigQuerySQLProducerSelectTest extends GoogleBigQuerySQLProduc
         assertEquals("Delta", secondRow.get("name"));
 
         assertEquals("PAGE_THREE_TOKEN", message.getHeader(GoogleBigQueryConstants.NEXT_PAGE_TOKEN));
+        assertEquals(JobId.of("JOB_ID"), message.getHeader(GoogleBigQueryConstants.JOB_ID));
     }
 
     @Test
@@ -136,6 +129,7 @@ public class GoogleBigQuerySQLProducerSelectTest extends GoogleBigQuerySQLProduc
         assertEquals("Delta", secondRow.get("name"));
 
         assertEquals("PAGE_THREE_TOKEN", message.getHeader(GoogleBigQueryConstants.NEXT_PAGE_TOKEN));
+        assertEquals(JobId.of("JOB_ID"), message.getHeader(GoogleBigQueryConstants.JOB_ID));
     }
 
     @Override
@@ -169,11 +163,12 @@ public class GoogleBigQuerySQLProducerSelectTest extends GoogleBigQuerySQLProduc
         when(tableResult.getSchema()).thenReturn(schema);
         when(tableResult.getValues()).thenReturn(Arrays.asList(row1, row2));
         when(tableResult.getNextPageToken()).thenReturn("PAGE_TWO_TOKEN");
-        when(statistics.getNumDmlAffectedRows()).thenReturn(null);
+        when(statistics.getStatementType()).thenReturn(JobStatistics.QueryStatistics.StatementType.SELECT);
 
         // Mock paging
         nextPageTableResult = mock(TableResult.class);
         when(job.getQueryResults(any(BigQuery.QueryResultsOption.class))).thenReturn(nextPageTableResult);
+        when(job.getJobId()).thenReturn(JobId.of("JOB_ID"));
         when(nextPageTableResult.getSchema()).thenReturn(schema);
         when(nextPageTableResult.getValues()).thenReturn(Arrays.asList(row3, row4));
         when(nextPageTableResult.getNextPageToken()).thenReturn("PAGE_THREE_TOKEN");
