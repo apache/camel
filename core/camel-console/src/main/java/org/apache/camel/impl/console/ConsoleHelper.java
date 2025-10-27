@@ -113,7 +113,7 @@ public final class ConsoleHelper {
         return null;
     }
 
-    private static Integer extractSourceLocationLineNumber(String location) {
+    public static Integer extractSourceLocationLineNumber(String location) {
         int cnt = StringHelper.countChar(location, ':');
         if (cnt > 0) {
             int pos = location.lastIndexOf(':');

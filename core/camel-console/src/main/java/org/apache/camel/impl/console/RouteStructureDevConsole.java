@@ -37,6 +37,8 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
+import static org.apache.camel.impl.console.ConsoleHelper.extractSourceLocationLineNumber;
+
 @DevConsole(name = "route-structure", description = "Dump route structure")
 public class RouteStructureDevConsole extends AbstractDevConsole {
 
@@ -186,23 +188,6 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             code.add(c);
         }
         return code;
-    }
-
-    private static Integer extractSourceLocationLineNumber(String location) {
-        int cnt = StringHelper.countChar(location, ':');
-        if (cnt > 0) {
-            int pos = location.lastIndexOf(':');
-            // in case pos is end of line
-            if (pos < location.length() - 1) {
-                String num = location.substring(pos + 1);
-                try {
-                    return Integer.valueOf(num);
-                } catch (Exception e) {
-                    return null;
-                }
-            }
-        }
-        return null;
     }
 
 }

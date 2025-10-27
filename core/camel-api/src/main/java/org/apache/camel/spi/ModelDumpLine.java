@@ -17,10 +17,13 @@
 package org.apache.camel.spi;
 
 /**
- * Represents a line in a model dumper
+ * Represents a line in a model dumper of the route structure (not with full details like a XML or YAML dump).
  *
  * @param location line source location:line (if present)
- * @param code     dump code such as YAML, XML, or text
+ * @param type     the kind of EIP node
+ * @param id       the id of the EIP node
+ * @param level    indent level of the EIP node
+ * @param code     EIP code such as label or short name that is human-readable or pseudocode
  */
 public record ModelDumpLine(String location, String type, String id, int level, String code) {
 }

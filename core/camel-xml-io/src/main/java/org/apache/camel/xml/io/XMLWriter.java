@@ -39,7 +39,6 @@ public class XMLWriter {
     private int depth;
     private boolean readyForNewLine;
     private boolean tagIsEmpty;
-    private boolean emptyTagNewLine;
 
     /**
      * @param writer not null
@@ -92,10 +91,6 @@ public class XMLWriter {
         if (doctype != null || encoding != null) {
             writeDocumentHeaders();
         }
-    }
-
-    public void setEmptyTagNewLine(boolean emptyTagNewLine) {
-        this.emptyTagNewLine = emptyTagNewLine;
     }
 
     private static String validateLineSeparator(String lineSeparator) {
@@ -196,7 +191,7 @@ public class XMLWriter {
 
         if (tagIsEmpty) {
             write("/");
-            readyForNewLine = emptyTagNewLine ? true : false;
+            readyForNewLine = false;
             finishTag();
             elements.removeLast();
         } else {
