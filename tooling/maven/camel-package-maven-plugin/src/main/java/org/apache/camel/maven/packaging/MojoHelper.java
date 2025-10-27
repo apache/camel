@@ -130,6 +130,10 @@ public final class MojoHelper {
                         dir.resolve("camel-huaweicloud-imagerecognition"),
                         dir.resolve("camel-huaweicloud-obs"),
                         dir.resolve("camel-huaweicloud-smn"));
+            case "camel-ibm":
+                return Arrays.asList(dir.resolve("camel-ibm-cos"),
+                        dir.resolve("camel-ibm-secrets-manager"),
+                        dir.resolve("camel-ibm-watson-language"));
             case "camel-knative":
                 return Collections.singletonList(dir.resolve("camel-knative-component"));
             case "camel-yaml-dsl":

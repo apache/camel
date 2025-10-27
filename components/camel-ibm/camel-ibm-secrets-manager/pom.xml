@@ -22,39 +22,43 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>components</artifactId>
+        <artifactId>camel-ibm-parent</artifactId>
         <version>4.16.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-ibm-cos</artifactId>
+    <artifactId>camel-ibm-secrets-manager</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: IBM :: Cloud Object Storage</name>
-    <description>Store and retrieve objects from IBM Cloud Object Storage</description>
+    <name>Camel :: IBM :: Secrets Manager </name>
+    <description>Camel IBM Secrets Manager Component</description>
+
+    <properties>
+        <!-- Hashicorp vault container is not available on this platform -->
+        <skipITs.s390x>true</skipITs.s390x>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>com.ibm.cos</groupId>
-            <artifactId>ibm-cos-java-sdk</artifactId>
-            <version>${ibm-cos-sdk-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.ibm.cloud</groupId>
+            <artifactId>secrets-manager</artifactId>
+	        <version>${ibm-secrets-manager-version}</version>
         </dependency>
+        
+        <!-- kafka java client -->
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-health</artifactId>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- for testing -->
@@ -63,25 +67,6 @@
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>${awaitility-version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*IT.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
