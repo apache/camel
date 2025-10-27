@@ -67,6 +67,7 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.ModelineFactory;
@@ -620,6 +621,22 @@ public class SimpleCamelContext extends AbstractCamelContext {
             return result.get();
         } else {
             throw new IllegalArgumentException("Cannot find ModelToYAMLDumper on classpath. Add camel-yaml-io to classpath.");
+        }
+    }
+
+    @Override
+    protected ModelToStructureDumper createModelToStructureDumper() {
+        Optional<ModelToStructureDumper> result = ResolverHelper.resolveService(
+                getCamelContextReference(),
+                getCamelContextExtension().getBootstrapFactoryFinder(),
+                ModelToStructureDumper.FACTORY,
+                ModelToStructureDumper.class);
+
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot find ModelToStructureDumper on classpath. Add camel-core-engine to classpath.");
         }
     }
 

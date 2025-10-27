@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl.console;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,20 +26,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.ModelDumpLine;
+import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
-@DevConsole(name = "route-dump", description = "Dump route in XML or YAML format")
-public class RouteDumpDevConsole extends AbstractDevConsole {
-
-    /**
-     * To output in either xml, yaml, or text format
-     */
-    public static final String FORMAT = "format";
+@DevConsole(name = "route-structure", description = "Dump route structure")
+public class RouteStructureDevConsole extends AbstractDevConsole {
 
     /**
      * Filters the routes matching by route id, route uri, and source location
@@ -53,41 +51,42 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     public static final String LIMIT = "limit";
 
     /**
-     * Whether to expand URIs into separated key/value parameters
+     * Whether to dump in brief mode (only overall structure, and no detailed options or expressions)
      */
-    public static final String URI_AS_PARAMETERS = "uriAsParameters";
+    public static final String BRIEF = "brief";
 
-    public RouteDumpDevConsole() {
-        super("camel", "route-dump", "Route Dump", "Dump route in XML or YAML format");
+    public RouteStructureDevConsole() {
+        super("camel", "route-structure", "Route Structure", "Dump route structure");
     }
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
+        final String brief = (String) options.getOrDefault(BRIEF, "false");
 
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
-            String dump = null;
             try {
-                String format = (String) options.get(FORMAT);
-                if (format == null || "xml".equals(format)) {
-                    dump = mrb.dumpRouteAsXml(true);
-                } else if ("yaml".equals(format)) {
-                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
+                ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
+                Route route = getCamelContext().getRoute(mrb.getRouteId());
+                List<ModelDumpLine> lines = dumper.dumpStructure(getCamelContext(), route, "true".equalsIgnoreCase(brief));
+
+                sb.append(String.format("    Id: %s", mrb.getRouteId()));
+                if (mrb.getSourceLocation() != null) {
+                    sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
                 }
-            } catch (Exception e) {
-                // ignore
-            }
-            sb.append(String.format("    Id: %s", mrb.getRouteId()));
-            if (mrb.getSourceLocation() != null) {
-                sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
-            }
-            if (dump != null && !dump.isEmpty()) {
                 sb.append("\n\n");
-                for (String line : dump.split("\n")) {
-                    sb.append("    ").append(line).append("\n");
+                for (ModelDumpLine line : lines) {
+                    String pad = StringHelper.padString(line.level());
+                    String num = "       ";
+                    Integer idx = extractSourceLocationLineNumber(line.location());
+                    if (idx != null) {
+                        num = String.format("%4d:  ", idx);
+                    }
+                    sb.append(num).append(pad).append(line.code()).append("\n");
                 }
                 sb.append("\n");
+            } catch (Exception e) {
+                // ignore
             }
 
             sb.append("\n");
@@ -99,7 +98,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
+        final String brief = (String) options.getOrDefault(BRIEF, "false");
 
         final JsonObject root = new JsonObject();
         final List<JsonObject> list = new ArrayList<>();
@@ -115,21 +114,11 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
             }
 
             try {
-                String dump = null;
-                String format = (String) options.get(FORMAT);
-                if (format == null || "xml".equals(format)) {
-                    jo.put("format", "xml");
-                    dump = mrb.dumpRouteAsXml(true);
-                } else if ("yaml".equals(format)) {
-                    jo.put("format", "yaml");
-                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
-                }
-                if (dump != null) {
-                    List<JsonObject> code = ConsoleHelper.loadSourceAsJson(new StringReader(dump), null);
-                    if (code != null) {
-                        jo.put("code", code);
-                    }
-                }
+                ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
+                Route route = getCamelContext().getRoute(mrb.getRouteId());
+                List<ModelDumpLine> lines = dumper.dumpStructure(getCamelContext(), route, "true".equalsIgnoreCase(brief));
+                List<JsonObject> code = dumpAsJSon(lines);
+                jo.put("code", code);
             } catch (Exception e) {
                 // ignore
             }
@@ -156,7 +145,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                     .filter(Objects::nonNull)
                     .filter(r -> accept(r, filter))
                     .filter(r -> accept(r, subPath))
-                    .sorted(RouteDumpDevConsole::sort)
+                    .sorted(RouteStructureDevConsole::sort)
                     .limit(max)
                     .forEach(task::apply);
         }
@@ -177,6 +166,43 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {
         // sort by id
         return o1.getRouteId().compareTo(o2.getRouteId());
+    }
+
+    private static List<JsonObject> dumpAsJSon(List<ModelDumpLine> lines) {
+        List<JsonObject> code = new ArrayList<>();
+        int counter = 0;
+        for (var line : lines) {
+            counter++;
+            JsonObject c = new JsonObject();
+            Integer idx = extractSourceLocationLineNumber(line.location());
+            if (idx == null) {
+                idx = counter;
+            }
+            c.put("line", idx);
+            c.put("type", line.type());
+            c.put("id", line.id());
+            c.put("level", line.level());
+            c.put("code", Jsoner.escape(line.code()));
+            code.add(c);
+        }
+        return code;
+    }
+
+    private static Integer extractSourceLocationLineNumber(String location) {
+        int cnt = StringHelper.countChar(location, ':');
+        if (cnt > 0) {
+            int pos = location.lastIndexOf(':');
+            // in case pos is end of line
+            if (pos < location.length() - 1) {
+                String num = location.substring(pos + 1);
+                try {
+                    return Integer.valueOf(num);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 
 }

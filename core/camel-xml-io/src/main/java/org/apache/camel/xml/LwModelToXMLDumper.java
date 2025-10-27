@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -45,6 +47,7 @@ import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.annotations.JdkService;
@@ -59,6 +62,8 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
  */
 @JdkService(ModelToXMLDumper.FACTORY)
 public class LwModelToXMLDumper implements ModelToXMLDumper {
+
+    private static final Pattern SOURCE_LOCATION_PATTERN = Pattern.compile("(\\ssourceLocation=\"(.*?)\")");
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
@@ -472,27 +477,31 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         }
     }
 
-    @Override
-    public String dumpStructureModelAsXml(CamelContext context, NamedNode definition) throws Exception {
-        StringWriter buffer = new StringWriter();
+    // TODO: Remove me
+    public List<ModelDumpLine> dumpStructureModel(CamelContext context, NamedNode definition) throws Exception {
+        List<ModelDumpLine> answer = new ArrayList<>();
+        doDumpStructureModelAsXml(answer, context, definition);
+        return answer;
+    }
+
+    protected void doDumpStructureModelAsXml(List<ModelDumpLine> answer, CamelContext context, NamedNode definition)
+            throws Exception {
+        final StringWriter buffer = new StringWriter();
         ModelWriter writer = new ModelWriter(buffer, BaseWriter.DEFAULT_NAMESPACE) {
-            @Override
             protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def)
                     throws IOException {
-
                 if (Boolean.TRUE.equals(def.getCustomId())) {
                     // write custom id
                     doWriteAttribute("id", def.getId());
                 }
-                // write location information
-                if (context.isDebugging()) {
-                    String loc = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLocation();
-                    int line = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
-                    if (line != -1) {
-                        writer.addAttribute("sourceLineNumber", Integer.toString(line));
-                        writer.addAttribute("sourceLocation", loc);
-                    }
+
+                // remember source locations
+                String loc = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLocation();
+                int line = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
+                if (line != -1) {
+                    doWriteAttribute("sourceLocation", loc + ":" + line);
                 }
+                // we do not want any other attributes
             }
 
             protected void doWriteExpressionNodeElements(ExpressionNode def) throws IOException {
@@ -500,24 +509,38 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             }
 
             @Override
-            protected void doWriteValue(String value) throws IOException {
-                if (value != null && !value.isEmpty()) {
-                    super.doWriteValue(value);
-                }
-            }
-
-            @Override
             protected void attribute(String name, Object value) throws IOException {
-                // limit what we want to see in brief mode
-                if ("id".equals(name) || "uri".equals(name) || "message".equals(name)) {
-                    super.attribute(name, value);
+                // limit what we want to see in structure mode
+                if ("sourceLocation".equals(name) || "id".equals(name) || "uri".equals(name) || "message".equals(name)) {
+                    String s = value != null ? value.toString() : null;
+                    // clip long text
+                    if (s != null && s.length() > 80) {
+                        s = s.substring(0, 80) + " ... (clipped value)";
+                    }
+                    super.attribute(name, s);
                 }
             }
         };
 
-        writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
+        writer.setEmptyTagNewLine(true);
+        writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition<?>) definition);
 
-        return buffer.toString();
+        String data = buffer.toString();
+        for (String line : data.split(System.lineSeparator())) {
+            if (!line.isBlank()) {
+                String loc = null;
+                Matcher m = SOURCE_LOCATION_PATTERN.matcher(line);
+                if (m.find()) {
+                    loc = m.group(2);
+                    line = m.replaceAll("");
+                }
+                // fake no line number
+                if (loc == null) {
+                    loc = ":-1";
+                }
+                answer.add(new ModelDumpLine(loc, null, null, 0, line));
+            }
+        }
     }
 
 }

@@ -39,6 +39,7 @@ public class XMLWriter {
     private int depth;
     private boolean readyForNewLine;
     private boolean tagIsEmpty;
+    private boolean emptyTagNewLine;
 
     /**
      * @param writer not null
@@ -93,6 +94,10 @@ public class XMLWriter {
         }
     }
 
+    public void setEmptyTagNewLine(boolean emptyTagNewLine) {
+        this.emptyTagNewLine = emptyTagNewLine;
+    }
+
     private static String validateLineSeparator(String lineSeparator) {
         String ls = lineSeparator != null ? lineSeparator : System.lineSeparator();
         if (!(ls.equals("\n") || ls.equals("\r") || ls.equals("\r\n"))) {
@@ -101,9 +106,6 @@ public class XMLWriter {
         return ls;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void startElement(String name) throws IOException {
         tagIsEmpty = false;
         finishTag();
@@ -116,16 +118,10 @@ public class XMLWriter {
         tagIsEmpty = true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void writeText(String text) throws IOException {
         writeText(text, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void writeMarkup(String text) throws IOException {
         writeText(text, false);
     }
@@ -187,9 +183,6 @@ public class XMLWriter {
         return text;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void addAttribute(String key, String value) throws IOException {
         write(" ");
         write(key);
@@ -198,15 +191,12 @@ public class XMLWriter {
         write("\"");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void endElement(String name) throws IOException {
         depth--;
 
         if (tagIsEmpty) {
             write("/");
-            readyForNewLine = false;
+            readyForNewLine = emptyTagNewLine ? true : false;
             finishTag();
             elements.removeLast();
         } else {

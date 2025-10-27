@@ -237,15 +237,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Dumps the route templates as XML")
     String dumpRouteTemplatesAsXml() throws Exception;
 
-    @ManagedOperation(description = "Dumps the structure of routes as YAML")
-    String dumpStructureRoutesAsYaml() throws Exception;
-
-    @ManagedOperation(description = "Dumps the structure of routes as XML")
-    String dumpStructureRoutesAsXml() throws Exception;
-
-    @ManagedOperation(description = "Dumps the structure of routes as text")
-    String dumpStructureRoutesAsText(boolean brief) throws Exception;
-
     @ManagedOperation(description = "Dumps the routes as YAML")
     String dumpRoutesAsYaml() throws Exception;
 
