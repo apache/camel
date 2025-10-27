@@ -1,1 +1,1 @@
-../../../../../components/camel-ibm-watson-language/src/main/docs/ibm-watson-language-component.adoc
+../../../../../components/camel-ibm/camel-ibm-watson-language/src/main/docs/ibm-watson-language-component.adoc

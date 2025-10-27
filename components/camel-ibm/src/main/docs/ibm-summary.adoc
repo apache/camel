@@ -1,0 +1,12 @@
+= IBM Component
+:doctitle: IBM
+
+The *ibm-* component allows you to work with the
+https://cloud.ibm.com/[IBM].
+IBM offers a great palette of different components like Cloud Object Storage, Watson, Event Stream etc.
+
+== {doctitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={doctitle}',descriptionformat=description]

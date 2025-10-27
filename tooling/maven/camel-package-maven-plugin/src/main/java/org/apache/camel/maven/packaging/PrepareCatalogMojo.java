@@ -934,6 +934,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-http-base":
                 case "camel-http-common":
                 case "camel-huawei":
+                case "camel-ibm":
                 case "camel-infinispan":
                 case "camel-jetty-common":
                 case "camel-knative":
