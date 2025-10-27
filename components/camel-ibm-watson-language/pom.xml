@@ -32,10 +32,6 @@
     <name>Camel :: IBM :: Watson Language</name>
     <description>IBM Watson Natural Language Understanding service</description>
 
-    <properties>
-        <ibm-watson-sdk-version>14.0.2</ibm-watson-sdk-version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -81,39 +77,4 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>ibm-watson-integration-tests</id>
-            <activation>
-                <property>
-                    <name>camel.ibm.watson.apiKey</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <includes>
-                                <include>**/*IT.java</include>
-                            </includes>
-                            <systemPropertyVariables>
-                                <camel.ibm.watson.apiKey>${camel.ibm.watson.apiKey}</camel.ibm.watson.apiKey>
-                                <camel.ibm.watson.serviceUrl>${camel.ibm.watson.serviceUrl}</camel.ibm.watson.serviceUrl>
-                            </systemPropertyVariables>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
