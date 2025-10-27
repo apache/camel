@@ -2158,6 +2158,20 @@ public interface ComponentsBuilderFactory {
         return IbmSecretsManagerComponentBuilderFactory.ibmSecretsManager();
     }
     /**
+     * IBM Watson Language (camel-ibm-watson-language)
+     * Perform natural language processing using IBM Watson Natural Language
+     * Understanding
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-language
+     * 
+     * @return the dsl builder
+     */
+    static IbmWatsonLanguageComponentBuilderFactory.IbmWatsonLanguageComponentBuilder ibmWatsonLanguage() {
+        return IbmWatsonLanguageComponentBuilderFactory.ibmWatsonLanguage();
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.

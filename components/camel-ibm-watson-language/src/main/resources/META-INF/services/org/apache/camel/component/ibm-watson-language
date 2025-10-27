@@ -1,0 +1,1 @@
+class=org.apache.camel.component.ibm.watson.language.WatsonLanguageComponent

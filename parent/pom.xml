@@ -245,6 +245,7 @@
         <huaweicloud-sdk-version>3.1.171</huaweicloud-sdk-version>
         <ibm-cos-sdk-version>2.13.6</ibm-cos-sdk-version>
         <ibm-secrets-manager-version>2.0.22</ibm-secrets-manager-version>
+        <ibm-watson-sdk-version>14.0.2</ibm-watson-sdk-version>
         <ical4j-version>4.2.0</ical4j-version>
         <icu4j-version>77.1</icu4j-version>
         <ignite-version>2.17.0</ignite-version>
@@ -1570,6 +1571,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-ibm-secrets-manager</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-ibm-watson-language</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
