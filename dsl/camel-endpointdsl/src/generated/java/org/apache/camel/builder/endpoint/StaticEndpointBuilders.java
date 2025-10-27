@@ -7005,6 +7005,48 @@ public class StaticEndpointBuilders {
         return IBMSecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM Watson Language (camel-ibm-watson-language)
+     * Perform natural language processing using IBM Watson Natural Language
+     * Understanding
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-language
+     * 
+     * Syntax: <code>ibm-watson-language:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(String path) {
+        return ibmWatsonLanguage("ibm-watson-language", path);
+    }
+    /**
+     * IBM Watson Language (camel-ibm-watson-language)
+     * Perform natural language processing using IBM Watson Natural Language
+     * Understanding
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-language
+     * 
+     * Syntax: <code>ibm-watson-language:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(String componentName, String path) {
+        return WatsonLanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
