@@ -44,18 +44,23 @@ public class FieldValueListMapper implements RowMapper<FieldValueList, Map<Strin
 
     @Override
     public Map<String, Object> map(FieldValueList row) {
+        return map(schema, row);
+    }
+
+    private Map<String, Object> map(FieldList schema, FieldValueList row) {
         Map<String, Object> rowMap = new HashMap<>();
-        for (Field field : schema) {
-            rowMap.put(field.getName(), convertValue(row.get(field.getName())));
+        for (int i = 0; i < schema.size(); i++) {
+            var field = schema.get(i);
+            rowMap.put(field.getName(), convertValue(field, row.get(i)));
         }
         return rowMap;
     }
 
-    private Object convertValue(FieldValue fieldValue) {
+    private Object convertValue(Field field, FieldValue fieldValue) {
         return switch (fieldValue.getAttribute()) {
-            case RECORD -> map(fieldValue.getRecordValue());
+            case RECORD -> map(field.getSubFields(), fieldValue.getRecordValue());
             case REPEATED -> fieldValue.getRepeatedValue().stream()
-                    .map(this::convertValue)
+                    .map(element -> convertValue(field, element))
                     .collect(Collectors.toList());
             case RANGE -> fieldValue.getRangeValue().getValues();
             case PRIMITIVE -> fieldValue.getValue();
