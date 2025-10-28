@@ -206,14 +206,12 @@ public class GenerateMojo extends AbstractExecMojo {
 
     private void addXmlFiles(File file, List<CamelCSimpleExpressionDetails> csimpleExpressions) {
         if (matchRouteFile(file)) {
-            try {
+            try (InputStream is = new FileInputStream(file)) {
                 List<CamelCSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
                 // parse the xml source code and find Camel routes
                 String fqn = file.getPath();
                 String baseDir = ".";
-                InputStream is = new FileInputStream(file);
                 XmlRouteParser.parseXmlRouteCSimpleExpressions(is, baseDir, fqn, fileSimpleExpressions);
-                is.close();
                 csimpleExpressions.addAll(fileSimpleExpressions);
             } catch (Exception e) {
                 getLog().warn("Error parsing xml file " + file + " code due " + e.getMessage(), e);
