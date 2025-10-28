@@ -28,6 +28,8 @@ import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClientBuilder;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
@@ -88,6 +90,22 @@ public class BedrockRuntimeClientIAMOptimizedImpl implements BedrockRuntimeInter
             clientBuilder.httpClient(ahc);
             clientBuilder.httpClientBuilder(null);
         }
+        client = clientBuilder.build();
+        return client;
+    }
+
+    @Override
+    public BedrockRuntimeAsyncClient getBedrockRuntimeAsyncClient() {
+        BedrockRuntimeAsyncClient client = null;
+        BedrockRuntimeAsyncClientBuilder clientBuilder = BedrockRuntimeAsyncClient.builder();
+
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
+        }
+        if (configuration.isOverrideEndpoint()) {
+            clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
+        }
+        // Note: Async clients use default credentials provider and Netty HTTP client
         client = clientBuilder.build();
         return client;
     }
