@@ -21,14 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 import com.google.cloud.bigquery.BigQuery;
+import com.google.cloud.bigquery.BigQuery.QueryResultsOption;
 import com.google.cloud.bigquery.BigQueryException;
-import com.google.cloud.bigquery.Field;
-import com.google.cloud.bigquery.FieldValueList;
 import com.google.cloud.bigquery.Job;
-import com.google.cloud.bigquery.JobException;
 import com.google.cloud.bigquery.JobId;
 import com.google.cloud.bigquery.JobInfo;
 import com.google.cloud.bigquery.JobStatistics;
@@ -42,19 +40,21 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.StreamListIterator;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Generic BigQuery Producer
+ * Producer for executing SQL queries against Google BigQuery. Supports both DML (INSERT, UPDATE, DELETE) and SELECT
+ * queries with parameterized queries, pagination, and streaming results.
  */
 public class GoogleBigQuerySQLProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleBigQuerySQLProducer.class);
 
     private final GoogleBigQuerySQLConfiguration configuration;
-    private BigQuery bigquery;
+    private final BigQuery bigquery;
     private String query;
     private Set<String> queryParameterNames;
 
@@ -66,14 +66,21 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
     }
 
     /**
-     * Process the exchange The incoming exchange can be a grouped exchange in which case all the exchanges will be
-     * combined. The incoming can be
+     * Processes the exchange by executing a SQL query against BigQuery.
+     * <p>
+     * Query parameters can be provided via:
      * <ul>
-     * <li>A map where all map keys will map to field records. One map object maps to one bigquery row</li>
-     * <li>A list of maps. Each entry in the list will map to one bigquery row</li>
+     * <li>Message body as {@code Map<String, Object>}</li>
+     * <li>Message headers</li>
      * </ul>
-     * The incoming message is expected to be a List of Maps The assumptions: - All incoming records go into the same
-     * table - Incoming records sorted by the timestamp
+     * <p>
+     * For SELECT queries, results are returned based on {@link OutputType}:
+     * <ul>
+     * <li>SELECT_LIST - {@code List<Map<String, Object>>} with pagination headers</li>
+     * <li>STREAM_LIST - {@code Iterator<Map<String, Object>>} for streaming</li>
+     * </ul>
+     * <p>
+     * For DML queries, returns the number of affected rows as {@code Long}.
      */
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -84,32 +91,57 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         message.setHeader(GoogleBigQueryConstants.TRANSLATED_QUERY, translatedQuery);
         JobId jobId = message.getHeader(GoogleBigQueryConstants.JOB_ID, JobId.class);
 
-        String pageToken = message.getHeader(GoogleBigQueryConstants.PAGE_TOKEN, String.class);
-        if (pageToken == null && configuration.getPageToken() != null) {
-            pageToken = configuration.getPageToken();
+        Job job = executeJob(jobId, translatedQuery, queryParameters);
+
+        if (isSelectQueryJob(job)) {
+            processSelectQueryJob(message, job);
+        } else {
+            long affectedRows = job.<JobStatistics.QueryStatistics> getStatistics().getNumDmlAffectedRows();
+            LOG.debug("The query {} affected {} rows", query, affectedRows);
+            message.setBody(affectedRows);
+        }
+    }
+
+    /**
+     * Processes SELECT query results based on the configured output type. Both types use pageSize for fetching results
+     * from BigQuery. For SELECT_LIST, loads current page into memory and sets pagination headers. For STREAM_LIST,
+     * creates an iterator that automatically fetches pages using pageSize.
+     */
+    private void processSelectQueryJob(Message message, Job job) throws Exception {
+        long pageSize = configuration.getPageSize();
+        String pageToken = message.getHeader(GoogleBigQueryConstants.PAGE_TOKEN, configuration::getPageToken, String.class);
+
+        TableResult result = getTableResult(job, pageSize, pageToken);
+        Schema schema = result.getSchema();
+
+        if (schema == null) {
+            LOG.debug("Query result schema is null. Unable to process the result set.");
+            message.setBody(result.getTotalRows());
+            return;
         }
 
-        Object queryResult = executeSQL(jobId, translatedQuery, queryParameters, pageToken);
-
-        if (queryResult instanceof Long) {
-            LOG.debug("The query {} affected {} rows", query, queryResult);
-            message.setBody(queryResult);
-        } else if (queryResult instanceof TableResult result) {
-            Schema schema = result.getSchema();
-            if (schema != null) {
+        switch (configuration.getOutputType()) {
+            case SELECT_LIST -> {
                 List<Map<String, Object>> rows = processSelectResult(result, schema);
                 LOG.debug("The query {} returned {} rows", query, rows.size());
                 message.setBody(rows);
                 message.setHeader(GoogleBigQueryConstants.NEXT_PAGE_TOKEN, result.getNextPageToken());
-            } else {
-                LOG.debug("Query result schema is null. Unable to process the result set.");
-                message.setBody(result.getTotalRows());
+                message.setHeader(GoogleBigQueryConstants.JOB_ID, job.getJobId());
+            }
+            case STREAM_LIST -> {
+                var iterator = new StreamListIterator<>(
+                        new FieldValueListMapper(schema.getFields()),
+                        result.iterateAll().iterator());
+                message.setBody(iterator);
             }
         }
     }
 
-    private Object executeSQL(JobId jobId, String translatedQuery, Map<String, Object> queryParameters, String pageToken)
-            throws Exception {
+    /**
+     * Executes a BigQuery job, either by retrieving an existing job or creating a new one. If jobId is provided,
+     * retrieves the existing job; otherwise creates a new query job. Waits for the job to complete before returning.
+     */
+    private Job executeJob(JobId jobId, String translatedQuery, Map<String, Object> queryParameters) throws Exception {
         QueryJobConfiguration.Builder builder = QueryJobConfiguration.newBuilder(translatedQuery)
                 .setUseLegacySql(false);
 
@@ -122,40 +154,71 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
                 LOG.trace("Sending query to bigquery standard sql: {}", translatedQuery);
             }
 
-            JobId queryJobId;
-            if (ObjectHelper.isNotEmpty(jobId)) {
-                queryJobId = jobId;
-            } else {
-                queryJobId = JobId.of(configuration.getProjectId(), UUID.randomUUID().toString());
-            }
+            var job = ObjectHelper.isNotEmpty(jobId)
+                    ? bigquery.getJob(jobId)
+                    : bigquery.create(getJobInfo(queryJobConfiguration));
 
-            Job job = bigquery.create(JobInfo.of(queryJobId, queryJobConfiguration)).waitFor();
-            JobStatistics.QueryStatistics statistics = job.getStatistics();
-            TableResult result;
-            if (pageToken != null) {
-                result = job.getQueryResults(BigQuery.QueryResultsOption.pageToken(pageToken));
-            } else {
-                result = job.getQueryResults();
-            }
-            Long numAffectedRows = statistics.getNumDmlAffectedRows();
-
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Query {} - Affected rows {} - Result {}", translatedQuery, numAffectedRows, result);
-            }
-
-            //numAffectedRows is present only for DML statements INSERT, UPDATE or DELETE.
-            if (numAffectedRows != null) {
-                return numAffectedRows;
-            }
-            //in other cases (SELECT), process results
-            return result;
-        } catch (JobException e) {
-            throw new Exception("Query " + translatedQuery + " failed: " + e.getErrors(), e);
+            return job.waitFor();
         } catch (BigQueryException e) {
             throw new Exception("Query " + translatedQuery + " failed: " + e.getError(), e);
         }
     }
 
+    /**
+     * Creates JobInfo with a random job ID for the given query configuration.
+     */
+    private JobInfo getJobInfo(QueryJobConfiguration queryJobConfiguration) {
+        return JobInfo.of(
+                JobId.newBuilder()
+                        .setRandomJob()
+                        .setProject(configuration.getProjectId())
+                        .build(),
+                queryJobConfiguration);
+    }
+
+    /**
+     * Retrieves query results from a completed job with optional pagination.
+     */
+    private TableResult getTableResult(Job job, long pageSize, String pageToken)
+            throws Exception {
+        String translatedQuery = job.<QueryJobConfiguration> getConfiguration().getQuery();
+        try {
+            QueryResultsOption[] queryResultsOptions = getQueryResultsOptions(pageSize, pageToken);
+            return job.getQueryResults(queryResultsOptions);
+        } catch (BigQueryException e) {
+            throw new Exception("Query " + translatedQuery + " failed: " + e.getError(), e);
+        }
+    }
+
+    /**
+     * Builds query result options array from pageSize and pageToken. Only includes options with non-default values
+     * (pageSize > 0, pageToken != null).
+     */
+    private static QueryResultsOption[] getQueryResultsOptions(long pageSize, String pageToken) {
+        List<QueryResultsOption> options = new ArrayList<>();
+        if (pageSize > 0) {
+            options.add(QueryResultsOption.pageSize(pageSize));
+        }
+        if (pageToken != null) {
+            options.add(QueryResultsOption.pageToken(pageToken));
+        }
+        return options.toArray(new QueryResultsOption[0]);
+    }
+
+    /**
+     * Checks if the job is a SELECT query by examining its statement type.
+     */
+    private static boolean isSelectQueryJob(Job job) {
+        JobStatistics.QueryStatistics statistics = job.getStatistics();
+        return statistics.getStatementType().equals(JobStatistics.QueryStatistics.StatementType.SELECT);
+    }
+
+    /**
+     * Extracts query parameters from exchange headers and body. Parameters are identified by names found in the query
+     * (e.g., @paramName). Body values take precedence over header values.
+     *
+     * @throws RuntimeExchangeException if a required parameter is not found
+     */
     private Map<String, Object> extractParameters(Exchange exchange) {
         if (queryParameterNames == null || queryParameterNames.isEmpty()) {
             return null;
@@ -206,22 +269,15 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
     }
 
     /**
-     * Processes a TableResult from a SELECT query, extracting the rows as a List of Maps.
-     *
-     * @param  result the TableResult returned from BigQuery
-     * @param  schema the Schema returned from BigQuery
-     * @return        a List of Maps where each Map represents a row of the result
+     * Converts TableResult to a list of maps for SELECT_LIST output type. Each map represents one row with field names
+     * as keys.
      */
     private List<Map<String, Object>> processSelectResult(TableResult result, Schema schema) {
-        List<Map<String, Object>> rows = new ArrayList<>();
-        for (FieldValueList row : result.getValues()) {
-            Map<String, Object> rowMap = new HashMap<>();
-            for (Field field : schema.getFields()) {
-                rowMap.put(field.getName(), row.get(field.getName()).getValue());
-            }
-            rows.add(rowMap);
-        }
-        return rows;
+        var mapper = new FieldValueListMapper(schema.getFields());
+
+        return StreamSupport.stream(result.getValues().spliterator(), false)
+                .map(mapper::map)
+                .toList();
     }
 
     @Override
@@ -229,6 +285,10 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         return (GoogleBigQuerySQLEndpoint) super.getEndpoint();
     }
 
+    /**
+     * Initializes the producer by resolving the query string and extracting parameter names. Query resolution supports
+     * file references and variable substitution.
+     */
     @Override
     protected void doStart() throws Exception {
         super.doStart();

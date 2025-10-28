@@ -77,6 +77,68 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
             return this;
         }
         /**
+         * Output mode type for select queries.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.google.bigquery.sql.OutputType</code> type.
+         * 
+         * Default: SELECT_LIST
+         * Group: producer
+         * 
+         * @param outputType the value to set
+         * @return the dsl builder
+         */
+        default GoogleBigQuerySQLEndpointBuilder outputType(org.apache.camel.component.google.bigquery.sql.OutputType outputType) {
+            doSetProperty("outputType", outputType);
+            return this;
+        }
+        /**
+         * Output mode type for select queries.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.google.bigquery.sql.OutputType</code> type.
+         * 
+         * Default: SELECT_LIST
+         * Group: producer
+         * 
+         * @param outputType the value to set
+         * @return the dsl builder
+         */
+        default GoogleBigQuerySQLEndpointBuilder outputType(String outputType) {
+            doSetProperty("outputType", outputType);
+            return this;
+        }
+        /**
+         * Size of a page to request. Unset by default.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
+         */
+        default GoogleBigQuerySQLEndpointBuilder pageSize(long pageSize) {
+            doSetProperty("pageSize", pageSize);
+            return this;
+        }
+        /**
+         * Size of a page to request. Unset by default.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: producer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
+         */
+        default GoogleBigQuerySQLEndpointBuilder pageSize(String pageSize) {
+            doSetProperty("pageSize", pageSize);
+            return this;
+        }
+        /**
          * Page token, returned by a previous call, to request the next page of
          * results.
          * 

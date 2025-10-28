@@ -42,6 +42,7 @@ public abstract class GoogleBigQuerySQLProducerBaseTest extends CamelTestSupport
     protected TableResult tableResult;
     protected Job job;
     protected JobStatistics.QueryStatistics statistics;
+    protected QueryJobConfiguration jobConfiguration;
 
     protected GoogleBigQuerySQLProducer createAndStartProducer() {
         configuration.setProjectId(projectId);
@@ -57,11 +58,15 @@ public abstract class GoogleBigQuerySQLProducerBaseTest extends CamelTestSupport
         tableResult = mock(TableResult.class);
         job = mock(Job.class);
         statistics = mock(JobStatistics.QueryStatistics.class);
+        jobConfiguration = mock(QueryJobConfiguration.class);
         when(bigquery.query(any(QueryJobConfiguration.class), any(JobId.class))).thenReturn(tableResult);
         when(bigquery.create(any(JobInfo.class))).thenReturn(job);
+        when(bigquery.getJob(any(JobId.class))).thenReturn(job);
         when(job.waitFor()).thenReturn(job);
         when(job.getQueryResults()).thenReturn(tableResult);
         when(job.getStatistics()).thenReturn(statistics);
+        when(job.<QueryJobConfiguration> getConfiguration()).thenReturn(jobConfiguration);
         when(statistics.getNumDmlAffectedRows()).thenReturn(1L);
+        when(jobConfiguration.getQuery()).thenReturn(sql);
     }
 }

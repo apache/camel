@@ -19,6 +19,7 @@ package org.apache.camel.component.google.bigquery.unit.sql;
 import java.util.List;
 
 import com.google.cloud.bigquery.JobInfo;
+import com.google.cloud.bigquery.JobStatistics;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import org.apache.camel.Exchange;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,7 @@ import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class GoogleBigQuerySQLProducerWithPatternTest extends GoogleBigQuerySQLProducerBaseTest {
 
@@ -34,6 +36,7 @@ public class GoogleBigQuerySQLProducerWithPatternTest extends GoogleBigQuerySQLP
     public void init() throws Exception {
         sql = "insert into ${testDatasetId}.testTableId(id, data) values(1, 'test')";
         setupBigqueryMock();
+        when(statistics.getStatementType()).thenReturn(JobStatistics.QueryStatistics.StatementType.INSERT);
         producer = createAndStartProducer();
     }
 

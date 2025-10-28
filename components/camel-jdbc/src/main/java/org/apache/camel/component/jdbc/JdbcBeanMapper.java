@@ -17,57 +17,34 @@
 package org.apache.camel.component.jdbc;
 
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.RowMapper;
 
 import static org.apache.camel.component.jdbc.JdbcHelper.newBeanInstance;
 
-public final class StreamListIterator implements Iterator {
-
+public class JdbcBeanMapper implements RowMapper<Map<String, Object>, Object> {
     private final CamelContext camelContext;
     private final String outputClass;
     private final BeanRowMapper beanRowMapper;
-    private final Iterator delegate;
 
-    public StreamListIterator(CamelContext camelContext, String outputClass,
-                              BeanRowMapper beanRowMapper, Iterator delegate) {
+    public JdbcBeanMapper(CamelContext camelContext, String outputClass, BeanRowMapper beanRowMapper) {
         this.camelContext = camelContext;
         this.outputClass = outputClass;
         this.beanRowMapper = beanRowMapper;
-        this.delegate = delegate;
     }
 
     @Override
-    public boolean hasNext() {
-        return delegate.hasNext();
-    }
-
-    @Override
-    public Object next() {
-        Object answer;
-        Map row = (Map) delegate.next();
+    public Object map(Map<String, Object> row) {
         if (row != null && outputClass != null) {
             try {
-                answer = newBeanInstance(camelContext, outputClass, beanRowMapper, row);
+                return newBeanInstance(camelContext, outputClass, beanRowMapper, row);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            answer = row;
+            return row;
         }
-        return answer;
-    }
-
-    @Override
-    public void remove() {
-        delegate.remove();
-    }
-
-    @Override
-    public void forEachRemaining(Consumer action) {
-        delegate.forEachRemaining(action);
     }
 }
