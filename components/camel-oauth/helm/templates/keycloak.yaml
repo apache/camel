@@ -111,13 +111,13 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: PathPrefix(`/kc`)
+    - match: Host("{{ .apiHost }}")
       kind: Rule
       services:
         - name: keycloak
           port: 8080
   tls:
-    secretName: traefik-tls
+    secretName: edge-tls
 ---
 {{- end }} # environment == 'k8s'
 

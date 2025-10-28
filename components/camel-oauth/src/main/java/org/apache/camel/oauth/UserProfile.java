@@ -179,44 +179,36 @@ public class UserProfile {
             var payload = signedJWT.getPayload().toString();
             tokenJwt = JsonParser.parseString(payload).getAsJsonObject();
 
-            var target = new ArrayList<String>();
+            var targetAudience = new ArrayList<String>();
             var jwtOptions = config.getJWTOptions();
             if (tokenJwt.has("aud")) {
                 try {
                     var aud = tokenJwt.get("aud");
                     if (aud.isJsonPrimitive()) {
-                        target.add(aud.getAsString());
+                        targetAudience.add(aud.getAsString());
                     } else {
-                        target.addAll(aud.getAsJsonArray().asList().stream().map(JsonElement::getAsString).toList());
+                        targetAudience.addAll(aud.getAsJsonArray().asList().stream().map(JsonElement::getAsString).toList());
                     }
                 } catch (RuntimeException ex) {
                     throw new OAuthException("User audience isn't a JsonArray or String");
                 }
             }
-            if (!target.isEmpty()) {
-                if (!idToken && jwtOptions.getAudience() != null) {
-                    for (String el : jwtOptions.getAudience()) {
-                        if (!target.contains(el)) {
-                            throw new OAuthException("Invalid JWT audience. expected: " + el);
-                        }
-                    }
-                } else if (!target.contains(config.getClientId())) {
-                    throw new OAuthException("Invalid JWT audience. expected: " + config.getClientId());
+            String clientId = config.getClientId();
+            if (idToken && !targetAudience.contains(clientId)) {
+                throw new OAuthException("Invalid JWT audience. Expected to contain: " + clientId);
+            }
+            if (idToken && tokenJwt.has("azp")) {
+                String authorizedParty = tokenJwt.get("azp").getAsString();
+                if (!authorizedParty.equals(clientId)) {
+                    throw new OAuthException("Invalid authorized party != config.clientID");
+                }
+                if (!targetAudience.contains(authorizedParty)) {
+                    throw new OAuthException("ID Token audience, doesn't contain authorized party");
                 }
             }
             var issuer = jwtOptions.getIssuer();
             if (issuer != null && !issuer.equals(tokenJwt.get("iss").getAsString())) {
                 throw new OAuthException("Invalid JWT issuer");
-            } else {
-                if (idToken && tokenJwt.has("azp")) {
-                    String clientId = config.getClientId();
-                    if (!clientId.equals(tokenJwt.get("azp").getAsString())) {
-                        throw new OAuthException("Invalid authorised party != config.clientID");
-                    }
-                    if (!target.isEmpty() && !target.contains(tokenJwt.get("azp").getAsString())) {
-                        throw new OAuthException("ID Token with multiple audiences, doesn't contain azp Claim value");
-                    }
-                }
             }
         } catch (OAuthException ex) {
             throw ex;
