@@ -113,7 +113,7 @@ The Camel JBang Kubernetes export command provides several options to customize 
 |Maven/Gradle build properties (syntax: --build-property=prop1=foo)
 
 |--property
-|Add a runtime property or properties from a file (syntax: [my-key=my-value|file:/path/to/my-conf.properties,/path/to/my-conf.properties]).
+|Add a runtime property or properties from a file (syntax: [my-key=my-value\|file:/path/to/my-conf.properties,/path/to/my-conf.properties]).
 
 |--config
 |Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap,secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).
