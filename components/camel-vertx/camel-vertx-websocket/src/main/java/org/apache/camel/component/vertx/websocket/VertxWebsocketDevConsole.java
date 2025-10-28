@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.vertx.core.http.ServerWebSocket;
@@ -47,31 +45,41 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
 
         StringBuilder sb = new StringBuilder();
 
-        Set<Map<VertxWebsocketHostKey, VertxWebsocketHost>> vertxHostRegistries = getHostRegistries();
+        Map<VertxWebsocketHostKey, List<VertxWebsocketConsumer>> consumersByHost = getConsumersByHost();
 
-        for (Map<VertxWebsocketHostKey, VertxWebsocketHost> vertxHostRegistry : vertxHostRegistries) {
-            for (Map.Entry<VertxWebsocketHostKey, VertxWebsocketHost> entry : vertxHostRegistry.entrySet()) {
-                VertxWebsocketHostKey hostKey = entry.getKey();
-                sb.append(String.format("\n    Host: %s", hostKey.toString()));
+        for (Map.Entry<VertxWebsocketHostKey, List<VertxWebsocketConsumer>> hostEntry : consumersByHost.entrySet()) {
+            VertxWebsocketHostKey hostKey = hostEntry.getKey();
+            sb.append(String.format("\n    Host: %s", hostKey.toString()));
 
-                List<VertxWebsocketPeer> connectedPeers = entry.getValue().getConnectedPeers();
-                sb.append(String.format("\n        Connected Peers (%d): ", connectedPeers.size()));
-                for (VertxWebsocketPeer peer : connectedPeers) {
-                    sb.append(String.format("\n            ID: %s", peer.getConnectionKey()));
-                    sb.append(String.format("\n            Path: %s", peer.getPath()));
-                    sb.append(String.format("\n            Raw Path: %s", peer.getRawPath()));
+            for (VertxWebsocketConsumer consumer : hostEntry.getValue()) {
+                String path = consumer.getEndpoint().getConfiguration().getWebsocketURI().getPath();
+                sb.append(String.format("\n        Path: %s", path));
+
+                List<VertxWebsocketPeer> pathPeers = consumer.getEndpoint().getVertxHostRegistry()
+                        .values()
+                        .stream()
+                        .flatMap(host -> host.getConnectedPeers().stream())
+                        .filter(peer -> peer.getRawPath().equals(path))
+                        .toList();
+
+                sb.append(String.format("\n            Connected Peers (%d): ", pathPeers.size()));
+
+                for (VertxWebsocketPeer peer : pathPeers) {
+                    sb.append(String.format("\n                ID: %s", peer.getConnectionKey()));
+                    sb.append(String.format("\n                Path: %s", peer.getPath()));
+                    sb.append(String.format("\n                Raw Path: %s", peer.getRawPath()));
 
                     ServerWebSocket webSocket = peer.getWebSocket();
                     SocketAddress socketAddress = webSocket.localAddress();
                     String hostAddress = socketAddress == null ? "Unknown" : socketAddress.hostAddress();
-                    sb.append(String.format("\n            Host Address: %s", hostAddress));
+                    sb.append(String.format("\n                Host Address: %s", hostAddress));
 
                     if (webSocket.subProtocol() != null) {
-                        sb.append(String.format("\n            Sub Protocol: %s", webSocket.subProtocol()));
+                        sb.append(String.format("\n                Sub Protocol: %s", webSocket.subProtocol()));
                     }
 
                     if (includeHeaders) {
-                        sb.append(String.format("\n            Headers: %s", webSocket.headers().entries().stream()
+                        sb.append(String.format("\n                Headers: %s", webSocket.headers().entries().stream()
                                 .map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining(", "))));
                     }
                 }
@@ -85,18 +93,32 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         boolean includeHeaders = "true".equals(options.getOrDefault(INCLUDE_HEADERS, "true"));
 
-        Set<Map<VertxWebsocketHostKey, VertxWebsocketHost>> vertxHostRegistries = getHostRegistries();
         JsonObject root = new JsonObject();
         JsonArray hosts = new JsonArray();
 
-        for (Map<VertxWebsocketHostKey, VertxWebsocketHost> vertxHostRegistry : vertxHostRegistries) {
-            for (Map.Entry<VertxWebsocketHostKey, VertxWebsocketHost> entry : vertxHostRegistry.entrySet()) {
-                VertxWebsocketHostKey hostKey = entry.getKey();
-                JsonObject host = new JsonObject();
-                host.put("host", hostKey.toString());
+        Map<VertxWebsocketHostKey, List<VertxWebsocketConsumer>> consumersByHost = getConsumersByHost();
+
+        for (Map.Entry<VertxWebsocketHostKey, List<VertxWebsocketConsumer>> hostEntry : consumersByHost.entrySet()) {
+            VertxWebsocketHostKey hostKey = hostEntry.getKey();
+            JsonObject host = new JsonObject();
+            host.put("host", hostKey.toString());
+
+            JsonArray paths = new JsonArray();
+            for (VertxWebsocketConsumer consumer : hostEntry.getValue()) {
+                String path = consumer.getEndpoint().getConfiguration().getWebsocketURI().getPath();
+
+                JsonObject pathJson = new JsonObject();
+                pathJson.put("path", path);
+
+                List<VertxWebsocketPeer> pathPeers = consumer.getEndpoint().getVertxHostRegistry()
+                        .values()
+                        .stream()
+                        .flatMap(h -> h.getConnectedPeers().stream())
+                        .filter(peer -> peer.getRawPath().equals(path))
+                        .toList();
 
                 JsonArray peers = new JsonArray();
-                for (VertxWebsocketPeer peer : entry.getValue().getConnectedPeers()) {
+                for (VertxWebsocketPeer peer : pathPeers) {
                     JsonObject peerJson = new JsonObject();
                     peerJson.put("id", peer.getConnectionKey());
                     peerJson.put("path", peer.getPath());
@@ -120,22 +142,28 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
                     peers.add(peerJson);
                 }
 
-                host.put("peers", peers);
-                hosts.add(host);
+                pathJson.put("peers", peers);
+                paths.add(pathJson);
             }
+
+            host.put("paths", paths);
+            hosts.add(host);
         }
 
         root.put("hosts", hosts);
         return root;
     }
 
-    Set<Map<VertxWebsocketHostKey, VertxWebsocketHost>> getHostRegistries() {
-        Set<Map<VertxWebsocketHostKey, VertxWebsocketHost>> hostRegistries = new LinkedHashSet<>();
+    Map<VertxWebsocketHostKey, List<VertxWebsocketConsumer>> getConsumersByHost() {
+        Map<VertxWebsocketHostKey, List<VertxWebsocketConsumer>> consumersByHost = new java.util.LinkedHashMap<>();
         for (Route route : getCamelContext().getRoutes()) {
             if (route.getConsumer() instanceof VertxWebsocketConsumer consumer) {
-                hostRegistries.add(consumer.getEndpoint().getVertxHostRegistry());
+                VertxWebsocketHostKey hostKey = new VertxWebsocketHostKey(
+                        consumer.getEndpoint().getConfiguration().getWebsocketURI().getHost(),
+                        consumer.getEndpoint().getConfiguration().getWebsocketURI().getPort());
+                consumersByHost.computeIfAbsent(hostKey, k -> new java.util.ArrayList<>()).add(consumer);
             }
         }
-        return hostRegistries;
+        return consumersByHost;
     }
 }
