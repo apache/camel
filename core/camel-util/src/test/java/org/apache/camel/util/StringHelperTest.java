@@ -675,4 +675,16 @@ public class StringHelperTest {
         assertEquals("50", list[50]);
         assertEquals("99", list[99]);
     }
+
+    @Test
+    public void testLimitLength() {
+        String s = "ABCDEFGHIJKLMNOPQRST";
+        assertEquals(s, StringHelper.limitLength("ABCDEFGHIJKLMNOPQRST", 30));
+        assertEquals(s, StringHelper.limitLength("ABCDEFGHIJKLMNOPQRST", 20));
+        assertEquals(s.substring(0, 10), StringHelper.limitLength("ABCDEFGHIJKLMNOPQRST", 10));
+
+        assertEquals(s, StringHelper.limitLength("ABCDEFGHIJKLMNOPQRST", 30, " (cut)"));
+        assertEquals(s, StringHelper.limitLength("ABCDEFGHIJKLMNOPQRST", 20, " (cut)"));
+        assertEquals(s.substring(0, 10) + " (cut)", StringHelper.limitLength("ABCDEFGHIJKLMNOPQRST", 10, " (cut)"));
+    }
 }
