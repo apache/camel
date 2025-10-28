@@ -171,7 +171,7 @@
         <formatter-maven-plugin-version>2.29.0</formatter-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
         <freemarker-version>2.3.34</freemarker-version>
-        <fory-version>0.12.3</fory-version>
+        <fory-version>0.13.0</fory-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
         <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
         <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
