@@ -368,6 +368,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory.VertxHttpBuilders,
             org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.VertxWebsocketBuilders,
             org.apache.camel.builder.endpoint.dsl.WasmEndpointBuilderFactory.WasmBuilders,
+            org.apache.camel.builder.endpoint.dsl.WatsonDiscoveryEndpointBuilderFactory.WatsonDiscoveryBuilders,
             org.apache.camel.builder.endpoint.dsl.WatsonLanguageEndpointBuilderFactory.WatsonLanguageBuilders,
             org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory.WeatherBuilders,
             org.apache.camel.builder.endpoint.dsl.WeaviateVectorDbEndpointBuilderFactory.WeaviateVectorDbBuilders,

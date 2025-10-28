@@ -36,6 +36,7 @@
         <module>camel-ibm-cos</module>
         <module>camel-ibm-secrets-manager</module>
         <module>camel-ibm-watson-language</module>
+        <module>camel-ibm-watson-discovery</module>
     </modules>
 
 </project>

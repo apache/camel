@@ -7005,6 +7005,46 @@ public class StaticEndpointBuilders {
         return IBMSecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM Watson Discovery (camel-ibm-watson-discovery)
+     * Perform document understanding and search using IBM Watson Discovery
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-discovery
+     * 
+     * Syntax: <code>ibm-watson-discovery:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonDiscoveryEndpointBuilderFactory.WatsonDiscoveryEndpointBuilder ibmWatsonDiscovery(String path) {
+        return ibmWatsonDiscovery("ibm-watson-discovery", path);
+    }
+    /**
+     * IBM Watson Discovery (camel-ibm-watson-discovery)
+     * Perform document understanding and search using IBM Watson Discovery
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-discovery
+     * 
+     * Syntax: <code>ibm-watson-discovery:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonDiscoveryEndpointBuilderFactory.WatsonDiscoveryEndpointBuilder ibmWatsonDiscovery(String componentName, String path) {
+        return WatsonDiscoveryEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IBM Watson Language (camel-ibm-watson-language)
      * Perform natural language processing using IBM Watson Natural Language
      * Understanding

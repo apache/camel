@@ -2158,6 +2158,19 @@ public interface ComponentsBuilderFactory {
         return IbmSecretsManagerComponentBuilderFactory.ibmSecretsManager();
     }
     /**
+     * IBM Watson Discovery (camel-ibm-watson-discovery)
+     * Perform document understanding and search using IBM Watson Discovery
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-discovery
+     * 
+     * @return the dsl builder
+     */
+    static IbmWatsonDiscoveryComponentBuilderFactory.IbmWatsonDiscoveryComponentBuilder ibmWatsonDiscovery() {
+        return IbmWatsonDiscoveryComponentBuilderFactory.ibmWatsonDiscovery();
+    }
+    /**
      * IBM Watson Language (camel-ibm-watson-language)
      * Perform natural language processing using IBM Watson Natural Language
      * Understanding
