@@ -139,6 +139,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Dumps the route as XML")
     String dumpRouteAsXml(boolean resolvePlaceholders, boolean generatedIds) throws Exception;
 
+    @ManagedOperation(description = "Dumps the route as XML")
+    String dumpRouteAsXml(boolean resolvePlaceholders, boolean generatedIds, boolean sourceLocation) throws Exception;
+
     @ManagedOperation(description = "Dumps the route as YAML")
     String dumpRouteAsYaml() throws Exception;
 

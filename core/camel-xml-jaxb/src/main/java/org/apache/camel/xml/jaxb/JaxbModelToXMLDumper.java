@@ -77,10 +77,11 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
-        return doDumpModelAsXml(context, definition, true);
+        return doDumpModelAsXml(context, definition, true, false);
     }
 
-    public String doDumpModelAsXml(CamelContext context, NamedNode definition, boolean generatedIds) throws Exception {
+    public String doDumpModelAsXml(CamelContext context, NamedNode definition, boolean generatedIds, boolean sourceLocation)
+            throws Exception {
         final JAXBContext jaxbContext = getJAXBContext(context);
         final Map<String, String> namespaces = new LinkedHashMap<>();
         final Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
@@ -91,14 +92,14 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             List<RouteTemplateDefinition> templates = routeTemplatesDefinition.getRouteTemplates();
             for (RouteTemplateDefinition route : templates) {
                 extractNamespaces(route.getRoute(), namespaces);
-                if (context.isDebugging()) {
+                if (sourceLocation || context.isDebugging()) {
                     extractSourceLocations(route.getRoute(), locations);
                 }
                 resolveEndpointDslUris(route.getRoute());
             }
         } else if (definition instanceof RouteTemplateDefinition template) {
             extractNamespaces(template.getRoute(), namespaces);
-            if (context.isDebugging()) {
+            if (sourceLocation || context.isDebugging()) {
                 extractSourceLocations(template.getRoute(), locations);
             }
             resolveEndpointDslUris(template.getRoute());
@@ -106,14 +107,14 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             List<RouteDefinition> routes = routesDefinition.getRoutes();
             for (RouteDefinition route : routes) {
                 extractNamespaces(route, namespaces);
-                if (context.isDebugging()) {
+                if (sourceLocation || context.isDebugging()) {
                     extractSourceLocations(route, locations);
                 }
                 resolveEndpointDslUris(route);
             }
         } else if (definition instanceof RouteDefinition route) {
             extractNamespaces(route, namespaces);
-            if (context.isDebugging()) {
+            if (sourceLocation || context.isDebugging()) {
                 extractSourceLocations(route, locations);
             }
             resolveEndpointDslUris(route);
@@ -161,9 +162,10 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds,
+            boolean sourceLocation)
             throws Exception {
-        String xml = doDumpModelAsXml(context, definition, generatedIds);
+        String xml = doDumpModelAsXml(context, definition, generatedIds, sourceLocation);
 
         // if resolving placeholders we parse the xml, and resolve the property
         // placeholders during parsing
@@ -216,7 +218,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                 NamedNode copy = modelToXml(context, xml, NamedNode.class);
-                xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy, false, generatedIds);
+                xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy, false, generatedIds,
+                        sourceLocation);
             }
         }
 

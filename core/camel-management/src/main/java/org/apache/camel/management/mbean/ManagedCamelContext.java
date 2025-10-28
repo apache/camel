@@ -554,7 +554,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
 
-        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, true);
+        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, true, false);
     }
 
     @Override
@@ -569,6 +569,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String dumpRoutesAsXml(boolean resolvePlaceholders, boolean generatedIds) throws Exception {
+        return dumpRoutesAsXml(resolvePlaceholders, true, false);
+    }
+
+    @Override
+    public String dumpRoutesAsXml(boolean resolvePlaceholders, boolean generatedIds, boolean sourceLocation) throws Exception {
         List<RouteDefinition> routes = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinitions();
         if (routes.isEmpty()) {
             return null;
@@ -582,7 +587,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         if (context.isDebugging()) {
             generatedIds = true;
         }
-        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, generatedIds);
+        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, generatedIds,
+                sourceLocation);
     }
 
     @Override
