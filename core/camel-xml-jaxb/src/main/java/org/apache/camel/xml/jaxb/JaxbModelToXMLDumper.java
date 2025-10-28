@@ -442,9 +442,4 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
         }
     }
 
-    @Override
-    public String dumpStructureModelAsXml(CamelContext context, NamedNode definition) throws Exception {
-        throw new UnsupportedOperationException(
-                "dumpStructureModelAsXml is not supported by camel-xml-jaxb. Use camel-xml-io instead.");
-    }
 }

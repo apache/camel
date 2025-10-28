@@ -163,15 +163,6 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Dumps the route with mappings between node ids and their source location/line-number (currently only XML and YAML routes supported) as XML")
     String dumpRouteSourceLocationsAsXml() throws Exception;
 
-    @ManagedOperation(description = "Dumps the structure of the route as XML")
-    String dumpStructureRouteAsXml() throws Exception;
-
-    @ManagedOperation(description = "Dumps the structure of the route as YAML")
-    String dumpStructureRouteAsYaml() throws Exception;
-
-    @ManagedOperation(description = "Dumps the structure of the route as text")
-    String dumpStructureRouteAsText(boolean brief) throws Exception;
-
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeProcessors) throws Exception;
 

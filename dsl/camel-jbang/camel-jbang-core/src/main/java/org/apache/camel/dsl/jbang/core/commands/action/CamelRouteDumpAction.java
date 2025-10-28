@@ -58,7 +58,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
 
         @Override
         public Iterator<String> iterator() {
-            return List.of("yaml", "xml", "text").iterator();
+            return List.of("yaml", "xml").iterator();
         }
 
     }
@@ -67,16 +67,12 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
     String name = "*";
 
     @CommandLine.Option(names = { "--format" }, completionCandidates = FormatCompletionCandidates.class,
-                        description = "Output format (xml, yaml, or text)", defaultValue = "yaml")
+                        description = "Output format (xml, or yaml)", defaultValue = "yaml")
     String format;
 
     @CommandLine.Option(names = { "--raw" },
                         description = "To output raw without metadata")
     boolean raw;
-
-    @CommandLine.Option(names = { "--brief" },
-                        description = "To output route structure only (without options) and only applicable for xml or yaml format")
-    boolean brief;
 
     @CommandLine.Option(names = { "--uri-as-parameters" },
                         description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)",
@@ -120,7 +116,6 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
         root.put("action", "route-dump");
         root.put("filter", "*");
         root.put("format", format);
-        root.put("brief", brief);
         root.put("uriAsParameters", uriAsParameters);
         Path file = getActionFile(Long.toString(pid));
         try {
@@ -220,7 +215,11 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
                 if (raw) {
                     printer().printf("%s%n", c);
                 } else {
-                    printer().printf("%4d: %s%n", code.line, c);
+                    if (code.line != -1) {
+                        printer().printf("%4d: %s%n", code.line, c);
+                    } else {
+                        printer().printf("      %s%n", c);
+                    }
                 }
             }
             printer().println();

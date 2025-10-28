@@ -64,7 +64,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.xml.LwModelHelper;
@@ -458,74 +457,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
 
         return null;
-    }
-
-    @Override
-    public String dumpStructureRouteAsXml() throws Exception {
-        String id = route.getId();
-        RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
-        if (def != null) {
-            return PluginHelper.getModelToXMLDumper(context).dumpStructureModelAsXml(context, def);
-        }
-
-        return null;
-    }
-
-    @Override
-    public String dumpStructureRouteAsYaml() throws Exception {
-        String id = route.getId();
-        RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
-        if (def != null) {
-            return PluginHelper.getModelToYAMLDumper(context).dumpStructureModelAsYaml(context, def);
-        }
-
-        return null;
-    }
-
-    @Override
-    public String dumpStructureRouteAsText(boolean brief) throws Exception {
-        StringBuilder sb = new StringBuilder();
-        sb.append("route[").append(route.getRouteId()).append("]\n");
-        if (brief) {
-            sb.append("  from[").append(route.getEndpoint().getEndpointBaseUri()).append("]\n");
-        } else {
-            sb.append("  from[").append(route.getEndpoint()).append("]\n");
-        }
-
-        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
-        if (server != null) {
-            // get all the processor mbeans and sort them accordingly to their index
-            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-            ObjectName query = ObjectName.getInstance(
-                    jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=processors,*");
-            Set<ObjectName> names = server.queryNames(query, null);
-            List<ManagedProcessorMBean> mps = new ArrayList<>();
-            for (ObjectName on : names) {
-                ManagedProcessorMBean processor = context.getManagementStrategy().getManagementAgent().newProxyClient(on,
-                        ManagedProcessorMBean.class);
-                // the processor must belong to this route
-                if (getRouteId().equals(processor.getRouteId())) {
-                    mps.add(processor);
-                }
-            }
-            // sort by index
-            mps.sort(new OrderProcessorMBeans());
-
-            // dump in text format padded by level
-            for (ManagedProcessorMBean processor : mps) {
-                int index = processor.getLevel() + 1;
-                String pad = StringHelper.padString(index);
-                sb.append(pad);
-                if (brief) {
-                    sb.append(processor.getProcessorName());
-                } else {
-                    sb.append(processor.getModelLabel());
-                }
-                sb.append("\n");
-            }
-        }
-
-        return sb.toString();
     }
 
     @Override

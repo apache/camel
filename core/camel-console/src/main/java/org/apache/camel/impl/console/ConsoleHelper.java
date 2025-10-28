@@ -27,6 +27,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -109,6 +110,23 @@ public final class ConsoleHelper {
             // ignore
         }
 
+        return null;
+    }
+
+    public static Integer extractSourceLocationLineNumber(String location) {
+        int cnt = StringHelper.countChar(location, ':');
+        if (cnt > 0) {
+            int pos = location.lastIndexOf(':');
+            // in case pos is end of line
+            if (pos < location.length() - 1) {
+                String num = location.substring(pos + 1);
+                try {
+                    return Integer.valueOf(num);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        }
         return null;
     }
 
