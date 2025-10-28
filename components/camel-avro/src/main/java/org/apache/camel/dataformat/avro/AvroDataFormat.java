@@ -138,7 +138,9 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         // the schema should be from the graph class name
         Schema useSchema = actualSchema != null ? actualSchema : loadSchema(graph.getClass().getName());
 
-        DatumWriter<Object> datum = new SpecificDatumWriter<>(useSchema);
+        SpecificData specificData = getSpecificData(useSchema);
+
+        DatumWriter<Object> datum = new SpecificDatumWriter<>(useSchema, specificData);
         Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
         datum.write(graph, encoder);
         encoder.flush();
@@ -148,17 +150,22 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         ObjectHelper.notNull(actualSchema, "schema", this);
 
-        ClassLoader classLoader = null;
-        Class<?> clazz = camelContext.getClassResolver().resolveClass(actualSchema.getFullName());
-
-        if (clazz != null) {
-            classLoader = clazz.getClassLoader();
-        }
-        SpecificData specificData = new SpecificDataNoCache(classLoader);
+        SpecificData specificData = getSpecificData(actualSchema);
         DatumReader<GenericRecord> reader = new SpecificDatumReader<>(null, null, specificData);
         reader.setSchema(actualSchema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(inputStream, null);
         return reader.read(null, decoder);
+    }
+
+    private SpecificData getSpecificData(Schema schema) {
+        // Use SpecificDataNoCache to support logical type conversions (date, timestamp, UUID, decimal, etc.)
+        ClassLoader classLoader = null;
+        Class<?> clazz = camelContext.getClassResolver().resolveClass(schema.getFullName());
+        if (clazz != null) {
+            classLoader = clazz.getClassLoader();
+        }
+        SpecificData specificData = new SpecificDataNoCache(classLoader);
+        return specificData;
     }
 
 }

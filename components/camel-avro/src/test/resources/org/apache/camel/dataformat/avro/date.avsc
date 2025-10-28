@@ -1,0 +1,29 @@
+{
+  "type": "record",
+  "name": "DateRecord",
+  "namespace": "org.apache.camel.dataformat.avro.example",
+  "fields": [
+    {
+      "name": "date",
+      "type": [
+        "null",
+        {
+          "type": "int",
+          "logicalType": "date"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "timestamp",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    }
+  ]
+}
