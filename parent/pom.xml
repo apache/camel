@@ -42,7 +42,8 @@
         <camel.surefire.parallel>false</camel.surefire.parallel>
         <camel.surefire.parallel.factor>1</camel.surefire.parallel.factor>
         <camel.surefire.parallel.strategy>dynamic</camel.surefire.parallel.strategy>
-        <camel.failsafe.fork.vmargs>-XX:+ExitOnOutOfMemoryError -Xmx3G</camel.failsafe.fork.vmargs>
+        <camel.failsafe.fork.additional-vmargs /><!-- Empty by default -->
+        <camel.failsafe.fork.vmargs>-XX:+ExitOnOutOfMemoryError -Xmx3G ${camel.failsafe.fork.additional-vmargs}</camel.failsafe.fork.vmargs>
         <camel.failsafe.forkCount>1</camel.failsafe.forkCount>
         <camel.failsafe.forkTimeout>600</camel.failsafe.forkTimeout>
         <camel.failsafe.reuseForks>true</camel.failsafe.reuseForks>
@@ -4117,7 +4118,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <argLine>@{camel.surefire.fork.vmargs}</argLine>
+                            <argLine>@{camel.failsafe.fork.vmargs}</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
