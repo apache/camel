@@ -79,6 +79,7 @@ public interface WatsonDiscoveryEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 2023-03-31
          * Group: common
          * 
          * @param version the value to set

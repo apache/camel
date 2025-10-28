@@ -35,7 +35,7 @@ public class WatsonDiscoveryConfiguration implements Cloneable {
     @Metadata(required = true)
     private String projectId;
 
-    @UriParam(label = "common")
+    @UriParam(label = "common", defaultValue = "2023-03-31")
     private String version = "2023-03-31";
 
     @UriParam(label = "producer")

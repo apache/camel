@@ -81,11 +81,13 @@ public interface IbmWatsonDiscoveryComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * The API version date (format: YYYY-MM-DD).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: 2023-03-31
          * Group: common
          * 
          * @param version the value to set
