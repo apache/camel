@@ -3414,7 +3414,7 @@ The `camel transform route` command can be used to transform a YAML route into a
 
 For example, given the following YAML content, in a file named route.yaml
 
-[source:yaml]
+[source, yaml]
 ----
 - route:
     id: route-b785
@@ -3451,14 +3451,14 @@ For example, given the following YAML content, in a file named route.yaml
 
 The following command
 
-[source:bash]
+[source, bash]
 ----
 camel transform route --format=xml /path/to/route.yaml
 ----
 
 Automatically transform the route in XML DSL (Camel XML IO DSL)
 
-[source:xml]
+[source, xml]
 ----
 <camel>
     <route id="route-b785" nodePrefixId="route-14b">
