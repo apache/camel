@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.component.aws2.bedrock.runtime.stream.BedrockStreamHandler;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -33,6 +37,7 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
+import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithResponseStreamRequest;
 
 /**
  * A Producer which sends messages to the Amazon Bedrock Service <a href="http://aws.amazon.com/bedrock/">AWS
@@ -58,6 +63,15 @@ public class BedrockProducer extends DefaultProducer {
                 break;
             case invokeEmbeddingsModel:
                 invokeEmbeddingsModel(getEndpoint().getBedrockRuntimeClient(), exchange);
+                break;
+            case invokeTextModelStreaming:
+                invokeTextModelStreaming(getEndpoint().getBedrockRuntimeClient(), exchange);
+                break;
+            case invokeImageModelStreaming:
+                invokeImageModelStreaming(getEndpoint().getBedrockRuntimeClient(), exchange);
+                break;
+            case invokeEmbeddingsModelStreaming:
+                invokeEmbeddingsModelStreaming(getEndpoint().getBedrockRuntimeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -382,6 +396,114 @@ public class BedrockProducer extends DefaultProducer {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("generation"));
+    }
+
+    private void invokeTextModelStreaming(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange)
+            throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getMessage().getMandatoryBody();
+            if (payload instanceof InvokeModelWithResponseStreamRequest) {
+                processStreamingRequest((InvokeModelWithResponseStreamRequest) payload, exchange);
+            }
+        } else {
+            InvokeModelWithResponseStreamRequest.Builder builder = InvokeModelWithResponseStreamRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockConstants.MODEL_CONTENT_TYPE))) {
+                String contentType = exchange.getIn().getHeader(BedrockConstants.MODEL_CONTENT_TYPE, String.class);
+                builder.contentType(contentType);
+            } else {
+                throw new IllegalArgumentException("Model Content Type must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE))) {
+                String acceptContentType = exchange.getIn().getHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, String.class);
+                builder.accept(acceptContentType);
+            } else {
+                throw new IllegalArgumentException("Model Accept Content Type must be specified");
+            }
+            InvokeModelWithResponseStreamRequest request = builder
+                    .body(SdkBytes.fromUtf8String(String.valueOf(exchange.getMessage().getBody())))
+                    .modelId(getConfiguration().getModelId())
+                    .build();
+            processStreamingRequest(request, exchange);
+        }
+    }
+
+    private void invokeImageModelStreaming(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange)
+            throws InvalidPayloadException {
+        // Image streaming works the same way as text streaming
+        invokeTextModelStreaming(bedrockRuntimeClient, exchange);
+    }
+
+    private void invokeEmbeddingsModelStreaming(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange)
+            throws InvalidPayloadException {
+        // Embeddings streaming works the same way as text streaming
+        invokeTextModelStreaming(bedrockRuntimeClient, exchange);
+    }
+
+    private void processStreamingRequest(
+            InvokeModelWithResponseStreamRequest request,
+            Exchange exchange) {
+
+        try {
+            String streamOutputMode = getConfiguration().getStreamOutputMode();
+            if (streamOutputMode == null) {
+                streamOutputMode = "complete";
+            }
+
+            // Check if mode is overridden in headers
+            if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockConstants.STREAM_OUTPUT_MODE))) {
+                streamOutputMode = exchange.getIn().getHeader(BedrockConstants.STREAM_OUTPUT_MODE, String.class);
+            }
+
+            Message message = getMessageForResponse(exchange);
+            BedrockStreamHandler.StreamMetadata metadata = new BedrockStreamHandler.StreamMetadata();
+
+            if ("chunks".equals(streamOutputMode)) {
+                // Chunks mode - emit each chunk as separate message
+                List<String> allChunks = new ArrayList<>();
+                getEndpoint().getBedrockRuntimeAsyncClient().invokeModelWithResponseStream(
+                        request,
+                        BedrockStreamHandler.createChunksHandler(
+                                getConfiguration().getModelId(),
+                                metadata,
+                                allChunks,
+                                null))
+                        .join();
+
+                message.setBody(allChunks);
+                if (getConfiguration().isIncludeStreamingMetadata()) {
+                    setStreamingMetadata(message, metadata);
+                }
+            } else {
+                // Complete mode - accumulate all chunks and return complete response
+                StringBuilder fullText = new StringBuilder();
+                getEndpoint().getBedrockRuntimeAsyncClient().invokeModelWithResponseStream(
+                        request,
+                        BedrockStreamHandler.createCompleteHandler(
+                                getConfiguration().getModelId(),
+                                metadata,
+                                fullText))
+                        .join();
+
+                message.setBody(fullText.toString());
+                if (getConfiguration().isIncludeStreamingMetadata()) {
+                    setStreamingMetadata(message, metadata);
+                }
+            }
+
+        } catch (AwsServiceException ase) {
+            LOG.trace("Invoke Model Streaming command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+    }
+
+    private void setStreamingMetadata(Message message, BedrockStreamHandler.StreamMetadata metadata) {
+        if (metadata.getCompletionReason() != null) {
+            message.setHeader(BedrockConstants.STREAMING_COMPLETION_REASON, metadata.getCompletionReason());
+        }
+        if (metadata.getTokenCount() != null) {
+            message.setHeader(BedrockConstants.STREAMING_TOKEN_COUNT, metadata.getTokenCount());
+        }
+        message.setHeader(BedrockConstants.STREAMING_CHUNK_COUNT, metadata.getChunkCount());
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

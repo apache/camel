@@ -33,6 +33,9 @@ public class BedrockConfiguration implements Cloneable {
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private BedrockRuntimeClient bedrockRuntimeClient;
+    @UriParam
+    @Metadata(label = "advanced", autowired = true)
+    private software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "security", secret = true)
@@ -69,6 +72,10 @@ public class BedrockConfiguration implements Cloneable {
     private boolean useSessionCredentials;
     @UriParam(defaultValue = "false")
     private String profileCredentialsName;
+    @UriParam(defaultValue = "complete", enums = "complete,chunks")
+    private String streamOutputMode = "complete";
+    @UriParam(defaultValue = "true")
+    private boolean includeStreamingMetadata = true;
 
     public BedrockRuntimeClient getBedrockRuntimeClient() {
         return bedrockRuntimeClient;
@@ -79,6 +86,18 @@ public class BedrockConfiguration implements Cloneable {
      */
     public void setBedrockRuntimeClient(BedrockRuntimeClient bedrockRuntimeClient) {
         this.bedrockRuntimeClient = bedrockRuntimeClient;
+    }
+
+    public software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient getBedrockRuntimeAsyncClient() {
+        return bedrockRuntimeAsyncClient;
+    }
+
+    /**
+     * To use an existing configured AWS Bedrock Runtime Async client for streaming operations
+     */
+    public void setBedrockRuntimeAsyncClient(
+            software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient) {
+        this.bedrockRuntimeAsyncClient = bedrockRuntimeAsyncClient;
     }
 
     public String getAccessKey() {
@@ -270,6 +289,29 @@ public class BedrockConfiguration implements Cloneable {
      */
     public void setModelId(String modelId) {
         this.modelId = modelId;
+    }
+
+    public String getStreamOutputMode() {
+        return streamOutputMode;
+    }
+
+    /**
+     * The streaming output mode (complete or chunks). In complete mode, the full response is accumulated and returned
+     * as a single message. In chunks mode, each chunk is emitted as a separate exchange.
+     */
+    public void setStreamOutputMode(String streamOutputMode) {
+        this.streamOutputMode = streamOutputMode;
+    }
+
+    public boolean isIncludeStreamingMetadata() {
+        return includeStreamingMetadata;
+    }
+
+    /**
+     * Whether to include streaming metadata in the response headers (completion reason, token count, chunk count)
+     */
+    public void setIncludeStreamingMetadata(boolean includeStreamingMetadata) {
+        this.includeStreamingMetadata = includeStreamingMetadata;
     }
 
     // *************************************************

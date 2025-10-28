@@ -23,9 +23,11 @@ public class BedrockEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(20);
+        Set<String> props = new HashSet<>(23);
         props.add("accessKey");
+        props.add("bedrockRuntimeAsyncClient");
         props.add("bedrockRuntimeClient");
+        props.add("includeStreamingMetadata");
         props.add("label");
         props.add("lazyStartProducer");
         props.add("modelId");
@@ -39,6 +41,7 @@ public class BedrockEndpointUriFactory extends org.apache.camel.support.componen
         props.add("region");
         props.add("secretKey");
         props.add("sessionToken");
+        props.add("streamOutputMode");
         props.add("trustAllCertificates");
         props.add("uriEndpointOverride");
         props.add("useDefaultCredentialsProvider");

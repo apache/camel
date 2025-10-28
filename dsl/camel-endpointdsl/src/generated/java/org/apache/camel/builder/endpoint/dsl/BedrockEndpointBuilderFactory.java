@@ -45,6 +45,38 @@ public interface BedrockEndpointBuilderFactory {
         }
 
         /**
+         * Whether to include streaming metadata in the response headers
+         * (completion reason, token count, chunk count).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param includeStreamingMetadata the value to set
+         * @return the dsl builder
+         */
+        default BedrockEndpointBuilder includeStreamingMetadata(boolean includeStreamingMetadata) {
+            doSetProperty("includeStreamingMetadata", includeStreamingMetadata);
+            return this;
+        }
+        /**
+         * Whether to include streaming metadata in the response headers
+         * (completion reason, token count, chunk count).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param includeStreamingMetadata the value to set
+         * @return the dsl builder
+         */
+        default BedrockEndpointBuilder includeStreamingMetadata(String includeStreamingMetadata) {
+            doSetProperty("includeStreamingMetadata", includeStreamingMetadata);
+            return this;
+        }
+        /**
          * Define the model Id we are going to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -184,6 +216,23 @@ public interface BedrockEndpointBuilderFactory {
          */
         default BedrockEndpointBuilder region(String region) {
             doSetProperty("region", region);
+            return this;
+        }
+        /**
+         * The streaming output mode (complete or chunks). In complete mode, the
+         * full response is accumulated and returned as a single message. In
+         * chunks mode, each chunk is emitted as a separate exchange.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: complete
+         * Group: producer
+         * 
+         * @param streamOutputMode the value to set
+         * @return the dsl builder
+         */
+        default BedrockEndpointBuilder streamOutputMode(String streamOutputMode) {
+            doSetProperty("streamOutputMode", streamOutputMode);
             return this;
         }
         /**
@@ -510,6 +559,38 @@ public interface BedrockEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use an existing configured AWS Bedrock Runtime Async client for
+         * streaming operations.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param bedrockRuntimeAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBedrockEndpointBuilder bedrockRuntimeAsyncClient(software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient) {
+            doSetProperty("bedrockRuntimeAsyncClient", bedrockRuntimeAsyncClient);
+            return this;
+        }
+        /**
+         * To use an existing configured AWS Bedrock Runtime Async client for
+         * streaming operations.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param bedrockRuntimeAsyncClient the value to set
+         * @return the dsl builder
+         */
+        default AdvancedBedrockEndpointBuilder bedrockRuntimeAsyncClient(String bedrockRuntimeAsyncClient) {
+            doSetProperty("bedrockRuntimeAsyncClient", bedrockRuntimeAsyncClient);
+            return this;
+        }
+        /**
          * To use an existing configured AWS Bedrock Runtime client.
          * 
          * The option is a:
@@ -642,6 +723,54 @@ public interface BedrockEndpointBuilderFactory {
          */
         public String awsBedrockAcceptContentType() {
             return "CamelAwsBedrockAcceptContentType";
+        }
+        /**
+         * The streaming output mode (complete or chunks).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockStreamOutputMode}.
+         */
+        public String awsBedrockStreamOutputMode() {
+            return "CamelAwsBedrockStreamOutputMode";
+        }
+        /**
+         * The completion reason for streaming response.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockCompletionReason}.
+         */
+        public String awsBedrockCompletionReason() {
+            return "CamelAwsBedrockCompletionReason";
+        }
+        /**
+         * The number of tokens generated in streaming response.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockTokenCount}.
+         */
+        public String awsBedrockTokenCount() {
+            return "CamelAwsBedrockTokenCount";
+        }
+        /**
+         * The number of chunks received in streaming response.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockChunkCount}.
+         */
+        public String awsBedrockChunkCount() {
+            return "CamelAwsBedrockChunkCount";
         }
     }
     static BedrockEndpointBuilder endpointBuilder(String componentName, String path) {

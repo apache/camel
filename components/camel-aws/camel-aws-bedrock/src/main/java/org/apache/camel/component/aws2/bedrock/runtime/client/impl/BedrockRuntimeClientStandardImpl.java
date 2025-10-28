@@ -30,6 +30,8 @@ import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClientBuilder;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
@@ -103,6 +105,31 @@ public class BedrockRuntimeClientStandardImpl implements BedrockRuntimeInternalC
             clientBuilder.httpClient(ahc);
             clientBuilder.httpClientBuilder(null);
         }
+        client = clientBuilder.build();
+        return client;
+    }
+
+    /**
+     * Getting the Bedrock Runtime AWS async client for streaming operations.
+     *
+     * @return BedrockRuntimeAsyncClient Async Client.
+     */
+    @Override
+    public BedrockRuntimeAsyncClient getBedrockRuntimeAsyncClient() {
+        BedrockRuntimeAsyncClient client = null;
+        BedrockRuntimeAsyncClientBuilder clientBuilder = BedrockRuntimeAsyncClient.builder();
+
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+            clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
+        }
+        if (configuration.isOverrideEndpoint()) {
+            clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
+        }
+        // Note: Async clients use Netty by default, proxy and TLS configuration would require NettyNioAsyncHttpClient
         client = clientBuilder.build();
         return client;
     }

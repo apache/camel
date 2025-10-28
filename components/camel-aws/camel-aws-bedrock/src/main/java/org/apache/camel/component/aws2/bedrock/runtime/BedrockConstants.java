@@ -28,4 +28,12 @@ public interface BedrockConstants {
     String MODEL_CONTENT_TYPE = "CamelAwsBedrockContentType";
     @Metadata(description = "The model accept content type", javaType = "String")
     String MODEL_ACCEPT_CONTENT_TYPE = "CamelAwsBedrockAcceptContentType";
+    @Metadata(description = "The streaming output mode (complete or chunks)", javaType = "String")
+    String STREAM_OUTPUT_MODE = "CamelAwsBedrockStreamOutputMode";
+    @Metadata(description = "The completion reason for streaming response", javaType = "String")
+    String STREAMING_COMPLETION_REASON = "CamelAwsBedrockCompletionReason";
+    @Metadata(description = "The number of tokens generated in streaming response", javaType = "Integer")
+    String STREAMING_TOKEN_COUNT = "CamelAwsBedrockTokenCount";
+    @Metadata(description = "The number of chunks received in streaming response", javaType = "Integer")
+    String STREAMING_CHUNK_COUNT = "CamelAwsBedrockChunkCount";
 }

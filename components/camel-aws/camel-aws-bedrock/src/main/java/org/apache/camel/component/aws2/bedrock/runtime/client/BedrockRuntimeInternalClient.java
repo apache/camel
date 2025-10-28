@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.client;
 
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 /**
@@ -29,4 +30,11 @@ public interface BedrockRuntimeInternalClient {
      * @return BedrockRuntimeClient BedrockRuntimeClient
      */
     BedrockRuntimeClient getBedrockRuntimeClient();
+
+    /**
+     * Returns an Bedrock Runtime async client for streaming operations.
+     *
+     * @return BedrockRuntimeAsyncClient BedrockRuntimeAsyncClient
+     */
+    BedrockRuntimeAsyncClient getBedrockRuntimeAsyncClient();
 }
