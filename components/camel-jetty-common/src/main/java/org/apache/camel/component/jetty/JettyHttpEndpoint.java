@@ -75,7 +75,7 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
               description = "Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server.")
     private Map<String, String> filterInitParameters;
     @UriParam(label = "consumer,advanced",
-              description = "Allows using a custom multipart filter. Note: setting multipartFilterRef forces the value of enableMultipartFilter to true.")
+              description = "Allows using a custom multipart filter. Note: setting multipartFilter forces the value of enableMultipartFilter to true.")
     private Filter multipartFilter;
     @UriParam(label = "security",
               description = "To configure security using SSLContextParameters")

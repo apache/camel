@@ -30,10 +30,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test for http binding ref option.
+ * Unit test for http binding option.
  */
-@Deprecated
-public class HttpBindingRefTest extends BaseJettyTest {
+public class HttpBindingTest extends BaseJettyTest {
 
     @BindToRegistry("default")
     private DefaultHttpBinding binding = new DefaultHttpBinding();
@@ -60,10 +59,10 @@ public class HttpBindingRefTest extends BaseJettyTest {
             public void configure() {
                 errorHandler(noErrorHandler());
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice?httpBindingRef=default").transform()
+                from("jetty:http://localhost:{{port}}/myapp/myservice?httpBinding=#default").transform()
                         .constant("Bye World");
 
-                from("jetty:http://localhost:{{port}}/myapp/myotherservice?httpBindingRef=myownbinder")
+                from("jetty:http://localhost:{{port}}/myapp/myotherservice?httpBinding=#myownbinder")
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 throw new IllegalStateException("Not implemented");

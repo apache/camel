@@ -165,10 +165,18 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         // must extract well known parameters before we create the endpoint
         List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
+        if (binding != null) {
+            // TODO: remove httpBindingRef in the future
+            LOG.warn("Using httpBindingRef is deprecated, use httpBinding=#beanId instead");
+        }
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
         Boolean enableMultipartFilter = getAndRemoveParameter(parameters, "enableMultipartFilter",
                 Boolean.class, true);
         Filter multipartFilter = resolveAndRemoveReferenceParameter(parameters, "multipartFilterRef", Filter.class);
+        if (binding != null) {
+            // TODO: remove multipartFilterRef in the future
+            LOG.warn("Using multipartFilterRef is deprecated, use multipartFilter=#beanId instead");
+        }
         List<Filter> filters = resolveAndRemoveReferenceListParameter(parameters, "filters", Filter.class);
         Boolean enableCors = getAndRemoveParameter(parameters, "enableCORS", Boolean.class, false);
         HeaderFilterStrategy headerFilterStrategy
@@ -1193,7 +1201,9 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
         JettyHttpEndpoint endpoint = (JettyHttpEndpoint) camelContext.getEndpoint(url, parameters);
 
-        if (!map.containsKey("httpBindingRef")) {
+        boolean binding = map.containsKey("httpBindingRef") || map.containsKey("httpBinding");
+
+        if (!binding) {
             // use the rest binding, if not using a custom http binding
             endpoint.setHttpBinding(new JettyRestHttpBinding(endpoint));
             // disable this filter as we want to use ours
