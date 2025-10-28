@@ -87,7 +87,7 @@ public class NewIssuesConsumer extends AbstractJiraConsumer {
      * @return {@link DateTimeZone} of the user
      */
     private DateTimeZone getUserTimeZone() {
-        URI userURI = URI.create(getEndpoint().getConfiguration().getJiraUrl() + "/rest/api/latest/myself");
+        URI userURI = URI.create(getEndpoint().getConfiguration().getJiraUrl()).resolve("rest/api/latest/myself");
         final User user = getEndpoint().getClient().getUserClient().getUser(userURI).claim();
         final String timezone = user.getTimezone();
 
