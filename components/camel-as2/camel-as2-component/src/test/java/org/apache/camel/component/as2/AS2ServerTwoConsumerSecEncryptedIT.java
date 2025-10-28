@@ -26,6 +26,8 @@ import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import java.security.PrivateKey;
+
 /**
  * Tests an AS2 server configured with a decryption key to decrypt AS2 Messages. <br>
  * Only messages with sufficient encryption will be processed, for instance, 'signed-encrypted',
@@ -73,6 +75,8 @@ public class AS2ServerTwoConsumerSecEncryptedIT extends AS2ServerTwoConsumerBase
     // utility method to reproduce the MIC and compare against the MIC received in MDN.
     @Override
     protected MicUtils.ReceivedContentMic createReceivedContentMic(HttpRequest request) throws HttpException {
-        return MicUtils.createReceivedContentMic((ClassicHttpRequest) request, null, signingKP.getPrivate());
+        final String requestUri = request.getPath();
+        final PrivateKey currentSigningKey = getSigningPrivateKeyByRequestUri(requestUri);
+        return MicUtils.createReceivedContentMic((ClassicHttpRequest) request, null, currentSigningKey);
     }
 }

@@ -32,11 +32,27 @@ import org.apache.hc.core5.http.protocol.HttpCoreContext;
 
 public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
 
-    protected static final String AS2_TO_A = "AS2_SERVER_A";
-    protected static final String AS2_TO_B = "AS2_SERVER_B";
+    public enum ConsumerConfig {
+        CONSUMER_A("AS2_SERVER_A", "keyPairA", "signingKeyA", "/consumerA"),
+        CONSUMER_B("AS2_SERVER_B", "keyPairB", "signingKeyB", "/consumerB");
 
-    protected static final String DECRYPTING_KEY_A = "keyPairA";
-    protected static final String DECRYPTING_KEY_B = "keyPairB";
+        private final String as2To;
+        private final String decryptingKey;
+        private final String signingKey;
+        private final String requestUriPattern; // New field
+
+        ConsumerConfig(String as2To, String decryptingKey, String signingKey, String requestUriPattern) {
+            this.as2To = as2To;
+            this.decryptingKey = decryptingKey;
+            this.signingKey = signingKey;
+            this.requestUriPattern = requestUriPattern;
+        }
+
+        public String getAs2To() { return as2To; }
+        public String getDecryptingKey() { return decryptingKey; }
+        public String getSigningKey() { return signingKey; }
+        public String getRequestUriPattern() { return requestUriPattern; } // New getter
+    }
 
     private KeyPair decryptingKPA;
     private KeyPair decryptingKPB;
@@ -49,19 +65,22 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
         CamelContext context = super.createCamelContext();
 
         // 2. Generate and assign distinct keys for Consumer A
-        Object[] setA = generateNewKeyPairSet(AS2_TO_A);
+        Object[] setA = generateNewKeyPairSet(ConsumerConfig.CONSUMER_A.getAs2To());
         decryptingKPA = (KeyPair) setA[1];
         signingCertA = (X509Certificate) setA[2];
 
         // 3. Generate and assign distinct keys for Consumer B
-        Object[] setB = generateNewKeyPairSet(AS2_TO_B);
+        Object[] setB = generateNewKeyPairSet(ConsumerConfig.CONSUMER_B.getAs2To());
         decryptingKPB = (KeyPair) setB[1];
         signingCertB = (X509Certificate) setB[2];
 
         // 4. Register private keys in the registry for the AS2 consumers to find.
         // The 'context' object is guaranteed to be non-null here.
-        context.getRegistry().bind(DECRYPTING_KEY_A, decryptingKPA.getPrivate());
-        context.getRegistry().bind(DECRYPTING_KEY_B, decryptingKPB.getPrivate());
+        context.getRegistry().bind(ConsumerConfig.CONSUMER_A.getDecryptingKey(), decryptingKPA.getPrivate());
+        context.getRegistry().bind(ConsumerConfig.CONSUMER_B.getDecryptingKey(), decryptingKPB.getPrivate());
+
+        context.getRegistry().bind(ConsumerConfig.CONSUMER_A.getSigningKey(), decryptingKPA.getPrivate());
+        context.getRegistry().bind(ConsumerConfig.CONSUMER_B.getSigningKey(), decryptingKPB.getPrivate());
 
         // 5. Return the configured context
         return context;
@@ -73,11 +92,11 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
         return new RouteBuilder() {
             public void configure() {
                 // Consumer A: Uses keys registered as 'keyPairA'
-                from("as2://server/listen?requestUriPattern=/consumerA&decryptingPrivateKey=#" + DECRYPTING_KEY_A)
+                from("as2://server/listen?requestUriPattern=/consumerA&decryptingPrivateKey=#" + ConsumerConfig.CONSUMER_A.getDecryptingKey() + "&signingPrivateKey=#" + ConsumerConfig.CONSUMER_A.getSigningKey())
                         .to("mock:consumerA");
 
                 // Consumer B: Uses keys registered as 'keyPairB'
-                from("as2://server/listen?requestUriPattern=/consumerB&decryptingPrivateKey=#" + DECRYPTING_KEY_B)
+                from("as2://server/listen?requestUriPattern=/consumerB&decryptingPrivateKey=#" + ConsumerConfig.CONSUMER_B.getDecryptingKey() + "&signingPrivateKey=#" + ConsumerConfig.CONSUMER_B.getSigningKey())
                         .to("mock:consumerB");
             }
         };
@@ -89,7 +108,7 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
         return sendWithIsolatedKeys(
                 structure,
                 "/consumerA",
-                AS2_TO_A,
+                ConsumerConfig.CONSUMER_A.getAs2To(),
                 signingCertA,
                 decryptingKPA.getPrivate(),
                 signingCertA);
@@ -101,7 +120,7 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
         return sendWithIsolatedKeys(
                 structure,
                 "/consumerB",
-                AS2_TO_B,
+                ConsumerConfig.CONSUMER_B.getAs2To(),
                 signingCertB,
                 decryptingKPB.getPrivate(),
                 signingCertB);
@@ -190,6 +209,21 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
                 issueDN);
 
         return new Object[] { issueKeyPair, signingKeyPair, signingCert };
+    }
+
+    protected PrivateKey getSigningPrivateKeyByRequestUri(String requestUri) {
+        for (ConsumerConfig config : ConsumerConfig.values()) {
+            if (config.getRequestUriPattern().equals(requestUri)) {
+                // Lookup the PrivateKey bound to the Registry under the signing key name
+                Object key = context.getRegistry().lookupByName(config.getSigningKey());
+                if (key instanceof PrivateKey) {
+                    return (PrivateKey) key;
+                }
+                // Key should always be a PrivateKey based on the AS2ServerTwoConsumerBase setup
+                throw new IllegalStateException("Registry entry for key '" + config.getSigningKey() + "' is not a PrivateKey.");
+            }
+        }
+        throw new IllegalArgumentException("No consumer configuration found for URI: " + requestUri);
     }
 
 }
