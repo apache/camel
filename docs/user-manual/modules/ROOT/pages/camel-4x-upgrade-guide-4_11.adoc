@@ -126,13 +126,14 @@ The `org.apache.camel.component.undertow.UndertowHeaderFilterStrategy` class has
 
 === camel-metrics
 
-A new gauge metric, `app.info` is available by default. This is providing a few information related to the runtime provider such as:
+A new gauge metric, `app.info` is available by default. This is providing information related to the runtime provider such as:
 
-```
+[source, bash]
+----
 # HELP app_info
 # TYPE app_info gauge
 app_info{camel_context="camel-1",camel_runtime_provider="Spring-Boot",camel_runtime_version="3.4.3",camel_version="4.10.2"} 1
-```
+----
 
 This information is evaluated at runtime startup and available through the usual metrics endpoint. To disable this metric you need to use the `camel.metrics.skipCamelInfo=true` property.
 

@@ -50,7 +50,9 @@ on Spring Boot.
 
 In order to fix the problems reported we had to align the Opentelemetry dependencies to a version which is different from the one used in Spring Boot 3.3.x BOM. 
 If you're using such BOM for your **Camel Spring Boot runtime** application, you will need to make sure to force the usage of the Opentelemetry dependencies below:
-```
+
+[source, xml]
+----
 <dependency>
     <groupId>io.opentelemetry</groupId>
     <artifactId>opentelemetry-sdk</artifactId>
@@ -101,7 +103,7 @@ If you're using such BOM for your **Camel Spring Boot runtime** application, you
     <artifactId>opentelemetry-api-incubator</artifactId>
     <version>1.43.0-alpha</version>
 </dependency>
-```
+----
 
 == Upgrading Camel 4.7 to 4.8
 
