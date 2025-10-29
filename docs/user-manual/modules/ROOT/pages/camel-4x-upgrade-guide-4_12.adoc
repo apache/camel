@@ -233,7 +233,7 @@ There is one single exception for ServiceNow Metadata Extension since it is used
 
 More details could be found in CAMEL-22013.
 
-== camel-spring-boot
+=== camel-spring-boot
 
 Upgraded to Spring Boot 3.5.0.
 
