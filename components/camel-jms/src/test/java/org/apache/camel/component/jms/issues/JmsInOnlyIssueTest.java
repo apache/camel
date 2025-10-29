@@ -30,7 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -38,7 +37,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisplayName("CAMEL-1770: unit tests for inout and in-only routing with jms")
+/**
+ * CAMEL-1770: unit tests for inout and in-only routing with jms
+ */
 public class JmsInOnlyIssueTest extends AbstractJMSTest {
 
     @Order(2)

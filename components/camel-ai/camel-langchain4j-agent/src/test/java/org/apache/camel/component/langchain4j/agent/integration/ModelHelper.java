@@ -17,12 +17,17 @@
 
 package org.apache.camel.component.langchain4j.agent.integration;
 
+import java.util.Optional;
+
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
+import dev.langchain4j.model.ollama.OllamaEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModelName;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
+import org.apache.camel.test.infra.ollama.services.OllamaService;
 
 import static java.time.Duration.ofSeconds;
 
@@ -30,6 +35,10 @@ public class ModelHelper {
 
     public static final String API_KEY = "API_KEY";
     public static final String MODEL_PROVIDER = "MODEL_PROVIDER";
+    public static final String MODEL_BASE_URL = "MODEL_BASE_URL";
+    public static final String MODEL_NAME = "MODEL_NAME";
+    public static final String DEFAULT_OLLAMA_MODEL_NAME = "granite4:tiny-h";
+    public static final String DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434/";
 
     protected static ChatModel createGeminiModel(String apiKey) {
         return GoogleAiGeminiChatModel.builder()
@@ -56,8 +65,25 @@ public class ModelHelper {
         return switch (name) {
             case "gemini" -> createGeminiModel(apiKey);
             case "openai" -> createOpenAiModel(apiKey);
+            case "ollama" -> createOllamaModel(apiKey);
             default -> throw new IllegalArgumentException("Unknown chat model: " + name);
         };
+    }
+
+    private static ChatModel createOllamaModel(String apiKey) {
+        String baseUrl = Optional.ofNullable(System.getenv(MODEL_BASE_URL))
+                .orElse(DEFAULT_OLLAMA_BASE_URL);
+        String modelName = Optional.ofNullable(System.getenv(MODEL_NAME))
+                .orElse(DEFAULT_OLLAMA_MODEL_NAME);
+
+        return OllamaChatModel.builder()
+                .baseUrl(baseUrl)
+                .modelName(modelName)
+                .temperature(1.0)
+                .timeout(ofSeconds(60))
+                .logRequests(true)
+                .logResponses(true)
+                .build();
     }
 
     public static ChatModel loadFromEnv() {
@@ -78,11 +104,23 @@ public class ModelHelper {
         var apiKey = System.getenv(API_KEY);
 
         // Create embeddings
-        return OpenAiEmbeddingModel.builder()
-                .apiKey(apiKey)
-                .modelName("text-embedding-ada-002")
-                .timeout(ofSeconds(30))
-                .build();
+        if ("ollama".equals(System.getenv(MODEL_PROVIDER))) {
+            String baseUrl = Optional.ofNullable(System.getenv(MODEL_BASE_URL))
+                    .orElse(DEFAULT_OLLAMA_BASE_URL);
+            String modelName = Optional.ofNullable(System.getenv(MODEL_NAME))
+                    .orElse(DEFAULT_OLLAMA_MODEL_NAME);
+
+            return OllamaEmbeddingModel.builder()
+                    .baseUrl(baseUrl)
+                    .modelName(modelName)
+                    .build();
+        } else {
+            return OpenAiEmbeddingModel.builder()
+                    .apiKey(apiKey)
+                    .modelName("text-embedding-ada-002")
+                    .timeout(ofSeconds(30))
+                    .build();
+        }
     }
 
     public static boolean environmentWithoutEmbeddings() {
@@ -102,10 +140,71 @@ public class ModelHelper {
     public static boolean isEmbeddingCapable() {
         var modelProvider = System.getenv(MODEL_PROVIDER);
 
-        return "openai".equals(modelProvider);
+        if ("openai".equals(modelProvider)) {
+            return true;
+        } else {
+            modelProvider = System.getenv(MODEL_PROVIDER);
+        }
+
+        return "openai".equals(modelProvider) || "ollama".equals(modelProvider);
     }
 
     public static String getApiKey() {
         return System.getenv(API_KEY);
+    }
+
+    /**
+     * Load chat model from environment variables if configured, otherwise use OllamaService. This allows tests to run
+     * without requiring external API keys.
+     */
+    public static ChatModel loadChatModel(OllamaService ollamaService) {
+        var apiKey = System.getenv(API_KEY);
+        var modelProvider = System.getenv(MODEL_PROVIDER);
+
+        if (apiKey != null && !apiKey.trim().isEmpty()
+                && modelProvider != null && !modelProvider.trim().isEmpty()) {
+            // Use environment-configured model
+            return loadFromEnv();
+        }
+
+        // Fallback to Ollama service
+        return OllamaChatModel.builder()
+                .baseUrl(ollamaService.baseUrl())
+                .modelName(ollamaService.modelName())
+                .temperature(0.3)
+                .timeout(ofSeconds(60))
+                .build();
+    }
+
+    /**
+     * Load embedding model from environment variables if configured, otherwise use OllamaService. This allows tests to
+     * run without requiring external API keys.
+     */
+    public static EmbeddingModel loadEmbeddingModel(OllamaService ollamaService) {
+        var apiKey = System.getenv(API_KEY);
+        var modelProvider = System.getenv(MODEL_PROVIDER);
+
+        if (apiKey != null && !apiKey.trim().isEmpty()
+                && modelProvider != null && !modelProvider.trim().isEmpty()) {
+            // Use environment-configured embedding model
+            return createEmbeddingModel();
+        }
+
+        // Fallback to Ollama service
+        return OllamaEmbeddingModel.builder()
+                .baseUrl(ollamaService.baseUrl())
+                .modelName(ollamaService.modelName())
+                .timeout(ofSeconds(60))
+                .build();
+    }
+
+    /**
+     * Check if environment variables are configured for testing. If false, tests should use OllamaService instead.
+     */
+    public static boolean hasEnvironmentConfiguration() {
+        var apiKey = System.getenv(API_KEY);
+        var modelProvider = System.getenv(MODEL_PROVIDER);
+        return apiKey != null && !apiKey.trim().isEmpty()
+                && modelProvider != null && !modelProvider.trim().isEmpty();
     }
 }

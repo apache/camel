@@ -23,12 +23,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
     </parent>
 
     <properties>
         <skipITs.s390x>true</skipITs.s390x>
         <skipITs.ppc64le>true</skipITs.ppc64le>
+        <!-- Make use of native access during IT test execution only -->
+        <camel.failsafe.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.failsafe.fork.additional-vmargs>
     </properties>
 
     <artifactId>camel-javascript</artifactId>

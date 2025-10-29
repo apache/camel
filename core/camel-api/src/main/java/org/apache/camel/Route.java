@@ -49,6 +49,7 @@ public interface Route extends RuntimeConfiguration {
     String TEMPLATE_PROPERTY = "template";
     String KAMELET_PROPERTY = "kamelet";
     String DESCRIPTION_PROPERTY = "description";
+    String NOTE_PROPERTY = "note";
     String CONFIGURATION_ID_PROPERTY = "configurationId";
     String SUPERVISED = "supervised";
 
@@ -148,6 +149,15 @@ public interface Route extends RuntimeConfiguration {
      * @return the description, or <tt>null</tt> if no description has been configured.
      */
     String getDescription();
+
+    /**
+     * Gets the route note (if any has been configured).
+     * <p/>
+     * The note is configured using the {@link #NOTE_PROPERTY} as key in the {@link #getProperties()}.
+     *
+     * @return the note, or <tt>null</tt> if no note has been configured.
+     */
+    String getNote();
 
     /**
      * Gets the route configuration id(s) the route has been applied with. Multiple ids is separated by comma.
@@ -312,6 +322,11 @@ public interface Route extends RuntimeConfiguration {
      * Gets the route description
      */
     String getRouteDescription();
+
+    /**
+     * Gets the route note
+     */
+    String getRouteNote();
 
     /**
      * Get the route type.

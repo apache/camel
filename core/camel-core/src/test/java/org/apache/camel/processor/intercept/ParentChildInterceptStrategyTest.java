@@ -58,7 +58,7 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
         assertEquals("Parent choice -> target task-e", LIST.get(4));
         assertEquals("Parent route -> target choice", LIST.get(5));
         // the last one has no custom id so its using its label instead
-        assertEquals("Parent route -> target mock:done", LIST.get(6));
+        assertEquals("Parent route -> target to[mock:done]", LIST.get(6));
     }
 
     @Override

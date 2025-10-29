@@ -19,6 +19,7 @@ package org.apache.camel.component.salesforce;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
@@ -74,6 +75,8 @@ public class StreamingApiConsumer extends DefaultConsumer {
     private final SalesforceEndpoint endpoint;
     private final MessageKind messageKind;
     private final ObjectMapper objectMapper;
+    private ExecutorService executorService;
+    private boolean customExecutorService;
 
     private final boolean rawPayload;
     private Class<?> sObjectClass;
@@ -98,10 +101,17 @@ public class StreamingApiConsumer extends DefaultConsumer {
 
         topicName = endpoint.getTopicName();
         subscriptionHelper = helper;
-
         messageKind = MessageKind.fromTopicName(topicName);
-
         rawPayload = endpoint.getConfiguration().isRawPayload();
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+        this.customExecutorService = executorService != null;
     }
 
     public String getTopicName() {
@@ -110,11 +120,6 @@ public class StreamingApiConsumer extends DefaultConsumer {
 
     public SubscriptionHelper getSubscriptionHelper() {
         return subscriptionHelper;
-    }
-
-    @Override
-    public void handleException(String message, Throwable t) {
-        super.handleException(message, t);
     }
 
     public void processMessage(final ClientSessionChannel channel, final Message message) {
@@ -139,9 +144,17 @@ public class StreamingApiConsumer extends DefaultConsumer {
                 throw new IllegalStateException("Unknown message kind: " + messageKind);
         }
 
-        // use default consumer callback
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
+        try {
+            // use default consumer callback
+            AsyncCallback cb = defaultConsumerCallback(exchange, true);
+            if (executorService != null) {
+                executorService.submit(() -> getAsyncProcessor().process(exchange, cb));
+            } else {
+                getAsyncProcessor().process(exchange, cb);
+            }
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error processing received Salesforce event", exchange, e);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -271,6 +284,10 @@ public class StreamingApiConsumer extends DefaultConsumer {
         determineSObjectClass();
         final SalesforceEndpointConfig config = endpoint.getConfiguration();
 
+        if (!customExecutorService && getEndpoint().isConsumerWorkerPoolEnabled()) {
+            executorService = getEndpoint().createExecutorService(this);
+        }
+
         // is a query configured in the endpoint?
         if (messageKind == MessageKind.PUSH_TOPIC && ObjectHelper.isNotEmpty(config.getSObjectQuery())) {
             // Note that we don't lookup topic if the query is not specified
@@ -330,6 +347,10 @@ public class StreamingApiConsumer extends DefaultConsumer {
             subscribed = false;
             // unsubscribe from topic
             subscriptionHelper.unsubscribe(this);
+        }
+        if (!customExecutorService && executorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
+            executorService = null;
         }
     }
 

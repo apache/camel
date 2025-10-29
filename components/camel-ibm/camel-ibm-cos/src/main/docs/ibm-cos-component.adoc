@@ -1,0 +1,403 @@
+= IBM Cloud Object Storage Component
+:doctitle: IBM Cloud Object Storage
+:shortname: ibm-cos
+:artifactid: camel-ibm-cos
+:description: Store and retrieve objects from IBM Cloud Object Storage.
+:since: 4.16
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: IBM
+:camel-spring-boot-name: ibm-cos
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The IBM COS component supports storing and retrieving objects from/to
+https://www.ibm.com/cloud/object-storage[IBM Cloud Object Storage].
+
+Prerequisites
+
+You must have a valid IBM Cloud account, and be signed up to use IBM Cloud Object Storage.
+More information is available at https://www.ibm.com/cloud/object-storage[IBM Cloud Object Storage].
+
+== URI Format
+
+------------------------------
+ibm-cos://bucketName[?options]
+------------------------------
+
+The bucket will be created if it doesn't already exist.
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+Required IBM COS component options
+
+You have to provide the `apiKey` and `serviceInstanceId` to access IBM Cloud Object Storage,
+along with the `endpointUrl` for your region.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+=== Batch Consumer
+
+This component implements the Batch Consumer.
+
+This allows you, for instance, to know how many messages exist in this
+batch and for instance, let the Aggregator
+aggregate this number of messages.
+
+=== IBM COS Producer operations
+
+The IBM COS component provides the following operation on the producer side:
+
+- copyObject
+- createBucket
+- deleteBucket
+- deleteObject
+- deleteObjects
+- getObject (this will return an InputStream)
+- getObjectRange (this will return an InputStream with partial content)
+- headBucket
+- listBuckets
+- listObjects
+- putObject
+
+If you don't specify an operation explicitly, the producer will do:
+
+- a single file upload
+- a multipart upload if multiPartUpload option is enabled
+
+== Examples
+
+For example, to read file `hello.txt` from bucket `helloBucket`, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("ibm-cos://helloBucket?apiKey=yourApiKey&serviceInstanceId=yourServiceInstanceId&endpointUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud&prefix=hello.txt")
+  .to("file:/var/downloaded");
+--------------------------------------------------------------------------------
+
+=== Advanced IBM COS Client configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the `AmazonS3` client instance configuration, you can
+create your own instance and refer to it in your Camel ibm-cos component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("ibm-cos://MyBucket?cosClient=#client&delay=5000&maxMessagesPerPoll=5")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+=== IBM COS Authentication
+
+IBM Cloud Object Storage uses IBM Cloud IAM (Identity and Access Management) for authentication.
+You need to provide:
+
+- `apiKey`: Your IBM Cloud API key
+- `serviceInstanceId`: Your COS service instance ID (CRN - Cloud Resource Name)
+- `endpointUrl`: The endpoint URL for your region (e.g., `https://s3.us-south.cloud-object-storage.appdomain.cloud`)
+
+You can find your service instance ID and create API keys in the IBM Cloud console.
+
+For more information about IBM COS authentication, see the
+https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-iam[IBM COS IAM documentation].
+
+=== IBM COS Endpoints
+
+IBM COS provides different endpoints for different regions and access types (public, private, direct).
+Examples:
+
+- Public endpoint (US South): `https://s3.us-south.cloud-object-storage.appdomain.cloud`
+- Public endpoint (EU GB): `https://s3.eu-gb.cloud-object-storage.appdomain.cloud`
+- Private endpoint (US South): `https://s3.private.us-south.cloud-object-storage.appdomain.cloud`
+
+For a complete list of endpoints, see
+https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-endpoints[IBM COS Endpoints documentation].
+
+=== IBM COS Producer Operation examples
+
+- Single Upload: This operation will upload a file to IBM COS based on the body content
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(IBMCOSConstants.KEY, "camel.txt");
+          exchange.getIn().setBody("Camel rocks!");
+      }
+  })
+  .to("ibm-cos://mycamelbucket?apiKey=RAW(myApiKey)&serviceInstanceId=RAW(myServiceInstanceId)&endpointUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will upload the file camel.txt with the content "Camel rocks!" in the _mycamelbucket_ bucket.
+
+NOTE: Use `RAW()` wrapper for sensitive values like API keys to prevent property placeholder resolution.
+
+- Multipart Upload: This operation will perform a multipart upload of a file to IBM COS based on the body content
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(IBMCOSConstants.KEY, "largefile.zip");
+          exchange.getIn().setBody(new File("src/largefile.zip"));
+      }
+  })
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&multiPartUpload=true&partSize=5242880")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will perform a multipart upload of the file largefile.zip in the _mycamelbucket_ bucket with a part size of 5MB.
+
+- CopyObject: this operation copies an object from one bucket to a different one
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(IBMCOSConstants.BUCKET_DESTINATION_NAME, "camelDestinationBucket");
+          exchange.getIn().setHeader(IBMCOSConstants.KEY, "camelKey");
+          exchange.getIn().setHeader(IBMCOSConstants.DESTINATION_KEY, "camelDestinationKey");
+      }
+  })
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=copyObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will copy the object with the name expressed in the header camelKey to camelDestinationKey in the camelDestinationBucket bucket, from the bucket _mycamelbucket_.
+
+- DeleteObject: this operation deletes an object from a bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(IBMCOSConstants.KEY, "camelKey");
+      }
+  })
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=deleteObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the object camelKey from the bucket _mycamelbucket_.
+
+- DeleteObjects: this operation deletes multiple objects from a bucket in a single request
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          List<String> keys = Arrays.asList("file1.txt", "file2.txt", "file3.txt");
+          exchange.getIn().setHeader(IBMCOSConstants.KEYS_TO_DELETE, keys);
+      }
+  })
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=deleteObjects")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the objects file1.txt, file2.txt, and file3.txt from the bucket _mycamelbucket_ in a single batch request.
+
+- ListBuckets: this operation lists the buckets for this account in this region
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=listBuckets")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list the buckets for this account.
+
+- DeleteBucket: this operation deletes the bucket specified as URI parameter or header
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=deleteBucket")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the bucket _mycamelbucket_.
+
+- CreateBucket: this operation creates a new bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(IBMCOSConstants.BUCKET_NAME, "newBucket");
+      }
+  })
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=createBucket")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will create a new bucket named _newBucket_.
+
+- ListObjects: this operation lists objects in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=listObjects")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list the objects in the _mycamelbucket_ bucket.
+
+- ListObjects with prefix: this operation lists objects in a specific bucket with a prefix filter
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(IBMCOSConstants.PREFIX, "backup/");
+      }
+  })
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=listObjects")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list only the objects in the _mycamelbucket_ bucket that start with "backup/".
+
+- GetObject: this operation gets a single object in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(IBMCOSConstants.KEY, "camelKey");
+      }
+  })
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=getObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return an InputStream with the content of the camelKey object in _mycamelbucket_ bucket.
+
+- GetObjectRange: this operation gets a single object range in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(IBMCOSConstants.KEY, "camelKey");
+          exchange.getIn().setHeader(IBMCOSConstants.RANGE_START, 0L);
+          exchange.getIn().setHeader(IBMCOSConstants.RANGE_END, 9L);
+      }
+  })
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=getObjectRange")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return an InputStream with the content of the camelKey object in _mycamelbucket_ bucket, containing bytes from 0 to 9.
+
+- HeadBucket: this operation checks if a bucket exists and you have permission to access it
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=headBucket")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will check if the bucket _mycamelbucket_ exists and is accessible. The result (true/false) will be in the message body.
+
+=== IBM COS Consumer
+
+The IBM COS consumer will poll a bucket for new objects and process them.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("ibm-cos://mycamelbucket?cosClient=#cosClient&delay=5000&maxMessagesPerPoll=10&deleteAfterRead=true")
+  .to("file:/var/downloaded");
+--------------------------------------------------------------------------------
+
+This route will poll the _mycamelbucket_ bucket every 5 seconds, processing up to 10 objects per poll, and deleting each object after it's been successfully processed.
+
+=== Move After Read
+
+Instead of deleting objects after reading, you can move them to a different bucket or prefix:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("ibm-cos://mycamelbucket?cosClient=#cosClient&deleteAfterRead=false&moveAfterRead=true&destinationBucket=processed-bucket&destinationBucketPrefix=done-")
+  .to("direct:process");
+--------------------------------------------------------------------------------
+
+This route will move processed objects from _mycamelbucket_ to _processed-bucket_, prefixing each object key with "done-".
+
+=== IBM COS Consumer with prefix filter
+
+You can filter which objects to consume by using a prefix:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("ibm-cos://mycamelbucket?cosClient=#cosClient&prefix=inbox/&deleteAfterRead=true")
+  .to("direct:process");
+--------------------------------------------------------------------------------
+
+This route will only consume objects whose keys start with "inbox/".
+
+== Dependencies
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ibm-cos</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------
+
+where `x.x.x` is the version number of Camel.
+
+include::spring-boot:partial$starter.adoc[]

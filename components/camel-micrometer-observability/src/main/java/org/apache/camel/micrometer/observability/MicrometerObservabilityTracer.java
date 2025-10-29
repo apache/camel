@@ -172,12 +172,16 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
         }
 
         @Override
-        public void inject(Span span, SpanContextPropagationInjector injector) {
+        public void inject(Span span, SpanContextPropagationInjector injector, boolean includeTracing) {
             MicrometerObservabilitySpanAdapter microObsSpan = (MicrometerObservabilitySpanAdapter) span;
             propagator.inject(
                     microObsSpan.getSpan().context(),
                     injector,
                     (carrier, key, value) -> carrier.put(key, value));
+            if (includeTracing) {
+                injector.put(org.apache.camel.telemetry.Tracer.TRACE_HEADER, microObsSpan.getSpan().context().traceId());
+                injector.put(org.apache.camel.telemetry.Tracer.SPAN_HEADER, microObsSpan.getSpan().context().spanId());
+            }
         }
     }
 

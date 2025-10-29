@@ -11,6 +11,12 @@ Note that manual migration is still required.
 See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 ====
 
+[IMPORTANT]
+====
+In this 4.15.0 release the Camel Spring Boot does not support running with JDK 17.
+This has been fixed for the next 4.16.0 release.
+====
+
 == Upgrading Camel 4.14 to 4.15
 
 === Data Formats

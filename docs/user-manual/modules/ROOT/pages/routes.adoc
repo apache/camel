@@ -24,6 +24,85 @@ Camel _routes_ can be defined using a variety of xref:dsl.adoc[domain-specific l
 </route>
 ----
 
+== Route Description and Notes
+
+You can add a description to your routes, for example to provide a short human summary of what the route does.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ftp:myserver/folder").routeDescription("Routes files from the FTP server to internal messaging system")
+  .to("activemq:queue:cheese");
+----
+
+XML::
++
+[source,xml]
+----
+<route description="Routes files from the FTP server to internal messaging system">
+  <from uri="ftp:myserver/folder"/>
+  <to uri="activemq:queue:cheese"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    description: "Routes files from the FTP server to internal messaging system"
+    from:
+      uri: ftp:myserver/folder
+      steps:
+        - to:
+            uri: activemq:cheese
+----
+====
+
+A note (requires **Camel 4.16** onwards) on the other hand is like a _code comments_ for developers or some other kind of information you
+want to keep. Both the notes and descriptions has no impact at runtime but are read-only information.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("ftp:myserver/folder").routeDescription("Routes files from the FTP server to internal messaging system")
+    .routeNote("The FTP server can be offline from time to time, and if so then just restart Camel")
+  .to("activemq:queue:cheese");
+----
+
+XML::
++
+[source,xml]
+----
+<route description="Routes files from the FTP server to internal messaging system"
+       note="The FTP server can be offline from time to time, and if so then just restart Camel">
+  <from uri="ftp:myserver/folder"/>
+  <to uri="activemq:queue:cheese"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    description: "Routes files from the FTP server to internal messaging system"
+    note: "The FTP server can be offline from time to time, and if so then just restart Camel"
+    from:
+      uri: ftp:myserver/folder
+      steps:
+        - to:
+            uri: activemq:cheese
+----
+====
+
+TIP: You can also add description and notes to EIP patterns
 
 == Writing Routes in Java using the Java DSL
 

@@ -17,6 +17,7 @@
 package org.apache.camel.micrometer.observability;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * AsyncTest tests the execution of a new spin off async components.
@@ -71,14 +73,14 @@ public class AsyncTest extends MicrometerObservabilityTracerTestSupport {
         SimpleSpan asyncMock = MicrometerObservabilityTracerTestSupport.getSpan(spans, "mock://end", Op.EVENT_SENT);
 
         // Validate span completion
-        assertNotEquals("", testProducer.getEndTimestamp());
-        assertNotEquals("", direct.getEndTimestamp());
-        assertNotEquals("", asyncDirectTo.getEndTimestamp());
-        assertNotEquals("", log.getEndTimestamp());
-        assertNotEquals("", asyncDirectFrom.getEndTimestamp());
-        assertNotEquals("", async.getEndTimestamp());
-        assertNotEquals("", asyncLog.getEndTimestamp());
-        assertNotEquals("", asyncMock.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, testProducer.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, direct.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, asyncDirectTo.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, log.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, asyncDirectFrom.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, async.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, asyncLog.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, asyncMock.getEndTimestamp());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
@@ -99,7 +101,7 @@ public class AsyncTest extends MicrometerObservabilityTracerTestSupport {
         assertEquals(asyncDirectTo.getTags().get("exchangeId"), asyncMock.getTags().get("exchangeId"));
 
         // Validate hierarchy
-        assertEquals("", testProducer.getParentId());
+        assertTrue(testProducer.getParentId().isEmpty());
         assertEquals(testProducer.getSpanId(), direct.getParentId());
         assertEquals(direct.getSpanId(), asyncDirectTo.getParentId());
         assertEquals(direct.getSpanId(), log.getParentId());

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -158,7 +158,7 @@
         <module>camel-headersmap</module>
         <module>camel-hl7</module>
         <module>camel-huawei</module>
-        <module>camel-ibm-secrets-manager</module>
+        <module>camel-ibm</module>
         <module>camel-ical</module>
         <module>camel-iec60870</module>
         <module>camel-ignite</module>
@@ -221,6 +221,7 @@
         <module>camel-micrometer-observability</module>
         <module>camel-micrometer-prometheus</module>
         <module>camel-microprofile</module>
+        <module>camel-milo</module>
         <module>camel-mina</module>
         <module>camel-minio</module>
         <module>camel-mllp</module>

@@ -19,6 +19,7 @@ package org.apache.camel.component.langchain4j.tools;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import org.apache.camel.test.infra.ollama.services.OllamaService;
 
 import static java.time.Duration.ofSeconds;
 
@@ -27,14 +28,11 @@ public final class ToolsHelper {
     private ToolsHelper() {
     }
 
-    public static ChatModel createModel(String baseUrl) {
-        String modelName = modelName();
-        String apiKey = System.getProperty("langchain4j.tools.api.key", "NO_API_KEY");
-
+    public static ChatModel createModel(OllamaService service) {
         return OpenAiChatModel.builder()
-                .apiKey(apiKey)
-                .modelName(modelName)
-                .baseUrl(baseUrl)
+                .apiKey(service.apiKey())
+                .modelName(service.modelName())
+                .baseUrl(service.baseUrlV1())
                 .temperature(0.0)
                 .timeout(ofSeconds(60))
                 .logRequests(true)
@@ -42,7 +40,15 @@ public final class ToolsHelper {
                 .build();
     }
 
-    public static String modelName() {
-        return System.getProperty("langchain4j.tools.model.name", "llama3.1:latest");
+    public static ChatModel createModel(String baseUrl) {
+        return OpenAiChatModel.builder()
+                .apiKey("NOT_NEEDED")
+                .modelName("MOCK")
+                .baseUrl(baseUrl)
+                .temperature(0.0)
+                .timeout(ofSeconds(60))
+                .logRequests(true)
+                .logResponses(true)
+                .build();
     }
 }

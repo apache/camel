@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jetty</artifactId>
@@ -140,6 +140,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jackson</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jacksonxml</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

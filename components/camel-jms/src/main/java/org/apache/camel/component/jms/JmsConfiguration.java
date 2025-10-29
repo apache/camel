@@ -492,6 +492,14 @@ public class JmsConfiguration implements Cloneable {
                             + " value of this property JMSCorrelationID property will be ignored and not set by Camel.")
     private String correlationProperty;
     @UriParam(label = "producer,advanced",
+              description = "When using InOut exchange pattern use this JMS property instead of JMSCorrelationID" +
+                            " JMS property to correlate reply message. Difference between this and 'correlationProperty'" +
+                            " is that 'correlationProperty' tells which request property holds the correlation id value and" +
+                            " it does not affect the selector for the reply (JMSCorrelationID=&lt;correlation id&gt;), while" +
+                            " 'replyCorrelationProperty' tells which reply property will hold the correlation id value and" +
+                            " it does affect the selector for the reply (&lt;replyCorrelationProperty&gt;=&lt;correlation id&gt;)")
+    private String replyCorrelationProperty;
+    @UriParam(label = "producer,advanced",
               description = "This option is used to allow additional headers which may have values that are invalid according to JMS specification."
                             + " For example, some message systems, such as WMQ, do this with header names using prefix JMS_IBM_MQMD_ containing values with byte array or other invalid types."
                             + " You can specify multiple header names separated by comma, and use * as suffix for wildcard matching.")
@@ -2282,6 +2290,14 @@ public class JmsConfiguration implements Cloneable {
 
     public String getCorrelationProperty() {
         return correlationProperty;
+    }
+
+    public String getReplyCorrelationProperty() {
+        return replyCorrelationProperty;
+    }
+
+    public void setReplyCorrelationProperty(String replyCorrelationProperty) {
+        this.replyCorrelationProperty = replyCorrelationProperty;
     }
 
     public String getAllowAdditionalHeaders() {

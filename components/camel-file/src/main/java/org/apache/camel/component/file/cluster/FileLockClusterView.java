@@ -33,6 +33,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
@@ -40,6 +41,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FileLockClusterView extends AbstractCamelClusterView {
+
+    // Used only during service startup as each context could try to access it concurrently.
+    // It isolates the critical section making sure only one service creates the files.
+    private static final ReentrantLock contextStartLock = new ReentrantLock();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FileLockClusterView.class);
     private final ClusterMember localMember;
     private final Path leaderLockPath;
@@ -82,21 +88,29 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStart() throws Exception {
-        if (leaderLockFile != null) {
-            closeInternal();
-            fireLeadershipChangedEvent((CamelClusterMember) null);
-        }
+        // Start critical section
+        try {
+            contextStartLock.lock();
 
-        if (!Files.exists(leaderLockPath.getParent())) {
-            Files.createDirectories(leaderLockPath.getParent());
-        }
+            if (leaderLockFile != null) {
+                closeInternal();
+                fireLeadershipChangedEvent((CamelClusterMember) null);
+            }
 
-        if (!Files.exists(leaderLockPath)) {
-            Files.createFile(leaderLockPath);
-        }
+            if (!Files.exists(leaderLockPath.getParent())) {
+                Files.createDirectories(leaderLockPath.getParent());
+            }
 
-        if (!Files.exists(leaderDataPath)) {
-            Files.createFile(leaderDataPath);
+            if (!Files.exists(leaderLockPath)) {
+                Files.createFile(leaderLockPath);
+            }
+
+            if (!Files.exists(leaderDataPath)) {
+                Files.createFile(leaderDataPath);
+            }
+        } finally {
+            // End critical section
+            contextStartLock.unlock();
         }
 
         FileLockClusterService service = getClusterService().unwrap(FileLockClusterService.class);
@@ -150,7 +164,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             try {
                 leaderLockFile.close();
             } catch (Exception ignore) {
-                // Ignore
+                LOGGER.warn("{}", ignore.getMessage(), ignore);
             }
             leaderLockFile = null;
         }
@@ -159,7 +173,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             try {
                 leaderDataFile.close();
             } catch (Exception ignore) {
-                // Ignore
+                LOGGER.warn("{}", ignore.getMessage(), ignore);
             }
             leaderDataFile = null;
         }
@@ -170,7 +184,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             try {
                 lock.release();
             } catch (Exception ignore) {
-                // Ignore
+                LOGGER.warn("{}", ignore.getMessage(), ignore);
             }
         }
     }

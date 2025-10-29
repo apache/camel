@@ -26,8 +26,9 @@ The configuration properties for the Telemetry component are:
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Option |Default |Description
-|`camel.component.telemetry.traceProcessors`| false | Trace inner processors.
-|`camel.component.telemetry.excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
+|`traceProcessors`| false | Trace inner processors.
+|`excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
+|`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
 
 == Tracing structure
@@ -83,6 +84,10 @@ Camel uses a proprietary storage mechanism. The trace is serialized into each ge
 === Component exclusions
 
 The component provide the possibility to exclude the trace of any component when using the `excludePatterns` parameter. This feature is not implementation specific.
+
+=== Exchange headers inclusion
+
+The component provide the possibility to include the generated `trace` and `span` into the Exchange header. These headers can be then used for any observability purposes, eg, included in MDC via `camel-mdc` component.
 
 === Component Span decoration
 

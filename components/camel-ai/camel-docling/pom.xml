@@ -25,13 +25,18 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-docling</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: AI :: Docling</name>
     <description>Docling document processing component</description>
+
+    <properties>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+    </properties>
 
     <dependencies>
 
@@ -47,6 +52,13 @@
             <version>${jackson2-version}</version>
         </dependency>
 
+        <!-- HTTP client for docling-serve API integration -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient-version}</version>
+        </dependency>
+
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -56,6 +68,13 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-docling</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
 

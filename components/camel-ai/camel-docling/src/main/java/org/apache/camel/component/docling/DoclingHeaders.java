@@ -44,6 +44,46 @@ public final class DoclingHeaders {
     @Metadata(description = "Custom command line arguments to pass to Docling", javaType = "List<String>")
     public static final String CUSTOM_ARGUMENTS = "CamelDoclingCustomArguments";
 
+    @Metadata(description = "Use asynchronous conversion mode (overrides endpoint configuration)", javaType = "Boolean")
+    public static final String USE_ASYNC_MODE = "CamelDoclingUseAsyncMode";
+
+    @Metadata(description = "Polling interval for async conversion status in milliseconds", javaType = "Long")
+    public static final String ASYNC_POLL_INTERVAL = "CamelDoclingAsyncPollInterval";
+
+    @Metadata(description = "Maximum time to wait for async conversion completion in milliseconds", javaType = "Long")
+    public static final String ASYNC_TIMEOUT = "CamelDoclingAsyncTimeout";
+
+    @Metadata(description = "Task ID for checking async conversion status", javaType = "String")
+    public static final String TASK_ID = "CamelDoclingTaskId";
+
+    @Metadata(description = "Override batch size for this operation", javaType = "Integer")
+    public static final String BATCH_SIZE = "CamelDoclingBatchSize";
+
+    @Metadata(description = "Override batch parallelism for this operation", javaType = "Integer")
+    public static final String BATCH_PARALLELISM = "CamelDoclingBatchParallelism";
+
+    @Metadata(description = "Override batch fail on first error setting for this operation", javaType = "Boolean")
+    public static final String BATCH_FAIL_ON_FIRST_ERROR = "CamelDoclingBatchFailOnFirstError";
+
+    @Metadata(description = "Override batch timeout for this operation in milliseconds", javaType = "Long")
+    public static final String BATCH_TIMEOUT = "CamelDoclingBatchTimeout";
+
+    @Metadata(description = "Total number of documents in the batch", javaType = "Integer")
+    public static final String BATCH_TOTAL_DOCUMENTS = "CamelDoclingBatchTotalDocuments";
+
+    @Metadata(description = "Number of successfully processed documents in the batch", javaType = "Integer")
+    public static final String BATCH_SUCCESS_COUNT = "CamelDoclingBatchSuccessCount";
+
+    @Metadata(description = "Number of failed documents in the batch", javaType = "Integer")
+    public static final String BATCH_FAILURE_COUNT = "CamelDoclingBatchFailureCount";
+
+    @Metadata(description = "Total processing time for the batch in milliseconds", javaType = "Long")
+    public static final String BATCH_PROCESSING_TIME = "CamelDoclingBatchProcessingTime";
+
+    @Metadata(description = "Split batch results into individual exchanges instead of single BatchProcessingResults",
+              javaType = "Boolean")
+    public static final String BATCH_SPLIT_RESULTS = "CamelDoclingBatchSplitResults";
+
     private DoclingHeaders() {
     }
 

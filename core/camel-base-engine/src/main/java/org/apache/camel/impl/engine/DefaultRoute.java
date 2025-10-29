@@ -76,6 +76,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private NamedNode route;
     private final String routeId;
     private final String routeDescription;
+    private final String routeNote;
     private final Resource sourceResource;
     private final String sourceLocation;
     private final String sourceLocationShort;
@@ -117,11 +118,13 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private Consumer consumer;
 
     public DefaultRoute(CamelContext camelContext, NamedNode route, String routeId,
-                        String routeDescription, Endpoint endpoint, Resource resource) {
+                        String routeDescription, String routeNote,
+                        Endpoint endpoint, Resource resource) {
         this.camelContext = camelContext;
         this.route = route;
         this.routeId = routeId;
         this.routeDescription = routeDescription;
+        this.routeNote = routeNote;
         this.endpoint = endpoint;
         this.sourceResource = resource;
         this.sourceLocation = LoggerHelper.getSourceLocation(route);
@@ -195,6 +198,12 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public String getDescription() {
         Object value = properties.get(Route.DESCRIPTION_PROPERTY);
+        return value != null ? (String) value : null;
+    }
+
+    @Override
+    public String getNote() {
+        Object value = properties.get(Route.NOTE_PROPERTY);
         return value != null ? (String) value : null;
     }
 
@@ -352,6 +361,11 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public String getRouteDescription() {
         return routeDescription;
+    }
+
+    @Override
+    public String getRouteNote() {
+        return routeNote;
     }
 
     @Override

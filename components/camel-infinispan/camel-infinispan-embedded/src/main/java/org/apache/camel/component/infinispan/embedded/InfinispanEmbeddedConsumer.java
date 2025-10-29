@@ -28,19 +28,19 @@ import org.apache.camel.component.infinispan.InfinispanEventListener;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.infinispan.Cache;
+import org.infinispan.commons.api.query.Query;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.notifications.cachelistener.event.Event;
 import org.infinispan.query.Search;
 import org.infinispan.query.api.continuous.ContinuousQuery;
 import org.infinispan.query.api.continuous.ContinuousQueryListener;
-import org.infinispan.query.dsl.Query;
 
 public class InfinispanEmbeddedConsumer
         extends InfinispanConsumer<EmbeddedCacheManager, InfinispanEmbeddedManager, InfinispanEmbeddedConfiguration> {
+
     private Service handler;
 
-    public InfinispanEmbeddedConsumer(
-                                      InfinispanEndpoint endpoint,
+    public InfinispanEmbeddedConsumer(InfinispanEndpoint endpoint,
                                       Processor processor,
                                       String cacheName,
                                       InfinispanEmbeddedManager manager,

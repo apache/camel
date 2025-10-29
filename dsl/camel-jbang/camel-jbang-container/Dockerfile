@@ -15,20 +15,20 @@
 # limitations under the License.
 #
 
-FROM mirror.gcr.io/library/eclipse-temurin:21-jdk
+FROM eclipse-temurin:21-jdk
 
-ENV JBANG_VERSION=0.132.0
-# /!\ Camel version must be changed in the entrypoint line too
-ENV CAMEL_VERSION=4.14.1
+# Set Versions, JBang Path and commit ID of the specific version of dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java
+ENV JBANG_VERSION=0.132.1 \
+    CAMEL_VERSION=4.15.0 \
+    CAMEL_JBANG_COMMIT=ff2828529a40c8d4ab39d405beb0885aa1413a7d \
+    JBANG_PATH=/usr/local/bin
 
-RUN wget -c https://github.com/jbangdev/jbang/releases/download/v$JBANG_VERSION/jbang.tar -O - | tar xv && \
-    chmod +x jbang/bin/jbang
-ENV PATH="${PATH}:/jbang/bin"
-ENV JBANG_PATH=/jbang/bin
+# Download JBang, create camel exec, set JBang version, trust camel sources and download camel DEPS by running camel
+RUN bash -c set -o pipefail && wget -qc https://github.com/jbangdev/jbang/releases/download/v$JBANG_VERSION/jbang.tar -O - | tar xf - --strip-components=2 -C /usr/local/bin jbang/bin/jbang jbang/bin/jbang.jar && \
+    echo '#!/bin/sh\nexec jbang run https://github.com/apache/camel/blob/'$CAMEL_JBANG_COMMIT'/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java "$@"' > /usr/local/bin/camel && \
+    chmod +x /usr/local/bin/camel && \
+    mkdir -p $HOME/.jbang/cache && echo -n $JBANG_VERSION > $HOME/.jbang/cache/version.txt && \
+    jbang trust add https://github.com/apache/camel && \
+    camel version
 
-RUN jbang trust add https://github.com/apache/camel
-
-# used to initiliaze dependencies in the docker image
-RUN jbang -Dcamel.jbang.version=$CAMEL_VERSION camel@apache/camel version
-
-ENTRYPOINT [ "jbang", "-Dcamel.jbang.version=4.14.1", "camel@apache/camel"]
+ENTRYPOINT ["camel"]

@@ -38,15 +38,13 @@ public class DfdlDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(required = true, description = "The path to the DFDL schema file.")
     private String schemaUri;
-
     @XmlAttribute
     @Metadata(description = "The root element name of the schema to use. If not specified, the first root element in the schema will be used.",
-              label = "advanced", defaultValue = "")
-    private String rootElement = "";
-
+              label = "advanced")
+    private String rootElement;
     @XmlAttribute
-    @Metadata(description = "The root namespace of the schema to use.", label = "advanced", defaultValue = "")
-    private String rootNamespace = "";
+    @Metadata(description = "The root namespace of the schema to use.", label = "advanced")
+    private String rootNamespace;
 
     public DfdlDataFormat() {
         super("dfdl");

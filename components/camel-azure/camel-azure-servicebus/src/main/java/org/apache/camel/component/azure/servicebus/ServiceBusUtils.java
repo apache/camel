@@ -24,6 +24,8 @@ import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.ServiceBusMessage;
 import org.apache.camel.util.ObjectHelper;
 
+import static org.apache.camel.Exchange.CONTENT_TYPE;
+
 public final class ServiceBusUtils {
 
     private ServiceBusUtils() {
@@ -44,6 +46,11 @@ public final class ServiceBusUtils {
         }
         if (applicationProperties != null) {
             serviceBusMessage.getRawAmqpMessage().getApplicationProperties().putAll(applicationProperties);
+
+            final Object contentType = serviceBusMessage.getRawAmqpMessage().getApplicationProperties().get(CONTENT_TYPE);
+            if (contentType != null) {
+                serviceBusMessage.getRawAmqpMessage().getProperties().setContentType(contentType.toString());
+            }
         }
         if (ObjectHelper.isNotEmpty(correlationId)) {
             serviceBusMessage.setCorrelationId(correlationId);

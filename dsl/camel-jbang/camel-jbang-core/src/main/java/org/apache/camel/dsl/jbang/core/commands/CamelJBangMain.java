@@ -144,6 +144,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("send", new CommandLine(new CamelSendAction(main)))
                         .addSubcommand("receive", new CommandLine(new CamelReceiveAction(main)))
                         .addSubcommand("browse", new CommandLine(new CamelBrowseAction(main)))
+                        .addSubcommand("route-structure", new CommandLine(new CamelRouteStructureAction(main)))
                         .addSubcommand("stub", new CommandLine(new CamelStubAction(main)))
                         .addSubcommand("thread-dump", new CommandLine(new CamelThreadDump(main)))
                         .addSubcommand("logger", new CommandLine(new LoggerAction(main)))

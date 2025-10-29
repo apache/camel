@@ -688,6 +688,44 @@ Camel-AWS Bedrock component provides the following operation on the producer sid
 - invokeTextModel
 - invokeImageModel
 - invokeEmbeddingsModel
+- invokeTextModelStreaming
+- invokeImageModelStreaming
+- invokeEmbeddingsModelStreaming
+
+=== Streaming Support
+
+The streaming operations (`invokeTextModelStreaming`, `invokeImageModelStreaming`, `invokeEmbeddingsModelStreaming`) enable real-time streaming of model responses, providing lower latency and better user experience for interactive applications.
+
+==== Streaming Output Modes
+
+Two streaming modes are supported:
+
+*Complete Mode (default)*: Accumulates all chunks and returns the complete response as a single message. This is the simplest mode and behaves similarly to non-streaming operations, but with lower time-to-first-token.
+
+*Chunks Mode*: Emits each chunk as it arrives in a List. Useful for reactive streaming pipelines or when you need to process chunks individually.
+
+==== Streaming Configuration Options
+
+- `streamOutputMode`: Set to "complete" (default) or "chunks"
+- `includeStreamingMetadata`: Whether to include metadata headers (default: true)
+
+==== Streaming Metadata Headers
+
+When `includeStreamingMetadata` is true, the following headers are set:
+
+- `CamelAwsBedrockCompletionReason`: The reason the model stopped generating (e.g., "FINISH", "end_turn", "stop")
+- `CamelAwsBedrockTokenCount`: The number of tokens generated (if provided by the model)
+- `CamelAwsBedrockChunkCount`: The number of chunks received
+
+==== Supported Models for Streaming
+
+All text generation models support streaming:
+- Amazon Titan (all text models)
+- Anthropic Claude (all versions)
+- Meta Llama (all versions)
+- Mistral AI (all models)
+- Cohere Command models
+- Amazon Nova models
 
 == Examples
 
@@ -797,6 +835,99 @@ and you can then send to the direct endpoint something like
 --------------------------------------------------------------------------------
 
 where template is a ProducerTemplate.
+
+- invokeTextModelStreaming (Complete Mode): this operation will invoke a model from Bedrock with streaming, accumulating the complete response.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:stream_complete")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=invokeTextModelStreaming&modelId=" + BedrockModels.TITAN_TEXT_EXPRESS_V1.model
+        + "&streamOutputMode=complete")
+    .to("log:response");
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:stream_complete", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.put("inputText", "Write a short poem about Apache Camel.");
+
+            ArrayNode stopSequences = mapper.createArrayNode();
+            stopSequences.add("User:");
+            ObjectNode childNode = mapper.createObjectNode();
+            childNode.put("maxTokenCount", 512);
+            childNode.put("stopSequences", stopSequences);
+            childNode.put("temperature", 0).put("topP", 1);
+
+            rootNode.put("textGenerationConfig", childNode);
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        // Get the complete response
+        String response = result.getMessage().getBody(String.class);
+
+        // Get streaming metadata
+        Integer tokenCount = result.getMessage().getHeader(BedrockConstants.STREAMING_TOKEN_COUNT, Integer.class);
+        String completionReason = result.getMessage().getHeader(BedrockConstants.STREAMING_COMPLETION_REASON, String.class);
+        Integer chunkCount = result.getMessage().getHeader(BedrockConstants.STREAMING_CHUNK_COUNT, Integer.class);
+--------------------------------------------------------------------------------
+
+- invokeTextModelStreaming (Chunks Mode): this operation will invoke a model from Bedrock with streaming, emitting individual chunks.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:stream_chunks")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=invokeTextModelStreaming&modelId=" + BedrockModels.ANTROPHIC_CLAUDE_V35_2.model
+        + "&streamOutputMode=chunks")
+    .split(body())
+        .to("websocket:chat-output");  // Send each chunk to websocket
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:stream_chunks", exchange -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+
+            ArrayNode messages = mapper.createArrayNode();
+            ObjectNode message = mapper.createObjectNode();
+            message.put("role", "user");
+
+            ArrayNode content = mapper.createArrayNode();
+            ObjectNode contentBlock = mapper.createObjectNode();
+            contentBlock.put("type", "text");
+            contentBlock.put("text", "Explain Apache Camel in one sentence.");
+            content.add(contentBlock);
+
+            message.put("content", content);
+            messages.add(message);
+
+            rootNode.put("messages", messages);
+            rootNode.put("max_tokens", 200);
+            rootNode.put("anthropic_version", "bedrock-2023-05-31");
+
+            exchange.getMessage().setBody(mapper.writer().writeValueAsString(rootNode));
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_CONTENT_TYPE, "application/json");
+            exchange.getMessage().setHeader(BedrockConstants.MODEL_ACCEPT_CONTENT_TYPE, "application/json");
+        });
+
+        // Get the list of chunks
+        List<String> chunks = result.getMessage().getBody(List.class);
+
+        // Process each chunk
+        for (String chunk : chunks) {
+            System.out.println("Chunk: " + chunk);
+        }
+--------------------------------------------------------------------------------
 
 == Dependencies
 

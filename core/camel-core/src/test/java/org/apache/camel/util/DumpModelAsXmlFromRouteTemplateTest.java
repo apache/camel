@@ -82,7 +82,7 @@ public class DumpModelAsXmlFromRouteTemplateTest extends ContextTestSupport {
         context.addRouteFromTemplate("bar2", "myTemplate", map);
 
         String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("bar"), true,
-                true);
+                true, false);
         assertNotNull(xml);
         log.info(xml);
 
@@ -104,7 +104,8 @@ public class DumpModelAsXmlFromRouteTemplateTest extends ContextTestSupport {
         node = (Element) nodes.item(0);
         assertEquals("bar", node.getAttribute("id"));
 
-        xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("bar2"), true, true);
+        xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("bar2"), true, true,
+                false);
         assertNotNull(xml);
         log.info(xml);
 

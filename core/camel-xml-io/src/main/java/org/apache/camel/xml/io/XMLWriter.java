@@ -101,9 +101,6 @@ public class XMLWriter {
         return ls;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void startElement(String name) throws IOException {
         tagIsEmpty = false;
         finishTag();
@@ -116,16 +113,10 @@ public class XMLWriter {
         tagIsEmpty = true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void writeText(String text) throws IOException {
         writeText(text, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void writeMarkup(String text) throws IOException {
         writeText(text, false);
     }
@@ -187,9 +178,6 @@ public class XMLWriter {
         return text;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void addAttribute(String key, String value) throws IOException {
         write(" ");
         write(key);
@@ -198,9 +186,6 @@ public class XMLWriter {
         write("\"");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void endElement(String name) throws IOException {
         depth--;
 

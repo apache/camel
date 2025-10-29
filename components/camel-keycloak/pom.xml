@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-keycloak</artifactId>
@@ -58,6 +58,15 @@
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-core</artifactId>
             <version>${keycloak-client-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-caffeine</artifactId>
         </dependency>
 
         <!-- test dependencies -->

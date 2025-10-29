@@ -86,6 +86,23 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * Docling-serve API URL (e.g., http://localhost:5001).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: http://localhost:5001
+         * Group: producer
+         * 
+         * @param doclingServeUrl the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder doclingServeUrl(java.lang.String doclingServeUrl) {
+            doSetProperty("doclingServeUrl", doclingServeUrl);
+            return this;
+        }
+    
+        
+        /**
          * Enable OCR processing for scanned documents.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -197,6 +214,74 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * Use docling-serve API instead of CLI command.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param useDoclingServe the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder useDoclingServe(boolean useDoclingServe) {
+            doSetProperty("useDoclingServe", useDoclingServe);
+            return this;
+        }
+    
+        
+        /**
+         * API request timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param apiTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder apiTimeout(long apiTimeout) {
+            doSetProperty("apiTimeout", apiTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Polling interval for async conversion status in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param asyncPollInterval the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder asyncPollInterval(long asyncPollInterval) {
+            doSetProperty("asyncPollInterval", asyncPollInterval);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum time to wait for async conversion completion in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 300000
+         * Group: advanced
+         * 
+         * @param asyncTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder asyncTimeout(long asyncTimeout) {
+            doSetProperty("asyncTimeout", asyncTimeout);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -217,6 +302,75 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Connection request timeout in milliseconds (timeout when requesting
+         * connection from pool).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param connectionRequestTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder connectionRequestTimeout(int connectionRequestTimeout) {
+            doSetProperty("connectionRequestTimeout", connectionRequestTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Connection timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 30000
+         * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder connectionTimeout(int connectionTimeout) {
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Time to live for connections in milliseconds (-1 for infinite).
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: advanced
+         * 
+         * @param connectionTimeToLive the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder connectionTimeToLive(long connectionTimeToLive) {
+            doSetProperty("connectionTimeToLive", connectionTimeToLive);
+            return this;
+        }
+    
+        
+        /**
+         * Docling-serve API convert endpoint path.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: /v1/convert/source
+         * Group: advanced
+         * 
+         * @param convertEndpoint the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder convertEndpoint(java.lang.String convertEndpoint) {
+            doSetProperty("convertEndpoint", convertEndpoint);
+            return this;
+        }
+    
         /**
          * Path to Docling Python executable or command.
          * 
@@ -229,6 +383,74 @@ public interface DoclingComponentBuilderFactory {
          */
         default DoclingComponentBuilder doclingCommand(java.lang.String doclingCommand) {
             doSetProperty("doclingCommand", doclingCommand);
+            return this;
+        }
+    
+        
+        /**
+         * Enable eviction of idle connections from the pool.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param evictIdleConnections the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder evictIdleConnections(boolean evictIdleConnections) {
+            doSetProperty("evictIdleConnections", evictIdleConnections);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum connections per route in the connection pool.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: advanced
+         * 
+         * @param maxConnectionsPerRoute the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder maxConnectionsPerRoute(int maxConnectionsPerRoute) {
+            doSetProperty("maxConnectionsPerRoute", maxConnectionsPerRoute);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum idle time for connections in milliseconds before eviction.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param maxIdleTime the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder maxIdleTime(long maxIdleTime) {
+            doSetProperty("maxIdleTime", maxIdleTime);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum total connections in the connection pool.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 20
+         * Group: advanced
+         * 
+         * @param maxTotalConnections the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder maxTotalConnections(int maxTotalConnections) {
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
     
@@ -249,6 +471,57 @@ public interface DoclingComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Socket timeout in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 60000
+         * Group: advanced
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder socketTimeout(int socketTimeout) {
+            doSetProperty("socketTimeout", socketTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Use asynchronous conversion mode (docling-serve API only).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param useAsyncMode the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder useAsyncMode(boolean useAsyncMode) {
+            doSetProperty("useAsyncMode", useAsyncMode);
+            return this;
+        }
+    
+        
+        /**
+         * Validate connections after inactivity in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2000
+         * Group: advanced
+         * 
+         * @param validateAfterInactivity the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder validateAfterInactivity(int validateAfterInactivity) {
+            doSetProperty("validateAfterInactivity", validateAfterInactivity);
+            return this;
+        }
+    
         /**
          * Working directory for Docling execution.
          * 
@@ -261,6 +534,144 @@ public interface DoclingComponentBuilderFactory {
          */
         default DoclingComponentBuilder workingDirectory(java.lang.String workingDirectory) {
             doSetProperty("workingDirectory", workingDirectory);
+            return this;
+        }
+    
+        
+        /**
+         * Fail entire batch on first error (true) or continue processing
+         * remaining documents (false).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: batch
+         * 
+         * @param batchFailOnFirstError the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder batchFailOnFirstError(boolean batchFailOnFirstError) {
+            doSetProperty("batchFailOnFirstError", batchFailOnFirstError);
+            return this;
+        }
+    
+        
+        /**
+         * Number of parallel threads for batch processing.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 4
+         * Group: batch
+         * 
+         * @param batchParallelism the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder batchParallelism(int batchParallelism) {
+            doSetProperty("batchParallelism", batchParallelism);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum number of documents to process in a single batch (batch
+         * operations only).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10
+         * Group: batch
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder batchSize(int batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+    
+        
+        /**
+         * Maximum time to wait for batch completion in milliseconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 300000
+         * Group: batch
+         * 
+         * @param batchTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder batchTimeout(long batchTimeout) {
+            doSetProperty("batchTimeout", batchTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Split batch results into individual exchanges (one per document)
+         * instead of single BatchProcessingResults.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: batch
+         * 
+         * @param splitBatchResults the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder splitBatchResults(boolean splitBatchResults) {
+            doSetProperty("splitBatchResults", splitBatchResults);
+            return this;
+        }
+    
+        
+        /**
+         * Header name for API key authentication.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: X-API-Key
+         * Group: security
+         * 
+         * @param apiKeyHeader the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder apiKeyHeader(java.lang.String apiKeyHeader) {
+            doSetProperty("apiKeyHeader", apiKeyHeader);
+            return this;
+        }
+    
+        
+        /**
+         * Authentication scheme (BEARER, API_KEY, NONE).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.docling.AuthenticationScheme&lt;/code&gt; type.
+         * 
+         * Default: NONE
+         * Group: security
+         * 
+         * @param authenticationScheme the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder authenticationScheme(org.apache.camel.component.docling.AuthenticationScheme authenticationScheme) {
+            doSetProperty("authenticationScheme", authenticationScheme);
+            return this;
+        }
+    
+        /**
+         * Authentication token for docling-serve API (Bearer token or API key).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param authenticationToken the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder authenticationToken(java.lang.String authenticationToken) {
+            doSetProperty("authenticationToken", authenticationToken);
             return this;
         }
     
@@ -303,16 +714,40 @@ public interface DoclingComponentBuilderFactory {
             switch (name) {
             case "configuration": ((DoclingComponent) component).setConfiguration((org.apache.camel.component.docling.DoclingConfiguration) value); return true;
             case "contentInBody": getOrCreateConfiguration((DoclingComponent) component).setContentInBody((boolean) value); return true;
+            case "doclingServeUrl": getOrCreateConfiguration((DoclingComponent) component).setDoclingServeUrl((java.lang.String) value); return true;
             case "enableOCR": getOrCreateConfiguration((DoclingComponent) component).setEnableOCR((boolean) value); return true;
             case "includeLayoutInfo": getOrCreateConfiguration((DoclingComponent) component).setIncludeLayoutInfo((boolean) value); return true;
             case "lazyStartProducer": ((DoclingComponent) component).setLazyStartProducer((boolean) value); return true;
             case "ocrLanguage": getOrCreateConfiguration((DoclingComponent) component).setOcrLanguage((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((DoclingComponent) component).setOperation((org.apache.camel.component.docling.DoclingOperations) value); return true;
             case "outputFormat": getOrCreateConfiguration((DoclingComponent) component).setOutputFormat((java.lang.String) value); return true;
+            case "useDoclingServe": getOrCreateConfiguration((DoclingComponent) component).setUseDoclingServe((boolean) value); return true;
+            case "apiTimeout": getOrCreateConfiguration((DoclingComponent) component).setApiTimeout((long) value); return true;
+            case "asyncPollInterval": getOrCreateConfiguration((DoclingComponent) component).setAsyncPollInterval((long) value); return true;
+            case "asyncTimeout": getOrCreateConfiguration((DoclingComponent) component).setAsyncTimeout((long) value); return true;
             case "autowiredEnabled": ((DoclingComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "connectionRequestTimeout": getOrCreateConfiguration((DoclingComponent) component).setConnectionRequestTimeout((int) value); return true;
+            case "connectionTimeout": getOrCreateConfiguration((DoclingComponent) component).setConnectionTimeout((int) value); return true;
+            case "connectionTimeToLive": getOrCreateConfiguration((DoclingComponent) component).setConnectionTimeToLive((long) value); return true;
+            case "convertEndpoint": getOrCreateConfiguration((DoclingComponent) component).setConvertEndpoint((java.lang.String) value); return true;
             case "doclingCommand": getOrCreateConfiguration((DoclingComponent) component).setDoclingCommand((java.lang.String) value); return true;
+            case "evictIdleConnections": getOrCreateConfiguration((DoclingComponent) component).setEvictIdleConnections((boolean) value); return true;
+            case "maxConnectionsPerRoute": getOrCreateConfiguration((DoclingComponent) component).setMaxConnectionsPerRoute((int) value); return true;
+            case "maxIdleTime": getOrCreateConfiguration((DoclingComponent) component).setMaxIdleTime((long) value); return true;
+            case "maxTotalConnections": getOrCreateConfiguration((DoclingComponent) component).setMaxTotalConnections((int) value); return true;
             case "processTimeout": getOrCreateConfiguration((DoclingComponent) component).setProcessTimeout((long) value); return true;
+            case "socketTimeout": getOrCreateConfiguration((DoclingComponent) component).setSocketTimeout((int) value); return true;
+            case "useAsyncMode": getOrCreateConfiguration((DoclingComponent) component).setUseAsyncMode((boolean) value); return true;
+            case "validateAfterInactivity": getOrCreateConfiguration((DoclingComponent) component).setValidateAfterInactivity((int) value); return true;
             case "workingDirectory": getOrCreateConfiguration((DoclingComponent) component).setWorkingDirectory((java.lang.String) value); return true;
+            case "batchFailOnFirstError": getOrCreateConfiguration((DoclingComponent) component).setBatchFailOnFirstError((boolean) value); return true;
+            case "batchParallelism": getOrCreateConfiguration((DoclingComponent) component).setBatchParallelism((int) value); return true;
+            case "batchSize": getOrCreateConfiguration((DoclingComponent) component).setBatchSize((int) value); return true;
+            case "batchTimeout": getOrCreateConfiguration((DoclingComponent) component).setBatchTimeout((long) value); return true;
+            case "splitBatchResults": getOrCreateConfiguration((DoclingComponent) component).setSplitBatchResults((boolean) value); return true;
+            case "apiKeyHeader": getOrCreateConfiguration((DoclingComponent) component).setApiKeyHeader((java.lang.String) value); return true;
+            case "authenticationScheme": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationScheme((org.apache.camel.component.docling.AuthenticationScheme) value); return true;
+            case "authenticationToken": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationToken((java.lang.String) value); return true;
             case "maxFileSize": getOrCreateConfiguration((DoclingComponent) component).setMaxFileSize((long) value); return true;
             default: return false;
             }

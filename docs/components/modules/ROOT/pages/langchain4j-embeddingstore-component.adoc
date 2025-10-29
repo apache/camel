@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-langchain4j-embeddingstore/src/main/docs/langchain4j-embeddingstore-component.adoc

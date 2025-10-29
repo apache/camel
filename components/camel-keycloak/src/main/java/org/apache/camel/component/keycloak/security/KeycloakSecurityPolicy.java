@@ -17,13 +17,16 @@
 package org.apache.camel.component.keycloak.security;
 
 import java.security.PublicKey;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.spi.AuthorizationPolicy;
+import org.apache.camel.util.ObjectHelper;
 import org.keycloak.admin.client.Keycloak;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,18 +40,39 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
     private String clientSecret;
     private String username;
     private String password;
-    private List<String> requiredRoles;
-    private List<String> requiredPermissions;
+    /**
+     * Comma-separated list of required roles for authorization. Example: "admin,user,manager"
+     */
+    private String requiredRoles;
+    /**
+     * Comma-separated list of required permissions for authorization. Example: "read:documents,write:documents"
+     */
+    private String requiredPermissions;
     private boolean allRolesRequired = true;
     private boolean allPermissionsRequired = true;
     private boolean useResourceOwnerPasswordCredentials = false;
     private PublicKey publicKey;
+    /**
+     * Enable OAuth 2.0 token introspection for real-time token validation. When enabled, tokens are validated by
+     * calling Keycloak's introspection endpoint instead of local JWT parsing. This allows detecting revoked tokens
+     * before expiration.
+     */
+    private boolean useTokenIntrospection = false;
+    /**
+     * Enable caching of token introspection results to reduce API calls to Keycloak.
+     */
+    private boolean introspectionCacheEnabled = true;
+    /**
+     * Time-to-live for cached introspection results in seconds. Default is 60 seconds.
+     */
+    private long introspectionCacheTtl = 60;
 
     private Keycloak keycloakClient;
+    private KeycloakTokenIntrospector tokenIntrospector;
 
     public KeycloakSecurityPolicy() {
-        this.requiredRoles = new ArrayList<>();
-        this.requiredPermissions = new ArrayList<>();
+        this.requiredRoles = "";
+        this.requiredPermissions = "";
     }
 
     public KeycloakSecurityPolicy(String serverUrl, String realm, String clientId, String clientSecret) {
@@ -75,6 +99,10 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
         if (keycloakClient == null) {
             initializeKeycloakClient();
         }
+        // Initialize token introspector if introspection is enabled
+        if (useTokenIntrospection && tokenIntrospector == null) {
+            initializeTokenIntrospector();
+        }
     }
 
     @Override
@@ -97,6 +125,16 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
 
         // Note: Permission-based authorization requires additional setup with Keycloak Authorization Services
         // For now, this implementation focuses on role-based authorization
+    }
+
+    private void initializeTokenIntrospector() {
+        if (clientSecret == null) {
+            throw new IllegalArgumentException(
+                    "Client secret is required for token introspection");
+        }
+        tokenIntrospector = new KeycloakTokenIntrospector(
+                serverUrl, realm, clientId, clientSecret,
+                introspectionCacheEnabled, introspectionCacheTtl);
     }
 
     // Getters and setters
@@ -148,20 +186,88 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
         this.password = password;
     }
 
-    public List<String> getRequiredRoles() {
+    /**
+     * Gets the required roles as a comma-separated string.
+     *
+     * @return comma-separated roles (e.g., "admin,user,manager")
+     */
+    public String getRequiredRoles() {
         return requiredRoles;
     }
 
-    public void setRequiredRoles(List<String> requiredRoles) {
-        this.requiredRoles = requiredRoles;
+    /**
+     * Sets the required roles as a comma-separated string.
+     *
+     * @param requiredRoles comma-separated roles (e.g., "admin,user,manager")
+     */
+    public void setRequiredRoles(String requiredRoles) {
+        this.requiredRoles = requiredRoles != null ? requiredRoles : "";
     }
 
-    public List<String> getRequiredPermissions() {
+    /**
+     * Sets the required roles from a list.
+     *
+     * @param requiredRoles list of roles
+     */
+    public void setRequiredRoles(List<String> requiredRoles) {
+        this.requiredRoles = requiredRoles != null ? String.join(",", requiredRoles) : "";
+    }
+
+    /**
+     * Gets the required roles as a list.
+     *
+     * @return list of required roles
+     */
+    public List<String> getRequiredRolesAsList() {
+        if (ObjectHelper.isEmpty(requiredRoles)) {
+            return Collections.emptyList();
+        }
+        return Arrays.stream(requiredRoles.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the required permissions as a comma-separated string.
+     *
+     * @return comma-separated permissions (e.g., "read:documents,write:documents")
+     */
+    public String getRequiredPermissions() {
         return requiredPermissions;
     }
 
+    /**
+     * Sets the required permissions as a comma-separated string.
+     *
+     * @param requiredPermissions comma-separated permissions (e.g., "read:documents,write:documents")
+     */
+    public void setRequiredPermissions(String requiredPermissions) {
+        this.requiredPermissions = requiredPermissions != null ? requiredPermissions : "";
+    }
+
+    /**
+     * Sets the required permissions from a list.
+     *
+     * @param requiredPermissions list of permissions
+     */
     public void setRequiredPermissions(List<String> requiredPermissions) {
-        this.requiredPermissions = requiredPermissions;
+        this.requiredPermissions = requiredPermissions != null ? String.join(",", requiredPermissions) : "";
+    }
+
+    /**
+     * Gets the required permissions as a list.
+     *
+     * @return list of required permissions
+     */
+    public List<String> getRequiredPermissionsAsList() {
+        if (ObjectHelper.isEmpty(requiredPermissions)) {
+            return Collections.emptyList();
+        }
+        return Arrays.stream(requiredPermissions.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
     }
 
     public boolean isAllRolesRequired() {
@@ -198,5 +304,33 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
 
     public void setPublicKey(PublicKey publicKey) {
         this.publicKey = publicKey;
+    }
+
+    public boolean isUseTokenIntrospection() {
+        return useTokenIntrospection;
+    }
+
+    public void setUseTokenIntrospection(boolean useTokenIntrospection) {
+        this.useTokenIntrospection = useTokenIntrospection;
+    }
+
+    public boolean isIntrospectionCacheEnabled() {
+        return introspectionCacheEnabled;
+    }
+
+    public void setIntrospectionCacheEnabled(boolean introspectionCacheEnabled) {
+        this.introspectionCacheEnabled = introspectionCacheEnabled;
+    }
+
+    public long getIntrospectionCacheTtl() {
+        return introspectionCacheTtl;
+    }
+
+    public void setIntrospectionCacheTtl(long introspectionCacheTtl) {
+        this.introspectionCacheTtl = introspectionCacheTtl;
+    }
+
+    public KeycloakTokenIntrospector getTokenIntrospector() {
+        return tokenIntrospector;
     }
 }

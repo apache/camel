@@ -54,7 +54,61 @@ The Keycloak producer supports administrative operations on Keycloak instances v
 
 === Configuration
 
-To use the producer, configure the Keycloak connection details:
+The Keycloak component supports four authentication methods:
+
+1. **Access Token (Bearer Token)** - Use a pre-obtained access token
+2. **Refresh Token** - Maintain long-running sessions with automatic token refresh
+3. **Username/Password** - Resource Owner Password Credentials flow
+4. **Client Credentials** - Service-to-service authentication
+
+==== Access Token Authentication
+
+Use this when you have a pre-obtained access token from an external authentication system:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component with access token
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setAccessToken("eyJhbGciOiJSUzI1NiIsInR5cC...");
+keycloak.setConfiguration(config);
+----
+====
+
+==== Refresh Token Authentication
+
+Use this for long-running sessions that need to maintain authentication without storing credentials. The refresh token will be used to automatically obtain new access tokens when needed:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Configure Keycloak component with refresh token
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setClientId("my-client");
+config.setRefreshToken("eyJhbGciOiJIUzI1NiIsInR5cCIgOi...");
+// Optional: set client secret for confidential clients
+config.setClientSecret("my-client-secret");
+keycloak.setConfiguration(config);
+----
+====
+
+NOTE: Refresh token authentication requires a `clientId`. The `clientSecret` is optional and should be provided only if your client is configured as confidential in Keycloak.
+
+==== Username/Password Authentication
+
+Use this for admin user authentication:
 
 [tabs]
 ====
@@ -71,19 +125,26 @@ config.setUsername("admin");
 config.setPassword("admin");
 keycloak.setConfiguration(config);
 ----
+====
 
-YAML::
+==== Client Credentials Authentication
+
+Use this for service-to-service authentication:
+
+[tabs]
+====
+Java::
 +
-[source,yaml]
+[source,java]
 ----
-# Configuration in application.yaml
-camel:
-  component:
-    keycloak:
-      server-url: "http://localhost:8080"
-      realm: "master"
-      username: "admin"
-      password: "admin"
+// Configure Keycloak component with client credentials
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master");
+config.setClientId("my-service-client");
+config.setClientSecret("my-client-secret");
+keycloak.setConfiguration(config);
 ----
 ====
 
@@ -93,13 +154,19 @@ The component supports the following operations:
 
 * **Realm Management**: `createRealm`, `getRealm`, `updateRealm`, `deleteRealm`
 * **User Management**: `createUser`, `getUser`, `updateUser`, `listUsers`, `searchUsers`, `deleteUser`
+* **User Attributes**: `getUserAttributes`, `setUserAttribute`, `deleteUserAttribute`
+* **User Credentials**: `getUserCredentials`, `deleteUserCredential`
+* **User Actions**: `sendVerifyEmail`, `sendPasswordResetEmail`, `addRequiredAction`, `removeRequiredAction`, `executeActionsEmail`
 * **Role Management**: `createRole`, `getRole`, `updateRole`, `listRoles`, `deleteRole`, `assignRoleToUser`, `removeRoleFromUser`, `getUserRoles`
 * **Group Management**: `createGroup`, `getGroup`, `updateGroup`, `listGroups`, `deleteGroup`, `addUserToGroup`, `removeUserFromGroup`, `listUserGroups`
 * **Client Management**: `createClient`, `getClient`, `updateClient`, `listClients`, `deleteClient`
+* **Client Secret Management**: `getClientSecret`, `regenerateClientSecret`
 * **Client Role Management**: `createClientRole`, `getClientRole`, `updateClientRole`, `listClientRoles`, `deleteClientRole`, `assignClientRoleToUser`, `removeClientRoleFromUser`
 * **Password Management**: `resetUserPassword`
 * **Session Management**: `listUserSessions`, `logoutUser`
 * **Client Scope Management**: `createClientScope`, `getClientScope`, `updateClientScope`, `listClientScopes`, `deleteClientScope`
+* **Identity Provider Management**: `createIdentityProvider`, `getIdentityProvider`, `updateIdentityProvider`, `listIdentityProviders`, `deleteIdentityProvider`
+* **Authorization Services**: `createResource`, `getResource`, `updateResource`, `listResources`, `deleteResource`, `createResourcePolicy`, `getResourcePolicy`, `updateResourcePolicy`, `listResourcePolicies`, `deleteResourcePolicy`, `createResourcePermission`, `getResourcePermission`, `updateResourcePermission`, `listResourcePermissions`, `deleteResourcePermission`, `evaluatePermission`
 
 === Realm Operations
 
@@ -120,44 +187,6 @@ template.sendBodyAndHeader("keycloak:admin?operation=getRealm", null,
 // Delete a realm
 template.sendBodyAndHeader("keycloak:admin?operation=deleteRealm", null,
     KeycloakConstants.REALM_NAME, "my-old-realm");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:create-realm
-      steps:
-        - setHeader:
-            name: CamelKeycloakRealmName
-            constant: "my-new-realm"
-        - to:
-            uri: keycloak:admin?operation=createRealm
-        - log: "Created realm: ${header.CamelKeycloakRealmName}"
-
-- route:
-    from:
-      uri: direct:get-realm
-      steps:
-        - setHeader:
-            name: CamelKeycloakRealmName
-            constant: "my-realm"
-        - to:
-            uri: keycloak:admin?operation=getRealm
-        - log: "Realm info: ${body}"
-
-- route:
-    from:
-      uri: direct:delete-realm
-      steps:
-        - setHeader:
-            name: CamelKeycloakRealmName
-            constant: "my-old-realm"
-        - to:
-            uri: keycloak:admin?operation=deleteRealm
-        - log: "Deleted realm: ${header.CamelKeycloakRealmName}"
 ----
 ====
 
@@ -198,83 +227,6 @@ deleteHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
 deleteHeaders.put(KeycloakConstants.USERNAME, "john.doe");
 
 template.sendBodyAndHeaders("keycloak:admin?operation=deleteUser", null, deleteHeaders);
-----
-
-YAML::
-+
-[source,yaml]
-----
-# Create user route
-- route:
-    from:
-      uri: direct:create-user
-      steps:
-        - setHeader:
-            name: CamelKeycloakRealmName
-            constant: "my-realm"
-        - setHeader:
-            name: CamelKeycloakUsername
-            simple: "${body[username]}"
-        - setHeader:
-            name: CamelKeycloakUserEmail
-            simple: "${body[email]}"
-        - setHeader:
-            name: CamelKeycloakUserFirstName
-            simple: "${body[firstName]}"
-        - setHeader:
-            name: CamelKeycloakUserLastName
-            simple: "${body[lastName]}"
-        - to:
-            uri: keycloak:admin?operation=createUser
-        - log: "Created user: ${header.CamelKeycloakUsername}"
-
-# Set user password route
-- route:
-    from:
-      uri: direct:set-user-password
-      steps:
-        - setHeader:
-            name: CamelKeycloakRealmName
-            constant: "my-realm"
-        - setHeader:
-            name: CamelKeycloakUsername
-            simple: "${body[username]}"
-        - setHeader:
-            name: CamelKeycloakUserPassword
-            simple: "${body[password]}"
-        - setHeader:
-            name: CamelKeycloakUserPasswordTemporary
-            constant: false
-        - to:
-            uri: keycloak:admin?operation=setUserPassword
-        - log: "Set password for user: ${header.CamelKeycloakUsername}"
-
-# List users route
-- route:
-    from:
-      uri: direct:list-users
-      steps:
-        - setHeader:
-            name: CamelKeycloakRealmName
-            constant: "my-realm"
-        - to:
-            uri: keycloak:admin?operation=listUsers
-        - log: "Users in realm: ${body}"
-
-# Delete user route
-- route:
-    from:
-      uri: direct:delete-user
-      steps:
-        - setHeader:
-            name: CamelKeycloakRealmName
-            constant: "my-realm"
-        - setHeader:
-            name: CamelKeycloakUsername
-            simple: "${body[username]}"
-        - to:
-            uri: keycloak:admin?operation=deleteUser
-        - log: "Deleted user: ${header.CamelKeycloakUsername}"
 ----
 ====
 
@@ -1022,6 +974,428 @@ YAML::
 ----
 ====
 
+=== Identity Provider Operations
+
+Identity providers allow you to configure external authentication systems like LDAP, Active Directory, Google, GitHub, and other SAML/OIDC providers.
+
+[source,java]
+----
+// Create OIDC identity provider
+Map<String, Object> idpHeaders = new HashMap<>();
+idpHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+
+IdentityProviderRepresentation idp = new IdentityProviderRepresentation();
+idp.setAlias("google-idp");
+idp.setProviderId("google");
+idp.setEnabled(true);
+idp.setDisplayName("Google Login");
+
+// Configure provider-specific settings
+Map<String, String> config = new HashMap<>();
+config.put("clientId", "google-client-id");
+config.put("clientSecret", "google-client-secret");
+idp.setConfig(config);
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createIdentityProvider&pojoRequest=true",
+    idp, idpHeaders);
+
+// List all identity providers
+template.sendBodyAndHeader("keycloak:admin?operation=listIdentityProviders", null,
+    KeycloakConstants.REALM_NAME, "my-realm");
+
+// Get specific identity provider
+Map<String, Object> getIdpHeaders = new HashMap<>();
+getIdpHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+getIdpHeaders.put(KeycloakConstants.IDP_ALIAS, "google-idp");
+
+IdentityProviderRepresentation provider = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=getIdentityProvider", null, getIdpHeaders,
+    IdentityProviderRepresentation.class);
+
+// Delete identity provider
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteIdentityProvider", null, getIdpHeaders);
+----
+
+=== User Attribute Operations
+
+User attributes allow you to store custom key-value pairs on user accounts for additional metadata or application-specific data.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Set user attribute
+Map<String, Object> attrHeaders = new HashMap<>();
+attrHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+attrHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+attrHeaders.put(KeycloakConstants.ATTRIBUTE_NAME, "department");
+attrHeaders.put(KeycloakConstants.ATTRIBUTE_VALUE, "Engineering");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=setUserAttribute", null, attrHeaders);
+
+// Get all user attributes
+Map<String, Object> getUserAttrHeaders = new HashMap<>();
+getUserAttrHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+getUserAttrHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+Map<String, List<String>> attributes = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=getUserAttributes", null, getUserAttrHeaders, Map.class);
+
+// Delete user attribute
+Map<String, Object> delAttrHeaders = new HashMap<>();
+delAttrHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+delAttrHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+delAttrHeaders.put(KeycloakConstants.ATTRIBUTE_NAME, "department");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteUserAttribute", null, delAttrHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Set user attribute
+- route:
+    from:
+      uri: direct:set-user-attribute
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakAttributeName
+            simple: "${body[attributeName]}"
+        - setHeader:
+            name: CamelKeycloakAttributeValue
+            simple: "${body[attributeValue]}"
+        - to:
+            uri: keycloak:admin?operation=setUserAttribute
+        - log: "Set attribute ${header.CamelKeycloakAttributeName}"
+
+# Get user attributes
+- route:
+    from:
+      uri: direct:get-user-attributes
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=getUserAttributes
+        - log: "User attributes: ${body}"
+
+# Delete user attribute
+- route:
+    from:
+      uri: direct:delete-user-attribute
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakAttributeName
+            simple: "${body[attributeName]}"
+        - to:
+            uri: keycloak:admin?operation=deleteUserAttribute
+        - log: "Deleted attribute ${header.CamelKeycloakAttributeName}"
+----
+====
+
+=== User Credential and Action Operations
+
+Manage user credentials and trigger user actions such as email verification and password resets.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Get user credentials
+Map<String, Object> credHeaders = new HashMap<>();
+credHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+credHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+List<CredentialRepresentation> credentials = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=getUserCredentials", null, credHeaders, List.class);
+
+// Delete specific credential
+Map<String, Object> delCredHeaders = new HashMap<>();
+delCredHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+delCredHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+delCredHeaders.put(KeycloakConstants.CREDENTIAL_ID, "credential-id-456");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=deleteUserCredential", null, delCredHeaders);
+
+// Send verification email
+Map<String, Object> verifyHeaders = new HashMap<>();
+verifyHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+verifyHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=sendVerifyEmail", null, verifyHeaders);
+
+// Send password reset email
+Map<String, Object> resetHeaders = new HashMap<>();
+resetHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+resetHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=sendPasswordResetEmail", null, resetHeaders);
+
+// Add required action
+Map<String, Object> actionHeaders = new HashMap<>();
+actionHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+actionHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+actionHeaders.put(KeycloakConstants.REQUIRED_ACTION, "VERIFY_EMAIL");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=addRequiredAction", null, actionHeaders);
+
+// Execute multiple actions via email
+Map<String, Object> execHeaders = new HashMap<>();
+execHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+execHeaders.put(KeycloakConstants.USER_ID, "user-id-123");
+execHeaders.put(KeycloakConstants.ACTIONS, Arrays.asList("UPDATE_PASSWORD", "VERIFY_EMAIL"));
+execHeaders.put(KeycloakConstants.REDIRECT_URI, "https://myapp.com/auth/callback");
+execHeaders.put(KeycloakConstants.LIFESPAN, 3600); // 1 hour
+
+template.sendBodyAndHeaders("keycloak:admin?operation=executeActionsEmail", null, execHeaders);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Get user credentials
+- route:
+    from:
+      uri: direct:get-user-credentials
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=getUserCredentials
+        - log: "User credentials: ${body}"
+
+# Send verification email
+- route:
+    from:
+      uri: direct:send-verify-email
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=sendVerifyEmail
+        - log: "Verification email sent to user ${header.CamelKeycloakUserId}"
+
+# Send password reset email
+- route:
+    from:
+      uri: direct:send-password-reset
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - to:
+            uri: keycloak:admin?operation=sendPasswordResetEmail
+        - log: "Password reset email sent"
+
+# Add required action
+- route:
+    from:
+      uri: direct:add-required-action
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakRequiredAction
+            constant: "VERIFY_EMAIL"
+        - to:
+            uri: keycloak:admin?operation=addRequiredAction
+        - log: "Added required action VERIFY_EMAIL"
+
+# Execute actions email
+- route:
+    from:
+      uri: direct:execute-actions-email
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakActions
+            constant:
+              - "UPDATE_PASSWORD"
+              - "VERIFY_EMAIL"
+        - setHeader:
+            name: CamelKeycloakRedirectUri
+            constant: "https://myapp.com/auth/callback"
+        - setHeader:
+            name: CamelKeycloakLifespan
+            constant: 3600
+        - to:
+            uri: keycloak:admin?operation=executeActionsEmail
+        - log: "Sent actions email to user"
+----
+====
+
+=== Client Secret Management
+
+Retrieve and rotate client secrets for confidential clients.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Get client secret
+Map<String, Object> getSecretHeaders = new HashMap<>();
+getSecretHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+getSecretHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+CredentialRepresentation secret = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=getClientSecret", null, getSecretHeaders,
+    CredentialRepresentation.class);
+
+System.out.println("Client secret: " + secret.getValue());
+
+// Regenerate client secret (rotates the secret)
+Map<String, Object> regenHeaders = new HashMap<>();
+regenHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+regenHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+CredentialRepresentation newSecret = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=regenerateClientSecret", null, regenHeaders,
+    CredentialRepresentation.class);
+
+System.out.println("New client secret: " + newSecret.getValue());
+----
+
+YAML::
++
+[source,yaml]
+----
+# Get client secret
+- route:
+    from:
+      uri: direct:get-client-secret
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - to:
+            uri: keycloak:admin?operation=getClientSecret
+        - log: "Retrieved client secret"
+
+# Regenerate client secret
+- route:
+    from:
+      uri: direct:regenerate-secret
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakClientUuid
+            simple: "${body[clientUuid]}"
+        - to:
+            uri: keycloak:admin?operation=regenerateClientSecret
+        - log: "Regenerated client secret: ${body.value}"
+        - to: "direct:notify-secret-rotation"
+----
+====
+
+=== Authorization Services Operations
+
+Keycloak Authorization Services provide fine-grained authorization with resources, policies, and permissions.
+
+NOTE: These operations require a client with authorization services enabled in Keycloak.
+
+[source,java]
+----
+// Create authorization resource
+ResourceRepresentation resource = new ResourceRepresentation();
+resource.setName("documents");
+resource.setType("urn:myapp:resources:document");
+resource.setUris(Collections.singleton("/documents/*"));
+resource.addScope("read", "write", "delete");
+
+Map<String, Object> resourceHeaders = new HashMap<>();
+resourceHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+resourceHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+Response response = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=createResource&pojoRequest=true",
+    resource, resourceHeaders, Response.class);
+
+// List all resources
+template.sendBodyAndHeaders("keycloak:admin?operation=listResources", null, resourceHeaders);
+
+// Create role-based policy
+PolicyRepresentation policy = new PolicyRepresentation();
+policy.setName("admin-policy");
+policy.setType("role");
+policy.setDescription("Only admins can access");
+
+Map<String, Object> policyConfig = new HashMap<>();
+policyConfig.put("roles", "[{\"id\":\"admin-role-id\",\"required\":true}]");
+policy.setConfig(policyConfig);
+
+Map<String, Object> policyHeaders = new HashMap<>();
+policyHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+policyHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createResourcePolicy&pojoRequest=true",
+    policy, policyHeaders);
+
+// Create resource permission
+ResourcePermissionRepresentation permission = new ResourcePermissionRepresentation();
+permission.setName("document-permission");
+permission.addResource("documents");
+permission.addPolicy("admin-policy");
+
+Map<String, Object> permHeaders = new HashMap<>();
+permHeaders.put(KeycloakConstants.REALM_NAME, "my-realm");
+permHeaders.put(KeycloakConstants.CLIENT_UUID, "client-uuid-123");
+
+template.sendBodyAndHeaders("keycloak:admin?operation=createResourcePermission&pojoRequest=true",
+    permission, permHeaders);
+
+// List all permissions
+template.sendBodyAndHeaders("keycloak:admin?operation=listResourcePermissions", null, permHeaders);
+----
+
 === Complete Producer Example
 
 [tabs]
@@ -1327,13 +1701,28 @@ The consumer uses a polling mechanism with fingerprint-based deduplication to en
 
 === Configuration
 
+The consumer supports the same authentication methods as the producer (access token, refresh token, username/password, or client credentials):
+
 [tabs]
 ====
-Java::
+Java (Access Token)::
 +
 [source,java]
 ----
-// Configure Keycloak component for consuming
+// Configure Keycloak component for consuming with access token
+KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
+KeycloakConfiguration config = new KeycloakConfiguration();
+config.setServerUrl("http://localhost:8080");
+config.setRealm("master"); // Auth realm
+config.setAccessToken("eyJhbGciOiJSUzI1NiIsInR5cC...");
+keycloak.setConfiguration(config);
+----
+
+Java (Username/Password)::
++
+[source,java]
+----
+// Configure Keycloak component for consuming with username/password
 KeycloakComponent keycloak = context.getComponent("keycloak", KeycloakComponent.class);
 KeycloakConfiguration config = new KeycloakConfiguration();
 config.setServerUrl("http://localhost:8080");
@@ -1347,7 +1736,15 @@ YAML::
 +
 [source,yaml]
 ----
-# Configuration in application.yaml
+# Configuration in application.yaml (using access token)
+camel:
+  component:
+    keycloak:
+      server-url: "http://localhost:8080"
+      realm: "master"
+      access-token: "eyJhbGciOiJSUzI1NiIsInR5cC..."
+
+# Or using username/password
 camel:
   component:
     keycloak:
@@ -2189,8 +2586,8 @@ Java::
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
     "http://localhost:8080", "my-realm", "my-client", "client-secret");
 
-// Require specific roles
-policy.setRequiredRoles(Arrays.asList("admin", "user"));
+// Require specific roles (comma-separated)
+policy.setRequiredRoles("admin,user");
 policy.setAllRolesRequired(true); // User must have ALL roles
 
 from("direct:admin")
@@ -2220,9 +2617,7 @@ beans:
       realm: "my-realm"
       clientId: "my-client"
       clientSecret: "client-secret"
-      requiredRoles:
-        - "admin"
-        - "user"
+      requiredRoles: "admin,user"
       allRolesRequired: true
 ----
 ====
@@ -2238,8 +2633,8 @@ Java::
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
     "http://localhost:8080", "my-realm", "my-client", "client-secret");
 
-// Require specific permissions
-policy.setRequiredPermissions(Arrays.asList("read:documents", "write:documents"));
+// Require specific permissions (comma-separated)
+policy.setRequiredPermissions("read:documents,write:documents");
 policy.setAllPermissionsRequired(false); // User needs ANY permission
 
 from("direct:documents")
@@ -2269,12 +2664,644 @@ beans:
       realm: "my-realm"
       clientId: "my-client"
       clientSecret: "client-secret"
-      requiredPermissions:
-        - "read:documents"
-        - "write:documents"
+      requiredPermissions: "read:documents,write:documents"
       allPermissionsRequired: false
 ----
 ====
+
+=== OAuth 2.0 Token Introspection (RFC 7662)
+
+Token introspection provides real-time validation of access tokens by querying Keycloak's introspection endpoint. This enables detection of revoked tokens before their expiration time, providing enhanced security compared to local JWT validation.
+
+==== Overview
+
+The Keycloak security policy supports two token validation methods:
+
+1. **Local JWT Parsing** (default) - Fast, offline validation by parsing and verifying the JWT signature
+2. **Token Introspection** (RFC 7662) - Real-time validation via Keycloak's introspection endpoint
+
+Token introspection is particularly useful for:
+
+* **Token Revocation**: Detect tokens that have been revoked before their expiration
+* **Centralized Validation**: Ensure all services validate against the same source of truth
+* **Security-Critical Operations**: Add an extra layer of validation for sensitive endpoints
+* **Compliance Requirements**: Meet regulatory requirements for real-time token validation
+
+==== Configuration
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Enable token introspection
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+policy.setServerUrl("http://localhost:8080");
+policy.setRealm("my-realm");
+policy.setClientId("my-client");
+policy.setClientSecret("my-client-secret");
+policy.setRequiredRoles("admin");
+
+// Enable introspection with caching
+policy.setUseTokenIntrospection(true);
+policy.setIntrospectionCacheEnabled(true);
+policy.setIntrospectionCacheTtl(120); // 2 minutes
+
+from("direct:secure-endpoint")
+    .policy(policy)
+    .to("mock:result");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:secure-endpoint
+      steps:
+        - policy:
+            ref: introspectionPolicy
+        - to:
+            uri: mock:result
+
+# Bean definition
+beans:
+  - name: introspectionPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "my-realm"
+      clientId: "my-client"
+      clientSecret: "my-client-secret"
+      requiredRoles: "admin"
+      useTokenIntrospection: true
+      introspectionCacheEnabled: true
+      introspectionCacheTtl: 120
+----
+====
+
+==== Introspection Options
+
+[width="100%",cols="20%,10%,70%",options="header"]
+|===
+| Option | Default | Description
+
+| `useTokenIntrospection` | false | Enable OAuth 2.0 token introspection. When enabled, tokens are validated via Keycloak's introspection endpoint instead of local JWT parsing.
+| `introspectionCacheEnabled` | true | Enable caching of introspection results to reduce API calls to Keycloak. Highly recommended for production use.
+| `introspectionCacheTtl` | 60 | Time-to-live for cached introspection results in seconds. Balance between security (lower TTL) and performance (higher TTL).
+|===
+
+NOTE: Token introspection requires a confidential client with client credentials (client ID and client secret).
+
+==== Local JWT vs. Token Introspection
+
+[width="100%",cols="30%,35%,35%",options="header"]
+|===
+| Feature | Local JWT Parsing | Token Introspection
+
+| **Performance** | ⚡ Very Fast (local) | 🔄 Network call required
+| **Revocation Detection** | ❌ No | ✅ Yes (real-time)
+| **Offline Support** | ✅ Yes | ❌ Requires Keycloak connectivity
+| **Caching** | N/A | ✅ Configurable TTL
+| **Security** | Good | Excellent
+| **Best For** | High-throughput, trusted environments | Security-critical operations
+|===
+
+==== Usage Examples
+
+===== Security-Critical Endpoints
+
+Use introspection for endpoints that require the highest level of security:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// High security policy with introspection
+KeycloakSecurityPolicy paymentPolicy = new KeycloakSecurityPolicy();
+paymentPolicy.setServerUrl("http://localhost:8080");
+paymentPolicy.setRealm("production-realm");
+paymentPolicy.setClientId("payment-service");
+paymentPolicy.setClientSecret("payment-secret");
+paymentPolicy.setRequiredRoles("payment-processor");
+
+// Enable introspection for payment endpoints
+paymentPolicy.setUseTokenIntrospection(true);
+paymentPolicy.setIntrospectionCacheEnabled(true);
+paymentPolicy.setIntrospectionCacheTtl(30); // Short TTL for security
+
+// Standard policy with local JWT parsing for regular endpoints
+KeycloakSecurityPolicy standardPolicy = new KeycloakSecurityPolicy();
+standardPolicy.setServerUrl("http://localhost:8080");
+standardPolicy.setRealm("production-realm");
+standardPolicy.setClientId("api-service");
+standardPolicy.setClientSecret("api-secret");
+standardPolicy.setRequiredRoles("user");
+// useTokenIntrospection is false by default (local JWT parsing)
+
+// Apply stricter validation to payment endpoints
+from("rest:post:/payments/process")
+    .policy(paymentPolicy)
+    .to("bean:paymentService?method=processPayment");
+
+// Use faster local validation for regular API calls
+from("rest:get:/api/data")
+    .policy(standardPolicy)
+    .to("bean:dataService?method=getData");
+----
+
+YAML::
++
+[source,yaml]
+----
+# Payment endpoint with introspection
+- route:
+    from:
+      uri: rest:post:/payments/process
+      steps:
+        - policy:
+            ref: paymentPolicy
+        - to:
+            uri: bean:paymentService?method=processPayment
+
+# Regular endpoint with local JWT
+- route:
+    from:
+      uri: rest:get:/api/data
+      steps:
+        - policy:
+            ref: standardPolicy
+        - to:
+            uri: bean:dataService?method=getData
+
+# Security policies
+beans:
+  - name: paymentPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "production-realm"
+      clientId: "payment-service"
+      clientSecret: "payment-secret"
+      requiredRoles: "payment-processor"
+      useTokenIntrospection: true
+      introspectionCacheEnabled: true
+      introspectionCacheTtl: 30
+
+  - name: standardPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "production-realm"
+      clientId: "api-service"
+      clientSecret: "api-secret"
+      requiredRoles: "user"
+----
+====
+
+===== Hybrid Approach - Different Policies for Different Endpoints
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+public class HybridSecurityRoutes extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+
+        // Introspection for admin operations
+        KeycloakSecurityPolicy adminIntrospection = new KeycloakSecurityPolicy(
+            "{{keycloak.server-url}}", "{{keycloak.realm}}",
+            "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
+        adminIntrospection.setRequiredRoles("admin");
+        adminIntrospection.setUseTokenIntrospection(true);
+        adminIntrospection.setIntrospectionCacheTtl(60);
+
+        // Local JWT for read operations (faster)
+        KeycloakSecurityPolicy readPolicy = new KeycloakSecurityPolicy(
+            "{{keycloak.server-url}}", "{{keycloak.realm}}",
+            "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
+        readPolicy.setRequiredRoles("reader,user");
+        readPolicy.setAllRolesRequired(false);
+        // useTokenIntrospection = false (default, uses local JWT)
+
+        // Admin routes - use introspection for security
+        from("rest:delete:/users/{id}")
+            .policy(adminIntrospection)
+            .to("bean:userService?method=deleteUser");
+
+        from("rest:post:/roles/assign")
+            .policy(adminIntrospection)
+            .to("bean:roleService?method=assignRole");
+
+        // Read routes - use local JWT for performance
+        from("rest:get:/users")
+            .policy(readPolicy)
+            .to("bean:userService?method=listUsers");
+
+        from("rest:get:/profile")
+            .policy(readPolicy)
+            .to("bean:userService?method=getProfile");
+    }
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+# Admin routes with introspection
+- route:
+    from:
+      uri: rest:delete:/users/{id}
+      steps:
+        - policy:
+            ref: adminIntrospection
+        - to:
+            uri: bean:userService?method=deleteUser
+
+- route:
+    from:
+      uri: rest:post:/roles/assign
+      steps:
+        - policy:
+            ref: adminIntrospection
+        - to:
+            uri: bean:roleService?method=assignRole
+
+# Read routes with local JWT
+- route:
+    from:
+      uri: rest:get:/users
+      steps:
+        - policy:
+            ref: readPolicy
+        - to:
+            uri: bean:userService?method=listUsers
+
+- route:
+    from:
+      uri: rest:get:/profile
+      steps:
+        - policy:
+            ref: readPolicy
+        - to:
+            uri: bean:userService?method=getProfile
+
+# Security policies
+beans:
+  - name: adminIntrospection
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles: "admin"
+      useTokenIntrospection: true
+      introspectionCacheTtl: 60
+
+  - name: readPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "{{keycloak.server-url}}"
+      realm: "{{keycloak.realm}}"
+      clientId: "{{keycloak.client-id}}"
+      clientSecret: "{{keycloak.client-secret}}"
+      requiredRoles: "reader,user"
+      allRolesRequired: false
+----
+====
+
+==== Performance Tuning
+
+===== Cache Configuration
+
+The introspection cache significantly reduces the performance impact of API calls to Keycloak:
+
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+policy.setServerUrl("http://localhost:8080");
+policy.setRealm("my-realm");
+policy.setClientId("my-client");
+policy.setClientSecret("my-client-secret");
+policy.setUseTokenIntrospection(true);
+
+// Fine-tune cache settings based on your requirements
+policy.setIntrospectionCacheEnabled(true);
+
+// High-security environment: shorter TTL
+policy.setIntrospectionCacheTtl(30); // 30 seconds
+
+// High-performance environment: longer TTL
+// policy.setIntrospectionCacheTtl(300); // 5 minutes
+
+// Disable cache for maximum security (not recommended for production)
+// policy.setIntrospectionCacheEnabled(false);
+----
+
+===== Cache TTL Recommendations
+
+[width="100%",cols="30%,15%,55%",options="header"]
+|===
+| Use Case | Recommended TTL | Rationale
+
+| High-Security (e.g., payments) | 30-60 seconds | Minimizes window for revoked token use
+| Standard API | 60-120 seconds | Balances security and performance
+| High-Throughput | 120-300 seconds | Reduces Keycloak load
+| Internal Services | 300-600 seconds | Trusted environment, prioritize performance
+|===
+
+NOTE: When a token is introspected and cached, subsequent requests with the same token will use the cached result until the TTL expires. Balance security requirements with performance needs.
+
+==== Pluggable Cache Implementation
+
+The token introspection feature supports pluggable cache implementations for flexible caching strategies. This allows you to choose the best caching solution for your performance and scalability requirements.
+
+===== Available Cache Types
+
+The component provides three cache implementations:
+
+1. **ConcurrentMap Cache** (default) - Simple in-memory cache using `ConcurrentHashMap`
+   - Time-based expiration (TTL)
+   - No external dependencies
+   - Suitable for basic use cases and backward compatibility
+
+2. **Caffeine Cache** (recommended for production) - High-performance cache with advanced features
+   - Time-based expiration
+   - Size-based eviction
+   - Detailed statistics (hit rate, miss rate, evictions)
+   - Optimized for high throughput
+
+3. **No Cache** - Disables caching completely
+   - Every token is introspected on each request
+   - Useful for testing or strict security requirements
+
+===== Using Caffeine Cache
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+import org.apache.camel.component.keycloak.security.cache.TokenCacheType;
+
+// Create introspector with Caffeine cache for high performance
+KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+    serverUrl,
+    realm,
+    clientId,
+    clientSecret,
+    TokenCacheType.CAFFEINE,
+    300,         // TTL in seconds (5 minutes)
+    10000,       // max cache size (0 for unlimited)
+    true         // record statistics
+);
+
+// Check cache statistics
+TokenCache.CacheStats stats = introspector.getCacheStats();
+if (stats != null) {
+    System.out.println("Cache hit rate: " + stats.getHitRate());
+    System.out.println("Total hits: " + stats.getHitCount());
+    System.out.println("Total misses: " + stats.getMissCount());
+    System.out.println("Evictions: " + stats.getEvictionCount());
+}
+
+// Get current cache size
+long size = introspector.getCacheSize();
+System.out.println("Cached tokens: " + size);
+----
+====
+
+===== Custom Cache Configuration
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+import org.apache.camel.component.keycloak.security.cache.TokenCache;
+import org.apache.camel.component.keycloak.security.cache.CaffeineTokenCache;
+
+// Create a custom cache with specific settings
+TokenCache customCache = new CaffeineTokenCache(
+    600,         // 10 minutes TTL
+    50000,       // max 50k entries
+    true         // enable stats
+);
+
+// Use the custom cache instance
+KeycloakTokenIntrospector introspector = new KeycloakTokenIntrospector(
+    serverUrl,
+    realm,
+    clientId,
+    clientSecret,
+    customCache
+);
+----
+====
+
+===== Cache Configuration in Security Policy
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// High-performance policy with Caffeine cache
+KeycloakSecurityPolicy highPerfPolicy = new KeycloakSecurityPolicy();
+highPerfPolicy.setServerUrl("http://localhost:8080");
+highPerfPolicy.setRealm("production-realm");
+highPerfPolicy.setClientId("api-service");
+highPerfPolicy.setClientSecret("api-secret");
+highPerfPolicy.setRequiredRoles("user");
+
+// Enable introspection with Caffeine cache
+highPerfPolicy.setUseTokenIntrospection(true);
+highPerfPolicy.setIntrospectionCacheType(TokenCacheType.CAFFEINE);
+highPerfPolicy.setIntrospectionCacheTtl(120);  // 2 minutes
+highPerfPolicy.setIntrospectionCacheMaxSize(5000);  // max 5k tokens
+highPerfPolicy.setIntrospectionCacheStats(true);  // enable statistics
+
+from("rest:get:/api/data")
+    .policy(highPerfPolicy)
+    .to("bean:dataService?method=getData");
+----
+
+YAML::
++
+[source,yaml]
+----
+# Bean definition with Caffeine cache
+beans:
+  - name: highPerfPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "production-realm"
+      clientId: "api-service"
+      clientSecret: "api-secret"
+      requiredRoles: "user"
+      useTokenIntrospection: true
+      introspectionCacheType: "CAFFEINE"
+      introspectionCacheTtl: 120
+      introspectionCacheMaxSize: 5000
+      introspectionCacheStats: true
+----
+====
+
+===== Cache Performance Monitoring
+
+For production systems, monitor cache performance to optimize TTL and size settings:
+
+[source,java]
+----
+// Periodically check cache performance
+TokenCache.CacheStats stats = introspector.getCacheStats();
+
+if (stats != null) {
+    logger.info("Token cache performance: " + stats.toString());
+    // Output: CacheStats{hits=1000, misses=100, hitRate=90.91%, evictions=50}
+
+    // Alert if hit rate is too low
+    if (stats.getHitRate() < 0.7) {
+        logger.warn("Low cache hit rate: " + stats.getHitRate());
+        logger.warn("Consider increasing cache TTL or size");
+    }
+
+    // Monitor evictions
+    if (stats.getEvictionCount() > threshold) {
+        logger.info("High eviction count: " + stats.getEvictionCount());
+        logger.info("Consider increasing cache max size");
+    }
+}
+----
+
+===== Cache Selection Guidelines
+
+[width="100%",cols="30%,35%,35%",options="header"]
+|===
+| Use Case | Recommended Cache | Configuration
+
+| **Development/Testing** | ConcurrentMap | TTL: 60s, Default settings
+| **Production (Low-Medium Traffic)** | ConcurrentMap | TTL: 120s, Monitor size
+| **Production (High Traffic)** | Caffeine | TTL: 300s, maxSize: 10000+, stats enabled
+| **Very High Traffic** | Caffeine | TTL: 300s, maxSize: 50000+, stats enabled
+| **Strict Security** | NONE or low TTL | TTL: 30s or disable caching
+| **Testing/Debugging** | NONE | Disable caching for fresh validation
+|===
+
+===== Best Practices
+
+1. **TTL Configuration**: Set TTL slightly shorter than your token expiration time to balance security and performance
+
+2. **Cache Size**: For Caffeine, set `maxSize` based on expected concurrent users:
+   - Small deployments (< 1000 users): 1000-5000 entries
+   - Medium deployments (1000-10000 users): 10000-25000 entries
+   - Large deployments (> 10000 users): 50000+ entries
+
+3. **Statistics**: Enable statistics in production environments for monitoring and tuning
+
+4. **Cleanup**: Always call `introspector.close()` when shutting down to release resources properly
+
+5. **Different Policies for Different Endpoints**: Use Caffeine cache for high-traffic endpoints and stricter settings for security-critical endpoints
+
+[source,java]
+----
+// High-traffic endpoint - use Caffeine with longer TTL
+KeycloakSecurityPolicy highTrafficPolicy = new KeycloakSecurityPolicy();
+highTrafficPolicy.setUseTokenIntrospection(true);
+highTrafficPolicy.setIntrospectionCacheType(TokenCacheType.CAFFEINE);
+highTrafficPolicy.setIntrospectionCacheTtl(300); // 5 minutes
+
+// Security-critical endpoint - shorter TTL or no cache
+KeycloakSecurityPolicy criticalPolicy = new KeycloakSecurityPolicy();
+criticalPolicy.setUseTokenIntrospection(true);
+criticalPolicy.setIntrospectionCacheType(TokenCacheType.NONE); // No caching
+
+from("rest:get:/api/users")
+    .policy(highTrafficPolicy)  // Cached validation
+    .to("bean:userService");
+
+from("rest:post:/payments")
+    .policy(criticalPolicy)  // Real-time validation
+    .to("bean:paymentService");
+----
+
+==== Token Revocation Workflow
+
+When using token introspection, you can implement a complete token revocation workflow:
+
+[source,java]
+----
+// 1. Revoke token in Keycloak (via admin API)
+template.sendBodyAndHeader("keycloak:admin?operation=revokeSession", null,
+    KeycloakConstants.SESSION_ID, sessionId);
+
+// 2. Subsequent requests with the revoked token will be rejected
+// The introspection endpoint will return "active": false
+// The security policy will throw CamelAuthorizationException
+
+// 3. Handle revoked token gracefully
+onException(CamelAuthorizationException.class)
+    .handled(true)
+    .log("Token validation failed: ${exception.message}")
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(401))
+    .transform().constant("{\"error\": \"Token has been revoked\"}");
+----
+
+==== Best Practices
+
+1. **Use Introspection Selectively**: Enable introspection for security-critical endpoints while using local JWT parsing for high-throughput APIs.
+
+2. **Enable Caching**: Always enable caching in production to reduce load on Keycloak and improve performance.
+
+3. **Tune Cache TTL**: Set appropriate cache TTL based on your security requirements:
+   - Lower TTL (30-60s) for security-critical operations
+   - Higher TTL (2-5min) for regular operations
+
+4. **Monitor Performance**: Track introspection API call latency and adjust caching accordingly.
+
+5. **Handle Failures Gracefully**: Implement proper error handling for network failures or Keycloak downtime.
+
+6. **Use Circuit Breakers**: Consider implementing circuit breakers for the introspection endpoint to handle Keycloak unavailability.
+
+==== Security Considerations
+
+* **Client Secret Protection**: Introspection requires a client secret. Store it securely (environment variables, vault services).
+* **HTTPS in Production**: Always use HTTPS for introspection requests in production.
+* **Keycloak Availability**: Introspection requires Keycloak to be available. Plan for high availability.
+* **Rate Limiting**: Be aware of Keycloak's rate limits for introspection endpoints.
+* **Token Leakage**: Even with introspection, protect tokens from leakage as they remain valid until revoked.
+
+==== Troubleshooting
+
+**High Latency**:
+- Enable caching if disabled
+- Increase cache TTL
+- Check network latency to Keycloak
+- Consider using local JWT for non-critical endpoints
+
+**Cache Not Working**:
+- Verify `introspectionCacheEnabled` is set to `true`
+- Check that TTL is > 0
+- Ensure tokens are identical (including whitespace)
+
+**Introspection Failures**:
+- Verify client secret is correct
+- Ensure client has introspection permissions
+- Check Keycloak logs for errors
+- Verify network connectivity to Keycloak
 
 === Resource Owner Password Credentials
 
@@ -2411,8 +3438,8 @@ YAML::
 | clientSecret | | Keycloak client secret (for client credentials flow)
 | username | | Username (for resource owner password flow)
 | password | | Password (for resource owner password flow)
-| requiredRoles | [] | List of required roles
-| requiredPermissions | [] | List of required permissions
+| requiredRoles | "" | Comma-separated list of required roles (e.g., "admin,user,manager")
+| requiredPermissions | "" | Comma-separated list of required permissions (e.g., "read:documents,write:documents")
 | allRolesRequired | true | Whether ALL roles are required (true) or ANY role (false)
 | allPermissionsRequired | true | Whether ALL permissions are required (true) or ANY permission (false)
 | useResourceOwnerPasswordCredentials | false | Whether to use resource owner password flow
@@ -2482,8 +3509,8 @@ keycloakPolicy.setRealm("my-company");
 keycloakPolicy.setClientId("my-service");
 keycloakPolicy.setClientSecret("client-secret-value");
 
-// Require admin role
-keycloakPolicy.setRequiredRoles(Arrays.asList("admin"));
+// Require admin role (comma-separated string)
+keycloakPolicy.setRequiredRoles("admin");
 
 // Apply to route
 from("direct:admin-endpoint")
@@ -2516,8 +3543,7 @@ beans:
       realm: "my-company"
       clientId: "my-service"
       clientSecret: "client-secret-value"
-      requiredRoles:
-        - "admin"
+      requiredRoles: "admin"
 ----
 ====
 
@@ -2529,10 +3555,10 @@ Java::
 +
 [source,java]
 ----
-// Require either admin OR user role
+// Require either admin OR user role (comma-separated string)
 KeycloakSecurityPolicy userPolicy = new KeycloakSecurityPolicy(
     "http://localhost:8080", "my-company", "my-service", "client-secret");
-userPolicy.setRequiredRoles(Arrays.asList("admin", "user"));
+userPolicy.setRequiredRoles("admin,user");
 userPolicy.setAllRolesRequired(false); // ANY role (OR logic)
 
 from("direct:user-endpoint")
@@ -2562,9 +3588,7 @@ beans:
       realm: "my-company"
       clientId: "my-service"
       clientSecret: "client-secret"
-      requiredRoles:
-        - "admin"
-        - "user"
+      requiredRoles: "admin,user"
       allRolesRequired: false
 ----
 ====
@@ -2581,19 +3605,19 @@ Java::
 KeycloakSecurityPolicy readPolicy = new KeycloakSecurityPolicy(
     "{{keycloak.server-url}}", "{{keycloak.realm}}",
     "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
-readPolicy.setRequiredRoles(Arrays.asList("reader", "writer", "admin"));
+readPolicy.setRequiredRoles("reader,writer,admin");
 readPolicy.setAllRolesRequired(false);
 
 KeycloakSecurityPolicy writePolicy = new KeycloakSecurityPolicy(
     "{{keycloak.server-url}}", "{{keycloak.realm}}",
     "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
-writePolicy.setRequiredRoles(Arrays.asList("writer", "admin"));
+writePolicy.setRequiredRoles("writer,admin");
 writePolicy.setAllRolesRequired(false);
 
 KeycloakSecurityPolicy adminPolicy = new KeycloakSecurityPolicy(
     "{{keycloak.server-url}}", "{{keycloak.realm}}",
     "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
-adminPolicy.setRequiredRoles(Arrays.asList("admin"));
+adminPolicy.setRequiredRoles("admin");
 
 // Configure REST endpoints
 rest("/api")
@@ -2648,10 +3672,7 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "reader"
-        - "writer"
-        - "admin"
+      requiredRoles: "reader,writer,admin"
       allRolesRequired: false
 
   - name: writePolicy
@@ -2661,9 +3682,7 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "writer"
-        - "admin"
+      requiredRoles: "writer,admin"
       allRolesRequired: false
 
   - name: adminPolicy
@@ -2673,8 +3692,7 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "admin"
+      requiredRoles: "admin"
 ----
 ====
 
@@ -2777,10 +3795,6 @@ YAML::
 
 === Configuration Properties
 
-[tabs]
-====
-Properties::
-+
 [source,properties]
 ----
 # application.properties
@@ -2813,7 +3827,7 @@ public class SecurityConfiguration {
     public KeycloakSecurityPolicy adminPolicy() {
         KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
             serverUrl, realm, clientId, clientSecret);
-        policy.setRequiredRoles(Arrays.asList("admin"));
+        policy.setRequiredRoles("admin");
         return policy;
     }
 
@@ -2821,7 +3835,7 @@ public class SecurityConfiguration {
     public KeycloakSecurityPolicy userPolicy() {
         KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
             serverUrl, realm, clientId, clientSecret);
-        policy.setRequiredRoles(Arrays.asList("user", "admin"));
+        policy.setRequiredRoles("user,admin");
         policy.setAllRolesRequired(false);
         return policy;
     }
@@ -2845,13 +3859,13 @@ public class KeycloakSecurityRoutes extends RouteBuilder {
         KeycloakSecurityPolicy adminPolicy = new KeycloakSecurityPolicy(
             "{{keycloak.server-url}}", "{{keycloak.realm}}",
             "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
-        adminPolicy.setRequiredRoles(Arrays.asList("admin"));
+        adminPolicy.setRequiredRoles("admin");
 
         // User policy - requires user or admin role
         KeycloakSecurityPolicy userPolicy = new KeycloakSecurityPolicy(
             "{{keycloak.server-url}}", "{{keycloak.realm}}",
             "{{keycloak.client-id}}", "{{keycloak.client-secret}}");
-        userPolicy.setRequiredRoles(Arrays.asList("user", "admin"));
+        userPolicy.setRequiredRoles("user,admin");
         userPolicy.setAllRolesRequired(false); // ANY role
 
         // Error handling
@@ -2915,8 +3929,7 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "admin"
+      requiredRoles: "admin"
 
   - name: userPolicy
     type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
@@ -2925,11 +3938,10 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "user"
-        - "admin"
+      requiredRoles: "user,admin"
       allRolesRequired: false
 ----
+====
 
 == Running Integration Tests
 
@@ -3162,7 +4174,7 @@ For permissions-based authorization, you have several options to include permiss
 [source,java]
 ----
 KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
-policy.setRequiredPermissions(Arrays.asList("documents", "users", "admin"));
+policy.setRequiredPermissions("documents,users,admin");
 policy.setAllPermissionsRequired(false); // ANY permission
 ----
 
@@ -3191,9 +4203,9 @@ strictPolicy.setRealm("{{keycloak.realm}}");
 strictPolicy.setClientId("{{keycloak.client-id}}");
 strictPolicy.setClientSecret("{{keycloak.client-secret}}");
 
-// User must have admin role AND document permissions
-strictPolicy.setRequiredRoles(Arrays.asList("admin"));
-strictPolicy.setRequiredPermissions(Arrays.asList("read:documents", "write:documents"));
+// User must have admin role AND document permissions (comma-separated)
+strictPolicy.setRequiredRoles("admin");
+strictPolicy.setRequiredPermissions("read:documents,write:documents");
 strictPolicy.setAllRolesRequired(true);
 strictPolicy.setAllPermissionsRequired(false); // ANY permission
 
@@ -3245,11 +4257,8 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "admin"
-      requiredPermissions:
-        - "read:documents"
-        - "write:documents"
+      requiredRoles: "admin"
+      requiredPermissions: "read:documents,write:documents"
       allRolesRequired: true
       allPermissionsRequired: false
 
@@ -3260,13 +4269,10 @@ beans:
       realm: "{{keycloak.realm}}"
       clientId: "{{keycloak.client-id}}"
       clientSecret: "{{keycloak.client-secret}}"
-      requiredRoles:
-        - "admin"
-        - "manager"
-      requiredPermissions:
-        - "read:documents"
-        - "emergency:access"
+      requiredRoles: "admin,manager"
+      requiredPermissions: "read:documents,emergency:access"
       allRolesRequired: false
       allPermissionsRequired: false
 ----
 ====
+

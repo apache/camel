@@ -7,7 +7,7 @@
 :supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: crypto
+:camel-spring-boot-name: crypto-pgp
 
 *Since Camel {since}*
 

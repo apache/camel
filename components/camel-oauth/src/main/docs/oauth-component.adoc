@@ -63,7 +63,7 @@ For details see the https://openid.net/specs/openid-connect-core-1_0.html[OIDC 1
 |===
 |Name |Description
 
-|`camel.oauth.base-uri` |The base URL to the identity provider (e.g. https://keycloak.local/kc/realms/camel)
+|`camel.oauth.base-uri` |The base URL to the identity provider (e.g. https://oauth.localtest.me/kc/realms/camel)
 
 |`camel.oauth.redirect-uri` |Valid URI pattern a browser can redirect to after a successful login (e.g. http://127.0.0.1:8080/auth). Must be registered with the identity provider.
 
@@ -88,7 +88,7 @@ For details see the https://datatracker.ietf.org/doc/html/rfc6749#section-4.4[OA
 |===
 |Name |Description
 
-|`camel.oauth.base-uri` |The base URL to the identity provider (e.g. https://keycloak.local/kc/realms/camel)
+|`camel.oauth.base-uri` |The base URL to the identity provider (e.g. https://oauth.localtest.me/kc/realms/camel)
 
 |`camel.oauth.client-id` |The client identifier registered with the identity provider.
 
@@ -102,7 +102,7 @@ Naturally, we want all communication between camel and the identity provider to 
 [source,shell]
 ----
 # Fetch the certificate from the IdP endpoint
-openssl s_client -connect keycloak.local:443 | openssl x509 > cluster.crt
+openssl s_client -connect oauth.localtest.me:443 | openssl x509 > cluster.crt
 
 # Import certificate to Java Keystore (i.e. trust the certificate)
 sudo keytool -import -alias keycloak -file cluster.crt -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
@@ -150,13 +150,13 @@ For example ...
 ----
 k8s-fetch-cert:
 	@mkdir -p tls
-	@echo -n | openssl s_client -connect keycloak.local:443 | openssl x509 > tls/cluster.crt
+	@echo -n | openssl s_client -connect oauth.localtest.me:443 | openssl x509 > tls/cluster.crt
 
 k8s-export: k8s-fetch-cert
 	@$(CAMEL_CMD) kubernetes export platform-http-files/* tls/* \
-	--dep=org.apache.camel:camel-oauth:4.15.0-SNAPSHOT \
+	--dep=org.apache.camel:camel-oauth:4.16.0-SNAPSHOT \
 	--gav=examples:platform-http-oauth:1.0.0 \
-	--property=camel.oauth.base-uri=https://keycloak.local/kc/realms/camel \
+	--property=camel.oauth.base-uri=https://oauth.localtest.me/kc/realms/camel \
 	--property=camel.oauth.redirect-uri=http://127.0.0.1:8080/auth \
 	--property=camel.oauth.logout.redirect-uri=http://127.0.0.1:8080/ \
 	--property=camel.oauth.client-id=camel-client \

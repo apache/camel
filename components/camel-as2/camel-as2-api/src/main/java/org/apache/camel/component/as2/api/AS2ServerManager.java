@@ -53,6 +53,10 @@ public class AS2ServerManager {
         as2ServerConnection.listen(requestUriPattern, handler);
     }
 
+    public void unlisten(String requestUriPattern) {
+        as2ServerConnection.unlisten(requestUriPattern);
+    }
+
     public void handleMDNResponse(
             HttpContext httpContext, String subject, String from) {
         // Add Context attributes for Response

@@ -312,6 +312,7 @@ public class Enricher extends BaseProcessorSupport implements IdAware, RouteIdAw
     @Override
     protected void doInit() throws Exception {
         headersMapFactory = camelContext.getCamelContextExtension().getHeadersMapFactory();
+        ServiceHelper.initService(processorExchangeFactory, aggregationStrategy, sendDynamicProcessor);
     }
 
     @Override

@@ -632,7 +632,12 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     private String resolveSpringBootVersionByCamelVersion(String camelVersion, Set<String> extraRepos)
             throws Exception {
-        String gav = "org.apache.camel.springboot" + ":" + "spring-boot" + ":pom:" + camelVersion;
+        String gav;
+        if (VersionHelper.isGE(camelVersion, "4.15.0")) {
+            gav = "org.apache.camel:camel-parent:pom:" + camelVersion;
+        } else {
+            gav = "org.apache.camel.springboot:spring-boot:pom:" + camelVersion;
+        }
 
         List<MavenArtifact> artifacts = resolveDependenciesViaAether(List.of(gav), extraRepos, false, false);
         if (!artifacts.isEmpty()) {
@@ -648,7 +653,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     NodeList nl = dom.getElementsByTagName("properties");
                     if (nl.getLength() > 0) {
                         Element node = (Element) nl.item(0);
-                        return node.getElementsByTagName("spring-boot-version").item(0).getTextContent();
+                        NodeList springBootVersionNodeList = node.getElementsByTagName("spring-boot-version");
+                        if (springBootVersionNodeList.getLength() > 0) {
+                            return springBootVersionNodeList.item(0).getTextContent();
+                        }
                     }
                 }
             }

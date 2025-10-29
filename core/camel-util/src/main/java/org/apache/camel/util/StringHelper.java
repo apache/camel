@@ -112,10 +112,29 @@ public final class StringHelper {
      * @return           s if the length of s is less than maxLength or the first maxLength characters of s
      */
     public static String limitLength(String s, int maxLength) {
+        return limitLength(s, maxLength, null);
+    }
+
+    /**
+     * Limits the length of a string
+     *
+     * @param  s         the string
+     * @param  maxLength the maximum length of the returned string
+     * @param  prefix    prefix to append if the string was limited
+     * @return           s if the length of s is less than maxLength or the first maxLength characters of s
+     */
+    public static String limitLength(String s, int maxLength, String prefix) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
         }
-        return s.length() <= maxLength ? s : s.substring(0, maxLength);
+        if (s.length() <= maxLength) {
+            return s;
+        }
+        s = s.substring(0, maxLength);
+        if (prefix != null) {
+            s = s + prefix;
+        }
+        return s;
     }
 
     /**

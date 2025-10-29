@@ -79,7 +79,7 @@ spec:
       middlewares:
         - name: strip-prefix-who
   tls:
-    secretName: traefik-tls
+    secretName: edge-tls
 
 ---
 apiVersion: traefik.io/v1alpha1

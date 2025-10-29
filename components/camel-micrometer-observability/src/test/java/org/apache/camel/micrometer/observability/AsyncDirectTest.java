@@ -17,6 +17,7 @@
 package org.apache.camel.micrometer.observability;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncDirectTest extends MicrometerObservabilityTracerTestSupport {
 
@@ -66,13 +68,13 @@ public class AsyncDirectTest extends MicrometerObservabilityTracerTestSupport {
         SimpleSpan newMock = MicrometerObservabilityTracerTestSupport.getSpan(spans, "mock://end", Op.EVENT_SENT);
 
         // Validate span completion
-        assertNotEquals("", testProducer.getEndTimestamp());
-        assertNotEquals("", direct.getEndTimestamp());
-        assertNotEquals("", newDirectTo.getEndTimestamp());
-        assertNotEquals("", log.getEndTimestamp());
-        assertNotEquals("", newDirectFrom.getEndTimestamp());
-        assertNotEquals("", newLog.getEndTimestamp());
-        assertNotEquals("", newMock.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, testProducer.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, direct.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, newDirectTo.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, log.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, newDirectFrom.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, newLog.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, newMock.getEndTimestamp());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
@@ -93,7 +95,7 @@ public class AsyncDirectTest extends MicrometerObservabilityTracerTestSupport {
         assertEquals(testProducer.getTags().get("exchangeId"), newMock.getTags().get("exchangeId"));
 
         // // Validate hierarchy
-        assertEquals("", testProducer.getParentId());
+        assertTrue(testProducer.getParentId().isEmpty());
         assertEquals(testProducer.getSpanId(), direct.getParentId());
         assertEquals(direct.getSpanId(), newDirectTo.getParentId());
         assertEquals(direct.getSpanId(), log.getParentId());

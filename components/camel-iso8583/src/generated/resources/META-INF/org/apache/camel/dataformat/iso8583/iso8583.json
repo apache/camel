@@ -8,10 +8,10 @@
     "firstVersion": "4.14.0",
     "label": "dataformat,transformation,finance",
     "javaType": "org.apache.camel.dataformat.iso8583.Iso8583DataFormat",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-iso8583",
-    "version": "4.15.0-SNAPSHOT",
+    "version": "4.16.0-SNAPSHOT",
     "modelName": "iso8583",
     "modelJavaType": "org.apache.camel.model.dataformat.Iso8583DataFormat"
   },

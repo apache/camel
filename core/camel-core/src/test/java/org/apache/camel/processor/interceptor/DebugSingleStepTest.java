@@ -62,12 +62,12 @@ public class DebugSingleStepTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(6, logs.size());
-        assertEquals("Single stepping at log:foo with body: Hello World", logs.get(0));
-        assertEquals("Single stepping at log:bar with body: Hello World", logs.get(1));
-        assertEquals("Single stepping at mock:result with body: Hello World", logs.get(2));
-        assertEquals("Single stepping at log:foo with body: Hello Camel", logs.get(3));
-        assertEquals("Single stepping at log:bar with body: Hello Camel", logs.get(4));
-        assertEquals("Single stepping at mock:result with body: Hello Camel", logs.get(5));
+        assertEquals("Single stepping at to[log:foo] with body: Hello World", logs.get(0));
+        assertEquals("Single stepping at to[log:bar] with body: Hello World", logs.get(1));
+        assertEquals("Single stepping at to[mock:result] with body: Hello World", logs.get(2));
+        assertEquals("Single stepping at to[log:foo] with body: Hello Camel", logs.get(3));
+        assertEquals("Single stepping at to[log:bar] with body: Hello Camel", logs.get(4));
+        assertEquals("Single stepping at to[mock:result] with body: Hello Camel", logs.get(5));
     }
 
     @Override

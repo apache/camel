@@ -30,7 +30,7 @@ public class OllamaTestSupport extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = OllamaServiceFactory.createService();
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
@@ -41,8 +41,8 @@ public class OllamaTestSupport extends CamelTestSupport {
 
     protected ChatModel createModel() {
         return OllamaChatModel.builder()
-                .baseUrl(OLLAMA.getEndpoint())
-                .modelName(OLLAMA.getModel())
+                .baseUrl(OLLAMA.baseUrl())
+                .modelName(OLLAMA.modelName())
                 .temperature(0.3)
                 .timeout(ofSeconds(60))
                 .build();

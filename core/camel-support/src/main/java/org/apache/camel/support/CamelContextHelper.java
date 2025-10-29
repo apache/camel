@@ -78,7 +78,9 @@ public final class CamelContextHelper {
             }
             text = text.toLowerCase(Locale.ENGLISH);
             text = text.replace("-", "");
-            return camelContext.getCamelContextExtension().getAdditionalSensitiveKeywords().contains(text);
+            String words = camelContext.getCamelContextExtension().getAdditionalSensitiveKeywords();
+            words = words.toLowerCase(Locale.ENGLISH);
+            return words.contains(text);
         }
         return false;
     }

@@ -77,6 +77,25 @@ public interface GraphqlComponentBuilderFactory {
     
         
         /**
+         * Option to disable throwing the HttpOperationFailedException in case
+         * of failed responses from the remote server. This allows you to get
+         * all responses regardless of the HTTP status code.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
+         */
+        default GraphqlComponentBuilder throwExceptionOnFailure(boolean throwExceptionOnFailure) {
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -114,6 +133,24 @@ public interface GraphqlComponentBuilderFactory {
             doSetProperty("httpClient", httpClient);
             return this;
         }
+    
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default GraphqlComponentBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     class GraphqlComponentBuilderImpl
@@ -130,8 +167,10 @@ public interface GraphqlComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((GraphqlComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "throwExceptionOnFailure": ((GraphqlComponent) component).setThrowExceptionOnFailure((boolean) value); return true;
             case "autowiredEnabled": ((GraphqlComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "httpClient": ((GraphqlComponent) component).setHttpClient((org.apache.hc.client5.http.classic.HttpClient) value); return true;
+            case "headerFilterStrategy": ((GraphqlComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             default: return false;
             }
         }

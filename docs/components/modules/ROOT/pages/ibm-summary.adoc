@@ -1,0 +1,1 @@
+../../../../../components/camel-ibm/src/main/docs/ibm-summary.adoc

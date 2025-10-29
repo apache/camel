@@ -136,11 +136,13 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
@@ -151,6 +153,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.spi.RestBindingJacksonXmlDataFormatFactory;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -363,6 +366,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(FactoryFinderResolver.class, createFactoryFinderResolver());
         camelContextExtension.addContextPlugin(PackageScanClassResolver.class, createPackageScanClassResolver());
         camelContextExtension.addContextPlugin(PackageScanResourceResolver.class, createPackageScanResourceResolver());
+        camelContextExtension.addContextPlugin(OptimisedComponentResolver.class, createOptimisedComponentResolver());
         camelContextExtension.addContextPlugin(VariableRepositoryFactory.class, createVariableRepositoryFactory());
         camelContextExtension.lazyAddContextPlugin(ModelineFactory.class, this::createModelineFactory);
         camelContextExtension.lazyAddContextPlugin(ModelJAXBContextFactory.class, this::createModelJAXBContextFactory);
@@ -380,6 +384,8 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(RuntimeCamelCatalog.class, this::createRuntimeCamelCatalog);
         camelContextExtension.lazyAddContextPlugin(RestBindingJaxbDataFormatFactory.class,
                 this::createRestBindingJaxbDataFormatFactory);
+        camelContextExtension.lazyAddContextPlugin(RestBindingJacksonXmlDataFormatFactory.class,
+                this::createRestBindingJacksonXmlDataFormatFactory);
         camelContextExtension.lazyAddContextPlugin(BeanProxyFactory.class, this::createBeanProxyFactory);
         camelContextExtension.lazyAddContextPlugin(UnitOfWorkFactory.class, this::createUnitOfWorkFactory);
         camelContextExtension.lazyAddContextPlugin(BeanIntrospection.class, this::createBeanIntrospection);
@@ -387,6 +393,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(BeanProcessorFactory.class, this::createBeanProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(ModelToXMLDumper.class, this::createModelToXMLDumper);
         camelContextExtension.lazyAddContextPlugin(ModelToYAMLDumper.class, this::createModelToYAMLDumper);
+        camelContextExtension.lazyAddContextPlugin(ModelToStructureDumper.class, this::createModelToStructureDumper);
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
                 this::createAnnotationBasedProcessorFactory);
@@ -4453,7 +4460,11 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract ModelToYAMLDumper createModelToYAMLDumper();
 
+    protected abstract ModelToStructureDumper createModelToStructureDumper();
+
     protected abstract RestBindingJaxbDataFormatFactory createRestBindingJaxbDataFormatFactory();
+
+    protected abstract RestBindingJacksonXmlDataFormatFactory createRestBindingJacksonXmlDataFormatFactory();
 
     protected abstract RuntimeCamelCatalog createRuntimeCamelCatalog();
 
@@ -4487,6 +4498,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract BackOffTimerFactory createBackOffTimerFactory();
 
     protected abstract TaskManagerRegistry createTaskManagerRegistry();
+
+    protected abstract OptimisedComponentResolver createOptimisedComponentResolver();
 
     protected RestConfiguration createRestConfiguration() {
         // lookup a global which may have been on a container such spring-boot / CDI / etc.

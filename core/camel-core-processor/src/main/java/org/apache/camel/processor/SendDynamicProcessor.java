@@ -34,6 +34,7 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.SendDynamicAware;
@@ -375,8 +376,10 @@ public class SendDynamicProcessor extends BaseProcessorSupport implements IdAwar
     @Override
     protected void doStart() throws Exception {
         // ensure the component is started
-        if (autoStartupComponents && scheme != null) {
-            camelContext.getComponent(scheme);
+        if (autoStartupComponents && scheme != null && uri != null) {
+            OptimisedComponentResolver resolver
+                    = camelContext.getCamelContextExtension().getContextPlugin(OptimisedComponentResolver.class);
+            resolver.resolveComponent(uri);
         }
 
         if (producerCache == null) {

@@ -45,6 +45,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectionsPerRoute": target.setConnectionsPerRoute(property(camelContext, int.class, value)); return true;
         case "contentcompressiondisabled":
         case "contentCompressionDisabled": target.setContentCompressionDisabled(property(camelContext, boolean.class, value)); return true;
+        case "contenttypecharsetenabled":
+        case "contentTypeCharsetEnabled": target.setContentTypeCharsetEnabled(property(camelContext, boolean.class, value)); return true;
         case "cookiemanagementdisabled":
         case "cookieManagementDisabled": target.setCookieManagementDisabled(property(camelContext, boolean.class, value)); return true;
         case "cookiestore":
@@ -151,6 +153,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectionsPerRoute": return int.class;
         case "contentcompressiondisabled":
         case "contentCompressionDisabled": return boolean.class;
+        case "contenttypecharsetenabled":
+        case "contentTypeCharsetEnabled": return boolean.class;
         case "cookiemanagementdisabled":
         case "cookieManagementDisabled": return boolean.class;
         case "cookiestore":
@@ -253,6 +257,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "connectionsPerRoute": return target.getConnectionsPerRoute();
         case "contentcompressiondisabled":
         case "contentCompressionDisabled": return target.isContentCompressionDisabled();
+        case "contenttypecharsetenabled":
+        case "contentTypeCharsetEnabled": return target.isContentTypeCharsetEnabled();
         case "cookiemanagementdisabled":
         case "cookieManagementDisabled": return target.isCookieManagementDisabled();
         case "cookiestore":

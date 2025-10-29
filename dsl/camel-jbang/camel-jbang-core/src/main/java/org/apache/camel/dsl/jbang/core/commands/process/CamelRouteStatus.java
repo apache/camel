@@ -89,6 +89,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         description = "Include description in the ID column (if available)")
     boolean description;
 
+    @CommandLine.Option(names = { "--note" },
+                        description = "Include note in the ID column (if available)")
+    boolean note;
+
     @CommandLine.Option(names = { "--show-group" },
                         description = "Include group column")
     boolean showGroup;
@@ -124,6 +128,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             row.routeId = o.getString("routeId");
                             row.group = o.getString("group");
                             row.description = o.getString("description");
+                            row.note = o.getString("note");
                             row.from = o.getString("from");
                             Boolean bool = o.getBoolean("remote");
                             if (bool != null) {
@@ -259,12 +264,12 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("GROUP").visible(showGroup).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getGroup),
-                new Column().header("ID").visible(!description).dataAlign(HorizontalAlign.LEFT)
+                new Column().header("ID").visible(!description && !note).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
-                new Column().header("ID").visible(description).dataAlign(HorizontalAlign.LEFT)
+                new Column().header("ID").visible(description || note).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(45, OverflowBehaviour.NEWLINE)
-                        .with(this::getIdAndDescription),
+                        .with(this::getIdAndNoteDescription),
                 new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
@@ -300,7 +305,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         .with(this::getId),
                 new Column().header("ID").visible(description).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(45, OverflowBehaviour.NEWLINE)
-                        .with(this::getIdAndDescription),
+                        .with(this::getIdAndNoteDescription),
                 new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(45, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
@@ -413,13 +418,20 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         }
     }
 
-    protected String getIdAndDescription(Row r) {
+    protected String getIdAndNoteDescription(Row r) {
         String id = getId(r);
         if (description && r.description != null) {
             if (id != null) {
                 id = id + "\n  " + Strings.wrapWords(r.description, " ", "\n  ", 40, true);
             } else {
                 id = r.description;
+            }
+        }
+        if (note && r.note != null) {
+            if (id != null) {
+                id = id + "\n  " + Strings.wrapWords(r.note, " ", "\n  ", 40, true);
+            } else {
+                id = r.note;
             }
         }
         return id;
@@ -456,6 +468,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         String routeId;
         String group;
         String description;
+        String note;
         String from;
         boolean remote;
         String source;

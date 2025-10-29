@@ -943,17 +943,22 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
      * Special for process the OptionalIdentifiedDefinition
      */
     private void processIdentified(Class<?> classElement, Set<EipOptionModel> eipOptions) {
-
         // id
         String docComment = findJavaDoc(null, "id", null, classElement, true);
         EipOptionModel ep
                 = createOption("id", "Id", "attribute", "java.lang.String", false, "", "", docComment, false, null, false,
                         null, null, false, false);
         eipOptions.add(ep);
-
         // description
         docComment = findJavaDoc(null, "description", null, classElement, true);
         ep = createOption("description", "Description", "attribute", "java.lang.String", false, "",
+                "",
+                docComment, false, null, false, null, null,
+                false, false);
+        eipOptions.add(ep);
+        // note
+        docComment = findJavaDoc(null, "note", null, classElement, true);
+        ep = createOption("note", "Note", "attribute", "java.lang.String", false, "",
                 "",
                 docComment, false, null, false, null, null,
                 false, false);
@@ -1687,8 +1692,10 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 return 98;
             } else if ("description".equals(name)) {
                 return 99;
-            } else if ("id".equals(name)) {
+            } else if ("note".equals(name)) {
                 return 100;
+            } else if ("id".equals(name)) {
+                return 101;
             } else if ("pattern".equals(name) && "to".equals(model.getName())) {
                 // and pattern only for the to model
                 return -10;

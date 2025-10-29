@@ -28,8 +28,12 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "connection": target.getConfiguration().setConnection(property(camelContext, io.nats.client.Connection.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
+        case "consumerconfiguration":
+        case "consumerConfiguration": target.getConfiguration().setConsumerConfiguration(property(camelContext, io.nats.client.api.ConsumerConfiguration.class, value)); return true;
         case "credentialsfilepath":
         case "credentialsFilePath": target.getConfiguration().setCredentialsFilePath(property(camelContext, java.lang.String.class, value)); return true;
+        case "durablename":
+        case "durableName": target.getConfiguration().setDurableName(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -63,6 +67,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pingInterval": target.getConfiguration().setPingInterval(property(camelContext, int.class, value)); return true;
         case "poolsize":
         case "poolSize": target.getConfiguration().setPoolSize(property(camelContext, int.class, value)); return true;
+        case "pullsubscription":
+        case "pullSubscription": target.getConfiguration().setPullSubscription(property(camelContext, boolean.class, value)); return true;
         case "queuename":
         case "queueName": target.getConfiguration().setQueueName(property(camelContext, java.lang.String.class, value)); return true;
         case "reconnect": target.getConfiguration().setReconnect(property(camelContext, boolean.class, value)); return true;
@@ -95,8 +101,12 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "connection": return io.nats.client.Connection.class;
         case "connectiontimeout":
         case "connectionTimeout": return int.class;
+        case "consumerconfiguration":
+        case "consumerConfiguration": return io.nats.client.api.ConsumerConfiguration.class;
         case "credentialsfilepath":
         case "credentialsFilePath": return java.lang.String.class;
+        case "durablename":
+        case "durableName": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -130,6 +140,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pingInterval": return int.class;
         case "poolsize":
         case "poolSize": return int.class;
+        case "pullsubscription":
+        case "pullSubscription": return boolean.class;
         case "queuename":
         case "queueName": return java.lang.String.class;
         case "reconnect": return boolean.class;
@@ -163,8 +175,12 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "connection": return target.getConfiguration().getConnection();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
+        case "consumerconfiguration":
+        case "consumerConfiguration": return target.getConfiguration().getConsumerConfiguration();
         case "credentialsfilepath":
         case "credentialsFilePath": return target.getConfiguration().getCredentialsFilePath();
+        case "durablename":
+        case "durableName": return target.getConfiguration().getDurableName();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -198,6 +214,8 @@ public class NatsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pingInterval": return target.getConfiguration().getPingInterval();
         case "poolsize":
         case "poolSize": return target.getConfiguration().getPoolSize();
+        case "pullsubscription":
+        case "pullSubscription": return target.getConfiguration().isPullSubscription();
         case "queuename":
         case "queueName": return target.getConfiguration().getQueueName();
         case "reconnect": return target.getConfiguration().isReconnect();

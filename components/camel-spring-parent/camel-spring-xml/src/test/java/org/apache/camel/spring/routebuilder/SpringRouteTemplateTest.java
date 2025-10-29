@@ -155,7 +155,7 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
 
         RouteDefinition def = context.getRouteDefinition("first");
 
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, true, false);
+        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, true, false, false);
 
         assertNotNull(xml);
         Assertions.assertTrue(xml.contains("<from uri=\"direct:one\"/>"));
@@ -171,7 +171,7 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(context.getRouteDefinitions());
 
-        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, true, false);
+        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, true, false, false);
 
         assertNotNull(xml);
         Assertions.assertTrue(xml.contains("<from uri=\"direct:one\"/>"));

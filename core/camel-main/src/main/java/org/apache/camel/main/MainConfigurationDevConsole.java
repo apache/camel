@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.DevConsole;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.json.JsonArray;
@@ -56,7 +55,7 @@ public class MainConfigurationDevConsole extends AbstractDevConsole {
                 String k = entry.getKey().toString();
                 Object v = entry.getValue();
                 String loc = locationSummary(startupConfiguration, k);
-                if (CamelContextHelper.containsSensitive(getCamelContext(), k)) {
+                if (MainHelper.containsSensitive(getCamelContext(), k, v)) {
                     sb.append(String.format("    %s %s = xxxxxx%n", loc, k));
                 } else {
                     sb.append(String.format("    %s %s = %s%n", loc, k, v));

@@ -17,7 +17,6 @@
 package org.apache.camel.component.jetty;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,6 +42,7 @@ import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
@@ -201,10 +201,11 @@ public class CamelContinuationServlet extends CamelServlet {
                 exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
             }
 
-            String charset = request.getCharacterEncoding();
-            if (charset != null && Charset.isSupported(charset)) {
-                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
+            if (contentType != null) {
+                String normalizedCharset = IOHelper.getCharsetNameFromContentType(contentType);
+                exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, normalizedCharset);
             }
+
             // reuse existing http message if pooled
             Message msg = exchange.getIn();
             if (msg instanceof HttpMessage) {

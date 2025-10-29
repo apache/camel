@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit test for http binding ref option.
  */
+@Deprecated
 public class HttpBindingRefTest extends BaseJettyTest {
 
     @BindToRegistry("default")

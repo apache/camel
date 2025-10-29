@@ -1,0 +1,248 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+[NOTE]
+====
+https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
+Note that manual migration is still required.
+See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
+====
+
+== Upgrading Camel 4.15 to 4.16
+
+=== camel-core
+
+The `tryConvertTo` method in Camel type converters will no longer in case of no converter suitable,
+mark this as a _miss_ for any same future converter attempts to immediately be identified as a _miss_.
+
+=== camel-kamelet
+
+The kamelet component is now parsing endpoint parameters using _raw mode_ to ensure when using sensitive parameters
+such as access keys, passwords etc. they are not URI encoded.
+
+=== camel-graphql
+
+The `camel-graphql` component now includes Camel message headers as HTTP headers when calling the remote Graphql server.
+
+If the response is not success (2xx) then the component now throws the `org.apache.camel.http.base.HttpOperationFailedException`.
+This can be turned off by setting `throwExceptionOnFailure=false`.
+
+=== camel-infinispan
+
+The `queryBuilder` option on `camel-infinispan` endpoint has been migrated to no longer use the deprecated query factory
+`org.infinispan.query.dsl.QueryFactory` to the new query API that is based on ickle query syntax.
+
+This means old code such:
+
+[source,java]
+----
+    private InfinispanQueryBuilder continuousQueryBuilder
+            = qf -> qf.from(User.class).having("name").like("CQ%").build();
+----
+
+Should use the https://infinispan.org/docs/stable/titles/query/query.html#ickle-query-language[ickle] query syntax:
+
+[source,java]
+----
+    private InfinispanQueryBuilder continuousQueryBuilder
+            = qf -> qf.query("FROM sample_bank_account.User WHERE name LIKE 'CQ%'");
+----
+
+=== camel-jbang
+
+The `camel-launcher` binary no longer include the `edit` plugin commands.
+
+=== camel-milo
+
+The camel-milo component has been upgraded to use Eclipse Milo 1.0.5, which includes several breaking API changes:
+
+==== Certificate Validation API Changes
+
+The certificate validation API has been refactored in Milo 1.0.5:
+
+* The `ServerCertificateValidator` class has been removed
+* Use `org.eclipse.milo.opcua.stack.core.security.CertificateValidator` instead
+* The new `CertificateValidator` is located in the core security package rather than the server-specific package
+
+If you were programmatically configuring certificate validators, you need to update your code:
+
+[source,java]
+----
+// Old API (no longer works)
+import org.eclipse.milo.opcua.stack.server.security.ServerCertificateValidator;
+server.setCertificateValidator(serverCertificateValidator);
+
+// New API (Milo 1.0.5)
+import org.eclipse.milo.opcua.stack.core.security.CertificateValidator;
+server.setCertificateValidator(certificateValidator);
+----
+
+==== Subscription Monitoring API Changes
+
+The monitored item data value listener API has changed:
+
+* The `DataValueListener` now requires two parameters: `OpcUaMonitoredItem` and `DataValue`
+* Previously it only accepted a `DataValue` parameter
+
+If you were using custom data value listeners, update your lambda expressions or anonymous classes:
+
+[source,java]
+----
+// Old API
+item.setDataValueListener(dataValue -> processValue(dataValue));
+
+// New API (Milo 1.0.5)
+item.setDataValueListener((monitoredItem, dataValue) -> processValue(dataValue));
+----
+
+=== camel-flink
+
+Apache Flink deprecated the DataSet API in version 1.12 in favor of a unified DataStream API that handles both
+streaming and batch processing. The DataStream API with bounded streams provides all the functionality of the
+DataSet API and more, with better performance and a unified programming model.
+
+==== Key Differences
+
+[cols="1,1,1", options="header"]
+|===
+|Aspect |DataSet API |DataStream API (Batch Mode)
+
+|Execution
+|Immediate (lazy evaluation)
+|Event-driven (requires explicit execution)
+
+|Data Type
+|Bounded datasets
+|Bounded or unbounded streams
+
+|Time Semantics
+|Not applicable
+|Event time, processing time, ingestion time
+
+|State Management
+|Limited
+|Full support for keyed and operator state
+
+|Windowing
+|Not applicable
+|Full windowing support
+|===
+
+==== Migration Guide
+
+===== Update Endpoint Type
+
+Replace `flink:dataset` with `flink:datastream`:
+
+.Before
+[source,java]
+-----------------------------------
+from("direct:start")
+    .to("flink:dataset?dataSet=#myDataSet&dataSetCallback=#myCallback");
+-----------------------------------
+
+.After
+[source,java]
+-----------------------------------
+from("direct:start")
+    .to("flink:datastream?dataStream=#myDataStream&dataStreamCallback=#myCallback");
+-----------------------------------
+
+===== Configure Batch Execution Mode
+
+For batch processing with DataStream API, configure the execution environment for batch mode:
+
+[source,java]
+-----------------------------------
+StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+// Set to batch mode for bounded streams
+env.setRuntimeMode(RuntimeExecutionMode.BATCH);
+-----------------------------------
+
+===== Update Data Sources
+
+.Before (DataSet API)
+[source,java]
+-----------------------------------
+ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+DataSet<String> dataSet = env.readTextFile("input.txt");
+-----------------------------------
+
+.After (DataStream API)
+[source,java]
+-----------------------------------
+StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+env.setRuntimeMode(RuntimeExecutionMode.BATCH);
+DataStream<String> dataStream = env.readTextFile("input.txt");
+-----------------------------------
+
+===== Update Transformations
+
+Most transformation operations have direct equivalents:
+
+[cols="1,1", options="header"]
+|===
+|DataSet API |DataStream API
+
+|`map()`
+|`map()`
+
+|`flatMap()`
+|`flatMap()`
+
+|`filter()`
+|`filter()`
+
+|`reduce()`
+|`reduce()` or `keyBy().reduce()`
+
+|`groupBy()`
+|`keyBy()`
+
+|`join()`
+|`join()` (with windowing)
+
+|`coGroup()`
+|`coGroup()` (with windowing)
+|===
+
+===== Update Callbacks
+
+Replace `DataSetCallback` with `DataStreamCallback`:
+
+.Before (DataSet)
+[source,java]
+-----------------------------------
+@Bean
+public DataSetCallback<Long> dataSetCallback() {
+    return new DataSetCallback<Long>() {
+        public Long onDataSet(DataSet dataSet, Object... objects) {
+            try {
+                return dataSet.count();
+            } catch (Exception e) {
+                return -1L;
+            }
+        }
+    };
+}
+-----------------------------------
+
+.After (DataStream)
+[source,java]
+-----------------------------------
+@Bean
+public DataStreamCallback dataStreamCallback() {
+    return new DataStreamCallback() {
+        public Object onDataStream(DataStream dataStream, Object... objects) {
+            // For batch mode, ensure runtime mode is set
+            dataStream.print();
+            return null;
+        }
+    };
+}
+-----------------------------------
+
+NOTE: Most users will not be affected by these changes as they primarily affect advanced use cases where you directly interact with the Milo API. Standard camel-milo endpoint configurations remain unchanged.

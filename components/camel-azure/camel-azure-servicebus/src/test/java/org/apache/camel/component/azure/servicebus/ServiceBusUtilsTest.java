@@ -20,17 +20,22 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
 import com.azure.messaging.servicebus.ServiceBusMessage;
 import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.ServiceBusSenderClient;
+import org.apache.camel.Exchange;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceBusUtilsTest {
+
+    private static final String APPLICATION_JSON_CONTENT_TYPE = "application/json";
 
     @Test
     void testCreateServiceBusMessage() {
@@ -135,6 +140,55 @@ public class ServiceBusUtilsTest {
                 .anyMatch(message -> Arrays.equals(message.getBody().toBytes(), byteBody2)));
         assertTrue(StreamSupport.stream(busMessages2.spliterator(), false)
                 .anyMatch(record -> record.getSessionId().equals("session-2")));
+    }
+
+    @Test
+    void testCreateServiceBusMessageWithContentType() {
+        final Map<String, Object> applicationProperties = Map.of(
+                Exchange.CONTENT_TYPE, APPLICATION_JSON_CONTENT_TYPE);
+
+        final ServiceBusMessage message
+                = ServiceBusUtils.createServiceBusMessage("test string", applicationProperties, null, null);
+
+        assertEquals("test string", message.getBody().toString());
+        assertEquals(APPLICATION_JSON_CONTENT_TYPE, message.getContentType());
+    }
+
+    @Test
+    void testCreateServiceBusMessagesWithContentType() {
+        final Map<String, Object> applicationProperties = Map.of(
+                Exchange.CONTENT_TYPE, APPLICATION_JSON_CONTENT_TYPE);
+
+        final List<String> inputMessages = new LinkedList<>();
+        inputMessages.add("test data");
+        inputMessages.add(String.valueOf(12345));
+
+        final Iterable<ServiceBusMessage> busMessages
+                = ServiceBusUtils.createServiceBusMessages(inputMessages, applicationProperties, null, null);
+
+        assertTrue(StreamSupport.stream(busMessages.spliterator(), false)
+                .anyMatch(record -> record.getBody().toString().equals("test data")));
+        assertTrue(StreamSupport.stream(busMessages.spliterator(), false)
+                .anyMatch(record -> record.getBody().toString().equals("12345")));
+        assertThat(StreamSupport.stream(busMessages.spliterator(), false))
+                .allMatch(message -> APPLICATION_JSON_CONTENT_TYPE.equals(message.getContentType()));
+
+        //Test bytes
+        final List<byte[]> inputMessages2 = new LinkedList<>();
+        byte[] byteBody1 = "test data".getBytes(StandardCharsets.UTF_8);
+        byte[] byteBody2 = "test data2".getBytes(StandardCharsets.UTF_8);
+        inputMessages2.add(byteBody1);
+        inputMessages2.add(byteBody2);
+
+        final Iterable<ServiceBusMessage> busMessages2
+                = ServiceBusUtils.createServiceBusMessages(inputMessages2, applicationProperties, null, null);
+
+        assertTrue(StreamSupport.stream(busMessages2.spliterator(), false)
+                .anyMatch(message -> Arrays.equals(message.getBody().toBytes(), byteBody1)));
+        assertTrue(StreamSupport.stream(busMessages2.spliterator(), false)
+                .anyMatch(message -> Arrays.equals(message.getBody().toBytes(), byteBody2)));
+        assertThat(StreamSupport.stream(busMessages.spliterator(), false))
+                .allMatch(message -> APPLICATION_JSON_CONTENT_TYPE.equals(message.getContentType()));
     }
 
     @Test

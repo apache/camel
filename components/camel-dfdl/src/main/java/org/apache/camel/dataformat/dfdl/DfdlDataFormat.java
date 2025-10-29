@@ -47,8 +47,8 @@ import org.apache.daffodil.japi.io.InputSourceDataInputStream;
 public class DfdlDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
     private CamelContext camelContext;
     private String schemaUri;
-    private String rootElement = "";
-    private String rootNamespace = "";
+    private String rootElement;
+    private String rootNamespace;
     private DataProcessor daffodilProcessor;
 
     @Override

@@ -16,12 +16,16 @@
  */
 package org.apache.camel.impl.console;
 
+import java.io.LineNumberReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
@@ -31,14 +35,19 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "route-dump", description = "Dump route in XML or YAML format")
 public class RouteDumpDevConsole extends AbstractDevConsole {
 
+    private static final Pattern SOURCE_LOCATION_PATTERN = Pattern.compile("(\\ssourceLocation=\"(.*?)\")");
+    private static final Pattern SOURCE_LINE_PATTERN = Pattern.compile("(\\ssourceLineNumber=\"(.*?)\")");
+
     /**
-     * To use either xml or yaml output format
+     * To output in either xml, yaml, or text format
      */
     public static final String FORMAT = "format";
 
@@ -71,7 +80,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
             try {
                 String format = (String) options.get(FORMAT);
                 if (format == null || "xml".equals(format)) {
-                    dump = mrb.dumpRouteAsXml();
+                    dump = mrb.dumpRouteAsXml(true);
                 } else if ("yaml".equals(format)) {
                     dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
                 }
@@ -119,13 +128,13 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                 String format = (String) options.get(FORMAT);
                 if (format == null || "xml".equals(format)) {
                     jo.put("format", "xml");
-                    dump = mrb.dumpRouteAsXml();
+                    dump = mrb.dumpRouteAsXml(true, false, true);
                 } else if ("yaml".equals(format)) {
                     jo.put("format", "yaml");
                     dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
                 }
                 if (dump != null) {
-                    List<JsonObject> code = ConsoleHelper.loadSourceAsJson(new StringReader(dump), null);
+                    List<JsonObject> code = loadSourceAsJson(new StringReader(dump));
                     if (code != null) {
                         jo.put("code", code);
                     }
@@ -177,6 +186,39 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
     private static int sort(ManagedRouteMBean o1, ManagedRouteMBean o2) {
         // sort by id
         return o1.getRouteId().compareTo(o2.getRouteId());
+    }
+
+    private static List<JsonObject> loadSourceAsJson(Reader reader) {
+        List<JsonObject> code = new ArrayList<>();
+        try {
+            LineNumberReader lnr = new LineNumberReader(reader);
+            String t;
+            do {
+                t = lnr.readLine();
+                if (t != null) {
+                    // extra source location from code line
+                    String idx = null;
+                    Matcher m = SOURCE_LOCATION_PATTERN.matcher(t);
+                    if (m.find()) {
+                        t = m.replaceFirst("");
+                    }
+                    m = SOURCE_LINE_PATTERN.matcher(t);
+                    if (m.find()) {
+                        idx = m.group(2);
+                        t = m.replaceFirst("");
+                    }
+                    JsonObject c = new JsonObject();
+                    c.put("line", idx != null ? Integer.parseInt(idx) : -1);
+                    c.put("code", Jsoner.escape(t));
+                    code.add(c);
+                }
+            } while (t != null);
+            IOHelper.close(lnr);
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return code.isEmpty() ? null : code;
     }
 
 }

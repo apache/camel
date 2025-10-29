@@ -240,6 +240,9 @@ public class QueueReplyManager extends ReplyManagerSupport {
             } else {
                 // use a dynamic message selector which will select the message we want to receive as reply
                 MessageSelectorCreator dynamicMessageSelector = new MessageSelectorCreator(correlation);
+                if (endpoint.getConfiguration().getReplyCorrelationProperty() != null) {
+                    dynamicMessageSelector.setCorrelationProperty(endpoint.getConfiguration().getReplyCorrelationProperty());
+                }
                 answer = new SharedQueueMessageListenerContainer(endpoint, dynamicMessageSelector);
                 log.debug("Using shared queue: {} with dynamic message selector as reply listener: {}", endpoint.getReplyTo(),
                         answer);

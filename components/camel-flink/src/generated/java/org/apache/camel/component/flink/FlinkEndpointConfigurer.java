@@ -23,6 +23,12 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FlinkEndpoint target = (FlinkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "checkpointinterval":
+        case "checkpointInterval": target.setCheckpointInterval(property(camelContext, java.lang.Long.class, value)); return true;
+        case "checkpointtimeout":
+        case "checkpointTimeout": target.setCheckpointTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "checkpointingmode":
+        case "checkpointingMode": target.setCheckpointingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "collect": target.setCollect(property(camelContext, boolean.class, value)); return true;
         case "dataset":
         case "dataSet": target.setDataSet(property(camelContext, org.apache.flink.api.java.DataSet.class, value)); return true;
@@ -32,8 +38,17 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "dataStream": target.setDataStream(property(camelContext, org.apache.flink.streaming.api.datastream.DataStream.class, value)); return true;
         case "datastreamcallback":
         case "dataStreamCallback": target.setDataStreamCallback(property(camelContext, org.apache.camel.component.flink.DataStreamCallback.class, value)); return true;
+        case "executionmode":
+        case "executionMode": target.setExecutionMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "jobname":
+        case "jobName": target.setJobName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxparallelism":
+        case "maxParallelism": target.setMaxParallelism(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "minpausebetweencheckpoints":
+        case "minPauseBetweenCheckpoints": target.setMinPauseBetweenCheckpoints(property(camelContext, java.lang.Long.class, value)); return true;
+        case "parallelism": target.setParallelism(property(camelContext, java.lang.Integer.class, value)); return true;
         default: return false;
         }
     }
@@ -41,6 +56,12 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "checkpointinterval":
+        case "checkpointInterval": return java.lang.Long.class;
+        case "checkpointtimeout":
+        case "checkpointTimeout": return java.lang.Long.class;
+        case "checkpointingmode":
+        case "checkpointingMode": return java.lang.String.class;
         case "collect": return boolean.class;
         case "dataset":
         case "dataSet": return org.apache.flink.api.java.DataSet.class;
@@ -50,8 +71,17 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "dataStream": return org.apache.flink.streaming.api.datastream.DataStream.class;
         case "datastreamcallback":
         case "dataStreamCallback": return org.apache.camel.component.flink.DataStreamCallback.class;
+        case "executionmode":
+        case "executionMode": return java.lang.String.class;
+        case "jobname":
+        case "jobName": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxparallelism":
+        case "maxParallelism": return java.lang.Integer.class;
+        case "minpausebetweencheckpoints":
+        case "minPauseBetweenCheckpoints": return java.lang.Long.class;
+        case "parallelism": return java.lang.Integer.class;
         default: return null;
         }
     }
@@ -60,6 +90,12 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FlinkEndpoint target = (FlinkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "checkpointinterval":
+        case "checkpointInterval": return target.getCheckpointInterval();
+        case "checkpointtimeout":
+        case "checkpointTimeout": return target.getCheckpointTimeout();
+        case "checkpointingmode":
+        case "checkpointingMode": return target.getCheckpointingMode();
         case "collect": return target.isCollect();
         case "dataset":
         case "dataSet": return target.getDataSet();
@@ -69,8 +105,17 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "dataStream": return target.getDataStream();
         case "datastreamcallback":
         case "dataStreamCallback": return target.getDataStreamCallback();
+        case "executionmode":
+        case "executionMode": return target.getExecutionMode();
+        case "jobname":
+        case "jobName": return target.getJobName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxparallelism":
+        case "maxParallelism": return target.getMaxParallelism();
+        case "minpausebetweencheckpoints":
+        case "minPauseBetweenCheckpoints": return target.getMinPauseBetweenCheckpoints();
+        case "parallelism": return target.getParallelism();
         default: return null;
         }
     }

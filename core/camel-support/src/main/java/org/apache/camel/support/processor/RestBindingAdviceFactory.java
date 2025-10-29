@@ -86,8 +86,8 @@ public class RestBindingAdviceFactory {
         }
 
         // setup xml data format
-        DataFormat jaxb = null;
-        DataFormat outJaxb = null;
+        DataFormat xml = null;
+        DataFormat outXml = null;
         if (mode.contains("xml") || "auto".equals(mode)) {
             String name = config.getXmlDataFormat();
             if (name != null) {
@@ -100,22 +100,29 @@ public class RestBindingAdviceFactory {
             } else {
                 name = "jaxb";
             }
-            // this will create a new instance as the name was not already
-            // pre-created
-            jaxb = camelContext.createDataFormat(name);
-            outJaxb = camelContext.createDataFormat(name);
+            // this will create a new instance as the name was not already pre-created
+            xml = camelContext.createDataFormat(name);
+            outXml = camelContext.createDataFormat(name);
 
             // is xml binding required?
-            if (mode.contains("xml") && jaxb == null) {
+            if (mode.contains("xml") && xml == null) {
                 throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
             }
 
-            if (jaxb != null) {
-                // to setup JAXB we need to use camel-jaxb
-                PluginHelper.getRestBindingJaxbDataFormatFactory(camelContext).setupJaxb(camelContext, config,
-                        bc.getType(), bc.getTypeClass(),
-                        bc.getOutType(), bc.getOutTypeClass(),
-                        jaxb, outJaxb);
+            if (xml != null) {
+                if ("jacksonXml".equalsIgnoreCase(name)) {
+                    // to setup jackson we need to use camel-jacksonxml
+                    PluginHelper.getRestBindingJacksonXmlDataFormatFactory(camelContext).setupJacksonXml(camelContext, config,
+                            bc.getType(), bc.getTypeClass(),
+                            bc.getOutType(), bc.getOutTypeClass(),
+                            xml, outXml);
+                } else {
+                    // to setup JAXB we need to use camel-jaxb
+                    PluginHelper.getRestBindingJaxbDataFormatFactory(camelContext).setupJaxb(camelContext, config,
+                            bc.getType(), bc.getTypeClass(),
+                            bc.getOutType(), bc.getOutTypeClass(),
+                            xml, outXml);
+                }
             }
         }
 
@@ -129,7 +136,7 @@ public class RestBindingAdviceFactory {
         }
 
         return new RestBindingAdvice(
-                camelContext, json, jaxb, outJson, outJaxb,
+                camelContext, json, xml, outJson, outXml,
                 bc.getConsumes(), bc.getProduces(), mode, bc.isSkipBindingOnErrorCode(), bc.isClientRequestValidation(),
                 bc.isClientResponseValidation(), bc.isEnableCORS(), bc.isEnableNoContentResponse(), bc.getCorsHeaders(),
                 bc.getQueryDefaultValues(), bc.getQueryAllowedValues(), bc.isRequiredBody(), bc.getRequiredQueryParameters(),

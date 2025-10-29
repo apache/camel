@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.exec.internal.ExecutableJavaProgram;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
@@ -40,13 +41,13 @@ import static org.apache.camel.component.exec.ExecBinding.EXEC_STDERR;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_USE_STDERR_ON_EMPTY_STDOUT;
 import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
 import static org.apache.camel.component.exec.ExecTestUtils.buildJavaExecutablePath;
-import static org.apache.camel.component.exec.ExecutableJavaProgram.EXIT_WITH_VALUE_0;
-import static org.apache.camel.component.exec.ExecutableJavaProgram.EXIT_WITH_VALUE_1;
-import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDERR;
-import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDOUT;
-import static org.apache.camel.component.exec.ExecutableJavaProgram.READ_INPUT_LINES_AND_PRINT_THEM;
-import static org.apache.camel.component.exec.ExecutableJavaProgram.SLEEP_WITH_TIMEOUT;
-import static org.apache.camel.component.exec.ExecutableJavaProgram.THREADS;
+import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.EXIT_WITH_VALUE_0;
+import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.EXIT_WITH_VALUE_1;
+import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.PRINT_IN_STDERR;
+import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.PRINT_IN_STDOUT;
+import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.READ_INPUT_LINES_AND_PRINT_THEM;
+import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.SLEEP_WITH_TIMEOUT;
+import static org.apache.camel.component.exec.internal.ExecutableJavaProgram.THREADS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -58,7 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * assumption, than assuming that java is in the path, because the Maven scripts build the path to java with the
  * JAVA_HOME environment variable.
  *
- * @see {@link org.apache.camel.component.exec.ExecutableJavaProgram}
+ * @see {@link org.apache.camel.component.exec.internal.ExecutableJavaProgram}
  */
 public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
 

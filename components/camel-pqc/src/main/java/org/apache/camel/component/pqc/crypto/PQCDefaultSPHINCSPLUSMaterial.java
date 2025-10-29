@@ -38,7 +38,8 @@ public class PQCDefaultSPHINCSPLUSMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.SPHINCSPLUS.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.SPHINCSPLUS.getAlgorithm(),
+                    PQCSignatureAlgorithms.SPHINCSPLUS.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

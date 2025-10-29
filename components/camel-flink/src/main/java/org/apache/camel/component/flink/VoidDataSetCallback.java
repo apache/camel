@@ -18,6 +18,14 @@ package org.apache.camel.component.flink;
 
 import org.apache.flink.api.java.DataSet;
 
+/**
+ * Void implementation of DataSetCallback for operations that don't return results.
+ *
+ * @deprecated The DataSet API is deprecated since Flink 1.12. Use the DataStream API with bounded streams instead. See
+ *             the Flink migration guide for details on migrating from DataSet to DataStream API. This class will be
+ *             maintained for backward compatibility but may be removed in future versions.
+ */
+@Deprecated(since = "4.16.0")
 public abstract class VoidDataSetCallback implements DataSetCallback<Void> {
 
     public abstract void doOnDataSet(DataSet ds, Object... payloads);

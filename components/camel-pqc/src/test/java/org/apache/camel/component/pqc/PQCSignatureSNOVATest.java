@@ -84,8 +84,9 @@ public class PQCSignatureSNOVATest extends CamelTestSupport {
     }
 
     @BindToRegistry("Signer")
-    public Signature getSigner() throws NoSuchAlgorithmException {
-        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.SNOVA.getAlgorithm());
+    public Signature getSigner() throws NoSuchAlgorithmException, NoSuchProviderException {
+        Signature mlDsa = Signature.getInstance(PQCSignatureAlgorithms.SNOVA.getAlgorithm(),
+                PQCSignatureAlgorithms.SNOVA.getBcProvider());
         return mlDsa;
     }
 }

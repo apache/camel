@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -223,12 +223,13 @@
                 </property>
             </activation>
             <properties>
-                <maven.test.skip>false</maven.test.skip>
-                <shared.data.folder>target/data</shared.data.folder>
                 <cli.jbang.version>${project.version}</cli.jbang.version>
                 <cli.jbang.repo>apache/camel</cli.jbang.repo>
                 <cli.jbang.branch>main</cli.jbang.branch>
                 <cli.jbang.docker.file/>
+                <export.runtime/>
+                <maven.test.skip>false</maven.test.skip>
+                <shared.data.folder>target/data</shared.data.folder>
                 <shared.maven.local.repo>${settings.localRepository}</shared.maven.local.repo>
                 <x11.display>:0</x11.display>
             </properties>
@@ -264,10 +265,10 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <rerunFailingTestsCount>${surefire.rerunFailingTestsCount}</rerunFailingTestsCount>
-                            <forkCount>1C</forkCount>
                             <argLine>-DforkNumber=${surefire.forkNumber}</argLine>
-                            <threadCountClasses>1</threadCountClasses>
+                            <forkCount>1C</forkCount>
+                            <groups>${export.runtime}</groups>
+                            <rerunFailingTestsCount>${surefire.rerunFailingTestsCount}</rerunFailingTestsCount>
                             <systemPropertyVariables>
                                 <cli.service.data.folder>${shared.data.folder}</cli.service.data.folder>
                                 <cli.service.version>${cli.jbang.version}</cli.service.version>
@@ -278,6 +279,7 @@
                                 <jbang.it.assert.wait.timeout>300</jbang.it.assert.wait.timeout>
                                 <DISPLAY>${x11.display}</DISPLAY>
                             </systemPropertyVariables>
+                            <threadCountClasses>1</threadCountClasses>
                         </configuration>
                     </plugin>
                 </plugins>

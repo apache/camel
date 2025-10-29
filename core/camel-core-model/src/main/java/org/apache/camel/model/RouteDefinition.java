@@ -329,6 +329,18 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     }
 
     /**
+     * Set the route note for this route
+     *
+     * @param  note the route note
+     * @return      the builder
+     */
+    @Override
+    public RouteDefinition routeNote(String note) {
+        setNote(note);
+        return this;
+    }
+
+    /**
      * Sets a prefix to use for all node ids (not route id).
      *
      * @param  prefixId the prefix

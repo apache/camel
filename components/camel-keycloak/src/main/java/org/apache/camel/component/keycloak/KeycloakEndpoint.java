@@ -101,7 +101,10 @@ public class KeycloakEndpoint extends ScheduledPollEndpoint implements EndpointS
                 .serverUrl(configuration.getServerUrl())
                 .realm(authenticationRealm);
 
-        if (configuration.getUsername() != null && configuration.getPassword() != null) {
+        if (configuration.getAccessToken() != null) {
+            // Use pre-obtained access token
+            builder.authorization(configuration.getAccessToken());
+        } else if (configuration.getUsername() != null && configuration.getPassword() != null) {
             builder.username(configuration.getUsername())
                     .password(configuration.getPassword())
                     .clientId("admin-cli");
@@ -110,7 +113,8 @@ public class KeycloakEndpoint extends ScheduledPollEndpoint implements EndpointS
                     .clientSecret(configuration.getClientSecret())
                     .grantType("client_credentials");
         } else {
-            throw new IllegalArgumentException("Either username/password or clientId/clientSecret must be provided");
+            throw new IllegalArgumentException(
+                    "Either accessToken, username/password, or clientId/clientSecret must be provided");
         }
 
         return builder.build();

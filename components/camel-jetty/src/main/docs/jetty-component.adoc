@@ -388,7 +388,7 @@ And then we can reference this binding when we define the route:
 [source,xml]
 ----
 <route>
-  <from uri="jetty:http://0.0.0.0:8080/myapp/myservice?httpBindingRef=mybinding"/>
+  <from uri="jetty:http://0.0.0.0:8080/myapp/myservice?httpBinding=#mybinding"/>
   <to uri="bean:doSomething"/>
 </route>
 ----

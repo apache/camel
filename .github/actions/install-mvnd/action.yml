@@ -37,12 +37,18 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: curl -fsSL -o mvnd.zip https://downloads.apache.org/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}.zip
+    - run: curl -fsSL -o mvnd.zip https://downloads.apache.org/maven/mvnd/$VERSION/maven-mvnd-$VERSION-$DISTRIBUTION.zip
       if: inputs.dry-run == 'false'
       shell: bash
-    - run: curl -fsSL -o mvnd.zip.sha256 https://downloads.apache.org/maven/mvnd/${{ inputs.version }}/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}.zip.sha256
+      env:
+        VERSION: ${{ inputs.version }}
+        DISTRIBUTION: ${{ inputs.distribution }}
+    - run: curl -fsSL -o mvnd.zip.sha256 https://downloads.apache.org/maven/mvnd/$VERSION/maven-mvnd-$VERSION-$DISTRIBUTION.zip.sha256
       if: inputs.dry-run == 'false'
       shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        DISTRIBUTION: ${{ inputs.distribution }}
     - id: integrity-check
       run: echo "$(cat mvnd.zip.sha256) mvnd.zip" | sha256sum --check
       if: inputs.dry-run == 'false'
@@ -51,8 +57,11 @@ runs:
       if: inputs.dry-run == 'false'
       shell: bash
     - id: mvnd-location
-      run: echo "mvnd-dir=/tmp/maven-mvnd-${{ inputs.version }}-${{ inputs.distribution }}/bin" >> $GITHUB_OUTPUT
+      run: echo "mvnd-dir=/tmp/maven-mvnd-$VERSION-$DISTRIBUTION/bin" >> $GITHUB_OUTPUT
       shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        DISTRIBUTION: ${{ inputs.distribution }}
     - id: mvnd-opts
       run: echo "MVND_OPTS=-P apache-snapshots -V -e -ntp -Dmvnd.threads=2 -Daether.connector.http.connectionMaxTtl=120 -Daether.connector.requestTimeout=300000 -Daether.dependencyCollector.impl=bf -Dmaven.artifact.threads=25 -Dci.env.name=github.com -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=2" >> $GITHUB_ENV
       shell: bash

@@ -87,7 +87,8 @@ public interface GraphqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * The query file name located in the classpath.
+         * The query file name located in the classpath (or use file: to load
+         * from file system).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -112,6 +113,40 @@ public interface GraphqlEndpointBuilderFactory {
          */
         default GraphqlEndpointBuilder queryHeader(String queryHeader) {
             doSetProperty("queryHeader", queryHeader);
+            return this;
+        }
+        /**
+         * Option to disable throwing the HttpOperationFailedException in case
+         * of failed responses from the remote server. This allows you to get
+         * all responses regardless of the HTTP status code.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
+         */
+        default GraphqlEndpointBuilder throwExceptionOnFailure(boolean throwExceptionOnFailure) {
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            return this;
+        }
+        /**
+         * Option to disable throwing the HttpOperationFailedException in case
+         * of failed responses from the remote server. This allows you to get
+         * all responses regardless of the HTTP status code.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param throwExceptionOnFailure the value to set
+         * @return the dsl builder
+         */
+        default GraphqlEndpointBuilder throwExceptionOnFailure(String throwExceptionOnFailure) {
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -228,6 +263,38 @@ public interface GraphqlEndpointBuilderFactory {
             return (GraphqlEndpointBuilder) this;
         }
 
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGraphqlEndpointBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedGraphqlEndpointBuilder headerFilterStrategy(String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
         /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to

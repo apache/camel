@@ -51,11 +51,23 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
 
     }
 
+    public static class FormatCompletionCandidates implements Iterable<String> {
+
+        public FormatCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("yaml", "xml").iterator();
+        }
+
+    }
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--format" },
-                        description = "Output format (xml or yaml)", defaultValue = "yaml")
+    @CommandLine.Option(names = { "--format" }, completionCandidates = FormatCompletionCandidates.class,
+                        description = "Output format (xml, or yaml)", defaultValue = "yaml")
     String format;
 
     @CommandLine.Option(names = { "--raw" },
@@ -68,7 +80,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
     boolean uriAsParameters;
 
     @CommandLine.Option(names = { "--filter" },
-                        description = "Filter route by filename (multiple names can be separated by comma)")
+                        description = "Filter route by filename or route id (multiple names can be separated by comma)")
     String filter;
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = NameIdCompletionCandidates.class,
@@ -141,7 +153,8 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
                         if (!f.endsWith("*")) {
                             f += "*";
                         }
-                        boolean match = PatternHelper.matchPattern(row.location, f);
+                        boolean match
+                                = PatternHelper.matchPattern(row.location, f) || PatternHelper.matchPattern(row.routeId, f);
                         if (negate) {
                             match = !match;
                         }
@@ -202,7 +215,11 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
                 if (raw) {
                     printer().printf("%s%n", c);
                 } else {
-                    printer().printf("%4d: %s%n", code.line, c);
+                    if (code.line != -1) {
+                        printer().printf("%4d: %s%n", code.line, c);
+                    } else {
+                        printer().printf("      %s%n", c);
+                    }
                 }
             }
             printer().println();

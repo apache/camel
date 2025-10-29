@@ -1,0 +1,365 @@
+= IBM Watson Language Component
+:doctitle: IBM Watson Language
+:shortname: ibm-watson-language
+:artifactid: camel-ibm-watson-language
+:description: Perform natural language processing using IBM Watson Natural Language Understanding
+:since: 4.16
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: IBM
+:camel-spring-boot-name: ibm-watson-language
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The IBM Watson Language component provides natural language understanding capabilities using
+https://www.ibm.com/cloud/watson-natural-language-understanding[IBM Watson Natural Language Understanding].
+
+Prerequisites
+
+You must have a valid IBM Cloud account and have provisioned a Watson Natural Language Understanding service instance.
+
+== URI Format
+
+------------------------------
+ibm-watson-language:label[?options]
+------------------------------
+
+Where `label` is a logical name for the endpoint.
+
+You can append query options to the URI in the following format:
+
+`?option1=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+Required IBM Watson Language component options
+
+You must provide the `apiKey` for authentication and optionally the `serviceUrl` for your Watson service instance.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+=== IBM Watson Natural Language Understanding
+
+This component integrates with IBM Watson Natural Language Understanding service to analyze text and extract metadata like sentiment, entities, keywords, concepts, categories, and emotions.
+
+=== Authentication
+
+IBM Watson services use IBM Cloud IAM (Identity and Access Management) for authentication.
+You need to provide:
+
+- `apiKey`: Your IBM Cloud API key
+- `serviceUrl`: The endpoint URL for your Watson service instance (optional, defaults to the public endpoint)
+
+You can find your service credentials in the IBM Cloud console.
+
+=== Operations
+
+1. `analyzeText` - Analyze text content provided in the message body or header
+2. `analyzeUrl` - Analyze content from a URL
+
+=== Analysis Features
+
+You can enable/disable various analysis features:
+
+- `analyzeSentiment` - Detect positive, negative, or neutral sentiment (default: true)
+- `analyzeEntities` - Extract people, companies, organizations, cities, etc. (default: true)
+- `analyzeKeywords` - Extract important keywords (default: true)
+- `analyzeEmotion` - Detect emotions like joy, anger, sadness (default: false)
+- `analyzeConcepts` - Identify high-level concepts (default: false)
+- `analyzeCategories` - Classify content into categories (default: false)
+
+== Examples
+
+=== Sentiment Analysis Example
+
+Analyze sentiment of text:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:sentiment")
+    .setBody(constant("I love this product! It's amazing!"))
+    .to("ibm-watson-language:default?apiKey=RAW(yourApiKey)&operation=analyzeText&analyzeSentiment=true&analyzeEntities=false&analyzeKeywords=false")
+    .process(exchange -> {
+        AnalysisResults results = exchange.getIn().getBody(AnalysisResults.class);
+        String sentiment = results.getSentiment().getDocument().getLabel();
+        Double score = results.getSentiment().getDocument().getScore();
+        // Or use convenience headers:
+        String sentimentLabel = exchange.getIn().getHeader("CamelIBMWatsonLanguageSentimentLabel", String.class);
+        Double sentimentScore = exchange.getIn().getHeader("CamelIBMWatsonLanguageSentimentScore", Double.class);
+    });
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:sentiment
+    steps:
+      - setBody:
+          constant: "I love this product! It's amazing!"
+      - to:
+          uri: ibm-watson-language:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            operation: analyzeText
+            analyzeSentiment: true
+            analyzeEntities: false
+            analyzeKeywords: false
+      - log: "Sentiment: ${header.CamelIBMWatsonLanguageSentimentLabel} (${header.CamelIBMWatsonLanguageSentimentScore})"
+--------------------------------------------------------------------------------
+====
+
+The full `AnalysisResults` object is returned in the body, containing all requested analyses (sentiment, entities, keywords, etc.).
+Common values like sentiment score and label are also available as headers for convenience.
+
+=== Extract Entities and Keywords
+
+Analyze text to extract entities and keywords:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:analyze")
+    .setBody(constant("IBM Watson is an AI platform developed by IBM in Armonk, New York."))
+    .to("ibm-watson-language:default?apiKey=RAW(yourApiKey)&operation=analyzeText&analyzeSentiment=false&analyzeEntities=true&analyzeKeywords=true")
+    .process(exchange -> {
+        AnalysisResults results = exchange.getIn().getBody(AnalysisResults.class);
+        results.getEntities().forEach(entity ->
+            System.out.println("Entity: " + entity.getText() + " (" + entity.getType() + ")")
+        );
+        results.getKeywords().forEach(keyword ->
+            System.out.println("Keyword: " + keyword.getText() + " (relevance: " + keyword.getRelevance() + ")")
+        );
+    });
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:analyze
+    steps:
+      - setBody:
+          constant: "IBM Watson is an AI platform developed by IBM in Armonk, New York."
+      - to:
+          uri: ibm-watson-language:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            operation: analyzeText
+            analyzeSentiment: false
+            analyzeEntities: true
+            analyzeKeywords: true
+      - log: "Analysis complete: ${body}"
+--------------------------------------------------------------------------------
+====
+
+=== Comprehensive Analysis
+
+Analyze text with multiple features enabled:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:comprehensive")
+    .setBody(constant("Apple Inc. announced record profits. The CEO praised the team's innovation."))
+    .to("ibm-watson-language:default?apiKey=RAW(yourApiKey)&operation=analyzeText&analyzeSentiment=true&analyzeEntities=true&analyzeKeywords=true&analyzeEmotion=true")
+    .process(exchange -> {
+        AnalysisResults results = exchange.getIn().getBody(AnalysisResults.class);
+        System.out.println("Sentiment: " + results.getSentiment().getDocument().getLabel());
+        System.out.println("Entities: " + results.getEntities().size());
+        System.out.println("Keywords: " + results.getKeywords().size());
+        if (results.getEmotion() != null) {
+            System.out.println("Emotions: " + results.getEmotion().getDocument().getEmotion());
+        }
+    });
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:comprehensive
+    steps:
+      - setBody:
+          constant: "Apple Inc. announced record profits. The CEO praised the team's innovation."
+      - to:
+          uri: ibm-watson-language:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            operation: analyzeText
+            analyzeSentiment: true
+            analyzeEntities: true
+            analyzeKeywords: true
+            analyzeEmotion: true
+--------------------------------------------------------------------------------
+====
+
+=== Analyze URL
+
+Analyze content from a webpage:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:url")
+    .setHeader("CamelIBMWatsonLanguageUrl", constant("https://www.ibm.com/watson"))
+    .to("ibm-watson-language:default?apiKey=RAW(yourApiKey)&operation=analyzeUrl&analyzeSentiment=true&analyzeKeywords=true")
+    .process(exchange -> {
+        AnalysisResults results = exchange.getIn().getBody(AnalysisResults.class);
+        System.out.println("Page language: " + results.getLanguage());
+        System.out.println("Page sentiment: " + results.getSentiment().getDocument().getLabel());
+    });
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:url
+    steps:
+      - setHeader:
+          name: CamelIBMWatsonLanguageUrl
+          constant: "https://www.ibm.com/watson"
+      - to:
+          uri: ibm-watson-language:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            operation: analyzeUrl
+            analyzeSentiment: true
+            analyzeKeywords: true
+      - log: "Page sentiment: ${header.CamelIBMWatsonLanguageSentimentLabel}"
+--------------------------------------------------------------------------------
+====
+
+=== Dynamic Feature Selection
+
+Use headers to dynamically enable/disable analysis features:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:dynamic")
+    .setBody(constant("This is great news for the company!"))
+    .setHeader(WatsonLanguageConstants.ANALYZE_SENTIMENT, constant(true))
+    .setHeader(WatsonLanguageConstants.ANALYZE_EMOTION, constant(true))
+    .setHeader(WatsonLanguageConstants.ANALYZE_KEYWORDS, constant(false))
+    .to("ibm-watson-language:default?apiKey=RAW(yourApiKey)&operation=analyzeText");
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:dynamic
+    steps:
+      - setBody:
+          constant: "This is great news for the company!"
+      - setHeader:
+          name: CamelIBMWatsonLanguageAnalyzeSentiment
+          constant: true
+      - setHeader:
+          name: CamelIBMWatsonLanguageAnalyzeEmotion
+          constant: true
+      - setHeader:
+          name: CamelIBMWatsonLanguageAnalyzeKeywords
+          constant: false
+      - to:
+          uri: ibm-watson-language:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            operation: analyzeText
+--------------------------------------------------------------------------------
+====
+
+=== Custom Service URL
+
+If your Watson service is in a specific region, specify the service URL:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:regional")
+    .to("ibm-watson-language:default?apiKey=RAW(yourApiKey)&serviceUrl=https://api.us-south.natural-language-understanding.watson.cloud.ibm.com&operation=analyzeText");
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:regional
+    steps:
+      - to:
+          uri: ibm-watson-language:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            serviceUrl: "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com"
+            operation: analyzeText
+--------------------------------------------------------------------------------
+====
+
+== Dependencies
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ibm-watson-language</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------
+
+where `x.x.x` is the version number of Camel.
+
+
+include::spring-boot:partial$starter.adoc[]

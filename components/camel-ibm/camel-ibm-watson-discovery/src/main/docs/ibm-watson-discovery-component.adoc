@@ -1,0 +1,398 @@
+= IBM Watson Discovery Component
+:doctitle: IBM Watson Discovery
+:shortname: ibm-watson-discovery
+:artifactid: camel-ibm-watson-discovery
+:description: Perform document understanding and search using IBM Watson Discovery
+:since: 4.16
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: IBM
+:camel-spring-boot-name: ibm-watson-discovery
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The IBM Watson Discovery component provides document understanding and intelligent search capabilities using
+https://www.ibm.com/cloud/watson-discovery[IBM Watson Discovery].
+
+Prerequisites
+
+You must have a valid IBM Cloud account and have provisioned a Watson Discovery service instance with a project.
+
+== URI Format
+
+------------------------------
+ibm-watson-discovery:label[?options]
+------------------------------
+
+Where `label` is a logical name for the endpoint.
+
+You can append query options to the URI in the following format:
+
+`?option1=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+
+Required IBM Watson Discovery component options
+
+You must provide the `apiKey` for authentication, `projectId` for your Watson Discovery project, and optionally the `serviceUrl` for your Watson service instance.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+=== IBM Watson Discovery
+
+This component integrates with IBM Watson Discovery service to perform intelligent document search, natural language querying, and document management operations.
+
+=== Authentication
+
+IBM Watson services use IBM Cloud IAM (Identity and Access Management) for authentication.
+You need to provide:
+
+- `apiKey`: Your IBM Cloud API key
+- `projectId`: Your Watson Discovery project ID
+- `serviceUrl`: The endpoint URL for your Watson service instance (optional, defaults to the public endpoint)
+
+You can find your service credentials and project ID in the IBM Cloud console.
+
+=== Operations
+
+1. `query` - Perform natural language queries against your document collections
+2. `listCollections` - List all collections in your project
+3. `createCollection` - Create a new document collection
+4. `deleteCollection` - Delete a collection
+5. `addDocument` - Add a document to a collection
+6. `updateDocument` - Update an existing document
+7. `deleteDocument` - Delete a document from a collection
+
+== Examples
+
+=== Query Documents
+
+Search for documents using natural language:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:search")
+    .setBody(constant("What is artificial intelligence?"))
+    .to("ibm-watson-discovery:default?apiKey=RAW(yourApiKey)&projectId=yourProjectId&operation=query")
+    .process(exchange -> {
+        QueryResponse response = exchange.getIn().getBody(QueryResponse.class);
+        System.out.println("Found " + response.getMatchingResults() + " results");
+        response.getResults().forEach(result -> {
+            System.out.println("Document: " + result);
+        });
+    });
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:search
+    steps:
+      - setBody:
+          constant: "What is artificial intelligence?"
+      - to:
+          uri: ibm-watson-discovery:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            projectId: yourProjectId
+            operation: query
+      - log: "Found ${body.matchingResults} results"
+--------------------------------------------------------------------------------
+====
+
+=== Query with Filters
+
+Apply filters to narrow down search results:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:searchFiltered")
+    .process(exchange -> {
+        exchange.getIn().setBody("cloud computing");
+        exchange.getIn().setHeader(WatsonDiscoveryConstants.FILTER, "enriched_text.entities.type:Company");
+        exchange.getIn().setHeader(WatsonDiscoveryConstants.COUNT, 10);
+    })
+    .to("ibm-watson-discovery:default?apiKey=RAW(yourApiKey)&projectId=yourProjectId&operation=query");
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:searchFiltered
+    steps:
+      - setBody:
+          constant: "cloud computing"
+      - setHeader:
+          name: CamelIBMWatsonDiscoveryFilter
+          constant: "enriched_text.entities.type:Company"
+      - setHeader:
+          name: CamelIBMWatsonDiscoveryCount
+          constant: 10
+      - to:
+          uri: ibm-watson-discovery:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            projectId: yourProjectId
+            operation: query
+--------------------------------------------------------------------------------
+====
+
+=== List Collections
+
+List all collections in your project:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listCollections")
+    .to("ibm-watson-discovery:default?apiKey=RAW(yourApiKey)&projectId=yourProjectId&operation=listCollections")
+    .process(exchange -> {
+        ListCollectionsResponse response = exchange.getIn().getBody(ListCollectionsResponse.class);
+        response.getCollections().forEach(collection -> {
+            System.out.println("Collection: " + collection.getName() + " (ID: " + collection.getCollectionId() + ")");
+        });
+    });
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:listCollections
+    steps:
+      - to:
+          uri: ibm-watson-discovery:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            projectId: yourProjectId
+            operation: listCollections
+      - log: "Collections: ${body}"
+--------------------------------------------------------------------------------
+====
+
+=== Create Collection
+
+Create a new document collection:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createCollection")
+    .process(exchange -> {
+        exchange.getIn().setHeader(WatsonDiscoveryConstants.COLLECTION_NAME, "My Documents");
+        exchange.getIn().setHeader(WatsonDiscoveryConstants.COLLECTION_DESCRIPTION, "Collection for project documents");
+    })
+    .to("ibm-watson-discovery:default?apiKey=RAW(yourApiKey)&projectId=yourProjectId&operation=createCollection")
+    .process(exchange -> {
+        CollectionDetails collection = exchange.getIn().getBody(CollectionDetails.class);
+        String collectionId = exchange.getIn().getHeader(WatsonDiscoveryConstants.COLLECTION_ID, String.class);
+        System.out.println("Created collection with ID: " + collectionId);
+    });
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:createCollection
+    steps:
+      - setHeader:
+          name: CamelIBMWatsonDiscoveryCollectionName
+          constant: "My Documents"
+      - setHeader:
+          name: CamelIBMWatsonDiscoveryCollectionDescription
+          constant: "Collection for project documents"
+      - to:
+          uri: ibm-watson-discovery:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            projectId: yourProjectId
+            operation: createCollection
+      - log: "Created collection: ${header.CamelIBMWatsonDiscoveryCollectionId}"
+--------------------------------------------------------------------------------
+====
+
+=== Add Document
+
+Add a document to a collection:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("file:input?noop=true")
+    .process(exchange -> {
+        exchange.getIn().setHeader(WatsonDiscoveryConstants.COLLECTION_ID, "your-collection-id");
+        exchange.getIn().setHeader(WatsonDiscoveryConstants.DOCUMENT_FILENAME, exchange.getIn().getHeader(Exchange.FILE_NAME));
+        exchange.getIn().setHeader(WatsonDiscoveryConstants.DOCUMENT_CONTENT_TYPE, "application/pdf");
+        // Body is already the file InputStream
+    })
+    .to("ibm-watson-discovery:default?apiKey=RAW(yourApiKey)&projectId=yourProjectId&operation=addDocument")
+    .process(exchange -> {
+        String documentId = exchange.getIn().getHeader(WatsonDiscoveryConstants.DOCUMENT_ID, String.class);
+        System.out.println("Added document with ID: " + documentId);
+    });
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: file:input?noop=true
+    steps:
+      - setHeader:
+          name: CamelIBMWatsonDiscoveryCollectionId
+          constant: "your-collection-id"
+      - setHeader:
+          name: CamelIBMWatsonDiscoveryDocumentFilename
+          simple: "${header.CamelFileName}"
+      - setHeader:
+          name: CamelIBMWatsonDiscoveryDocumentContentType
+          constant: "application/pdf"
+      - to:
+          uri: ibm-watson-discovery:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            projectId: yourProjectId
+            operation: addDocument
+      - log: "Added document: ${header.CamelIBMWatsonDiscoveryDocumentId}"
+--------------------------------------------------------------------------------
+====
+
+=== Delete Document
+
+Delete a document from a collection:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:deleteDoc")
+    .process(exchange -> {
+        exchange.getIn().setHeader(WatsonDiscoveryConstants.COLLECTION_ID, "your-collection-id");
+        exchange.getIn().setHeader(WatsonDiscoveryConstants.DOCUMENT_ID, "document-to-delete");
+    })
+    .to("ibm-watson-discovery:default?apiKey=RAW(yourApiKey)&projectId=yourProjectId&operation=deleteDocument")
+    .log("Document deleted successfully");
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:deleteDoc
+    steps:
+      - setHeader:
+          name: CamelIBMWatsonDiscoveryCollectionId
+          constant: "your-collection-id"
+      - setHeader:
+          name: CamelIBMWatsonDiscoveryDocumentId
+          constant: "document-to-delete"
+      - to:
+          uri: ibm-watson-discovery:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            projectId: yourProjectId
+            operation: deleteDocument
+      - log: "Document deleted successfully"
+--------------------------------------------------------------------------------
+====
+
+=== Custom Service URL
+
+If your Watson service is in a specific region, specify the service URL:
+
+[tabs]
+====
+Java::
++
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:search")
+    .to("ibm-watson-discovery:default?apiKey=RAW(yourApiKey)&projectId=yourProjectId&serviceUrl=https://api.us-south.discovery.watson.cloud.ibm.com&operation=query");
+--------------------------------------------------------------------------------
+
+YAML::
++
+[source,yaml]
+--------------------------------------------------------------------------------
+- from:
+    uri: direct:search
+    steps:
+      - to:
+          uri: ibm-watson-discovery:default
+          parameters:
+            apiKey: RAW(yourApiKey)
+            projectId: yourProjectId
+            serviceUrl: "https://api.us-south.discovery.watson.cloud.ibm.com"
+            operation: query
+--------------------------------------------------------------------------------
+====
+
+== Dependencies
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ibm-watson-discovery</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------
+
+where `x.x.x` is the version number of Camel.
+
+
+include::spring-boot:partial$starter.adoc[]

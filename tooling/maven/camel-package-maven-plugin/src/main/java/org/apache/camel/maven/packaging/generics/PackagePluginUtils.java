@@ -59,7 +59,7 @@ public final class PackagePluginUtils {
                         "IOException: " + jandex.getException().getMessage(), jandex.getException());
             }
 
-            log.warn("Jandex reading failed: " + jandex.getException().getMessage());
+            log.warn("Jandex reading failed: " + jandex.getException().getMessage(), jandex.getException());
         }
 
         return jandex.getIndex();

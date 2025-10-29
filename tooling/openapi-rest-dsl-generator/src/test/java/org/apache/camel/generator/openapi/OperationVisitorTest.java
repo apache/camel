@@ -37,7 +37,7 @@ public class OperationVisitorTest {
     public void shouldEmitCodeForOas2ParameterInQuery() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null, null);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(null, emitter, null, null, null, null);
 
         final Parameter parameter = new Parameter();
         parameter.setName("param");
@@ -58,7 +58,7 @@ public class OperationVisitorTest {
     public void referenceApiParameter() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null, null);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(null, emitter, null, null, null, null);
         final OpenAPI document
                 = new OpenAPIV3Parser().read("src/test/resources/org/apache/camel/generator/openapi/openapi-v3-ref-param.yaml");
         final PathItem pathItem = document.getPaths().get("/path");
@@ -81,6 +81,7 @@ public class OperationVisitorTest {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
         final OperationVisitor<?> visitor = new OperationVisitor<>(
+                null,
                 emitter, new OperationFilter(), "/path", new DefaultDestinationGenerator(), "camel.sample");
 
         final OpenAPI document = new OpenAPIV3Parser().read(
@@ -113,6 +114,7 @@ public class OperationVisitorTest {
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
         final OperationVisitor<?> visitor
                 = new OperationVisitor<>(
+                        null,
                         emitter, new OperationFilter(), "/path/{param}", new DefaultDestinationGenerator(), null);
 
         final OpenAPI document = new OpenAPI();
@@ -145,6 +147,7 @@ public class OperationVisitorTest {
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
         final OperationVisitor<?> visitor
                 = new OperationVisitor<>(
+                        null,
                         emitter, new OperationFilter(), "/path/{param}", new DefaultDestinationGenerator(), null);
 
         final Paths paths = new Paths();
@@ -174,7 +177,7 @@ public class OperationVisitorTest {
     public void shouldEmitCodeForOas3ParameterWithDefaultValue() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null, null);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(null, emitter, null, null, null, null);
 
         final Parameter parameter = new Parameter();
         parameter.setName("param");
@@ -199,7 +202,7 @@ public class OperationVisitorTest {
     public void shouldEmitCodeForOas3ParameterWithEnum() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null, null);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(null, emitter, null, null, null, null);
 
         final Parameter parameter = new Parameter();
         parameter.setName("param");
@@ -224,7 +227,7 @@ public class OperationVisitorTest {
     public void shouldEmitCodeForOas3ParameterWithType() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null, null);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(null, emitter, null, null, null, null);
 
         final Parameter parameter = new Parameter();
         parameter.setName("param");
@@ -249,7 +252,7 @@ public class OperationVisitorTest {
     public void shouldEmitCodeForOas3PathParameter() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null, null);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(null, emitter, null, null, null, null);
 
         final Parameter parameter = new Parameter();
         parameter.setName("param");
@@ -270,7 +273,7 @@ public class OperationVisitorTest {
     public void shouldEmitCodeForOas3RefParameters() {
         final Builder method = MethodSpec.methodBuilder("configure");
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
-        final OperationVisitor<?> visitor = new OperationVisitor<>(emitter, null, null, null, null);
+        final OperationVisitor<?> visitor = new OperationVisitor<>(null, emitter, null, null, null, null);
 
         final Paths paths = new Paths();
         final PathItem path = new PathItem();
@@ -298,6 +301,7 @@ public class OperationVisitorTest {
         final MethodBodySourceCodeEmitter emitter = new MethodBodySourceCodeEmitter(method);
         final OperationVisitor<?> visitor
                 = new OperationVisitor<>(
+                        null,
                         emitter, new OperationFilter(), "/path/{param}",
                         new DefaultDestinationGenerator("seda:${operationId}"), null);
 

@@ -66,7 +66,7 @@ public class ArtemisAMQPInfraService extends AbstractArtemisEmbeddedService {
             throw new ArtemisRunException("AMQP acceptor cannot be configured", e);
         }
         artemisConfiguration.setPersistenceEnabled(false);
-        artemisConfiguration.addAddressesSetting("#", addressSettings);
+        artemisConfiguration.addAddressSetting("#", addressSettings);
         artemisConfiguration.setSecurityEnabled(
                 "true".equalsIgnoreCase(System.getProperty(ArtemisProperties.ARTEMIS_AUTHENTICATION_ENABLED)));
         if (artemisConfiguration.isSecurityEnabled()) {

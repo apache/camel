@@ -25,6 +25,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "httpclient":
         case "httpClient": target.setHttpClient(property(camelContext, org.apache.hc.client5.http.classic.HttpClient.class, value)); return true;
         case "jwtauthorizationtype":
@@ -41,6 +43,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "queryFile": target.setQueryFile(property(camelContext, java.lang.String.class, value)); return true;
         case "queryheader":
         case "queryHeader": target.setQueryHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": target.setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
         case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "variables": target.setVariables(property(camelContext, org.apache.camel.util.json.JsonObject.class, value)); return true;
         case "variablesheader":
@@ -54,6 +58,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "httpclient":
         case "httpClient": return org.apache.hc.client5.http.classic.HttpClient.class;
         case "jwtauthorizationtype":
@@ -70,6 +76,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "queryFile": return java.lang.String.class;
         case "queryheader":
         case "queryHeader": return java.lang.String.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
         case "username": return java.lang.String.class;
         case "variables": return org.apache.camel.util.json.JsonObject.class;
         case "variablesheader":
@@ -84,6 +92,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "httpclient":
         case "httpClient": return target.getHttpClient();
         case "jwtauthorizationtype":
@@ -100,6 +110,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "queryFile": return target.getQueryFile();
         case "queryheader":
         case "queryHeader": return target.getQueryHeader();
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return target.isThrowExceptionOnFailure();
         case "username": return target.getUsername();
         case "variables": return target.getVariables();
         case "variablesheader":

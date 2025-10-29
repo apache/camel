@@ -27,6 +27,6 @@ public class OnFallbackDefinitionTest {
         OnFallbackDefinition ofd = new OnFallbackDefinition();
         ofd.addOutput(new ToDefinition("urn:foo1"));
         ofd.addOutput(new ToDefinition("urn:foo2"));
-        assertEquals("onFallback[urn:foo1,urn:foo2]", ofd.getLabel());
+        assertEquals("onFallback[to[urn:foo1],to[urn:foo2]]", ofd.getLabel());
     }
 }

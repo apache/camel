@@ -20,11 +20,13 @@ import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 public class ExportITCase extends JBangTestSupport {
 
     @Test
+    @Tag("spring-boot")
     public void testExportSB() throws IOException {
         execute(String.format("export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
                 mountPoint()));
@@ -35,6 +37,7 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("quarkus")
     public void testExportQuarkus() throws IOException {
         execute(String.format("export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
                 mountPoint()));
@@ -45,6 +48,7 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("main")
     public void testExportMain() throws IOException {
         execute(String.format("export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
                 mountPoint()));
@@ -55,6 +59,7 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("spring-boot")
     public void testExportFile() throws IOException {
         copyResourceInDataFolder(TestResources.DIR_ROUTE);
         copyResourceInDataFolder(TestResources.SERVER_ROUTE);
@@ -66,6 +71,7 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("spring-boot")
     public void testExportGradle() {
         execute(String.format(
                 "export --build-tool=gradle --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
@@ -76,6 +82,7 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("quarkus")
     public void testExportProperties() throws IOException {
         newFileInDataFolder("application.properties", "camel.jbang.runtime=quarkus");
         execInContainer(String.format("mv %s/application.properties .", mountPoint()));
@@ -85,11 +92,11 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("main")
     public void testExportWithAgent() throws IOException {
         newFileInDataFolder("application.properties",
                 "camel.jbang.dependencies=camel:opentelemetry,agent:io.opentelemetry.javaagent:opentelemetry-javaagent:1.31.0\n"
-                                                      +
-                                                      "camel.opentelemetry.enabled=true");
+                                                      + "camel.opentelemetry.enabled=true");
         execInContainer(String.format("mv %s/application.properties .", mountPoint()));
         execute(String.format(
                 "export --runtime=camel-main --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s", mountPoint()));
@@ -97,6 +104,7 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("quarkus")
     public void testExportWithJMXManagement() throws IOException {
         execute(String.format(
                 "export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dep=camel:management --directory=%s",
@@ -105,6 +113,7 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("quarkus")
     public void testExportWithCliConnector() throws IOException {
         execute(String.format(
                 "export --runtime=quarkus --gav=com.foo:acme:1.0-SNAPSHOT --dep=camel:cli-connector --directory=%s",
@@ -113,6 +122,7 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("quarkus")
     public void testExportWithCamelConfig() throws IOException {
         execute("config set gav=com.foo:acme:1.0-SNAPSHOT");
         execute("config set runtime=quarkus");
@@ -122,6 +132,7 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
+    @Tag("quarkus")
     public void testExportWithCustomQuarkusBuild() throws IOException {
         String quarkusGid = System.getProperty("quarkusGroupId");
         String quarkusVersion = System.getProperty("quarkusVersion");

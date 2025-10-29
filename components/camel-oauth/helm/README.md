@@ -1,6 +1,6 @@
 # Local Kubernetes Cluster
 
-To keep the entry barrier for Camel OAuth low, we initially deploy Keycloak as our Identity Provider on Docker Desktop Kubernetes.
+To keep the entry barrier for Camel OAuth low, we initially deploy Keycloak as our Identity Provider on Rancher Desktop Kubernetes.
 This is a single node Kubernetes cluster running on localhost.
 
 ## Ingress with Traefik
@@ -9,45 +9,32 @@ Keycloak should only be accessed with transport layer security (TLS) in place. T
 of exchanging privacy/security sensitive data over any channel.
 
 Here we place Keycloak behind a TLS terminating proxy (Traefik). It has the advantage that any traffic
-(i.e. not only for Keycloak) can be secured at ingress level.
+(i.e. not only for Keycloak) can be secured at ingress level. Traefik should already be installed with Rancher Desktop.
 
 https://doc.traefik.io/traefik/
 
-```
-helm repo add traefik https://traefik.github.io/charts
-helm repo update
-helm install traefik traefik/traefik
-```
 
-Once Traefik is installed, we create a Kubernetes TLS 'secret'.  
-
-In case you'd like to regenerate the TLS certificate and key, do this ...
-Also, a Java app that wants to access Keycloak over TLS, must trust that certificate. 
+Create and install TLS edge certificate
 
 ```
-# Generate TLS Certificate
-openssl req -x509 -newkey rsa:4096 -keyout ./helm/etc/cluster.key -out ./helm/etc/cluster.crt -days 365 -nodes -config ./helm/etc/san.cnf
+brew install mkcert nss
 
-# Show Certificate
-cat ./helm/etc/cluster.crt | openssl x509 -noout -text
+# Make sure the mkcert root CA is trusted
+mkcert --install
 
-# Import TLS Certificate to Java Keystore (i.e. trust the certificate)
-sudo keytool -import -alias camel-oauth -file ./helm/etc/cluster.crt -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
+mkcert "localtest.me" "*.localtest.me"
+mkdir -p helm/tls && mv localtest.* helm/tls
 
-# Remove TLS Certificate from Java Keystore
-sudo keytool -delete -alias camel-oauth -keystore $JAVA_HOME/lib/security/cacerts -storepass changeit
+kubectl delete secret edge-tls --ignore-not-found=true
+kubectl create secret tls edge-tls \
+    --cert=helm/tls/localtest.me+1.pem \
+    --key=helm/tls/localtest.me+1-key.pem
 
-# Trust this cert on macOS
-sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ./helm/etc/cluster.crt
-
-# Trust this cert on Rock9
-sudo cp ./helm/etc/cluster.crt /etc/pki/ca-trust/source/anchors/ && sudo update-ca-trust
-```
-
-Once we have the TLS certificate, we can install the TLS secret like this ...
-
-```
-helm upgrade --install traefik-tls ./helm -f ./helm/values-traefik-tls.yaml
+# The above shold also install the root cert with the Java system truststore. This is matter of mkcert finding the correct JRE home.
+# In case it does not, you may need to import the mkcert rootCA.pem manually to the Java truststore.
+keytool -delete -cacerts -alias mkcert-root -storepass changeit
+keytool -importcert -cacerts -alias mkcert-root -storepass changeit -noprompt \
+    -file "$(mkcert -CAROOT)/rootCA.pem"
 ```
 
 ... and verify that TLS access is working
@@ -56,13 +43,12 @@ helm upgrade --install traefik-tls ./helm -f ./helm/values-traefik-tls.yaml
 helm upgrade --install whoami ./helm -f ./helm/values-whoami.yaml
 ```
 
-https://example.local/who
+https://localtest.me/who
 
-Note, the domains `example.local` and `keycloak.local` are mapped to an actual IP in `/etc/hosts`.
 
 ## Installing Keycloak
 
-Using Helm, we can install a pre-configured instance of Keycloak behind Traefik like this ... 
+Using Helm, we can also install a pre-configured instance of Keycloak behind Traefik like this ... 
 
 ```
 helm upgrade --install keycloak ./helm -f ./helm/values-keycloak.yaml \
@@ -72,7 +58,7 @@ helm upgrade --install keycloak ./helm -f ./helm/values-keycloak.yaml \
 helm uninstall keycloak
 ```
 
-https://keycloak.local/kc
+https://oauth.localtest.me
 
 Admin:  admin/admin
 User:   alice/alice
@@ -86,7 +72,7 @@ Note, in case you see `NoSuchAlgorithmException: RSA-OAEP`, we can disable that 
 Create realm 'camel' if not already imported
 
 ```
-kcadm config credentials --server https://keycloak.local/kc --realm master --user admin --password admin
+kcadm config credentials --server https://oauth.localtest.me/kc --realm master --user admin --password admin
 
 kcadm create realms -s realm=camel -s enabled=true
 
@@ -136,59 +122,6 @@ helm upgrade --install kafka ./helm -f ./helm/values-kafka.yaml \
 
 helm uninstall kafka
 ```
-
-# Remote Kubernetes Cluster
-
-Next level up, we run a single node cluster that we access remotely - [K3S](https://k3s.io/) is an excellent choice for that.
-
-Once K3s is running, we can use [Lens](https://k8slens.dev/), [kubectx](https://github.com/ahmetb/kubectx) or plain `kubectl config` for context switching to k3s.
-
-As above, we need to install the TLS secret
-
-```
-helm upgrade --install traefik-tls ./helm -f ./helm/values-traefik-tls.yaml
-```
-
-... and then Keycloak
-
-```
-helm upgrade --install keycloak ./helm -f ./helm/values-keycloak.yaml \
-    && kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=keycloak --timeout=20s \
-    && kubectl logs --tail 400 -f -l app.kubernetes.io/name=keycloak
-
-helm uninstall keycloak
-```
-
-https://keycloak.k3s/kc
-
-## Modifying CoreDNS
-
-Unlike DockerDesktop Kubernetes, pods deployed on K3S do not see /etc/hosts from the host system. Instead, K3S uses 
-CoreDNS to resolve host names, which we can use to add the required mapping.
-
-```
-kubectl -n kube-system edit configmap coredns
-
-  Corefile: |                                           
-    .:53 {
-        ...                                              
-        hosts /etc/coredns/NodeHosts {
-          <host-ip> keycloak.k3s
-          ttl 60                  
-          reload 15s              
-          fallthrough                        
-        }                                    
-```
-
-Please let us know, when there is a better way to provide a host mapping such that traffic goes through the Keycloak 
-IngressRoute, which references our custom TLS certificate.
-
-## Private Registry
-
-Most of our examples reference images that are deployed to the private registry of the given cluster (i.e. these images
-are not available in public registries). [camel-cloud-examples](https://github.com/tdiesler/camel-cloud-examples/tree/main)
-provides [Ansible playbooks](https://github.com/tdiesler/camel-cloud-examples/tree/main/ansible) that show how ton install 
-a private registry in K3S. There is also some documentation in K3S [directly](https://docs.k3s.io/installation/private-registry).
 
 # OpenShift
 

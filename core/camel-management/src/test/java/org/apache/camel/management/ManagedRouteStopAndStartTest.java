@@ -56,6 +56,9 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
         String description = (String) mbeanServer.getAttribute(on, "Description");
         assertEquals("This is the foo route", description);
 
+        String note = (String) mbeanServer.getAttribute(on, "Note");
+        assertEquals("Some route note here", note);
+
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
@@ -99,7 +102,7 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from(fileUri("?initialDelay=0&delay=10")).routeId("foo")
-                        .routeDescription("This is the foo route")
+                        .routeDescription("This is the foo route").routeNote("Some route note here")
                         .convertBodyTo(String.class)
                         .to("mock:result");
             }

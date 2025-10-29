@@ -98,8 +98,8 @@ public class PQCProducer extends DefaultProducer {
             signer = getEndpoint().getConfiguration().getSigner();
 
             if (ObjectHelper.isEmpty(signer)) {
-                signer = Signature
-                        .getInstance(PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm()).getAlgorithm());
+                PQCSignatureAlgorithms sigAlg = PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm());
+                signer = Signature.getInstance(sigAlg.getAlgorithm(), sigAlg.getBcProvider());
             }
         }
 
@@ -108,9 +108,9 @@ public class PQCProducer extends DefaultProducer {
             keyGenerator = getEndpoint().getConfiguration().getKeyGenerator();
 
             if (ObjectHelper.isEmpty(keyGenerator)) {
-                keyGenerator = KeyGenerator
-                        .getInstance(PQCKeyEncapsulationAlgorithms.valueOf(getConfiguration().getKeyEncapsulationAlgorithm())
-                                .getAlgorithm());
+                PQCKeyEncapsulationAlgorithms kemAlg
+                        = PQCKeyEncapsulationAlgorithms.valueOf(getConfiguration().getKeyEncapsulationAlgorithm());
+                keyGenerator = KeyGenerator.getInstance(kemAlg.getAlgorithm(), kemAlg.getBcProvider());
             }
         }
 

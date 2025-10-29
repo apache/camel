@@ -97,8 +97,8 @@ public class DebugTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(2, logs.size());
-        assertEquals("Breakpoint at To[log:foo] with body: Hello Camel", logs.get(0));
-        assertEquals("Breakpoint at To[mock:result] with body: Hello Camel", logs.get(1));
+        assertEquals("Breakpoint at to[log:foo] with body: Hello Camel", logs.get(0));
+        assertEquals("Breakpoint at to[mock:result] with body: Hello Camel", logs.get(1));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class DebugTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(1, logs.size());
-        assertEquals("Breakpoint at To[mock:result] with body: Hello Camel", logs.get(0));
+        assertEquals("Breakpoint at to[mock:result] with body: Hello Camel", logs.get(0));
     }
 
     @Test

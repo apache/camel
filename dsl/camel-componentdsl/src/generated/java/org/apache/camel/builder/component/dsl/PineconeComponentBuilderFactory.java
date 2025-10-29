@@ -51,6 +51,22 @@ public interface PineconeComponentBuilderFactory {
     interface PineconeComponentBuilder extends ComponentBuilder<PineconeVectorDbComponent> {
     
         /**
+         * Action to perform.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.pinecone.PineconeVectorDbAction&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder action(org.apache.camel.component.pinecone.PineconeVectorDbAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+    
+        /**
          * Sets the cloud type to use (aws/gcp/azure).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -216,39 +232,6 @@ public interface PineconeComponentBuilderFactory {
     
         
         /**
-         * Whether the client uses Transport Layer Security (TLS) to secure
-         * communications.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param tls the value to set
-         * @return the dsl builder
-         */
-        default PineconeComponentBuilder tls(boolean tls) {
-            doSetProperty("tls", tls);
-            return this;
-        }
-    
-        /**
-         * Sets the API key to use for authentication.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param token the value to set
-         * @return the dsl builder
-         */
-        default PineconeComponentBuilder token(java.lang.String token) {
-            doSetProperty("token", token);
-            return this;
-        }
-    
-        
-        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -266,6 +249,39 @@ public interface PineconeComponentBuilderFactory {
          */
         default PineconeComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * Whether the client uses Transport Layer Security (TLS) to secure
+         * communications.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
+            return this;
+        }
+    
+        /**
+         * Sets the API key to use for authentication.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param token the value to set
+         * @return the dsl builder
+         */
+        default PineconeComponentBuilder token(java.lang.String token) {
+            doSetProperty("token", token);
             return this;
         }
     }
@@ -289,6 +305,7 @@ public interface PineconeComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "action": getOrCreateConfiguration((PineconeVectorDbComponent) component).setAction((org.apache.camel.component.pinecone.PineconeVectorDbAction) value); return true;
             case "cloud": getOrCreateConfiguration((PineconeVectorDbComponent) component).setCloud((java.lang.String) value); return true;
             case "cloudRegion": getOrCreateConfiguration((PineconeVectorDbComponent) component).setCloudRegion((java.lang.String) value); return true;
             case "collectionDimension": getOrCreateConfiguration((PineconeVectorDbComponent) component).setCollectionDimension((java.lang.Integer) value); return true;
@@ -299,9 +316,9 @@ public interface PineconeComponentBuilderFactory {
             case "lazyStartProducer": ((PineconeVectorDbComponent) component).setLazyStartProducer((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((PineconeVectorDbComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((PineconeVectorDbComponent) component).setProxyPort((java.lang.Integer) value); return true;
+            case "autowiredEnabled": ((PineconeVectorDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "tls": getOrCreateConfiguration((PineconeVectorDbComponent) component).setTls((boolean) value); return true;
             case "token": getOrCreateConfiguration((PineconeVectorDbComponent) component).setToken((java.lang.String) value); return true;
-            case "autowiredEnabled": ((PineconeVectorDbComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

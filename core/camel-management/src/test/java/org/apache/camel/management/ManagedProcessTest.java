@@ -68,6 +68,12 @@ public class ManagedProcessTest extends ManagementTestSupport {
         String ref = (String) mbeanServer.getAttribute(on, "Ref");
         assertEquals("foo", ref);
 
+        String desc = (String) mbeanServer.getAttribute(on, "Description");
+        assertEquals("My foo processor", desc);
+
+        String note = (String) mbeanServer.getAttribute(on, "Note");
+        assertEquals("Some internal note here", note);
+
         String processorClassName = (String) mbeanServer.getAttribute(on, "ProcessorClassName");
         assertEquals("org.apache.camel.management.MyDummyProcessor", processorClassName);
     }
@@ -78,7 +84,7 @@ public class ManagedProcessTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .process("foo").id("mysend")
+                        .process("foo").id("mysend").description("My foo processor").note("Some internal note here")
                         .to("mock:foo");
             }
         };

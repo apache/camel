@@ -20,11 +20,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.cloud.bigquery.JobId;
-import com.google.cloud.bigquery.JobInfo;
-import com.google.cloud.bigquery.QueryJobConfiguration;
-import com.google.cloud.bigquery.QueryParameterValue;
-import com.google.cloud.bigquery.StandardSQLTypeName;
+import com.google.cloud.bigquery.*;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
@@ -38,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQLProducerBaseTest {
 
@@ -45,6 +42,7 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
     public void init() throws Exception {
         sql = "insert into testDatasetId.testTableId(id, data) values(@id, @data)";
         setupBigqueryMock();
+        when(statistics.getStatementType()).thenReturn(JobStatistics.QueryStatistics.StatementType.INSERT);
         producer = createAndStartProducer();
     }
 
@@ -174,20 +172,11 @@ public class GoogleBigQuerySQLProducerWithParamersTest extends GoogleBigQuerySQL
 
         producer.process(exchange);
 
-        ArgumentCaptor<JobInfo> dataCaptor = ArgumentCaptor.forClass(JobInfo.class);
-        verify(bigquery).create(dataCaptor.capture());
+        ArgumentCaptor<JobId> dataCaptor = ArgumentCaptor.forClass(JobId.class);
+        verify(bigquery).getJob(dataCaptor.capture());
 
-        QueryJobConfiguration request = dataCaptor.getValue().getConfiguration();
-        assertEquals(sql, request.getQuery());
-
-        Map<String, QueryParameterValue> namedParameters = request.getNamedParameters();
-        assertEquals(2, namedParameters.size());
-
-        assertTrue(namedParameters.containsKey("id"));
-        assertEquals("100", namedParameters.get("id").getValue(), "Body data must have higher priority");
-
-        assertTrue(namedParameters.containsKey("data"));
-        assertEquals("some data", namedParameters.get("data").getValue());
+        JobId request = dataCaptor.getValue();
+        assertEquals(jobId, request);
     }
 
     @Test

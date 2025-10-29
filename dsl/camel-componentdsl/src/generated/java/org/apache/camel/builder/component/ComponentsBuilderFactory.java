@@ -2132,6 +2132,19 @@ public interface ComponentsBuilderFactory {
         return HwcloudSmnComponentBuilderFactory.hwcloudSmn();
     }
     /**
+     * IBM Cloud Object Storage (camel-ibm-cos)
+     * Store and retrieve objects from IBM Cloud Object Storage.
+     * 
+     * Category: cloud,file
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-cos
+     * 
+     * @return the dsl builder
+     */
+    static IbmCosComponentBuilderFactory.IbmCosComponentBuilder ibmCos() {
+        return IbmCosComponentBuilderFactory.ibmCos();
+    }
+    /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
      * 
@@ -2143,6 +2156,33 @@ public interface ComponentsBuilderFactory {
      */
     static IbmSecretsManagerComponentBuilderFactory.IbmSecretsManagerComponentBuilder ibmSecretsManager() {
         return IbmSecretsManagerComponentBuilderFactory.ibmSecretsManager();
+    }
+    /**
+     * IBM Watson Discovery (camel-ibm-watson-discovery)
+     * Perform document understanding and search using IBM Watson Discovery
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-discovery
+     * 
+     * @return the dsl builder
+     */
+    static IbmWatsonDiscoveryComponentBuilderFactory.IbmWatsonDiscoveryComponentBuilder ibmWatsonDiscovery() {
+        return IbmWatsonDiscoveryComponentBuilderFactory.ibmWatsonDiscovery();
+    }
+    /**
+     * IBM Watson Language (camel-ibm-watson-language)
+     * Perform natural language processing using IBM Watson Natural Language
+     * Understanding
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-language
+     * 
+     * @return the dsl builder
+     */
+    static IbmWatsonLanguageComponentBuilderFactory.IbmWatsonLanguageComponentBuilder ibmWatsonLanguage() {
+        return IbmWatsonLanguageComponentBuilderFactory.ibmWatsonLanguage();
     }
     /**
      * IEC 60870 Client (camel-iec60870)
@@ -2959,6 +2999,19 @@ public interface ComponentsBuilderFactory {
         return Langchain4jEmbeddingsComponentBuilderFactory.langchain4jEmbeddings();
     }
     /**
+     * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
+     * Perform operations on the Langchain4jEmbeddingStores.
+     * 
+     * Category: database,ai
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-langchain4j-embeddingstore
+     * 
+     * @return the dsl builder
+     */
+    static Langchain4jEmbeddingstoreComponentBuilderFactory.Langchain4jEmbeddingstoreComponentBuilder langchain4jEmbeddingstore() {
+        return Langchain4jEmbeddingstoreComponentBuilderFactory.langchain4jEmbeddingstore();
+    }
+    /**
      * LangChain4j Tools (camel-langchain4j-tools)
      * LangChain4j Tools and Function Calling Features
      * 
@@ -3130,6 +3183,47 @@ public interface ComponentsBuilderFactory {
      */
     static MicrometerComponentBuilderFactory.MicrometerComponentBuilder micrometer() {
         return MicrometerComponentBuilderFactory.micrometer();
+    }
+    /**
+     * OPC UA Browser (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for browsing the node
+     * tree.
+     * 
+     * Category: iot
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
+     */
+    static MiloBrowseComponentBuilderFactory.MiloBrowseComponentBuilder miloBrowse() {
+        return MiloBrowseComponentBuilderFactory.miloBrowse();
+    }
+    /**
+     * OPC UA Client (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for acquiring
+     * telemetry data.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
+     */
+    static MiloClientComponentBuilderFactory.MiloClientComponentBuilder miloClient() {
+        return MiloClientComponentBuilderFactory.miloClient();
+    }
+    /**
+     * OPC UA Server (camel-milo)
+     * Make telemetry data available as an OPC UA server.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * @return the dsl builder
+     */
+    static MiloServerComponentBuilderFactory.MiloServerComponentBuilder miloServer() {
+        return MiloServerComponentBuilderFactory.miloServer();
     }
     /**
      * Milvus (camel-milvus)

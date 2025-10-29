@@ -185,6 +185,9 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
     @UriParam(label = "producer", defaultValue = "data",
               description = "The name of the multipart/form-data when multipartUpload is enabled.")
     private String multipartUploadName = "data";
+    @UriParam(label = "producer,advanced", defaultValue = "true",
+              description = "Whether the Content-Type header should automatic include charset for string based content.")
+    private boolean contentTypeCharsetEnabled = true;
 
     public HttpEndpoint() {
     }
@@ -773,6 +776,14 @@ public class HttpEndpoint extends HttpCommonEndpoint implements LineNumberAware 
 
     public void setMultipartUploadName(String multipartUploadName) {
         this.multipartUploadName = multipartUploadName;
+    }
+
+    public boolean isContentTypeCharsetEnabled() {
+        return contentTypeCharsetEnabled;
+    }
+
+    public void setContentTypeCharsetEnabled(boolean contentTypeCharsetEnabled) {
+        this.contentTypeCharsetEnabled = contentTypeCharsetEnabled;
     }
 
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")

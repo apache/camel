@@ -13,8 +13,9 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "description": { "index": 1, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
-    "uri": { "index": 2, "kind": "attribute", "displayName": "Uri", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the URI of the endpoint to use" },
-    "variableReceive": { "index": 3, "kind": "attribute", "displayName": "Variable Receive", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use a variable to store a copy of the received message body (only body, not headers). This is handy for easy access to the received message body via variables." }
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the note of this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "uri": { "index": 3, "kind": "attribute", "displayName": "Uri", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the URI of the endpoint to use" },
+    "variableReceive": { "index": 4, "kind": "attribute", "displayName": "Variable Receive", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To use a variable to store a copy of the received message body (only body, not headers). This is handy for easy access to the received message body via variables." }
   }
 }

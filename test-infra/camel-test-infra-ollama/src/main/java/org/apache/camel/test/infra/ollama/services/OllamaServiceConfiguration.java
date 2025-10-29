@@ -18,5 +18,8 @@
 package org.apache.camel.test.infra.ollama.services;
 
 public interface OllamaServiceConfiguration {
+
     String modelName();
+
+    String apiKey();
 }

@@ -183,7 +183,7 @@ public class AS2AsyncMdnBasicAuthHeaderTest extends AbstractAS2ITSupport {
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 "1.1", "AS2ClientManagerIntegrationTest Server",
-                "server.example.com", 8888, AS2SignatureAlgorithm.SHA256WITHRSA,
+                "server.example.com", 8889, AS2SignatureAlgorithm.SHA256WITHRSA,
                 null, null, null,
                 "TBD", null, null,
                 // server authorization config

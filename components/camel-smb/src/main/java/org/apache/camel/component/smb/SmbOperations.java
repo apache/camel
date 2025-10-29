@@ -176,7 +176,7 @@ public class SmbOperations implements SmbFileOperations {
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         connectIfNecessary();
         if (share.fileExists(name)) {
-            try (File f = share.openFile(name, EnumSet.of(AccessMask.GENERIC_ALL), null,
+            try (File f = share.openFile(name, EnumSet.of(AccessMask.DELETE), null,
                     SMB2ShareAccess.ALL,
                     SMB2CreateDisposition.FILE_OPEN, null)) {
                 f.deleteOnClose();
@@ -194,7 +194,7 @@ public class SmbOperations implements SmbFileOperations {
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         connectIfNecessary();
         try (File src
-                = share.openFile(from, EnumSet.of(AccessMask.GENERIC_ALL), null,
+                = share.openFile(from, EnumSet.of(AccessMask.GENERIC_READ, AccessMask.DELETE), null,
                         SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null)) {
 
             try (File dst

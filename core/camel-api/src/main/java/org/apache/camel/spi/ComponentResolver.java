@@ -20,8 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 
 /**
- * Represents a resolver of components from a URI to be able to auto-load them using some discovery mechanism like
- * {@link org.apache.camel.impl.DefaultComponentResolver}
+ * Represents a resolver of components from a URI to be able to autoload them using some discovery mechanism.
  */
 public interface ComponentResolver {
 

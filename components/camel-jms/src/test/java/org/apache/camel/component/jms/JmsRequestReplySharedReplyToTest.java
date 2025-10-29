@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ConsumerTemplate;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
@@ -28,8 +26,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JmsRequestReplySharedReplyToTest extends AbstractJMSTest {
 
@@ -67,6 +64,35 @@ public class JmsRequestReplySharedReplyToTest extends AbstractJMSTest {
         assertTrue(delta > 2000, "Should be slower than about 2 seconds, was: " + delta);
     }
 
+    /**
+     * When setting the 'correlationProperty' option we decide which request header will hold the correlation id that
+     * would later be used by the reply listener as a selector in form of 'JMSCorrelationID=<correlation id>'. Setting
+     * the 'replyCorrelationProperty' option would instead allow to change that reply listener's selector to
+     * '<replyCorrelationProperty>=<correlation id>'
+     */
+
+    String correlationProperty = "CustomID";
+    String replyCorrelationProperty = "CustomCorrelationID";
+
+    @Test
+    public void testCustomCorrelation() throws Exception {
+
+        Exchange out = template.request(
+                "activemq:queue:JmsRequestReplySharedReplyToWithCustomCorrelationTest" +
+                                        "?replyTo=JmsRequestReplySharedReplyToWithCustomCorrelationTest.reply" +
+                                        "&correlationProperty=" + correlationProperty +
+                                        "&replyCorrelationProperty=" + replyCorrelationProperty,
+                exchange -> {
+                    Message in = exchange.getIn();
+                    in.setBody("A");
+                });
+
+        assertNotNull(out);
+        assertNotNull(out.getMessage().getHeader(replyCorrelationProperty));
+        assertEquals(out.getMessage().getHeader(replyCorrelationProperty), out.getMessage().getHeader(correlationProperty));
+        assertEquals("Hello A", out.getMessage().getBody());
+    }
+
     @Override
     protected String getComponentName() {
         return "activemq";
@@ -79,6 +105,10 @@ public class JmsRequestReplySharedReplyToTest extends AbstractJMSTest {
             public void configure() {
                 from("activemq:queue:JmsRequestReplySharedReplyToTest")
                         .transform(body().prepend("Hello "));
+
+                from("activemq:queue:JmsRequestReplySharedReplyToWithCustomCorrelationTest")
+                        .transform(body().prepend("Hello "))
+                        .setHeader(replyCorrelationProperty, header(correlationProperty));
             }
         };
     }

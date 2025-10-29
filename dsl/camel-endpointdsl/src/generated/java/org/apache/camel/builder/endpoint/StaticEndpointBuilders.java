@@ -6925,6 +6925,46 @@ public class StaticEndpointBuilders {
         return SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM Cloud Object Storage (camel-ibm-cos)
+     * Store and retrieve objects from IBM Cloud Object Storage.
+     * 
+     * Category: cloud,file
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-cos
+     * 
+     * Syntax: <code>ibm-cos:bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name
+     * 
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static IBMCOSEndpointBuilderFactory.IBMCOSEndpointBuilder ibmCos(String path) {
+        return ibmCos("ibm-cos", path);
+    }
+    /**
+     * IBM Cloud Object Storage (camel-ibm-cos)
+     * Store and retrieve objects from IBM Cloud Object Storage.
+     * 
+     * Category: cloud,file
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-cos
+     * 
+     * Syntax: <code>ibm-cos:bucketName</code>
+     * 
+     * Path parameter: bucketName (required)
+     * Bucket name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path bucketName
+     * @return the dsl builder
+     */
+    public static IBMCOSEndpointBuilderFactory.IBMCOSEndpointBuilder ibmCos(String componentName, String path) {
+        return IBMCOSEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
      * 
@@ -6963,6 +7003,88 @@ public class StaticEndpointBuilders {
      */
     public static IBMSecretsManagerEndpointBuilderFactory.IBMSecretsManagerEndpointBuilder ibmSecretsManager(String componentName, String path) {
         return IBMSecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * IBM Watson Discovery (camel-ibm-watson-discovery)
+     * Perform document understanding and search using IBM Watson Discovery
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-discovery
+     * 
+     * Syntax: <code>ibm-watson-discovery:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonDiscoveryEndpointBuilderFactory.WatsonDiscoveryEndpointBuilder ibmWatsonDiscovery(String path) {
+        return ibmWatsonDiscovery("ibm-watson-discovery", path);
+    }
+    /**
+     * IBM Watson Discovery (camel-ibm-watson-discovery)
+     * Perform document understanding and search using IBM Watson Discovery
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-discovery
+     * 
+     * Syntax: <code>ibm-watson-discovery:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonDiscoveryEndpointBuilderFactory.WatsonDiscoveryEndpointBuilder ibmWatsonDiscovery(String componentName, String path) {
+        return WatsonDiscoveryEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * IBM Watson Language (camel-ibm-watson-language)
+     * Perform natural language processing using IBM Watson Natural Language
+     * Understanding
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-language
+     * 
+     * Syntax: <code>ibm-watson-language:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(String path) {
+        return ibmWatsonLanguage("ibm-watson-language", path);
+    }
+    /**
+     * IBM Watson Language (camel-ibm-watson-language)
+     * Perform natural language processing using IBM Watson Natural Language
+     * Understanding
+     * 
+     * Category: ai,cloud
+     * Since: 4.16
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-language
+     * 
+     * Syntax: <code>ibm-watson-language:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(String componentName, String path) {
+        return WatsonLanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * IEC 60870 Client (camel-iec60870)
@@ -9799,6 +9921,46 @@ public class StaticEndpointBuilders {
         return LangChain4jEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
+     * Perform operations on the Langchain4jEmbeddingStores.
+     * 
+     * Category: database,ai
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-langchain4j-embeddingstore
+     * 
+     * Syntax: <code>langchain4j-embeddingstore:embeddingStoreId</code>
+     * 
+     * Path parameter: embeddingStoreId (required)
+     * The id of the embedding store
+     * 
+     * @param path embeddingStoreId
+     * @return the dsl builder
+     */
+    public static LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreEndpointBuilder langchain4jEmbeddingstore(String path) {
+        return langchain4jEmbeddingstore("langchain4j-embeddingstore", path);
+    }
+    /**
+     * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
+     * Perform operations on the Langchain4jEmbeddingStores.
+     * 
+     * Category: database,ai
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-langchain4j-embeddingstore
+     * 
+     * Syntax: <code>langchain4j-embeddingstore:embeddingStoreId</code>
+     * 
+     * Path parameter: embeddingStoreId (required)
+     * The id of the embedding store
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path embeddingStoreId
+     * @return the dsl builder
+     */
+    public static LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreEndpointBuilder langchain4jEmbeddingstore(String componentName, String path) {
+        return LangChain4jEmbeddingStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * LangChain4j Tools (camel-langchain4j-tools)
      * LangChain4j Tools and Function Calling Features
      * 
@@ -10417,6 +10579,130 @@ public class StaticEndpointBuilders {
      */
     public static MicrometerEndpointBuilderFactory.MicrometerEndpointBuilder micrometer(String componentName, String path) {
         return MicrometerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * OPC UA Browser (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for browsing the node
+     * tree.
+     * 
+     * Category: iot
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-browse:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
+     * 
+     * @param path endpointUri
+     * @return the dsl builder
+     */
+    public static MiloBrowseEndpointBuilderFactory.MiloBrowseEndpointBuilder miloBrowse(String path) {
+        return miloBrowse("milo-browse", path);
+    }
+    /**
+     * OPC UA Browser (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for browsing the node
+     * tree.
+     * 
+     * Category: iot
+     * Since: 3.15
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-browse:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path endpointUri
+     * @return the dsl builder
+     */
+    public static MiloBrowseEndpointBuilderFactory.MiloBrowseEndpointBuilder miloBrowse(String componentName, String path) {
+        return MiloBrowseEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * OPC UA Client (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for acquiring
+     * telemetry data.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-client:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
+     * 
+     * @param path endpointUri
+     * @return the dsl builder
+     */
+    public static MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(String path) {
+        return miloClient("milo-client", path);
+    }
+    /**
+     * OPC UA Client (camel-milo)
+     * Connect to OPC UA servers using the binary protocol for acquiring
+     * telemetry data.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-client:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path endpointUri
+     * @return the dsl builder
+     */
+    public static MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(String componentName, String path) {
+        return MiloClientEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * OPC UA Server (camel-milo)
+     * Make telemetry data available as an OPC UA server.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-server:itemId</code>
+     * 
+     * Path parameter: itemId (required)
+     * ID of the item
+     * 
+     * @param path itemId
+     * @return the dsl builder
+     */
+    public static MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(String path) {
+        return miloServer("milo-server", path);
+    }
+    /**
+     * OPC UA Server (camel-milo)
+     * Make telemetry data available as an OPC UA server.
+     * 
+     * Category: iot
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-server:itemId</code>
+     * 
+     * Path parameter: itemId (required)
+     * ID of the item
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path itemId
+     * @return the dsl builder
+     */
+    public static MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(String componentName, String path) {
+        return MiloServerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Milvus (camel-milvus)
@@ -12045,7 +12331,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>pinecone:collection</code>
      * 
      * Path parameter: collection (required)
-     * The collection Name
+     * The collection Name. (Only used by some actions)
      * 
      * @param path collection
      * @return the dsl builder
@@ -12064,7 +12350,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>pinecone:collection</code>
      * 
      * Path parameter: collection (required)
-     * The collection Name
+     * The collection Name. (Only used by some actions)
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

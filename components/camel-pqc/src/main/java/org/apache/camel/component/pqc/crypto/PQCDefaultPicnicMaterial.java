@@ -38,7 +38,8 @@ public class PQCDefaultPicnicMaterial {
         try {
             generator = prepareKeyPair();
             keyPair = generator.generateKeyPair();
-            signer = Signature.getInstance(PQCSignatureAlgorithms.PICNIC.getAlgorithm());
+            signer = Signature.getInstance(PQCSignatureAlgorithms.PICNIC.getAlgorithm(),
+                    PQCSignatureAlgorithms.PICNIC.getBcProvider());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -6,6 +6,8 @@
 :since: 4.11
 :supportlevel: Preview
 :tabs-sync-option:
+//Manually maintained attributes
+:camel-spring-boot-name: opentelemetry2
 
 *Since Camel {since}*
 
@@ -23,6 +25,7 @@ The configuration properties for the OpenTelemetry2 tracer are:
 |`excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
 |`traceProcessors` | `false` | Setting this to true will create new OpenTelemetry Spans for each Camel Processors.
 Use the excludePattern property to filter out Processors
+|`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
 |=======================================================================
 
 === Using with standalone Camel
@@ -78,3 +81,10 @@ java -javaagent:path/to/opentelemetry-javaagent.jar \
 === Collect OpenTelemetry traces
 
 OpenTelemetry is a tracing protocol which is implemented by several vendors. You can use the Jaeger project which provides an open source all in one tracing application. See details how to run it in https://www.jaegertracing.io/docs/latest/getting-started/[Jaeger getting started guide].
+
+=== MDC logging
+
+You can leverage the `traceHeadersInclusion` to include the generated `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` into the Camel Exchange and together with `camel-mdc` you can make those headers available in the MDC context (via `camel.mdc.customHeaders=CAMEL_TRACE_ID,CAMEL_SPAN_ID` configuration). This is the idiomatic way in Camel.
+
+As an alternative, you can add Mapped Diagnostic Context tracing information (ie, `trace_id` and `span_id`) adding the specific https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md[Opentelemetry Logger MDC auto instrumentation]. The logging configuration depends on the logging framework you're using.
+

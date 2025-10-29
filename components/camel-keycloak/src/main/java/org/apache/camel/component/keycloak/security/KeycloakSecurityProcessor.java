@@ -51,11 +51,11 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                 throw new CamelAuthorizationException("Access token not found in exchange", exchange);
             }
 
-            if (!policy.getRequiredRoles().isEmpty()) {
+            if (!policy.getRequiredRolesAsList().isEmpty()) {
                 validateRoles(accessToken, exchange);
             }
 
-            if (!policy.getRequiredPermissions().isEmpty()) {
+            if (!policy.getRequiredPermissionsAsList().isEmpty()) {
                 validatePermissions(accessToken, exchange);
             }
 
@@ -91,17 +91,34 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
 
     private void validateRoles(String accessToken, Exchange exchange) throws Exception {
         try {
-            AccessToken token;
-            if (ObjectHelper.isEmpty(policy.getPublicKey())) {
-                token = KeycloakSecurityHelper.parseAccessToken(accessToken);
+            Set<String> userRoles;
+
+            // Use token introspection if enabled
+            if (policy.isUseTokenIntrospection() && policy.getTokenIntrospector() != null) {
+                KeycloakTokenIntrospector.IntrospectionResult introspectionResult
+                        = KeycloakSecurityHelper.introspectToken(accessToken, policy.getTokenIntrospector());
+
+                // Check if token is active
+                if (!introspectionResult.isActive()) {
+                    throw new CamelAuthorizationException("Token is not active (may be revoked or expired)", exchange);
+                }
+
+                userRoles = KeycloakSecurityHelper.extractRolesFromIntrospection(
+                        introspectionResult, policy.getRealm(), policy.getClientId());
             } else {
-                token = KeycloakSecurityHelper.parseAccessToken(accessToken, policy.getPublicKey());
+                // Use local JWT parsing
+                AccessToken token;
+                if (ObjectHelper.isEmpty(policy.getPublicKey())) {
+                    token = KeycloakSecurityHelper.parseAccessToken(accessToken);
+                } else {
+                    token = KeycloakSecurityHelper.parseAccessToken(accessToken, policy.getPublicKey());
+                }
+                userRoles = KeycloakSecurityHelper.extractRoles(token, policy.getRealm(), policy.getClientId());
             }
-            Set<String> userRoles = KeycloakSecurityHelper.extractRoles(token, policy.getRealm(), policy.getClientId());
 
             boolean hasRequiredRoles = policy.isAllRolesRequired()
-                    ? userRoles.containsAll(policy.getRequiredRoles())
-                    : policy.getRequiredRoles().stream().anyMatch(userRoles::contains);
+                    ? userRoles.containsAll(policy.getRequiredRolesAsList())
+                    : policy.getRequiredRolesAsList().stream().anyMatch(userRoles::contains);
 
             if (!hasRequiredRoles) {
                 String message = String.format("User does not have required roles. Required: %s, User has: %s",
@@ -122,17 +139,33 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
 
     private void validatePermissions(String accessToken, Exchange exchange) throws Exception {
         try {
-            AccessToken token;
-            if (ObjectHelper.isEmpty(policy.getPublicKey())) {
-                token = KeycloakSecurityHelper.parseAccessToken(accessToken);
+            Set<String> userPermissions;
+
+            // Use token introspection if enabled
+            if (policy.isUseTokenIntrospection() && policy.getTokenIntrospector() != null) {
+                KeycloakTokenIntrospector.IntrospectionResult introspectionResult
+                        = KeycloakSecurityHelper.introspectToken(accessToken, policy.getTokenIntrospector());
+
+                // Check if token is active
+                if (!introspectionResult.isActive()) {
+                    throw new CamelAuthorizationException("Token is not active (may be revoked or expired)", exchange);
+                }
+
+                userPermissions = KeycloakSecurityHelper.extractPermissionsFromIntrospection(introspectionResult);
             } else {
-                token = KeycloakSecurityHelper.parseAccessToken(accessToken, policy.getPublicKey());
+                // Use local JWT parsing
+                AccessToken token;
+                if (ObjectHelper.isEmpty(policy.getPublicKey())) {
+                    token = KeycloakSecurityHelper.parseAccessToken(accessToken);
+                } else {
+                    token = KeycloakSecurityHelper.parseAccessToken(accessToken, policy.getPublicKey());
+                }
+                userPermissions = KeycloakSecurityHelper.extractPermissions(token);
             }
-            Set<String> userPermissions = KeycloakSecurityHelper.extractPermissions(token);
 
             boolean hasRequiredPermissions = policy.isAllPermissionsRequired()
-                    ? userPermissions.containsAll(policy.getRequiredPermissions())
-                    : policy.getRequiredPermissions().stream().anyMatch(userPermissions::contains);
+                    ? userPermissions.containsAll(policy.getRequiredPermissionsAsList())
+                    : policy.getRequiredPermissionsAsList().stream().anyMatch(userPermissions::contains);
 
             if (!hasRequiredPermissions) {
                 String message = String.format("User does not have required permissions. Required: %s, User has: %s",

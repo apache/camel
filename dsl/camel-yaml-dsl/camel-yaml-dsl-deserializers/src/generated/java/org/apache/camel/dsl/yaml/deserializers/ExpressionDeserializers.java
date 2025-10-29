@@ -15,7 +15,11 @@ import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
-@SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
+/**
+ * The model automatically scan all classes, also those one deprecated. They will be dropped when removed from core model.
+ * In the while we confirm this exception by suppressing the compiler warning.
+ */
+@SuppressWarnings("deprecation")
 public final class ExpressionDeserializers extends YamlDeserializerSupport {
     private ExpressionDeserializers() {
     }

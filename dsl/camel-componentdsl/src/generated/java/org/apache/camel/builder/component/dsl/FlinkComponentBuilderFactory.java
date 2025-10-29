@@ -61,6 +61,7 @@ public interface FlinkComponentBuilderFactory {
          * @param dataSetCallback the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default FlinkComponentBuilder dataSetCallback(org.apache.camel.component.flink.DataSetCallback dataSetCallback) {
             doSetProperty("dataSetCallback", dataSetCallback);
             return this;

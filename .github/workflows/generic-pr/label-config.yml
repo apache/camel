@@ -90,8 +90,8 @@ docs:
   - changed-files:
       - any-glob-to-any-file:
         - docs/**/*
-        - '**.adoc'
-        - '**.md'
+        - '**/*.adoc'
+        - '**/*.md'
 
 dsl:
   - changed-files:

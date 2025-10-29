@@ -30,6 +30,8 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KeycloakComponent target = (KeycloakComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "authclient":
         case "authClient": getOrCreateConfiguration(target).setAuthClient(property(camelContext, java.lang.String.class, value)); return true;
         case "authipaddress":
@@ -57,6 +59,10 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
         case "eventtype":
         case "eventType": getOrCreateConfiguration(target).setEventType(property(camelContext, java.lang.String.class, value)); return true;
         case "first": getOrCreateConfiguration(target).setFirst(property(camelContext, int.class, value)); return true;
+        case "introspectioncacheenabled":
+        case "introspectionCacheEnabled": getOrCreateConfiguration(target).setIntrospectionCacheEnabled(property(camelContext, boolean.class, value)); return true;
+        case "introspectioncachettl":
+        case "introspectionCacheTtl": getOrCreateConfiguration(target).setIntrospectionCacheTtl(property(camelContext, long.class, value)); return true;
         case "ipaddress":
         case "ipAddress": getOrCreateConfiguration(target).setIpAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "keycloakclient":
@@ -77,6 +83,8 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
         case "serverurl":
         case "serverUrl": getOrCreateConfiguration(target).setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "types": getOrCreateConfiguration(target).setTypes(property(camelContext, java.lang.String.class, value)); return true;
+        case "usetokenintrospection":
+        case "useTokenIntrospection": getOrCreateConfiguration(target).setUseTokenIntrospection(property(camelContext, boolean.class, value)); return true;
         case "user": getOrCreateConfiguration(target).setUser(property(camelContext, java.lang.String.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -91,6 +99,8 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
         case "authclient":
         case "authClient": return java.lang.String.class;
         case "authipaddress":
@@ -118,6 +128,10 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
         case "eventtype":
         case "eventType": return java.lang.String.class;
         case "first": return int.class;
+        case "introspectioncacheenabled":
+        case "introspectionCacheEnabled": return boolean.class;
+        case "introspectioncachettl":
+        case "introspectionCacheTtl": return long.class;
         case "ipaddress":
         case "ipAddress": return java.lang.String.class;
         case "keycloakclient":
@@ -138,6 +152,8 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
         case "serverurl":
         case "serverUrl": return java.lang.String.class;
         case "types": return java.lang.String.class;
+        case "usetokenintrospection":
+        case "useTokenIntrospection": return boolean.class;
         case "user": return java.lang.String.class;
         case "username": return java.lang.String.class;
         default: return null;
@@ -148,6 +164,8 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KeycloakComponent target = (KeycloakComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
         case "authclient":
         case "authClient": return getOrCreateConfiguration(target).getAuthClient();
         case "authipaddress":
@@ -175,6 +193,10 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
         case "eventtype":
         case "eventType": return getOrCreateConfiguration(target).getEventType();
         case "first": return getOrCreateConfiguration(target).getFirst();
+        case "introspectioncacheenabled":
+        case "introspectionCacheEnabled": return getOrCreateConfiguration(target).isIntrospectionCacheEnabled();
+        case "introspectioncachettl":
+        case "introspectionCacheTtl": return getOrCreateConfiguration(target).getIntrospectionCacheTtl();
         case "ipaddress":
         case "ipAddress": return getOrCreateConfiguration(target).getIpAddress();
         case "keycloakclient":
@@ -195,6 +217,8 @@ public class KeycloakComponentConfigurer extends PropertyConfigurerSupport imple
         case "serverurl":
         case "serverUrl": return getOrCreateConfiguration(target).getServerUrl();
         case "types": return getOrCreateConfiguration(target).getTypes();
+        case "usetokenintrospection":
+        case "useTokenIntrospection": return getOrCreateConfiguration(target).isUseTokenIntrospection();
         case "user": return getOrCreateConfiguration(target).getUser();
         case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;

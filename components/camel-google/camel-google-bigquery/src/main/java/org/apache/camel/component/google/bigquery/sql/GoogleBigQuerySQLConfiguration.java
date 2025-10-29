@@ -40,11 +40,16 @@ public class GoogleBigQuerySQLConfiguration implements Cloneable {
 
     @UriParam(label = "security",
               description = "Service account key in json format to authenticate an application as a service account to google cloud platform")
-    @Metadata(required = false)
     private String serviceAccountKey;
 
     @UriParam(label = "producer", description = "Page token, returned by a previous call, to request the next page of results")
     private String pageToken;
+
+    @UriParam(label = "producer", description = "Size of a page to request. Unset by default", defaultValue = "0")
+    private long pageSize;
+
+    @UriParam(label = "producer", description = "Output mode type for select queries", defaultValue = "SELECT_LIST")
+    private OutputType outputType = OutputType.SELECT_LIST;
 
     public void parseRemaining(String remaining) {
         int indexOfColon = remaining.indexOf(':');
@@ -101,6 +106,24 @@ public class GoogleBigQuerySQLConfiguration implements Cloneable {
 
     public GoogleBigQuerySQLConfiguration setPageToken(String pageToken) {
         this.pageToken = pageToken;
+        return this;
+    }
+
+    public long getPageSize() {
+        return pageSize;
+    }
+
+    public GoogleBigQuerySQLConfiguration setPageSize(long pageSize) {
+        this.pageSize = pageSize;
+        return this;
+    }
+
+    public OutputType getOutputType() {
+        return outputType;
+    }
+
+    public GoogleBigQuerySQLConfiguration setOutputType(OutputType outputType) {
+        this.outputType = outputType;
         return this;
     }
 

@@ -34,6 +34,8 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "bedrockruntimeasyncclient":
+        case "bedrockRuntimeAsyncClient": getOrCreateConfiguration(target).setBedrockRuntimeAsyncClient(property(camelContext, software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient.class, value)); return true;
         case "bedrockruntimeclient":
         case "bedrockRuntimeClient": getOrCreateConfiguration(target).setBedrockRuntimeClient(property(camelContext, software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration.class, value)); return true;
@@ -41,6 +43,8 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "includestreamingmetadata":
+        case "includeStreamingMetadata": getOrCreateConfiguration(target).setIncludeStreamingMetadata(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "modelid":
@@ -63,6 +67,8 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontoken":
         case "sessionToken": getOrCreateConfiguration(target).setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "streamoutputmode":
+        case "streamOutputMode": getOrCreateConfiguration(target).setStreamOutputMode(property(camelContext, java.lang.String.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
         case "uriendpointoverride":
@@ -79,7 +85,7 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"bedrockRuntimeClient"};
+        return new String[]{"bedrockRuntimeAsyncClient", "bedrockRuntimeClient"};
     }
 
     @Override
@@ -89,6 +95,8 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "bedrockruntimeasyncclient":
+        case "bedrockRuntimeAsyncClient": return software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient.class;
         case "bedrockruntimeclient":
         case "bedrockRuntimeClient": return software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient.class;
         case "configuration": return org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration.class;
@@ -96,6 +104,8 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "includestreamingmetadata":
+        case "includeStreamingMetadata": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "modelid":
@@ -118,6 +128,8 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "secretKey": return java.lang.String.class;
         case "sessiontoken":
         case "sessionToken": return java.lang.String.class;
+        case "streamoutputmode":
+        case "streamOutputMode": return java.lang.String.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
         case "uriendpointoverride":
@@ -140,6 +152,8 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "bedrockruntimeasyncclient":
+        case "bedrockRuntimeAsyncClient": return getOrCreateConfiguration(target).getBedrockRuntimeAsyncClient();
         case "bedrockruntimeclient":
         case "bedrockRuntimeClient": return getOrCreateConfiguration(target).getBedrockRuntimeClient();
         case "configuration": return target.getConfiguration();
@@ -147,6 +161,8 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "includestreamingmetadata":
+        case "includeStreamingMetadata": return getOrCreateConfiguration(target).isIncludeStreamingMetadata();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "modelid":
@@ -169,6 +185,8 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "sessiontoken":
         case "sessionToken": return getOrCreateConfiguration(target).getSessionToken();
+        case "streamoutputmode":
+        case "streamOutputMode": return getOrCreateConfiguration(target).getStreamOutputMode();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
         case "uriendpointoverride":

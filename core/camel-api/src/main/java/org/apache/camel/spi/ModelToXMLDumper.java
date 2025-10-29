@@ -49,11 +49,13 @@ public interface ModelToXMLDumper {
      * @param  definition          the definition, such as a {@link org.apache.camel.NamedNode}
      * @param  resolvePlaceholders whether to resolve property placeholders in the dumped XML
      * @param  generatedIds        whether to include auto generated IDs
+     * @param  sourceLocation      whether to include source location:line
      * @return                     the output in XML (is formatted)
      * @throws Exception           is throw if error marshalling to XML
      */
     String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders,
+            boolean generatedIds, boolean sourceLocation)
             throws Exception;
 
     /**

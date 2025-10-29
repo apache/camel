@@ -31,8 +31,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform operations on the Pinecone Vector Database.
  */
-@UriEndpoint(
-             firstVersion = "4.6.0",
+@UriEndpoint(firstVersion = "4.6.0",
              scheme = PineconeVectorDb.SCHEME,
              title = "Pinecone",
              syntax = "pinecone:collection",
@@ -45,7 +44,7 @@ import org.apache.camel.support.DefaultEndpoint;
 public class PineconeVectorDbEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
-    @UriPath(description = "The collection Name")
+    @UriPath(description = "The collection Name. (Only used by some actions)")
     private final String collection;
 
     @UriParam
@@ -53,14 +52,11 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
 
     private Pinecone client;
 
-    public PineconeVectorDbEndpoint(
-                                    String endpointUri,
+    public PineconeVectorDbEndpoint(String endpointUri,
                                     Component component,
                                     String collection,
                                     PineconeVectorDbConfiguration configuration) {
-
         super(endpointUri, component);
-
         this.collection = collection;
         this.configuration = configuration;
     }
@@ -98,20 +94,7 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer is not implemented for this component");
     }
 
-    @Override
-    public void doStart() throws Exception {
-        super.doStart();
-    }
-
-    @Override
-    public void doStop() throws Exception {
-        super.doStop();
-    }
-
     private Pinecone createClient() {
-
-        boolean tls = configuration.isTls();
-
         Pinecone.Builder builder = new Pinecone.Builder(configuration.getToken());
 
         // Check to see if a host is configured
@@ -120,6 +103,7 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
         }
 
         // if TLS is false, set it
+        boolean tls = configuration.isTls();
         if (!tls) {
             builder = builder.withTlsEnabled(tls);
         }
@@ -128,7 +112,7 @@ public class PineconeVectorDbEndpoint extends DefaultEndpoint {
         if ((getConfiguration().getProxyHost() != null) &&
                 (getConfiguration().getProxyPort() != null)) {
             builder = builder.withProxy(getConfiguration().getProxyHost(),
-                    getConfiguration().getProxyPort().intValue());
+                    getConfiguration().getProxyPort());
         }
 
         return builder.build();

@@ -29,6 +29,7 @@ public enum PQCKeyEncapsulationAlgorithms {
     FRODO("FRODO", "BCPQC"),
     NTRU("NTRU", "BCPQC"),
     NTRULPRime("NTRULPRime", "BCPQC"),
+    SNTRUPrime("SNTRUPrime", "BCPQC"),
     KYBER("KYBER", "BCPQC");
 
     private final String algorithm;

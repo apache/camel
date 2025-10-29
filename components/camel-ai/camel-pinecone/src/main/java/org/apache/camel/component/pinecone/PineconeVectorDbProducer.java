@@ -59,7 +59,9 @@ public class PineconeVectorDbProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) {
         final Message in = exchange.getMessage();
-        final PineconeVectorDbAction action = in.getHeader(PineconeVectorDbHeaders.ACTION, PineconeVectorDbAction.class);
+        // header take precedence
+        final PineconeVectorDbAction action = in.getHeader(PineconeVectorDbHeaders.ACTION,
+                getEndpoint().getConfiguration().getAction(), PineconeVectorDbAction.class);
 
         try {
             if (action == null) {
@@ -117,12 +119,11 @@ public class PineconeVectorDbProducer extends DefaultProducer {
     private void createCollection(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
 
-        String indexName = getEndpoint().getConfiguration().getIndexName();
-
-        String collectionName = in.getHeader(PineconeVectorDbHeaders.COLLECTION_NAME, String.class);
-        if (in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class) != null) {
-            indexName = in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, String.class);
-        }
+        // header can override default value
+        String indexName = in.getHeader(PineconeVectorDbHeaders.INDEX_NAME, getEndpoint().getConfiguration().getIndexName(),
+                String.class);
+        String collectionName
+                = in.getHeader(PineconeVectorDbHeaders.COLLECTION_NAME, getEndpoint().getCollection(), String.class);
 
         CollectionModel result = this.client.createCollection(collectionName, indexName);
 
@@ -250,7 +251,8 @@ public class PineconeVectorDbProducer extends DefaultProducer {
 
     private void deleteCollection(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        String collectionName = in.getHeader(PineconeVectorDbHeaders.COLLECTION_NAME, String.class);
+        String collectionName
+                = in.getHeader(PineconeVectorDbHeaders.COLLECTION_NAME, getEndpoint().getCollection(), String.class);
         this.client.deleteCollection(collectionName);
     }
 

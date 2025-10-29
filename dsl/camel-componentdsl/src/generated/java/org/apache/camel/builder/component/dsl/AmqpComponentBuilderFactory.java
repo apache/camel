@@ -1282,6 +1282,30 @@ public interface AmqpComponentBuilderFactory {
         }
     
         /**
+         * When using InOut exchange pattern use this JMS property instead of
+         * JMSCorrelationID JMS property to correlate reply message. Difference
+         * between this and 'correlationProperty' is that 'correlationProperty'
+         * tells which request property holds the correlation id value and it
+         * does not affect the selector for the reply
+         * (JMSCorrelationID=&amp;lt;correlation id&amp;gt;), while
+         * 'replyCorrelationProperty' tells which reply property will hold the
+         * correlation id value and it does affect the selector for the reply
+         * (&amp;lt;replyCorrelationProperty&amp;gt;=&amp;lt;correlation
+         * id&amp;gt;).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param replyCorrelationProperty the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder replyCorrelationProperty(java.lang.String replyCorrelationProperty) {
+            doSetProperty("replyCorrelationProperty", replyCorrelationProperty);
+            return this;
+        }
+    
+        /**
          * Sets the cache level by name for the reply consumer when doing
          * request/reply over JMS. This option only applies when using fixed
          * reply queues (not temporary). Camel will by default use:
@@ -2467,6 +2491,7 @@ public interface AmqpComponentBuilderFactory {
             case "disableTimeToLive": getOrCreateConfiguration((AMQPComponent) component).setDisableTimeToLive((boolean) value); return true;
             case "forceSendOriginalMessage": getOrCreateConfiguration((AMQPComponent) component).setForceSendOriginalMessage((boolean) value); return true;
             case "includeSentJMSMessageID": getOrCreateConfiguration((AMQPComponent) component).setIncludeSentJMSMessageID((boolean) value); return true;
+            case "replyCorrelationProperty": getOrCreateConfiguration((AMQPComponent) component).setReplyCorrelationProperty((java.lang.String) value); return true;
             case "replyToCacheLevelName": getOrCreateConfiguration((AMQPComponent) component).setReplyToCacheLevelName((java.lang.String) value); return true;
             case "replyToDestinationSelectorName": getOrCreateConfiguration((AMQPComponent) component).setReplyToDestinationSelectorName((java.lang.String) value); return true;
             case "streamMessageTypeEnabled": getOrCreateConfiguration((AMQPComponent) component).setStreamMessageTypeEnabled((boolean) value); return true;

@@ -23,11 +23,11 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jasypt</artifactId>
-    <!-- the packaging will be a bundle, however we need to add maniclass etc so we use the jar packaging -->
+    <!-- the packaging will be a bundle, however we need to add main class etc so we use the jar packaging -->
     <packaging>jar</packaging>
     <name>Camel :: Jasypt</name>
     <description>Security using Jasypt</description>

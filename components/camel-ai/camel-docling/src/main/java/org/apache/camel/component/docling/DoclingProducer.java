@@ -24,8 +24,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -42,11 +44,55 @@ public class DoclingProducer extends DefaultProducer {
 
     private DoclingEndpoint endpoint;
     private DoclingConfiguration configuration;
+    private DoclingServeClient doclingServeClient;
 
     public DoclingProducer(DoclingEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
         this.configuration = endpoint.getConfiguration();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (configuration.isUseDoclingServe()) {
+            doclingServeClient = new DoclingServeClient(
+                    configuration.getDoclingServeUrl(),
+                    configuration.getAuthenticationScheme(),
+                    configuration.getAuthenticationToken(),
+                    configuration.getApiKeyHeader(),
+                    configuration.getConvertEndpoint(),
+                    configuration.getAsyncPollInterval(),
+                    configuration.getAsyncTimeout(),
+                    configuration.getMaxTotalConnections(),
+                    configuration.getMaxConnectionsPerRoute(),
+                    configuration.getConnectionTimeout(),
+                    configuration.getSocketTimeout(),
+                    configuration.getConnectionRequestTimeout(),
+                    configuration.getConnectionTimeToLive(),
+                    configuration.getValidateAfterInactivity(),
+                    configuration.isEvictIdleConnections(),
+                    configuration.getMaxIdleTime());
+            LOG.info("DoclingProducer configured to use docling-serve API at: {}{} with authentication: {} (async mode: {})",
+                    configuration.getDoclingServeUrl(),
+                    configuration.getConvertEndpoint(),
+                    configuration.getAuthenticationScheme(),
+                    configuration.isUseAsyncMode());
+            LOG.debug("Connection pool stats: {}", doclingServeClient.getPoolStats());
+        } else {
+            LOG.info("DoclingProducer configured to use docling CLI command");
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (doclingServeClient != null) {
+            LOG.debug("Shutting down DoclingServeClient. Final pool stats: {}", doclingServeClient.getPoolStats());
+            doclingServeClient.close();
+            doclingServeClient = null;
+            LOG.info("DoclingServeClient closed successfully");
+        }
     }
 
     @Override
@@ -71,6 +117,27 @@ public class DoclingProducer extends DefaultProducer {
             case EXTRACT_STRUCTURED_DATA:
                 processExtractStructuredData(exchange);
                 break;
+            case SUBMIT_ASYNC_CONVERSION:
+                processSubmitAsyncConversion(exchange);
+                break;
+            case CHECK_CONVERSION_STATUS:
+                processCheckConversionStatus(exchange);
+                break;
+            case BATCH_CONVERT_TO_MARKDOWN:
+                processBatchConversion(exchange, "markdown");
+                break;
+            case BATCH_CONVERT_TO_HTML:
+                processBatchConversion(exchange, "html");
+                break;
+            case BATCH_CONVERT_TO_JSON:
+                processBatchConversion(exchange, "json");
+                break;
+            case BATCH_EXTRACT_TEXT:
+                processBatchConversion(exchange, "text");
+                break;
+            case BATCH_EXTRACT_STRUCTURED_DATA:
+                processBatchConversion(exchange, "json");
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
         }
@@ -86,29 +153,306 @@ public class DoclingProducer extends DefaultProducer {
 
     private void processConvertToMarkdown(Exchange exchange) throws Exception {
         LOG.debug("DoclingProducer converting to markdown");
-        String inputPath = getInputPath(exchange);
-        exchange.getIn().setBody(executeDoclingCommand(inputPath, "markdown", exchange));
+        if (configuration.isUseDoclingServe()) {
+            String inputPath = getInputPath(exchange);
+            String result = convertUsingDoclingServe(inputPath, "markdown", exchange);
+            exchange.getIn().setBody(result);
+        } else {
+            String inputPath = getInputPath(exchange);
+            exchange.getIn().setBody(executeDoclingCommand(inputPath, "markdown", exchange));
+        }
     }
 
     private void processConvertToHTML(Exchange exchange) throws Exception {
         LOG.debug("DoclingProducer converting to HTML");
-        String inputPath = getInputPath(exchange);
-        exchange.getIn().setBody(executeDoclingCommand(inputPath, "html", exchange));
+        if (configuration.isUseDoclingServe()) {
+            String inputPath = getInputPath(exchange);
+            String result = convertUsingDoclingServe(inputPath, "html", exchange);
+            exchange.getIn().setBody(result);
+        } else {
+            String inputPath = getInputPath(exchange);
+            exchange.getIn().setBody(executeDoclingCommand(inputPath, "html", exchange));
+        }
     }
 
     private void processConvertToJSON(Exchange exchange) throws Exception {
-        String inputPath = getInputPath(exchange);
-        exchange.getIn().setBody(executeDoclingCommand(inputPath, "json", exchange));
+        if (configuration.isUseDoclingServe()) {
+            String inputPath = getInputPath(exchange);
+            String result = convertUsingDoclingServe(inputPath, "json", exchange);
+            exchange.getIn().setBody(result);
+        } else {
+            String inputPath = getInputPath(exchange);
+            exchange.getIn().setBody(executeDoclingCommand(inputPath, "json", exchange));
+        }
     }
 
     private void processExtractText(Exchange exchange) throws Exception {
-        String inputPath = getInputPath(exchange);
-        exchange.getIn().setBody(executeDoclingCommand(inputPath, "text", exchange));
+        if (configuration.isUseDoclingServe()) {
+            String inputPath = getInputPath(exchange);
+            String result = convertUsingDoclingServe(inputPath, "text", exchange);
+            exchange.getIn().setBody(result);
+        } else {
+            String inputPath = getInputPath(exchange);
+            exchange.getIn().setBody(executeDoclingCommand(inputPath, "text", exchange));
+        }
     }
 
     private void processExtractStructuredData(Exchange exchange) throws Exception {
+        if (configuration.isUseDoclingServe()) {
+            String inputPath = getInputPath(exchange);
+            String result = convertUsingDoclingServe(inputPath, "json", exchange);
+            exchange.getIn().setBody(result);
+        } else {
+            String inputPath = getInputPath(exchange);
+            exchange.getIn().setBody(executeDoclingCommand(inputPath, "json", exchange));
+        }
+    }
+
+    private void processSubmitAsyncConversion(Exchange exchange) throws Exception {
+        LOG.debug("DoclingProducer submitting async conversion");
+
+        if (!configuration.isUseDoclingServe()) {
+            throw new IllegalStateException(
+                    "SUBMIT_ASYNC_CONVERSION operation requires docling-serve mode (useDoclingServe=true)");
+        }
+
         String inputPath = getInputPath(exchange);
-        exchange.getIn().setBody(executeDoclingCommand(inputPath, "json", exchange));
+
+        // Determine output format from header or configuration
+        String outputFormat = exchange.getIn().getHeader(DoclingHeaders.OUTPUT_FORMAT, String.class);
+        if (outputFormat == null) {
+            outputFormat = configuration.getOutputFormat();
+        }
+
+        // Submit async conversion and get task ID
+        String taskId = doclingServeClient.convertDocumentAsync(inputPath, outputFormat);
+
+        LOG.debug("Async conversion submitted with task ID: {}", taskId);
+
+        // Set task ID in body and header
+        exchange.getIn().setBody(taskId);
+        exchange.getIn().setHeader(DoclingHeaders.TASK_ID, taskId);
+    }
+
+    private void processCheckConversionStatus(Exchange exchange) throws Exception {
+        LOG.debug("DoclingProducer checking conversion status");
+
+        if (!configuration.isUseDoclingServe()) {
+            throw new IllegalStateException(
+                    "CHECK_CONVERSION_STATUS operation requires docling-serve mode (useDoclingServe=true)");
+        }
+
+        // Get task ID from header or body
+        String taskId = exchange.getIn().getHeader(DoclingHeaders.TASK_ID, String.class);
+        if (taskId == null) {
+            Object body = exchange.getIn().getBody();
+            if (body instanceof String) {
+                taskId = (String) body;
+            } else {
+                throw new IllegalArgumentException("Task ID must be provided in header CamelDoclingTaskId or in message body");
+            }
+        }
+
+        LOG.debug("Checking status for task ID: {}", taskId);
+
+        // Check conversion status
+        ConversionStatus status = doclingServeClient.checkConversionStatus(taskId);
+
+        // Set status object in body
+        exchange.getIn().setBody(status);
+
+        // Set individual status fields as headers for easy access
+        exchange.getIn().setHeader(DoclingHeaders.TASK_ID, status.getTaskId());
+        exchange.getIn().setHeader("CamelDoclingTaskStatus", status.getStatus().toString());
+
+        if (status.getProgress() != null) {
+            exchange.getIn().setHeader("CamelDoclingTaskProgress", status.getProgress());
+        }
+
+        if (status.isCompleted() && status.getResult() != null) {
+            exchange.getIn().setHeader("CamelDoclingResult", status.getResult());
+        }
+
+        if (status.isFailed() && status.getErrorMessage() != null) {
+            exchange.getIn().setHeader("CamelDoclingErrorMessage", status.getErrorMessage());
+        }
+    }
+
+    private void processBatchConversion(Exchange exchange, String outputFormat) throws Exception {
+        LOG.debug("DoclingProducer processing batch conversion with format: {}", outputFormat);
+
+        if (!configuration.isUseDoclingServe()) {
+            throw new IllegalStateException(
+                    "Batch operations require docling-serve mode (useDoclingServe=true)");
+        }
+
+        // Extract document list from body
+        List<String> documentPaths = extractDocumentList(exchange);
+
+        if (documentPaths.isEmpty()) {
+            throw new IllegalArgumentException("No documents provided for batch processing");
+        }
+
+        LOG.debug("Processing batch of {} documents", documentPaths.size());
+
+        // Get batch configuration from headers or use defaults
+        int batchSize = exchange.getIn().getHeader(DoclingHeaders.BATCH_SIZE, configuration.getBatchSize(), Integer.class);
+        int parallelism
+                = exchange.getIn().getHeader(DoclingHeaders.BATCH_PARALLELISM, configuration.getBatchParallelism(),
+                        Integer.class);
+        boolean failOnFirstError = exchange.getIn().getHeader(DoclingHeaders.BATCH_FAIL_ON_FIRST_ERROR,
+                configuration.isBatchFailOnFirstError(), Boolean.class);
+        long batchTimeout = exchange.getIn().getHeader(DoclingHeaders.BATCH_TIMEOUT, configuration.getBatchTimeout(),
+                Long.class);
+
+        // Check if we should use async mode for individual conversions
+        boolean useAsync = configuration.isUseAsyncMode();
+        Boolean asyncModeHeader = exchange.getIn().getHeader(DoclingHeaders.USE_ASYNC_MODE, Boolean.class);
+        if (asyncModeHeader != null) {
+            useAsync = asyncModeHeader;
+        }
+
+        // Process batch using DoclingServeClient
+        BatchProcessingResults results = doclingServeClient.convertDocumentsBatch(
+                documentPaths, outputFormat, batchSize, parallelism, failOnFirstError, useAsync, batchTimeout);
+
+        // Check if we should split results into individual exchanges
+        boolean splitResults = configuration.isSplitBatchResults();
+        Boolean splitResultsHeader = exchange.getIn().getHeader(DoclingHeaders.BATCH_SPLIT_RESULTS, Boolean.class);
+        if (splitResultsHeader != null) {
+            splitResults = splitResultsHeader;
+        }
+
+        // Set summary headers (always set these regardless of split mode)
+        exchange.getIn().setHeader(DoclingHeaders.BATCH_TOTAL_DOCUMENTS, results.getTotalDocuments());
+        exchange.getIn().setHeader(DoclingHeaders.BATCH_SUCCESS_COUNT, results.getSuccessCount());
+        exchange.getIn().setHeader(DoclingHeaders.BATCH_FAILURE_COUNT, results.getFailureCount());
+        exchange.getIn().setHeader(DoclingHeaders.BATCH_PROCESSING_TIME, results.getTotalProcessingTimeMs());
+
+        // Set results in exchange body based on split mode
+        if (splitResults) {
+            // Return list of individual results for splitting
+            exchange.getIn().setBody(results.getResults());
+            LOG.info(
+                    "Batch conversion completed: {} documents, {} succeeded, {} failed - returning individual results for splitting",
+                    results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount());
+        } else {
+            // Return complete BatchProcessingResults object
+            exchange.getIn().setBody(results);
+            LOG.info("Batch conversion completed: {} documents, {} succeeded, {} failed",
+                    results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount());
+        }
+
+        // Note: Exception is thrown in DoclingServeClient if failOnFirstError=true
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> extractDocumentList(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+
+        // Handle List<String>
+        if (body instanceof List) {
+            List<?> list = (List<?>) body;
+            if (list.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            // Check if it's a List<String>
+            if (list.get(0) instanceof String) {
+                return (List<String>) list;
+            }
+
+            // Check if it's a List<File>
+            if (list.get(0) instanceof File) {
+                return ((List<File>) list).stream()
+                        .map(File::getAbsolutePath)
+                        .collect(Collectors.toList());
+            }
+
+            // Try to convert to string
+            return list.stream()
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+        }
+
+        // Handle Collection
+        if (body instanceof Collection) {
+            Collection<?> collection = (Collection<?>) body;
+            return collection.stream()
+                    .map(obj -> {
+                        if (obj instanceof String) {
+                            return (String) obj;
+                        } else if (obj instanceof File) {
+                            return ((File) obj).getAbsolutePath();
+                        } else {
+                            return obj.toString();
+                        }
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        // Handle String array
+        if (body instanceof String[]) {
+            return List.of((String[]) body);
+        }
+
+        // Handle File array
+        if (body instanceof File[]) {
+            File[] files = (File[]) body;
+            List<String> paths = new ArrayList<>();
+            for (File file : files) {
+                paths.add(file.getAbsolutePath());
+            }
+            return paths;
+        }
+
+        // Handle single String (directory path to scan)
+        if (body instanceof String) {
+            String path = (String) body;
+            File dir = new File(path);
+            if (dir.isDirectory()) {
+                File[] files = dir.listFiles();
+                if (files != null) {
+                    List<String> paths = new ArrayList<>();
+                    for (File file : files) {
+                        if (file.isFile()) {
+                            paths.add(file.getAbsolutePath());
+                        }
+                    }
+                    return paths;
+                }
+            } else {
+                // Single file path
+                return List.of(path);
+            }
+        }
+
+        throw new IllegalArgumentException(
+                "Unsupported body type for batch processing: " + (body != null ? body.getClass().getName() : "null")
+                                           + ". Expected List<String>, List<File>, String[], File[], or directory path");
+    }
+
+    private String convertUsingDoclingServe(String inputPath, String outputFormat) throws Exception {
+        return convertUsingDoclingServe(inputPath, outputFormat, null);
+    }
+
+    private String convertUsingDoclingServe(String inputPath, String outputFormat, Exchange exchange) throws Exception {
+        // Check for header override
+        boolean useAsync = configuration.isUseAsyncMode();
+        if (exchange != null) {
+            Boolean asyncModeHeader = exchange.getIn().getHeader(DoclingHeaders.USE_ASYNC_MODE, Boolean.class);
+            if (asyncModeHeader != null) {
+                useAsync = asyncModeHeader;
+            }
+        }
+
+        if (useAsync) {
+            LOG.debug("Using async mode for conversion");
+            return doclingServeClient.convertDocumentAsyncAndWait(inputPath, outputFormat);
+        } else {
+            LOG.debug("Using sync mode for conversion");
+            return doclingServeClient.convertDocument(inputPath, outputFormat);
+        }
     }
 
     private String getInputPath(Exchange exchange) throws InvalidPayloadException, IOException {
@@ -122,10 +466,16 @@ public class DoclingProducer extends DefaultProducer {
         Object body = exchange.getIn().getBody();
         if (body instanceof String) {
             String content = (String) body;
-            if (content.startsWith("/") || content.contains("\\")) {
+            // Check if it's a URL (http:// or https://) or a file path
+            if (content.startsWith("http://") || content.startsWith("https://")) {
+                // Return URL as-is, no validation needed
+                return content;
+            } else if (content.startsWith("/") || content.contains("\\")) {
+                // It's a file path
                 validateFileSize(content);
                 return content;
             } else {
+                // Treat as content to be written to a temp file
                 Path tempFile = Files.createTempFile("docling-", ".tmp");
                 Files.write(tempFile, content.getBytes());
                 validateFileSize(tempFile.toString());

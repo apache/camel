@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -281,6 +282,19 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
               defaultValue = "30", label = "consumer,advanced")
     private int initialReplyIdTimeout = 30;
 
+    @Metadata(label = "consumer,advanced",
+              description = "Use thread pool for processing received Salesforce events, for example to process events in parallel.")
+    private boolean consumerWorkerPoolEnabled;
+    @Metadata(label = "consumer,advanced",
+              description = "To use a custom thread pool for processing received Salesforce events, for example to process events in parallel.")
+    private ExecutorService consumerWorkerPoolExecutorService;
+    @Metadata(label = "consumer,advanced", description = "Core thread pool size size for consumer worker pool.",
+              defaultValue = "10")
+    private int consumerWorkerPoolSize = 10;
+    @Metadata(label = "consumer,advanced", description = "Maximum thread pool size size for consumer worker pool.",
+              defaultValue = "20")
+    private int consumerWorkerPoolMaxSize = 20;
+
     // component state
     private SalesforceHttpClient httpClient;
 
@@ -340,6 +354,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         }
 
         final SalesforceEndpoint endpoint = new SalesforceEndpoint(uri, this, copy, operationName, topicName);
+        endpoint.setConsumerWorkerPoolEnabled(consumerWorkerPoolEnabled);
+        endpoint.setConsumerWorkerPoolExecutorService(consumerWorkerPoolExecutorService);
+        endpoint.setConsumerWorkerPoolSize(consumerWorkerPoolSize);
+        endpoint.setConsumerWorkerPoolMaxSize(consumerWorkerPoolMaxSize);
 
         // map remaining parameters to endpoint (specifically, synchronous)
         setProperties(endpoint, parameters);
@@ -840,6 +858,38 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public void setInitialReplyIdTimeout(int initialReplyIdTimeout) {
         this.initialReplyIdTimeout = initialReplyIdTimeout;
+    }
+
+    public boolean isConsumerWorkerPoolEnabled() {
+        return consumerWorkerPoolEnabled;
+    }
+
+    public void setConsumerWorkerPoolEnabled(boolean consumerWorkerPoolEnabled) {
+        this.consumerWorkerPoolEnabled = consumerWorkerPoolEnabled;
+    }
+
+    public ExecutorService getConsumerWorkerPoolExecutorService() {
+        return consumerWorkerPoolExecutorService;
+    }
+
+    public void setConsumerWorkerPoolExecutorService(ExecutorService consumerWorkerPoolExecutorService) {
+        this.consumerWorkerPoolExecutorService = consumerWorkerPoolExecutorService;
+    }
+
+    public int getConsumerWorkerPoolSize() {
+        return consumerWorkerPoolSize;
+    }
+
+    public void setConsumerWorkerPoolSize(int consumerWorkerPoolSize) {
+        this.consumerWorkerPoolSize = consumerWorkerPoolSize;
+    }
+
+    public int getConsumerWorkerPoolMaxSize() {
+        return consumerWorkerPoolMaxSize;
+    }
+
+    public void setConsumerWorkerPoolMaxSize(int consumerWorkerPoolMaxSize) {
+        this.consumerWorkerPoolMaxSize = consumerWorkerPoolMaxSize;
     }
 
     public SalesforceSession getSession() {

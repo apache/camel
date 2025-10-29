@@ -38,6 +38,7 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.OptimisedComponentResolver;
 import org.apache.camel.spi.PollDynamicAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
@@ -596,8 +597,10 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
     @Override
     protected void doStart() throws Exception {
         // ensure the component is started
-        if (autoStartupComponents && scheme != null) {
-            camelContext.getComponent(scheme);
+        if (autoStartupComponents && scheme != null && uri != null) {
+            OptimisedComponentResolver resolver
+                    = camelContext.getCamelContextExtension().getContextPlugin(OptimisedComponentResolver.class);
+            resolver.resolveComponent(uri);
         }
 
         ServiceHelper.startService(consumerCache, aggregationStrategy, dynamicAware);

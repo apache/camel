@@ -17,8 +17,56 @@
 package org.apache.camel.test.infra.ollama.services;
 
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
+import org.apache.camel.test.infra.common.services.SingletonService;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 public final class OllamaServiceFactory {
+
+    static class SingletonOllamaService extends SingletonService<OllamaService> implements OllamaService {
+        public SingletonOllamaService(OllamaService service, String name) {
+            super(service, name);
+        }
+
+        @Override
+        public String getEndpoint() {
+            return getService().getEndpoint();
+        }
+
+        @Override
+        public String getModel() {
+            return getService().getModel();
+        }
+
+        @Override
+        public String modelName() {
+            return getService().modelName();
+        }
+
+        @Override
+        public String baseUrl() {
+            return getService().baseUrl();
+        }
+
+        @Override
+        public String baseUrlV1() {
+            return getService().baseUrlV1();
+        }
+
+        @Override
+        public String apiKey() {
+            return getService().apiKey();
+        }
+
+        @Override
+        public final void beforeAll(ExtensionContext extensionContext) {
+            super.beforeAll(extensionContext);
+        }
+
+        @Override
+        public final void afterAll(ExtensionContext extensionContext) {
+            // NO-OP
+        }
+    }
 
     private OllamaServiceFactory() {
 
@@ -40,5 +88,36 @@ public final class OllamaServiceFactory {
                 .addLocalMapping(() -> new OllamaLocalContainerService(serviceConfiguration))
                 .addRemoteMapping(() -> new OllamaRemoteService(serviceConfiguration))
                 .build();
+    }
+
+    public static OllamaService createSingletonService() {
+        return SingletonServiceHolder.INSTANCE;
+    }
+
+    public static OllamaService createSingletonServiceWithConfiguration(OllamaServiceConfiguration serviceConfiguration) {
+        return SingletonServiceWithConfigurationHolder.getInstance(serviceConfiguration);
+    }
+
+    private static class SingletonServiceHolder {
+        static final OllamaService INSTANCE;
+        static {
+            SimpleTestServiceBuilder<OllamaService> instance = builder();
+
+            instance.addLocalMapping(() -> new SingletonOllamaService(new OllamaLocalContainerService(), "ollama"))
+                    .addRemoteMapping(OllamaRemoteService::new);
+
+            INSTANCE = instance.build();
+        }
+    }
+
+    private static class SingletonServiceWithConfigurationHolder {
+        private static volatile OllamaService INSTANCE;
+
+        static synchronized OllamaService getInstance(OllamaServiceConfiguration serviceConfiguration) {
+            if (INSTANCE == null) {
+                INSTANCE = new SingletonOllamaService(new OllamaLocalContainerService(serviceConfiguration), "ollama");
+            }
+            return INSTANCE;
+        }
     }
 }

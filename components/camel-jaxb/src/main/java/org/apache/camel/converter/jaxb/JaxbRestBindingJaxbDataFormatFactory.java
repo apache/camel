@@ -33,6 +33,7 @@ import org.apache.camel.support.PropertyBindingSupport;
  */
 @JdkService(RestBindingJaxbDataFormatFactory.FACTORY)
 public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbDataFormatFactory {
+
     @Override
     public void setupJaxb(
             CamelContext camelContext, RestConfiguration config,

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-pqc</artifactId>
@@ -33,6 +33,8 @@
     <description>Execute different Signature and verification using Post Quantum Cryptography algorithms</description>
 
     <properties>
+        <skipITs.s390x>true</skipITs.s390x>
+        <skipITs.ppc64le>true</skipITs.ppc64le>
     </properties>
 
     <dependencies>
@@ -44,6 +46,22 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk18on</artifactId>
             <version>${bouncycastle-version}</version>
+        </dependency>
+
+        <!-- Spring Vault for HashicorpVaultKeyLifecycleManager (optional) -->
+        <dependency>
+            <groupId>org.springframework.vault</groupId>
+            <artifactId>spring-vault-core</artifactId>
+            <version>${spring-vault-core-version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- AWS SDK for AwsSecretsManagerKeyLifecycleManager (optional) -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>secretsmanager</artifactId>
+            <version>${aws-java-sdk2-version}</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- for testing -->
@@ -61,6 +79,20 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bouncycastle-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-hashicorp-vault</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-aws-v2</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
     </dependencies>

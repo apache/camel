@@ -17,13 +17,17 @@
 package org.apache.camel.micrometer.observability;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
 import io.micrometer.tracing.test.simple.SimpleSpan;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +38,7 @@ public class DisableEndpointTest extends MicrometerObservabilityTracerTestSuppor
     @Override
     protected CamelContext createCamelContext() throws Exception {
         tst.setTraceProcessors(true);
-        tst.setExcludePatterns("log*,to*");
+        tst.setExcludePatterns("log*,to*,setVariable*");
         return super.createCamelContext();
     }
 
@@ -46,6 +50,18 @@ public class DisableEndpointTest extends MicrometerObservabilityTracerTestSuppor
         checkTrace(traces.values().iterator().next());
     }
 
+    @Test
+    void testExcludedVariableIsPresent() throws InterruptedException {
+        MockEndpoint endpoint = context().getEndpoint("mock:variable", MockEndpoint.class);
+
+        endpoint.expectedMessageCount(1);
+        template.sendBody("direct:variable", "Test Message");
+        endpoint.assertIsSatisfied();
+        Exchange first = endpoint.getReceivedExchanges().get(0);
+        String myVar = first.getVariable("myVar", String.class);
+        Assertions.assertEquals("testValue", myVar);
+    }
+
     private void checkTrace(MicrometerObservabilityTrace trace) {
         List<SimpleSpan> spans = trace.getSpans();
         assertEquals(2, spans.size());
@@ -53,8 +69,8 @@ public class DisableEndpointTest extends MicrometerObservabilityTracerTestSuppor
         SimpleSpan direct = spans.get(1);
 
         // Validate span completion
-        assertNotEquals("", testProducer.getEndTimestamp());
-        assertNotEquals("", direct.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, testProducer.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, direct.getEndTimestamp());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
@@ -73,6 +89,10 @@ public class DisableEndpointTest extends MicrometerObservabilityTracerTestSuppor
                         .routeId("start")
                         .log("A message")
                         .to("log:info");
+
+                from("direct:variable")
+                        .setVariable("myVar", constant("testValue"))
+                        .to("mock:variable");
             }
         };
     }

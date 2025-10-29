@@ -24,7 +24,7 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-milvus</artifactId>
@@ -39,6 +39,8 @@
         <!-- Milvus is not available on these platforms -->
         <skipITs.s390x>true</skipITs.s390x>
         <skipTests.s390x>true</skipTests.s390x>
+        <!-- Make use of native access during IT test execution only -->
+        <camel.failsafe.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.failsafe.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -101,6 +103,15 @@
                     <artifactId>log4j-slf4j-impl</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Required as the Milvus API is leaking a @NonNull annotation -->
+        <!-- TODO: remove when this issue is solved https://github.com/milvus-io/milvus-sdk-java/issues/1651-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok-version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- test dependencies -->

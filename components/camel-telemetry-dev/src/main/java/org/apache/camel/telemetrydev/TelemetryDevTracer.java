@@ -136,13 +136,18 @@ public class TelemetryDevTracer extends Tracer {
         }
 
         @Override
-        public void inject(Span span, SpanContextPropagationInjector injector) {
+        public void inject(Span span, SpanContextPropagationInjector injector, boolean includeTracing) {
             String[] split = span.toString().split("-");
             if (split.length < 2) {
                 LOG.error("TRACE ERROR: wrong format, could not split traceparent {}", span);
                 return;
             }
             injector.put("traceparent", split[0] + "-" + split[1]);
+            if (includeTracing) {
+                DevSpanAdapter spanAdapter = (DevSpanAdapter) span;
+                injector.put(Tracer.TRACE_HEADER, spanAdapter.getTag("traceid"));
+                injector.put(Tracer.SPAN_HEADER, spanAdapter.getTag("spanid"));
+            }
         }
 
     }

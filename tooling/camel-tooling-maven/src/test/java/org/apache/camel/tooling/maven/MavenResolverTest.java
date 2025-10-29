@@ -60,7 +60,7 @@ public class MavenResolverTest {
     @BeforeAll
     public static void startMavenMirror() throws Exception {
         localServer = ServerBootstrap.bootstrap()
-                .setListenerPort(8888)
+                .setListenerPort(AvailablePortFinder.getNextAvailable(9234, 10000))
                 .registerHandler("/maven/*", (req, res, context) -> {
                     Header authz = req.getFirstHeader("Authorization");
                     if (authz == null) {

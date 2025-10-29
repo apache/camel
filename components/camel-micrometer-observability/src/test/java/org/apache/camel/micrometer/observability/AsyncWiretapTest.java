@@ -17,6 +17,7 @@
 package org.apache.camel.micrometer.observability;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * WiretappedRouteTest tests the execution of a new spin off component which would create a new exchange,
@@ -71,13 +73,13 @@ public class AsyncWiretapTest extends MicrometerObservabilityTracerTestSupport {
         SimpleSpan wiretapMock = MicrometerObservabilityTracerTestSupport.getSpan(spans, "mock://end", Op.EVENT_SENT);
 
         // Validate span completion
-        assertNotEquals("", testProducer.getEndTimestamp());
-        assertNotEquals("", direct.getEndTimestamp());
-        assertNotEquals("", wiretapDirectTo.getEndTimestamp());
-        assertNotEquals("", log.getEndTimestamp());
-        assertNotEquals("", wiretapDirectFrom.getEndTimestamp());
-        assertNotEquals("", wiretapLog.getEndTimestamp());
-        assertNotEquals("", wiretapMock.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, testProducer.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, direct.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, wiretapDirectTo.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, log.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, wiretapDirectFrom.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, wiretapLog.getEndTimestamp());
+        assertNotEquals(Instant.EPOCH, wiretapMock.getEndTimestamp());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
@@ -96,7 +98,7 @@ public class AsyncWiretapTest extends MicrometerObservabilityTracerTestSupport {
         assertEquals(wiretapDirectTo.getTags().get("exchangeId"), wiretapMock.getTags().get("exchangeId"));
 
         // Validate hierarchy
-        assertEquals("", testProducer.getParentId());
+        assertTrue(testProducer.getParentId().isEmpty());
         assertEquals(testProducer.getSpanId(), direct.getParentId());
         assertEquals(direct.getSpanId(), wiretapDirectTo.getParentId());
         assertEquals(direct.getSpanId(), log.getParentId());

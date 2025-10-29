@@ -19,5 +19,6 @@ environment: k8s
 
 deployments:
   keycloak:
-    version: 26.1.2
+    apiHost: "oauth.localtest.me"
+    version: 26.4.2
 

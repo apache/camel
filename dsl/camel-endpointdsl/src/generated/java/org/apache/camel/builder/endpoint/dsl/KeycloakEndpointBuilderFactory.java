@@ -44,6 +44,22 @@ public interface KeycloakEndpointBuilderFactory {
             return (AdvancedKeycloakEndpointConsumerBuilder) this;
         }
         /**
+         * Pre-obtained access token for authentication. When provided, this
+         * token will be used directly instead of obtaining one through
+         * username/password or client credentials flow.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
          * Filter admin events by authentication client ID.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -230,6 +246,68 @@ public interface KeycloakEndpointBuilderFactory {
          */
         default KeycloakEndpointConsumerBuilder first(String first) {
             doSetProperty("first", first);
+            return this;
+        }
+        /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder introspectionCacheEnabled(boolean introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder introspectionCacheEnabled(String introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder introspectionCacheTtl(long introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder introspectionCacheTtl(String introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
             return this;
         }
         /**
@@ -482,6 +560,42 @@ public interface KeycloakEndpointBuilderFactory {
          */
         default KeycloakEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder useTokenIntrospection(boolean useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointConsumerBuilder useTokenIntrospection(String useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
             return this;
         }
         /**
@@ -1150,6 +1264,22 @@ public interface KeycloakEndpointBuilderFactory {
         }
 
         /**
+         * Pre-obtained access token for authentication. When provided, this
+         * token will be used directly instead of obtaining one through
+         * username/password or client credentials flow.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
          * Filter admin events by authentication client ID.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1336,6 +1466,68 @@ public interface KeycloakEndpointBuilderFactory {
          */
         default KeycloakEndpointProducerBuilder first(String first) {
             doSetProperty("first", first);
+            return this;
+        }
+        /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder introspectionCacheEnabled(boolean introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder introspectionCacheEnabled(String introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder introspectionCacheTtl(long introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder introspectionCacheTtl(String introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
             return this;
         }
         /**
@@ -1590,6 +1782,42 @@ public interface KeycloakEndpointBuilderFactory {
             doSetProperty("username", username);
             return this;
         }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder useTokenIntrospection(boolean useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointProducerBuilder useTokenIntrospection(String useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
+            return this;
+        }
     }
 
     /**
@@ -1659,6 +1887,22 @@ public interface KeycloakEndpointBuilderFactory {
             return (AdvancedKeycloakEndpointBuilder) this;
         }
 
+        /**
+         * Pre-obtained access token for authentication. When provided, this
+         * token will be used directly instead of obtaining one through
+         * username/password or client credentials flow.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
         /**
          * Filter admin events by authentication client ID.
          * 
@@ -1846,6 +2090,68 @@ public interface KeycloakEndpointBuilderFactory {
          */
         default KeycloakEndpointBuilder first(String first) {
             doSetProperty("first", first);
+            return this;
+        }
+        /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder introspectionCacheEnabled(boolean introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Enable caching of token introspection results to reduce API calls to
+         * Keycloak.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param introspectionCacheEnabled the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder introspectionCacheEnabled(String introspectionCacheEnabled) {
+            doSetProperty("introspectionCacheEnabled", introspectionCacheEnabled);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder introspectionCacheTtl(long introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
+            return this;
+        }
+        /**
+         * Time-to-live for cached introspection results in seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 60
+         * Group: common
+         * 
+         * @param introspectionCacheTtl the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder introspectionCacheTtl(String introspectionCacheTtl) {
+            doSetProperty("introspectionCacheTtl", introspectionCacheTtl);
             return this;
         }
         /**
@@ -2098,6 +2404,42 @@ public interface KeycloakEndpointBuilderFactory {
          */
         default KeycloakEndpointBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder useTokenIntrospection(boolean useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
+            return this;
+        }
+        /**
+         * Enable OAuth 2.0 token introspection for real-time token validation.
+         * When enabled, tokens are validated by calling Keycloak's
+         * introspection endpoint instead of local JWT parsing. This allows
+         * detecting revoked tokens before expiration.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param useTokenIntrospection the value to set
+         * @return the dsl builder
+         */
+        default KeycloakEndpointBuilder useTokenIntrospection(String useTokenIntrospection) {
+            doSetProperty("useTokenIntrospection", useTokenIntrospection);
             return this;
         }
     }
@@ -2457,6 +2799,246 @@ public interface KeycloakEndpointBuilderFactory {
          */
         public String keycloakEventId() {
             return "CamelKeycloakEventId";
+        }
+        /**
+         * The identity provider alias.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakIdpAlias}.
+         */
+        public String keycloakIdpAlias() {
+            return "CamelKeycloakIdpAlias";
+        }
+        /**
+         * The identity provider ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakIdpId}.
+         */
+        public String keycloakIdpId() {
+            return "CamelKeycloakIdpId";
+        }
+        /**
+         * The resource ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakResourceId}.
+         */
+        public String keycloakResourceId() {
+            return "CamelKeycloakResourceId";
+        }
+        /**
+         * The resource name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakResourceName}.
+         */
+        public String keycloakResourceName() {
+            return "CamelKeycloakResourceName";
+        }
+        /**
+         * The resource type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakResourceType}.
+         */
+        public String keycloakResourceType() {
+            return "CamelKeycloakResourceType";
+        }
+        /**
+         * The resource URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakResourceUri}.
+         */
+        public String keycloakResourceUri() {
+            return "CamelKeycloakResourceUri";
+        }
+        /**
+         * The policy ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPolicyId}.
+         */
+        public String keycloakPolicyId() {
+            return "CamelKeycloakPolicyId";
+        }
+        /**
+         * The policy name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPolicyName}.
+         */
+        public String keycloakPolicyName() {
+            return "CamelKeycloakPolicyName";
+        }
+        /**
+         * The policy type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPolicyType}.
+         */
+        public String keycloakPolicyType() {
+            return "CamelKeycloakPolicyType";
+        }
+        /**
+         * The permission ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPermissionId}.
+         */
+        public String keycloakPermissionId() {
+            return "CamelKeycloakPermissionId";
+        }
+        /**
+         * The permission name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPermissionName}.
+         */
+        public String keycloakPermissionName() {
+            return "CamelKeycloakPermissionName";
+        }
+        /**
+         * The scope name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakScopeName}.
+         */
+        public String keycloakScopeName() {
+            return "CamelKeycloakScopeName";
+        }
+        /**
+         * The user attribute name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakAttributeName}.
+         */
+        public String keycloakAttributeName() {
+            return "CamelKeycloakAttributeName";
+        }
+        /**
+         * The user attribute value.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakAttributeValue}.
+         */
+        public String keycloakAttributeValue() {
+            return "CamelKeycloakAttributeValue";
+        }
+        /**
+         * The credential ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakCredentialId}.
+         */
+        public String keycloakCredentialId() {
+            return "CamelKeycloakCredentialId";
+        }
+        /**
+         * The credential type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakCredentialType}.
+         */
+        public String keycloakCredentialType() {
+            return "CamelKeycloakCredentialType";
+        }
+        /**
+         * The required action type.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakRequiredAction}.
+         */
+        public String keycloakRequiredAction() {
+            return "CamelKeycloakRequiredAction";
+        }
+        /**
+         * The list of actions to execute.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakActions}.
+         */
+        public String keycloakActions() {
+            return "CamelKeycloakActions";
+        }
+        /**
+         * The redirect URI.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakRedirectUri}.
+         */
+        public String keycloakRedirectUri() {
+            return "CamelKeycloakRedirectUri";
+        }
+        /**
+         * The lifespan in seconds.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakLifespan}.
+         */
+        public String keycloakLifespan() {
+            return "CamelKeycloakLifespan";
         }
     }
     static KeycloakEndpointBuilder endpointBuilder(String componentName, String path) {

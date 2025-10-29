@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.keycloak;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.ws.rs.core.Response;
 
@@ -32,10 +36,14 @@ import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.ClientScopeRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.GroupRepresentation;
+import org.keycloak.representations.idm.IdentityProviderRepresentation;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.UserSessionRepresentation;
+import org.keycloak.representations.idm.authorization.PolicyRepresentation;
+import org.keycloak.representations.idm.authorization.ResourcePermissionRepresentation;
+import org.keycloak.representations.idm.authorization.ResourceRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -207,6 +215,105 @@ public class KeycloakProducer extends DefaultProducer {
                 break;
             case listClientScopes:
                 listClientScopes(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case createIdentityProvider:
+                createIdentityProvider(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case deleteIdentityProvider:
+                deleteIdentityProvider(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case getIdentityProvider:
+                getIdentityProvider(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case updateIdentityProvider:
+                updateIdentityProvider(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case listIdentityProviders:
+                listIdentityProviders(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case createResource:
+                createResource(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case deleteResource:
+                deleteResource(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case getResource:
+                getResource(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case updateResource:
+                updateResource(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case listResources:
+                listResources(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case createResourcePolicy:
+                createResourcePolicy(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case deleteResourcePolicy:
+                deleteResourcePolicy(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case getResourcePolicy:
+                getResourcePolicy(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case updateResourcePolicy:
+                updateResourcePolicy(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case listResourcePolicies:
+                listResourcePolicies(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case createResourcePermission:
+                createResourcePermission(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case deleteResourcePermission:
+                deleteResourcePermission(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case getResourcePermission:
+                getResourcePermission(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case updateResourcePermission:
+                updateResourcePermission(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case listResourcePermissions:
+                listResourcePermissions(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case evaluatePermission:
+                evaluatePermission(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case getUserAttributes:
+                getUserAttributes(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case setUserAttribute:
+                setUserAttribute(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case deleteUserAttribute:
+                deleteUserAttribute(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case getUserCredentials:
+                getUserCredentials(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case deleteUserCredential:
+                deleteUserCredential(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case sendVerifyEmail:
+                sendVerifyEmail(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case sendPasswordResetEmail:
+                sendPasswordResetEmail(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case addRequiredAction:
+                addRequiredAction(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case removeRequiredAction:
+                removeRequiredAction(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case executeActionsEmail:
+                executeActionsEmail(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case getClientSecret:
+                getClientSecret(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case regenerateClientSecret:
+                regenerateClientSecret(getEndpoint().getKeycloakClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
@@ -1170,6 +1277,720 @@ public class KeycloakProducer extends DefaultProducer {
         List<ClientScopeRepresentation> clientScopes = keycloakClient.realm(realmName).clientScopes().findAll();
         Message message = getMessageForResponse(exchange);
         message.setBody(clientScopes);
+    }
+
+    // Identity Provider operations
+    private void createIdentityProvider(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof IdentityProviderRepresentation) {
+                Response response
+                        = keycloakClient.realm(realmName).identityProviders().create((IdentityProviderRepresentation) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(response);
+            }
+        } else {
+            throw new IllegalArgumentException(
+                    "Create identity provider requires POJO request with IdentityProviderRepresentation");
+        }
+    }
+
+    private void deleteIdentityProvider(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String idpAlias = exchange.getIn().getHeader(KeycloakConstants.IDP_ALIAS, String.class);
+        if (ObjectHelper.isEmpty(idpAlias)) {
+            throw new IllegalArgumentException("Identity provider alias must be specified");
+        }
+
+        keycloakClient.realm(realmName).identityProviders().get(idpAlias).remove();
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Identity provider deleted successfully");
+    }
+
+    private void getIdentityProvider(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String idpAlias = exchange.getIn().getHeader(KeycloakConstants.IDP_ALIAS, String.class);
+        if (ObjectHelper.isEmpty(idpAlias)) {
+            throw new IllegalArgumentException("Identity provider alias must be specified");
+        }
+
+        IdentityProviderRepresentation idp
+                = keycloakClient.realm(realmName).identityProviders().get(idpAlias).toRepresentation();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(idp);
+    }
+
+    private void updateIdentityProvider(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String idpAlias = exchange.getIn().getHeader(KeycloakConstants.IDP_ALIAS, String.class);
+        if (ObjectHelper.isEmpty(idpAlias)) {
+            throw new IllegalArgumentException("Identity provider alias must be specified");
+        }
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof IdentityProviderRepresentation) {
+                keycloakClient.realm(realmName).identityProviders().get(idpAlias)
+                        .update((IdentityProviderRepresentation) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody("Identity provider updated successfully");
+            }
+        } else {
+            throw new IllegalArgumentException(
+                    "Update identity provider requires POJO request with IdentityProviderRepresentation");
+        }
+    }
+
+    private void listIdentityProviders(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        List<IdentityProviderRepresentation> idps = keycloakClient.realm(realmName).identityProviders().findAll();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(idps);
+    }
+
+    // Authorization Services operations
+    private void createResource(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ResourceRepresentation) {
+                Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources()
+                        .create((ResourceRepresentation) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(response);
+            }
+        } else {
+            throw new IllegalArgumentException("Create resource requires POJO request with ResourceRepresentation");
+        }
+    }
+
+    private void deleteResource(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        String resourceId = exchange.getIn().getHeader(KeycloakConstants.RESOURCE_ID, String.class);
+        if (ObjectHelper.isEmpty(resourceId)) {
+            throw new IllegalArgumentException("Resource ID must be specified");
+        }
+
+        keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources().resource(resourceId).remove();
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Resource deleted successfully");
+    }
+
+    private void getResource(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        String resourceId = exchange.getIn().getHeader(KeycloakConstants.RESOURCE_ID, String.class);
+        if (ObjectHelper.isEmpty(resourceId)) {
+            throw new IllegalArgumentException("Resource ID must be specified");
+        }
+
+        ResourceRepresentation resource
+                = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources().resource(resourceId)
+                        .toRepresentation();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(resource);
+    }
+
+    private void updateResource(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        String resourceId = exchange.getIn().getHeader(KeycloakConstants.RESOURCE_ID, String.class);
+        if (ObjectHelper.isEmpty(resourceId)) {
+            throw new IllegalArgumentException("Resource ID must be specified");
+        }
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ResourceRepresentation) {
+                keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources().resource(resourceId)
+                        .update((ResourceRepresentation) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody("Resource updated successfully");
+            }
+        } else {
+            throw new IllegalArgumentException("Update resource requires POJO request with ResourceRepresentation");
+        }
+    }
+
+    private void listResources(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        List<ResourceRepresentation> resources
+                = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources().resources();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(resources);
+    }
+
+    private void createResourcePolicy(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof PolicyRepresentation) {
+                Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies()
+                        .create((PolicyRepresentation) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(response);
+            }
+        } else {
+            throw new IllegalArgumentException("Create policy requires POJO request with PolicyRepresentation");
+        }
+    }
+
+    private void deleteResourcePolicy(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        String policyId = exchange.getIn().getHeader(KeycloakConstants.POLICY_ID, String.class);
+        if (ObjectHelper.isEmpty(policyId)) {
+            throw new IllegalArgumentException("Policy ID must be specified");
+        }
+
+        keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(policyId).remove();
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Policy deleted successfully");
+    }
+
+    private void getResourcePolicy(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        String policyId = exchange.getIn().getHeader(KeycloakConstants.POLICY_ID, String.class);
+        if (ObjectHelper.isEmpty(policyId)) {
+            throw new IllegalArgumentException("Policy ID must be specified");
+        }
+
+        PolicyRepresentation policy
+                = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(policyId)
+                        .toRepresentation();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(policy);
+    }
+
+    private void updateResourcePolicy(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        String policyId = exchange.getIn().getHeader(KeycloakConstants.POLICY_ID, String.class);
+        if (ObjectHelper.isEmpty(policyId)) {
+            throw new IllegalArgumentException("Policy ID must be specified");
+        }
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof PolicyRepresentation) {
+                keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(policyId)
+                        .update((PolicyRepresentation) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody("Policy updated successfully");
+            }
+        } else {
+            throw new IllegalArgumentException("Update policy requires POJO request with PolicyRepresentation");
+        }
+    }
+
+    private void listResourcePolicies(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        List<PolicyRepresentation> policies
+                = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policies();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(policies);
+    }
+
+    private void createResourcePermission(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ResourcePermissionRepresentation) {
+                Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().permissions()
+                        .resource().create((ResourcePermissionRepresentation) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(response);
+            }
+        } else {
+            throw new IllegalArgumentException("Create permission requires POJO request with ResourcePermissionRepresentation");
+        }
+    }
+
+    private void deleteResourcePermission(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        String permissionId = exchange.getIn().getHeader(KeycloakConstants.PERMISSION_ID, String.class);
+        if (ObjectHelper.isEmpty(permissionId)) {
+            throw new IllegalArgumentException("Permission ID must be specified");
+        }
+
+        // Use policy endpoint for permissions
+        keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(permissionId).remove();
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Permission deleted successfully");
+    }
+
+    private void getResourcePermission(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        String permissionId = exchange.getIn().getHeader(KeycloakConstants.PERMISSION_ID, String.class);
+        if (ObjectHelper.isEmpty(permissionId)) {
+            throw new IllegalArgumentException("Permission ID must be specified");
+        }
+
+        // Use policy endpoint for permissions
+        PolicyRepresentation permission
+                = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(permissionId)
+                        .toRepresentation();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(permission);
+    }
+
+    private void updateResourcePermission(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        String permissionId = exchange.getIn().getHeader(KeycloakConstants.PERMISSION_ID, String.class);
+        if (ObjectHelper.isEmpty(permissionId)) {
+            throw new IllegalArgumentException("Permission ID must be specified");
+        }
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof PolicyRepresentation) {
+                // Use policy endpoint for permissions
+                keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(permissionId)
+                        .update((PolicyRepresentation) payload);
+                Message message = getMessageForResponse(exchange);
+                message.setBody("Permission updated successfully");
+            }
+        } else {
+            throw new IllegalArgumentException("Update permission requires POJO request with PolicyRepresentation");
+        }
+    }
+
+    private void listResourcePermissions(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        // List all policies (which includes permissions)
+        List<PolicyRepresentation> permissions
+                = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policies();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(permissions);
+    }
+
+    private void evaluatePermission(Keycloak keycloakClient, Exchange exchange) {
+        // This would require more complex implementation with AuthzClient
+        // For now, provide a placeholder that can be extended
+        throw new UnsupportedOperationException(
+                "Permission evaluation requires AuthzClient and will be implemented in future versions");
+    }
+
+    // User Attribute operations
+    private void getUserAttributes(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        UserRepresentation user = keycloakClient.realm(realmName).users().get(userId).toRepresentation();
+        Map<String, List<String>> attributes = user.getAttributes();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(attributes != null ? attributes : new HashMap<>());
+    }
+
+    private void setUserAttribute(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        String attributeName = exchange.getIn().getHeader(KeycloakConstants.ATTRIBUTE_NAME, String.class);
+        if (ObjectHelper.isEmpty(attributeName)) {
+            throw new IllegalArgumentException("Attribute name must be specified");
+        }
+
+        String attributeValue = exchange.getIn().getHeader(KeycloakConstants.ATTRIBUTE_VALUE, String.class);
+        if (ObjectHelper.isEmpty(attributeValue)) {
+            throw new IllegalArgumentException("Attribute value must be specified");
+        }
+
+        UserRepresentation user = keycloakClient.realm(realmName).users().get(userId).toRepresentation();
+        Map<String, List<String>> attributes = user.getAttributes();
+        if (attributes == null) {
+            attributes = new HashMap<>();
+            user.setAttributes(attributes);
+        }
+        attributes.put(attributeName, Arrays.asList(attributeValue));
+        keycloakClient.realm(realmName).users().get(userId).update(user);
+        Message message = getMessageForResponse(exchange);
+        message.setBody("User attribute set successfully");
+    }
+
+    private void deleteUserAttribute(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        String attributeName = exchange.getIn().getHeader(KeycloakConstants.ATTRIBUTE_NAME, String.class);
+        if (ObjectHelper.isEmpty(attributeName)) {
+            throw new IllegalArgumentException("Attribute name must be specified");
+        }
+
+        UserRepresentation user = keycloakClient.realm(realmName).users().get(userId).toRepresentation();
+        Map<String, List<String>> attributes = user.getAttributes();
+        if (attributes != null) {
+            attributes.remove(attributeName);
+            keycloakClient.realm(realmName).users().get(userId).update(user);
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody("User attribute deleted successfully");
+    }
+
+    // User Credential operations
+    private void getUserCredentials(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        List<CredentialRepresentation> credentials = keycloakClient.realm(realmName).users().get(userId).credentials();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(credentials);
+    }
+
+    private void deleteUserCredential(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        String credentialId = exchange.getIn().getHeader(KeycloakConstants.CREDENTIAL_ID, String.class);
+        if (ObjectHelper.isEmpty(credentialId)) {
+            throw new IllegalArgumentException("Credential ID must be specified");
+        }
+
+        keycloakClient.realm(realmName).users().get(userId).removeCredential(credentialId);
+        Message message = getMessageForResponse(exchange);
+        message.setBody("User credential deleted successfully");
+    }
+
+    // User Action operations
+    private void sendVerifyEmail(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        keycloakClient.realm(realmName).users().get(userId).sendVerifyEmail();
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Verify email sent successfully");
+    }
+
+    private void sendPasswordResetEmail(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        // Reset password by executing required action
+        List<String> actions = Arrays.asList("UPDATE_PASSWORD");
+        keycloakClient.realm(realmName).users().get(userId).executeActionsEmail(actions);
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Password reset email sent successfully");
+    }
+
+    private void addRequiredAction(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        String requiredAction = exchange.getIn().getHeader(KeycloakConstants.REQUIRED_ACTION, String.class);
+        if (ObjectHelper.isEmpty(requiredAction)) {
+            throw new IllegalArgumentException("Required action must be specified");
+        }
+
+        UserRepresentation user = keycloakClient.realm(realmName).users().get(userId).toRepresentation();
+        List<String> actions = user.getRequiredActions();
+        if (actions == null) {
+            actions = new ArrayList<>();
+            user.setRequiredActions(actions);
+        }
+        if (!actions.contains(requiredAction)) {
+            actions.add(requiredAction);
+        }
+        keycloakClient.realm(realmName).users().get(userId).update(user);
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Required action added successfully");
+    }
+
+    private void removeRequiredAction(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        String requiredAction = exchange.getIn().getHeader(KeycloakConstants.REQUIRED_ACTION, String.class);
+        if (ObjectHelper.isEmpty(requiredAction)) {
+            throw new IllegalArgumentException("Required action must be specified");
+        }
+
+        UserRepresentation user = keycloakClient.realm(realmName).users().get(userId).toRepresentation();
+        List<String> actions = user.getRequiredActions();
+        if (actions != null) {
+            actions.remove(requiredAction);
+            keycloakClient.realm(realmName).users().get(userId).update(user);
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Required action removed successfully");
+    }
+
+    @SuppressWarnings("unchecked")
+    private void executeActionsEmail(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        List<String> actions = exchange.getIn().getHeader(KeycloakConstants.ACTIONS, List.class);
+        if (actions == null || actions.isEmpty()) {
+            throw new IllegalArgumentException("Actions list must be specified");
+        }
+
+        Integer lifespan = exchange.getIn().getHeader(KeycloakConstants.LIFESPAN, Integer.class);
+        String redirectUri = exchange.getIn().getHeader(KeycloakConstants.REDIRECT_URI, String.class);
+
+        if (lifespan != null && redirectUri != null) {
+            keycloakClient.realm(realmName).users().get(userId).executeActionsEmail(redirectUri, lifespan.toString(), actions);
+        } else if (redirectUri != null) {
+            keycloakClient.realm(realmName).users().get(userId).executeActionsEmail(actions);
+        } else {
+            keycloakClient.realm(realmName).users().get(userId).executeActionsEmail(actions);
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody("Actions email sent successfully");
+    }
+
+    // Client Secret Management operations
+    private void getClientSecret(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        CredentialRepresentation secret = keycloakClient.realm(realmName).clients().get(clientUuid).getSecret();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(secret);
+    }
+
+    private void regenerateClientSecret(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String clientUuid = exchange.getIn().getHeader(KeycloakConstants.CLIENT_UUID, String.class);
+        if (ObjectHelper.isEmpty(clientUuid)) {
+            throw new IllegalArgumentException(MISSING_CLIENT_UUID);
+        }
+
+        CredentialRepresentation newSecret = keycloakClient.realm(realmName).clients().get(clientUuid).generateNewSecret();
+        Message message = getMessageForResponse(exchange);
+        message.setBody(newSecret);
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

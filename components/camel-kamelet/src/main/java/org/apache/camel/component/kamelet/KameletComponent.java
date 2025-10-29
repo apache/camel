@@ -101,6 +101,13 @@ public class KameletComponent extends DefaultComponent {
     public KameletComponent() {
     }
 
+    @Override
+    public boolean useRawUri() {
+        // must use raw because sensitive information need to be preserved when building URIs
+        // as otherwise a kamelet would encode parameters (also sensitive which leads to wrong passwords)
+        return true;
+    }
+
     public void addKameletEip(String key, Processor callback) {
         kameletEips.put(key, callback);
     }

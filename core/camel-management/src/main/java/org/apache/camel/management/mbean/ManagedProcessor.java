@@ -206,6 +206,16 @@ public class ManagedProcessor extends ManagedPerformanceCounter
     }
 
     @Override
+    public String getModelLabel() {
+        return definition.getLabel();
+    }
+
+    @Override
+    public String getNote() {
+        return definition.getNote();
+    }
+
+    @Override
     public Boolean getDisabled() {
         if (processor instanceof DisabledAware da) {
             return da.isDisabled();

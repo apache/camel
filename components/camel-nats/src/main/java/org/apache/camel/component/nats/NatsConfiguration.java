@@ -23,6 +23,7 @@ import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
+import io.nats.client.api.ConsumerConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -96,6 +97,12 @@ public class NatsConfiguration {
     private String jetstreamName;
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean jetstreamAsync = true;
+    @UriParam(label = "advanced")
+    private ConsumerConfiguration consumerConfiguration;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean pullSubscription = true;
+    @UriParam(label = "advanced")
+    private String durableName;
 
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
@@ -502,5 +509,69 @@ public class NatsConfiguration {
      */
     public void setJetstreamAsync(boolean jetstreamAsync) {
         this.jetstreamAsync = jetstreamAsync;
+    }
+
+    /**
+     * Allows the entire NATS JetStream Consumer Configuration object to be provided directly.
+     * <p>
+     * This provides fine-grained control over all consumer properties (e.g., ack policies, max deliver, replay
+     * policies) and overrides any individual consumer-related options set separately via the Camel URI parameters.
+     */
+    public ConsumerConfiguration getConsumerConfiguration() {
+        return consumerConfiguration;
+    }
+
+    /**
+     * Sets a custom {@code ConsumerConfiguration} object for the JetStream consumer.
+     * <p>
+     * This is an advanced option typically used when you need to configure properties not exposed as simple Camel URI
+     * parameters. When set, this object will be used to build the final consumer subscription options.
+     */
+    public void setConsumerConfiguration(ConsumerConfiguration consumerConfiguration) {
+        this.consumerConfiguration = consumerConfiguration;
+    }
+
+    /**
+     * Whether the consumer subscription type is a **Pull Subscription** ({@code true}) or a **Push Subscription**
+     * ({@code false}) when using JetStream.
+     * <p>
+     * **Pull Subscriptions** require the consumer to explicitly fetch messages. **Push Subscriptions** automatically
+     * deliver messages to the consumer. The default setting is {@code true} (Pull Subscription).
+     */
+    public boolean isPullSubscription() {
+        return pullSubscription;
+    }
+
+    /**
+     * Sets the consumer subscription type for JetStream.
+     * <p>
+     * Set to {@code true} to use a **Pull Subscription** (consumer explicitly requests messages). Set to {@code false}
+     * to use a **Push Subscription** (messages are automatically delivered).
+     */
+    public void setPullSubscription(boolean pullSubscription) {
+        this.pullSubscription = pullSubscription;
+    }
+
+    /**
+     * The name to assign to the JetStream durable consumer.
+     * <p>
+     * If set, the consumer becomes **durable**, allowing subscriptions to bind to it and resume message processing
+     * until the consumer is explicitly deleted. This name is crucial for resilient message processing.
+     * <p>
+     * A durable name cannot contain whitespace, '.', '*', '>', path separators (forward or backward slash), or
+     * non-printable characters.
+     */
+    public String getDurableName() {
+        return durableName;
+    }
+
+    /**
+     * Sets the name to assign to the JetStream durable consumer.
+     * <p>
+     * Setting this value makes the consumer durable. The value is used to set the {@code durable()} field in the
+     * underlying NATS {@code ConsumerConfiguration.Builder}.
+     */
+    public void setDurableName(String durableName) {
+        this.durableName = durableName;
     }
 }

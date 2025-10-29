@@ -62,12 +62,13 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
-        return dumpModelAsXml(context, definition, false, true);
+        return dumpModelAsXml(context, definition, false, true, false);
     }
 
     @Override
     public String dumpModelAsXml(
-            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds)
+            CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds,
+            boolean sourceLocation)
             throws Exception {
 
         Properties properties = new Properties();
@@ -75,7 +76,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
         Consumer<RouteDefinition> extractor = route -> {
             extractNamespaces(route, namespaces);
-            if (context.isDebugging()) {
+            if (sourceLocation || context.isDebugging()) {
                 extractSourceLocations(route, locations);
             }
             resolveEndpointDslUris(route);
@@ -102,7 +103,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                     doWriteAttribute("description", def.getDescriptionText());
                 }
                 // write location information
-                if (context.isDebugging()) {
+                if (sourceLocation || context.isDebugging()) {
                     String loc = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLocation();
                     int line = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
                     if (line != -1) {

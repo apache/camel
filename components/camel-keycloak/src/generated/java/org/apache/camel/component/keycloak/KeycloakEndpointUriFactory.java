@@ -23,7 +23,8 @@ public class KeycloakEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(46);
+        Set<String> props = new HashSet<>(50);
+        props.add("accessToken");
         props.add("authClient");
         props.add("authIpAddress");
         props.add("authRealm");
@@ -45,6 +46,8 @@ public class KeycloakEndpointUriFactory extends org.apache.camel.support.compone
         props.add("first");
         props.add("greedy");
         props.add("initialDelay");
+        props.add("introspectionCacheEnabled");
+        props.add("introspectionCacheTtl");
         props.add("ipAddress");
         props.add("keycloakClient");
         props.add("label");
@@ -68,10 +71,12 @@ public class KeycloakEndpointUriFactory extends org.apache.camel.support.compone
         props.add("timeUnit");
         props.add("types");
         props.add("useFixedDelay");
+        props.add("useTokenIntrospection");
         props.add("user");
         props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
+        Set<String> secretProps = new HashSet<>(4);
+        secretProps.add("accessToken");
         secretProps.add("clientSecret");
         secretProps.add("password");
         secretProps.add("username");

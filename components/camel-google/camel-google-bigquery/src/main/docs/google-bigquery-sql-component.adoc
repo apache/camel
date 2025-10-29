@@ -114,5 +114,116 @@ include::partial$component-endpoint-headers.adoc[]
 
 Google BigQuery SQL endpoint expects the payload to be either empty or a map of query parameters.
 
+== Query Types
+
+The component supports both SELECT and DML (INSERT, UPDATE, DELETE) queries:
+
+* **SELECT queries** - Return data based on configured `outputType` (SELECT_LIST or STREAM_LIST)
+* **DML queries** - Return the number of affected rows as `Long`
+
+== Output Types
+
+The component supports two output types for SELECT queries, configured using the `outputType` parameter
+
+=== SELECT_LIST (default)
+
+Returns all query results as a `List<Map<String, Object>>` loaded into memory.
+
+*Characteristics:*
+
+* All rows from current page loaded into memory
+* Message body: `List<Map<String, Object>>`
+* Manual pagination via `pageSize` and `pageToken` parameters
+* Sets `CamelGoogleBigQueryNextPageToken` header for next page
+* Sets `CamelGoogleBigQueryJobId` header for continued pagination with same job
+* Results can be accessed multiple times
+
+=== STREAM_LIST
+
+Returns an `Iterator<Map<String, Object>>` for memory-efficient streaming of large result sets. Rows are loaded lazily as the iterator is consumed.
+
+*Characteristics:*
+
+* Message body: `Iterator<Map<String, Object>>`
+* Pagination handled automatically by BigQuery SDK using `pageSize` for internal page fetching
+* Does NOT set `CamelGoogleBigQueryNextPageToken` or `CamelGoogleBigQueryJobId` headers
+* Does NOT support manual `pageToken` control
+* Memory-efficient - only current page in memory
+* Iterator can only be consumed once
+
+*Note:* The `.streaming()` modifier on Split EIP is required to prevent loading all rows into memory before splitting.
+
+*When to use STREAM_LIST:*
+
+* Result sets with millions of rows
+* Memory-constrained environments
+* One-time sequential processing of rows
+* When using Split EIP in streaming mode
+
+== Data Type Mapping
+
+BigQuery result types are mapped to Java types:
+
+[cols="1,1,3"]
+|===
+|BigQuery Type|Java Type|Notes
+
+|INT64
+|Long
+|
+
+|FLOAT64
+|Double
+|
+
+|NUMERIC
+|BigDecimal
+|
+
+|STRING
+|String
+|
+
+|BOOL
+|Boolean
+|
+
+|BYTES
+|byte[]
+|
+
+|DATE
+|String
+|ISO 8601 format
+
+|DATETIME
+|String
+|ISO 8601 format
+
+|TIME
+|String
+|ISO 8601 format
+
+|TIMESTAMP
+|String
+|ISO 8601 format with timezone
+
+|STRUCT (RECORD)
+|Map<String, Object>
+|Recursively converted to nested maps
+
+|ARRAY (REPEATED)
+|List<Object>
+|Elements recursively converted based on their type
+
+|RANGE
+|Map<String, Object>
+|Map with range start and end values
+
+|NULL
+|null
+|
+|===
+
 
 include::spring-boot:partial$starter.adoc[]

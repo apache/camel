@@ -23,6 +23,7 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.pinecone.PineconeVectorDbConfiguration target = (org.apache.camel.component.pinecone.PineconeVectorDbConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": target.setAction(property(camelContext, org.apache.camel.component.pinecone.PineconeVectorDbAction.class, value)); return true;
         case "client": target.setClient(property(camelContext, io.pinecone.clients.Pinecone.class, value)); return true;
         case "cloud": target.setCloud(property(camelContext, java.lang.String.class, value)); return true;
         case "cloudregion":
@@ -47,6 +48,7 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return org.apache.camel.component.pinecone.PineconeVectorDbAction.class;
         case "client": return io.pinecone.clients.Pinecone.class;
         case "cloud": return java.lang.String.class;
         case "cloudregion":
@@ -72,6 +74,7 @@ public class PineconeVectorDbConfigurationConfigurer extends org.apache.camel.su
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.pinecone.PineconeVectorDbConfiguration target = (org.apache.camel.component.pinecone.PineconeVectorDbConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return target.getAction();
         case "client": return target.getClient();
         case "cloud": return target.getCloud();
         case "cloudregion":

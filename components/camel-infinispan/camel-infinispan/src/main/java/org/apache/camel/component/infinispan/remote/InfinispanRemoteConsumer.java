@@ -32,9 +32,9 @@ import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.Search;
 import org.infinispan.client.hotrod.event.ClientEvent;
 import org.infinispan.client.hotrod.exceptions.RemoteCacheManagerNotStartedException;
+import org.infinispan.commons.api.query.Query;
 import org.infinispan.query.api.continuous.ContinuousQuery;
 import org.infinispan.query.api.continuous.ContinuousQueryListener;
-import org.infinispan.query.dsl.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

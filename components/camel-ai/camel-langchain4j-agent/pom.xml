@@ -25,7 +25,7 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-langchain4j-agent</artifactId>
@@ -36,6 +36,7 @@
 
     <properties>
         <supportLevel>Preview</supportLevel>
+        <failsafe.rerunFailingTestsCount>3</failsafe.rerunFailingTestsCount>
     </properties>
 
   <dependencies>
@@ -78,6 +79,12 @@
           <version>${langchain4j-version}</version>
           <scope>test</scope>
       </dependency>
+      <dependency>
+          <groupId>dev.langchain4j</groupId>
+          <artifactId>langchain4j-ollama</artifactId>
+          <version>${langchain4j-version}</version>
+          <scope>test</scope>
+      </dependency>
 
       <dependency>
           <groupId>dev.langchain4j</groupId>
@@ -94,6 +101,13 @@
       <dependency>
           <groupId>org.assertj</groupId>
           <artifactId>assertj-core</artifactId>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-test-infra-ollama</artifactId>
+          <version>${project.version}</version>
+          <type>test-jar</type>
           <scope>test</scope>
       </dependency>
   </dependencies>

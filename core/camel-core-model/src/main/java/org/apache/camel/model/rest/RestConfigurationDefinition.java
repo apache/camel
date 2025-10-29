@@ -104,10 +104,10 @@ public class RestConfigurationDefinition {
     @Metadata(label = "consumer", javaType = "java.lang.Boolean", defaultValue = "true")
     private String inlineRoutes;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", enums = "jackson,jsonb,fastjson,gson", defaultValue = "jackson")
     private String jsonDataFormat;
     @XmlAttribute
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", enums = "jaxb,jacksonXml", defaultValue = "jaxb")
     private String xmlDataFormat;
     @XmlElement(name = "componentProperty")
     @Metadata(label = "advanced")
@@ -426,7 +426,7 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Name of specific json data format to use. By default jackson will be used. Important: This option is only for
+     * Name of specific json data format to use. By default, jackson will be used. Important: This option is only for
      * setting a custom name of the data format, not to refer to an existing data format instance.
      */
     public void setJsonDataFormat(String jsonDataFormat) {
@@ -438,8 +438,9 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * Name of specific XML data format to use. By default jaxb will be used. Important: This option is only for setting
-     * a custom name of the data format, not to refer to an existing data format instance.
+     * Name of specific XML data format to use. By default jaxb will be used, but jacksonXml is also supported.
+     * Important: This option is only for setting a custom name of the data format, not to refer to an existing data
+     * format instance.
      */
     public void setXmlDataFormat(String xmlDataFormat) {
         this.xmlDataFormat = xmlDataFormat;

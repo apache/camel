@@ -86,6 +86,9 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
         Exchange exchange = plc4XEndpoint.createExchange();
         try {
             plc4XEndpoint.reconnectIfNeeded();
+            if (plc4XEndpoint.connection == null) {
+                throw new PlcConnectionException("Cannot establish connection");
+            }
 
             PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest();
             CompletableFuture<? extends PlcReadResponse> future

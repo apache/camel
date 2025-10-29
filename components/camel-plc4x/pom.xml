@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-plc4x</artifactId>
@@ -149,13 +149,6 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
             <version>${hamcrest-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- avoids java.lang.NoClassDefFoundError: javax/activation/DataHandler in Plc4XProducerTest on Java 11-->
-            <groupId>jakarta.activation</groupId>
-            <artifactId>jakarta.activation-api</artifactId>
-            <version>${jakarta-activation-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

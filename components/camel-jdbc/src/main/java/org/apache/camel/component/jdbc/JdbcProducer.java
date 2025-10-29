@@ -33,6 +33,7 @@ import javax.sql.DataSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.StreamListIterator;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -392,10 +393,12 @@ public class JdbcProducer extends DefaultProducer {
         JdbcOutputType outputType = getEndpoint().getOutputType();
         exchange.getMessage().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, iterator.getColumnNames());
         if (outputType == JdbcOutputType.StreamList) {
+            var beanMapper = new JdbcBeanMapper(
+                    getEndpoint().getCamelContext(),
+                    getEndpoint().getOutputClass(),
+                    getEndpoint().getBeanRowMapper());
             exchange.getMessage()
-                    .setBody(new StreamListIterator(
-                            getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(),
-                            iterator));
+                    .setBody(new StreamListIterator<>(beanMapper, iterator));
             // do not close resources as we are in streaming mode
             answer = false;
         } else if (outputType == JdbcOutputType.SelectList) {

@@ -41,6 +41,7 @@ import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToStructureDumper;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelToYAMLDumper;
 import org.apache.camel.spi.ModelineFactory;
@@ -50,6 +51,7 @@ import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.spi.RestBindingJacksonXmlDataFormatFactory;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
@@ -452,6 +454,21 @@ public final class PluginHelper {
     }
 
     /**
+     * Gets the {@link RestBindingJacksonXmlDataFormatFactory} to be used.
+     */
+    public static RestBindingJacksonXmlDataFormatFactory getRestBindingJacksonXmlDataFormatFactory(CamelContext camelContext) {
+        return getRestBindingJacksonXmlDataFormatFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link RestBindingJacksonXmlDataFormatFactory} to be used.
+     */
+    public static RestBindingJacksonXmlDataFormatFactory getRestBindingJacksonXmlDataFormatFactory(
+            ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RestBindingJacksonXmlDataFormatFactory.class);
+    }
+
+    /**
      * Gets the {@link BeanProxyFactory} to use.
      */
     public static BeanProxyFactory getBeanProxyFactory(CamelContext camelContext) {
@@ -547,6 +564,20 @@ public final class PluginHelper {
      */
     public static ModelToYAMLDumper getModelToYAMLDumper(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ModelToYAMLDumper.class);
+    }
+
+    /**
+     * Gets the {@link ModelToStructureDumper} to be used.
+     */
+    public static ModelToStructureDumper getModelToStructureDumper(CamelContext camelContext) {
+        return getModelToStructureDumper(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ModelToStructureDumper} to be used.
+     */
+    public static ModelToStructureDumper getModelToStructureDumper(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ModelToStructureDumper.class);
     }
 
     /**

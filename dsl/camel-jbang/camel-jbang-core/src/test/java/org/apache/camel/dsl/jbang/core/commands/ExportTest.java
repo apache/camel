@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Dependency;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -117,7 +119,6 @@ class ExportTest {
                         assertThat(dep.getArtifactId()).isEqualTo("camel-bom");
                         assertThat(dep.getVersion()).isEqualTo("4.8.3");
                     });
-
         } else if (rt == RuntimeType.springBoot) {
             assertThat(model.getDependencyManagement().getDependencies())
                     .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.8.3")
@@ -690,4 +691,85 @@ class ExportTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportToDWithCustomKamelet(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportToDWithCustomKamelet {}", rt);
+        Export command = createCommand(rt,
+                new String[] { "src/test/resources/toDroute.yaml", "src/test/resources/cheese-sink.kamelet.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-log", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
+            Assertions
+                    .assertFalse(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-log-starter", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
+            Assertions
+                    .assertFalse(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-log", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
+            Assertions
+                    .assertFalse(
+                            containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
+        }
+
+        File f = workingDir.toPath().resolve("src/main/resources/kamelets/cheese-sink.kamelet.yaml").toFile();
+        Assertions.assertTrue(f.isFile());
+        Assertions.assertTrue(f.exists());
+        f = workingDir.toPath().resolve("src/main/resources/camel/toDroute.yaml").toFile();
+        Assertions.assertTrue(f.isFile());
+        Assertions.assertTrue(f.exists());
+    }
+
+    @Test
+    @SetSystemProperty(key = CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, value = "4.10.0")
+    public void shouldOverrideSpringBootVersionFromSystemProperty() throws Exception {
+        LOG.info("shouldOverrideSpringBootVersionFromSystemProperty");
+        Export command = createCommand(RuntimeType.springBoot, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        assertThat(model.getDependencyManagement().getDependencies())
+                .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.10.0")
+                .anySatisfy(dep -> {
+                    assertThat(dep.getGroupId()).isEqualTo("org.apache.camel.springboot");
+                    assertThat(dep.getArtifactId()).isEqualTo("camel-spring-boot-bom");
+                    assertThat(dep.getVersion()).isEqualTo("4.10.0");
+                });
+    }
+
+    @Test
+    @SetSystemProperty(key = CamelJBangConstants.QUARKUS_VERSION, value = "3.26.0")
+    public void shouldOverrideQuarkusVersionFromSystemProperty() throws Exception {
+        LOG.info("shouldOverrideQuarkusVersionFromSystemProperty");
+
+        Export command = createCommand(RuntimeType.quarkus, new String[] { "classpath:route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+
+        Model model = readMavenModel();
+        assertThat(model.getProperties()).containsEntry("quarkus.platform.version",
+                System.getProperty(CamelJBangConstants.QUARKUS_VERSION));
+    }
 }

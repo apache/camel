@@ -41,7 +41,8 @@ public final class MojoHelper {
                 return Arrays.asList(dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
                         dir.resolve("camel-langchain4j-agent"),
                         dir.resolve("camel-langchain4j-core"), dir.resolve("camel-langchain4j-chat"),
-                        dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-langchain4j-tokenizer"),
+                        dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-langchain4j-embeddingstore"),
+                        dir.resolve("camel-langchain4j-tokenizer"),
                         dir.resolve("camel-langchain4j-tools"), dir.resolve("camel-langchain4j-web-search"),
                         dir.resolve("camel-qdrant"), dir.resolve("camel-milvus"), dir.resolve("camel-neo4j"),
                         dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"),
@@ -129,6 +130,11 @@ public final class MojoHelper {
                         dir.resolve("camel-huaweicloud-imagerecognition"),
                         dir.resolve("camel-huaweicloud-obs"),
                         dir.resolve("camel-huaweicloud-smn"));
+            case "camel-ibm":
+                return Arrays.asList(dir.resolve("camel-ibm-cos"),
+                        dir.resolve("camel-ibm-secrets-manager"),
+                        dir.resolve("camel-ibm-watson-language"),
+                        dir.resolve("camel-ibm-watson-discovery"));
             case "camel-knative":
                 return Collections.singletonList(dir.resolve("camel-knative-component"));
             case "camel-yaml-dsl":

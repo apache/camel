@@ -79,6 +79,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     protected final Route route;
     protected final String description;
+    protected final String note;
     protected final String configurationId;
     protected final String sourceLocation;
     protected final String sourceLocationShort;
@@ -91,6 +92,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         this.route = route;
         this.context = context;
         this.description = route.getDescription();
+        this.note = route.getNote();
         this.configurationId = route.getConfigurationId();
         this.sourceLocation = route.getSourceLocation();
         this.sourceLocationShort = route.getSourceLocationShort();
@@ -170,6 +172,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String getNote() {
+        return note;
     }
 
     @Override
@@ -439,6 +446,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public String dumpRouteAsXml(boolean resolvePlaceholders, boolean generatedIds) throws Exception {
+        return dumpRouteAsXml(resolvePlaceholders, true, false);
+    }
+
+    @Override
+    public String dumpRouteAsXml(boolean resolvePlaceholders, boolean generatedIds, boolean sourceLocation) throws Exception {
         String id = route.getId();
         RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
         if (def != null) {
@@ -446,7 +458,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             if (context.isDebugging()) {
                 generatedIds = true;
             }
-            return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, generatedIds);
+            return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, generatedIds,
+                    sourceLocation);
         }
 
         return null;

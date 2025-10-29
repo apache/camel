@@ -30,6 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 /**
@@ -41,6 +42,7 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 public class BedrockEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     private BedrockRuntimeClient bedrockRuntimeClient;
+    private BedrockRuntimeAsyncClient bedrockRuntimeAsyncClient;
 
     @UriParam
     private BedrockConfiguration configuration;
@@ -69,9 +71,15 @@ public class BedrockEndpoint extends ScheduledPollEndpoint implements EndpointSe
     public void doStart() throws Exception {
         super.doStart();
 
+        // Get sync client
         bedrockRuntimeClient = configuration.getBedrockRuntimeClient() != null
                 ? configuration.getBedrockRuntimeClient()
                 : BedrockClientFactory.getBedrockRuntimeClient(configuration).getBedrockRuntimeClient();
+
+        // Get async client for streaming operations
+        bedrockRuntimeAsyncClient = configuration.getBedrockRuntimeAsyncClient() != null
+                ? configuration.getBedrockRuntimeAsyncClient()
+                : BedrockClientFactory.getBedrockRuntimeClient(configuration).getBedrockRuntimeAsyncClient();
     }
 
     @Override
@@ -79,6 +87,11 @@ public class BedrockEndpoint extends ScheduledPollEndpoint implements EndpointSe
         if (ObjectHelper.isEmpty(configuration.getBedrockRuntimeClient())) {
             if (bedrockRuntimeClient != null) {
                 bedrockRuntimeClient.close();
+            }
+        }
+        if (ObjectHelper.isEmpty(configuration.getBedrockRuntimeAsyncClient())) {
+            if (bedrockRuntimeAsyncClient != null) {
+                bedrockRuntimeAsyncClient.close();
             }
         }
         super.doStop();
@@ -90,6 +103,10 @@ public class BedrockEndpoint extends ScheduledPollEndpoint implements EndpointSe
 
     public BedrockRuntimeClient getBedrockRuntimeClient() {
         return bedrockRuntimeClient;
+    }
+
+    public BedrockRuntimeAsyncClient getBedrockRuntimeAsyncClient() {
+        return bedrockRuntimeAsyncClient;
     }
 
     @Override

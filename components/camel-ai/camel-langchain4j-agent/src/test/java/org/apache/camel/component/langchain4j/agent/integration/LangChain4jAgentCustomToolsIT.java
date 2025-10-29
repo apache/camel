@@ -28,9 +28,12 @@ import org.apache.camel.component.langchain4j.agent.pojos.CalculatorTool;
 import org.apache.camel.component.langchain4j.agent.pojos.StringTool;
 import org.apache.camel.component.langchain4j.agent.pojos.WeatherTool;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.ollama.services.OllamaService;
+import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Integration test for LangChain4j Agent component with custom tools only (no Camel route tools).
  */
-@EnabledIf("org.apache.camel.component.langchain4j.agent.integration.ModelHelper#environmentWithoutEmbeddings")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
 public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
 
     private static final String CALCULATION_RESULT = "8";
@@ -47,10 +50,15 @@ public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
 
     protected ChatModel chatModel;
 
+    @RegisterExtension
+    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
+            ? null
+            : OllamaServiceFactory.createSingletonService();
+
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
-        chatModel = ModelHelper.loadFromEnv();
+        chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
     }
 
     @Test
@@ -72,12 +80,13 @@ public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
         mockEndpoint.expectedMessageCount(1);
 
         String response
-                = template.requestBody("direct:chat", "Calculate 10 * 5 and tell me the weather in Paris", String.class);
+                = template.requestBody("direct:chat",
+                        "Calculate 10 * 5 and tell me the result, then tell me the weather in Paris", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
         assertTrue(response.contains("50") || response.contains("fifty"),
-                "Response should contain the multiplication result");
+                "Response should contain the multiplication result but was: " + response);
         // Weather tool might not be used by the AI, so we make this assertion more flexible
         assertTrue(
                 response.toLowerCase().contains(WEATHER_INFO) || response.toLowerCase().contains("weather")
@@ -109,12 +118,12 @@ public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        String response = template.requestBody("direct:chat", "Convert 'hello world' to uppercase", String.class);
+        String response = template.requestBody("direct:chat", "Convert the 'hello world' text to uppercase", String.class);
 
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
         assertTrue(response.contains("HELLO WORLD"),
-                "Response should contain the uppercase conversion result");
+                "Response should contain the uppercase conversion result but was: " + response);
     }
 
     @Override

@@ -218,6 +218,8 @@ public interface Exchange extends VariableAware {
     @Deprecated(since = "3.1.0")
     String INTERRUPTED = "CamelInterrupted";
 
+    String JPA_ENTITY_MANAGER = "CamelEntityManager";
+
     String LANGUAGE_SCRIPT = "CamelLanguageScript";
     String LOG_DEBUG_BODY_MAX_CHARS = "CamelLogDebugBodyMaxChars";
     String LOG_DEBUG_BODY_STREAMS = "CamelLogDebugStreams";

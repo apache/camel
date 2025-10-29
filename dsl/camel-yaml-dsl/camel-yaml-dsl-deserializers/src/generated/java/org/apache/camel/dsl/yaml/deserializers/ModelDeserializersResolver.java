@@ -263,6 +263,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.OutputTypeDefinition": return new ModelDeserializers.OutputTypeDefinitionDeserializer();
             case "pgp": return new ModelDeserializers.PGPDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.PGPDataFormat": return new ModelDeserializers.PGPDataFormatDeserializer();
+            case "pqc": return new ModelDeserializers.PQCDataFormatDeserializer();
+            case "org.apache.camel.model.dataformat.PQCDataFormat": return new ModelDeserializers.PQCDataFormatDeserializer();
             case "packageScan": return new ModelDeserializers.PackageScanDefinitionDeserializer();
             case "org.apache.camel.model.PackageScanDefinition": return new ModelDeserializers.PackageScanDefinitionDeserializer();
             case "param": return new ModelDeserializers.ParamDefinitionDeserializer();

@@ -1327,6 +1327,15 @@ Rest POST command
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="pqc" type="tns:pqcDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="predicateValidator" type="tns:predicateValidatorDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -3671,6 +3680,15 @@ Sets the description of this node.
         <xs:documentation xml:lang="en">
 <![CDATA[
 Sets the id of this node.
+]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="note" type="xs:string">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the note of this node.
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15416,8 +15434,8 @@ become an individual route. This option is default true. Default value: true
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Name of specific json data format to use. By default jackson will be used. Important: This option is only for setting a
-custom name of the data format, not to refer to an existing data format instance.
+Name of specific json data format to use. By default, jackson will be used. Important: This option is only for setting a
+custom name of the data format, not to refer to an existing data format instance. Default value: jackson
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15426,8 +15444,9 @@ custom name of the data format, not to refer to an existing data format instance
       <xs:annotation>
         <xs:documentation xml:lang="en">
 <![CDATA[
-Name of specific XML data format to use. By default jaxb will be used. Important: This option is only for setting a
-custom name of the data format, not to refer to an existing data format instance.
+Name of specific XML data format to use. By default jaxb will be used, but jacksonXml is also supported. Important: This
+option is only for setting a custom name of the data format, not to refer to an existing data format instance. Default
+value: jaxb
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -17152,6 +17171,7 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:crypto"/>
         <xs:element ref="tns:csv"/>
         <xs:element ref="tns:custom"/>
+        <xs:element ref="tns:dfdl"/>
         <xs:element ref="tns:fhirJson"/>
         <xs:element ref="tns:fhirXml"/>
         <xs:element ref="tns:flatpack"/>
@@ -17188,6 +17208,78 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="pqcDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="keyEncapsulationAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO,
+NTRU, NTRULPRime, SNTRUPrime, KYBER. Default value: MLKEM
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="symmetricKeyAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA,
+CAST5, CAST6, CHACHA7539, etc. Default value: AES
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="symmetricKeyLength" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The length (in bits) of the symmetric key. Default value: 128
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyPair" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to the KeyPair to lookup from the register to use for KEM operations.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="bufferSize" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The size of the buffer used for streaming encryption/decryption. Default value: 4096
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="provider" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The JCE security provider to use.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyGenerator" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to a custom KeyGenerator to lookup from the register for KEM operations.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>
@@ -18003,6 +18095,7 @@ Set the 'to' data type name. If you specify 'json:XYZ', the transformer will be 
             <xs:element ref="tns:crypto"/>
             <xs:element ref="tns:csv"/>
             <xs:element ref="tns:custom"/>
+            <xs:element ref="tns:dfdl"/>
             <xs:element ref="tns:fhirJson"/>
             <xs:element ref="tns:fhirXml"/>
             <xs:element ref="tns:flatpack"/>

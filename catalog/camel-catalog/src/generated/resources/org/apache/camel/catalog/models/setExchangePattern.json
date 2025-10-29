@@ -13,8 +13,9 @@
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
-    "description": { "index": 1, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
-    "disabled": { "index": 2, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Disables this EIP from the route." },
-    "pattern": { "index": 3, "kind": "attribute", "displayName": "Pattern", "group": "common", "required": true, "type": "enum", "javaType": "org.apache.camel.ExchangePattern", "enum": [ "InOnly", "InOut" ], "deprecated": false, "autowired": false, "secret": false, "description": "Sets the new exchange pattern of the Exchange to be used from this point forward" }
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the note of this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "disabled": { "index": 3, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Disables this EIP from the route." },
+    "pattern": { "index": 4, "kind": "attribute", "displayName": "Pattern", "group": "common", "required": true, "type": "enum", "javaType": "org.apache.camel.ExchangePattern", "enum": [ "InOnly", "InOut" ], "deprecated": false, "autowired": false, "secret": false, "description": "Sets the new exchange pattern of the Exchange to be used from this point forward" }
   }
 }

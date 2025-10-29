@@ -29,6 +29,6 @@ public interface SpanLifecycleManager {
 
     void close(Span span);
 
-    void inject(Span span, SpanContextPropagationInjector injector);
+    void inject(Span span, SpanContextPropagationInjector injector, boolean includeTracing);
 
 }

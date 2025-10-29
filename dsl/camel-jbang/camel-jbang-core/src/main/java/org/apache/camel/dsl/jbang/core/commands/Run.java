@@ -44,6 +44,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -1084,9 +1085,9 @@ public class Run extends CamelCommand {
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
         eq.gradleWrapper = false;
-        eq.quarkusVersion = this.quarkusVersion;
-        eq.quarkusGroupId = this.quarkusGroupId;
-        eq.quarkusArtifactId = this.quarkusArtifactId;
+        eq.quarkusVersion = PropertyResolver.fromSystemProperty(QUARKUS_VERSION, () -> this.quarkusVersion);
+        eq.quarkusGroupId = PropertyResolver.fromSystemProperty(QUARKUS_GROUP_ID, () -> this.quarkusGroupId);
+        eq.quarkusArtifactId = PropertyResolver.fromSystemProperty(QUARKUS_ARTIFACT_ID, () -> this.quarkusArtifactId);
         eq.camelVersion = this.camelVersion;
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDirPath.toString();
@@ -1133,7 +1134,7 @@ public class Run extends CamelCommand {
             mvnw = "/mvnw.cmd";
         }
         ProcessBuilder pb = new ProcessBuilder();
-        pb.command(runDirPath.toString() + mvnw, "--quiet", "--file",
+        pb.command(runDirPath + mvnw, "--quiet", "--file",
                 runDirPath.toRealPath().resolve("pom.xml").toString(), "package",
                 "quarkus:" + (dev ? "dev" : "run"));
 
@@ -1194,7 +1195,7 @@ public class Run extends CamelCommand {
         eq.gradleWrapper = false;
         eq.springBootVersion = this.springBootVersion;
         eq.camelVersion = this.camelVersion;
-        eq.camelSpringBootVersion = VersionHelper.getSpringBootVersion(
+        eq.camelSpringBootVersion = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION,
                 () -> this.camelSpringBootVersion != null ? this.camelSpringBootVersion : this.camelVersion);
         eq.kameletsVersion = this.kameletsVersion;
         eq.exportDir = runDirPath.toString();

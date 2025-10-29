@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.15.0-SNAPSHOT</version>
+        <version>4.16.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jms</artifactId>
@@ -38,7 +38,8 @@
         <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>
         <camel.surefire.parallel>true</camel.surefire.parallel>
         <camel.surefire.parallel.factor>0.5</camel.surefire.parallel.factor>
-        <camel.surefire.fork.additional-vmargs>-Xmx1G</camel.surefire.fork.additional-vmargs>
+        <!-- Make use of native access during test execution only -->
+        <camel.surefire.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED -Xmx1G</camel.surefire.fork.additional-vmargs>
 
         <camel.failsafe.parallel>true</camel.failsafe.parallel>
         <camel.failsafe.parallel.factor>0.5</camel.failsafe.parallel.factor>
@@ -259,6 +260,30 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jdk25</id>
+            <activation>
+                <jdk>[25,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <skipITs>true</skipITs>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
