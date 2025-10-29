@@ -61,8 +61,14 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "enableOCR": target.getConfiguration().setEnableOCR(property(camelContext, boolean.class, value)); return true;
         case "evictidleconnections":
         case "evictIdleConnections": target.getConfiguration().setEvictIdleConnections(property(camelContext, boolean.class, value)); return true;
+        case "extractallmetadata":
+        case "extractAllMetadata": target.getConfiguration().setExtractAllMetadata(property(camelContext, boolean.class, value)); return true;
         case "includelayoutinfo":
         case "includeLayoutInfo": target.getConfiguration().setIncludeLayoutInfo(property(camelContext, boolean.class, value)); return true;
+        case "includemetadatainheaders":
+        case "includeMetadataInHeaders": target.getConfiguration().setIncludeMetadataInHeaders(property(camelContext, boolean.class, value)); return true;
+        case "includerawmetadata":
+        case "includeRawMetadata": target.getConfiguration().setIncludeRawMetadata(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxconnectionsperroute":
@@ -137,8 +143,14 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "enableOCR": return boolean.class;
         case "evictidleconnections":
         case "evictIdleConnections": return boolean.class;
+        case "extractallmetadata":
+        case "extractAllMetadata": return boolean.class;
         case "includelayoutinfo":
         case "includeLayoutInfo": return boolean.class;
+        case "includemetadatainheaders":
+        case "includeMetadataInHeaders": return boolean.class;
+        case "includerawmetadata":
+        case "includeRawMetadata": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxconnectionsperroute":
@@ -214,8 +226,14 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "enableOCR": return target.getConfiguration().isEnableOCR();
         case "evictidleconnections":
         case "evictIdleConnections": return target.getConfiguration().isEvictIdleConnections();
+        case "extractallmetadata":
+        case "extractAllMetadata": return target.getConfiguration().isExtractAllMetadata();
         case "includelayoutinfo":
         case "includeLayoutInfo": return target.getConfiguration().isIncludeLayoutInfo();
+        case "includemetadatainheaders":
+        case "includeMetadataInHeaders": return target.getConfiguration().isIncludeMetadataInHeaders();
+        case "includerawmetadata":
+        case "includeRawMetadata": return target.getConfiguration().isIncludeRawMetadata();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxconnectionsperroute":

@@ -90,6 +90,9 @@ The component supports the following operations:
 | `EXTRACT_STRUCTURED_DATA`
 | Extract structured data including tables and layout information
 
+| `EXTRACT_METADATA`
+| Extract document metadata (title, author, page count, creation date, etc.)
+
 | `SUBMIT_ASYNC_CONVERSION`
 | Submit an async conversion and return task ID (docling-serve only)
 
@@ -347,6 +350,202 @@ YAML::
           uri: "docling:CONVERT_TO_MARKDOWN"
       - to:
           uri: "file:///data/output"
+----
+====
+
+=== Extracting document metadata
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:EXTRACT_METADATA")
+    .process(exchange -> {
+        DocumentMetadata metadata = exchange.getIn().getBody(DocumentMetadata.class);
+
+        // Access metadata fields
+        String title = metadata.getTitle();
+        String author = metadata.getAuthor();
+        Integer pageCount = metadata.getPageCount();
+        Instant creationDate = metadata.getCreationDate();
+
+        log.info("Document: {} by {}, Pages: {}, Created: {}",
+            title, author, pageCount, creationDate);
+
+        // Metadata is also available in headers
+        String titleFromHeader = exchange.getIn().getHeader("CamelDoclingMetadataTitle", String.class);
+    });
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:EXTRACT_METADATA"
+      - log: "Document: ${header.CamelDoclingMetadataTitle} by ${header.CamelDoclingMetadataAuthor}"
+      - log: "Pages: ${header.CamelDoclingMetadataPageCount}"
+      - process:
+          ref: "metadataProcessor"
+----
+====
+
+=== Extract metadata with all fields
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:EXTRACT_METADATA?extractAllMetadata=true&includeRawMetadata=true")
+    .process(exchange -> {
+        DocumentMetadata metadata = exchange.getIn().getBody(DocumentMetadata.class);
+
+        // Standard metadata fields
+        log.info("Title: {}", metadata.getTitle());
+        log.info("Author: {}", metadata.getAuthor());
+        log.info("Creator: {}", metadata.getCreator());
+        log.info("Producer: {}", metadata.getProducer());
+        log.info("Subject: {}", metadata.getSubject());
+        log.info("Keywords: {}", metadata.getKeywords());
+        log.info("Language: {}", metadata.getLanguage());
+        log.info("Page Count: {}", metadata.getPageCount());
+
+        // Custom metadata fields
+        Map<String, Object> customMetadata = metadata.getCustomMetadata();
+        customMetadata.forEach((key, value) -> {
+            log.info("Custom field {}: {}", key, value);
+        });
+
+        // Raw metadata from parser
+        Map<String, Object> rawMetadata = metadata.getRawMetadata();
+        log.info("Raw metadata: {}", rawMetadata);
+    });
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:EXTRACT_METADATA"
+          parameters:
+            extractAllMetadata: true
+            includeRawMetadata: true
+      - process:
+          ref: "fullMetadataProcessor"
+----
+====
+
+=== Route documents based on metadata
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:EXTRACT_METADATA")
+    .choice()
+        .when(simple("${header.CamelDoclingMetadataPageCount} > 100"))
+            .log("Large document with ${header.CamelDoclingMetadataPageCount} pages")
+            .to("file:///data/large-docs")
+        .when(simple("${header.CamelDoclingMetadataLanguage} == 'fr'"))
+            .log("French document")
+            .to("file:///data/french-docs")
+        .when(simple("${header.CamelDoclingMetadataAuthor} contains 'Smith'"))
+            .log("Document by Smith")
+            .to("file:///data/smith-docs")
+        .otherwise()
+            .to("file:///data/other-docs")
+    .end();
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:EXTRACT_METADATA"
+      - choice:
+          when:
+            - simple: "${header.CamelDoclingMetadataPageCount} > 100"
+              steps:
+                - log: "Large document with ${header.CamelDoclingMetadataPageCount} pages"
+                - to: "file:///data/large-docs"
+            - simple: "${header.CamelDoclingMetadataLanguage} == 'fr'"
+              steps:
+                - log: "French document"
+                - to: "file:///data/french-docs"
+            - simple: "${header.CamelDoclingMetadataAuthor} contains 'Smith'"
+              steps:
+                - log: "Document by Smith"
+                - to: "file:///data/smith-docs"
+          otherwise:
+            steps:
+              - to: "file:///data/other-docs"
+----
+====
+
+=== Extract metadata without headers
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:EXTRACT_METADATA?includeMetadataInHeaders=false")
+    .process(exchange -> {
+        DocumentMetadata metadata = exchange.getIn().getBody(DocumentMetadata.class);
+
+        // All metadata is in the body object only
+        // Headers are not populated with metadata fields
+        log.info("Metadata: {}", metadata);
+    });
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:EXTRACT_METADATA"
+          parameters:
+            includeMetadataInHeaders: false
+      - process:
+          ref: "metadataBodyProcessor"
 ----
 ====
 

@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -137,6 +138,9 @@ public class DoclingProducer extends DefaultProducer {
                 break;
             case BATCH_EXTRACT_STRUCTURED_DATA:
                 processBatchConversion(exchange, "json");
+                break;
+            case EXTRACT_METADATA:
+                processExtractMetadata(exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
@@ -275,6 +279,219 @@ public class DoclingProducer extends DefaultProducer {
 
         if (status.isFailed() && status.getErrorMessage() != null) {
             exchange.getIn().setHeader("CamelDoclingErrorMessage", status.getErrorMessage());
+        }
+    }
+
+    private void processExtractMetadata(Exchange exchange) throws Exception {
+        LOG.debug("DoclingProducer extracting metadata");
+
+        String inputPath = getInputPath(exchange);
+        DocumentMetadata metadata;
+
+        if (configuration.isUseDoclingServe()) {
+            // Use docling-serve API for metadata extraction
+            metadata = doclingServeClient.extractMetadata(inputPath, configuration.isExtractAllMetadata(),
+                    configuration.isIncludeRawMetadata());
+        } else {
+            // Use CLI for metadata extraction
+            metadata = extractMetadataUsingCLI(inputPath, exchange);
+        }
+
+        // Set metadata object in body
+        exchange.getIn().setBody(metadata);
+
+        // Optionally set metadata fields as headers
+        if (configuration.isIncludeMetadataInHeaders()) {
+            setMetadataHeaders(exchange, metadata);
+        }
+
+        LOG.debug("Metadata extraction completed for: {}", inputPath);
+    }
+
+    private DocumentMetadata extractMetadataUsingCLI(String inputPath, Exchange exchange) throws Exception {
+        LOG.debug("Extracting metadata using Docling CLI for: {}", inputPath);
+
+        // For CLI mode, we'll convert to JSON and parse the metadata from the structured output
+        String jsonOutput = executeDoclingCommand(inputPath, "json", exchange);
+
+        // Parse the JSON output to extract metadata
+        DocumentMetadata metadata = parseMetadataFromJson(jsonOutput, inputPath);
+
+        return metadata;
+    }
+
+    private DocumentMetadata parseMetadataFromJson(String jsonOutput, String inputPath) {
+        DocumentMetadata metadata = new DocumentMetadata();
+        metadata.setFilePath(inputPath);
+
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            com.fasterxml.jackson.databind.JsonNode rootNode = mapper.readTree(jsonOutput);
+
+            // Extract basic file information
+            File file = new File(inputPath);
+            if (file.exists()) {
+                metadata.setFileName(file.getName());
+                metadata.setFileSizeBytes(file.length());
+            }
+
+            // Try to extract metadata from the JSON structure
+            // Docling JSON output may have different structures depending on the document
+            if (rootNode.has(DoclingMetadataFields.METADATA)) {
+                com.fasterxml.jackson.databind.JsonNode metadataNode = rootNode.get(DoclingMetadataFields.METADATA);
+                extractFieldsFromJsonNode(metadata, metadataNode);
+            }
+
+            // Look for document-level information
+            if (rootNode.has(DoclingMetadataFields.DOCUMENT)) {
+                com.fasterxml.jackson.databind.JsonNode docNode = rootNode.get(DoclingMetadataFields.DOCUMENT);
+                if (docNode.has(DoclingMetadataFields.NAME)) {
+                    metadata.setTitle(docNode.get(DoclingMetadataFields.NAME).asText());
+                }
+            }
+
+            // Count pages if available
+            if (rootNode.has(DoclingMetadataFields.PAGES)) {
+                metadata.setPageCount(rootNode.get(DoclingMetadataFields.PAGES).size());
+            } else if (rootNode.has(DoclingMetadataFields.NUM_PAGES)) {
+                metadata.setPageCount(rootNode.get(DoclingMetadataFields.NUM_PAGES).asInt());
+            }
+
+            // Store raw metadata if configured
+            if (configuration.isIncludeRawMetadata()) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> rawMap
+                        = mapper.convertValue(rootNode, java.util.Map.class);
+                metadata.setRawMetadata(rawMap);
+            }
+
+        } catch (Exception e) {
+            LOG.warn("Failed to parse metadata from JSON output: {}", e.getMessage(), e);
+        }
+
+        return metadata;
+    }
+
+    private void extractFieldsFromJsonNode(
+            DocumentMetadata metadata, com.fasterxml.jackson.databind.JsonNode metadataNode) {
+        // Extract common metadata fields
+        if (metadataNode.has(DoclingMetadataFields.TITLE)) {
+            metadata.setTitle(metadataNode.get(DoclingMetadataFields.TITLE).asText());
+        }
+        if (metadataNode.has(DoclingMetadataFields.AUTHOR)) {
+            metadata.setAuthor(metadataNode.get(DoclingMetadataFields.AUTHOR).asText());
+        }
+        if (metadataNode.has(DoclingMetadataFields.CREATOR)) {
+            metadata.setCreator(metadataNode.get(DoclingMetadataFields.CREATOR).asText());
+        }
+        if (metadataNode.has(DoclingMetadataFields.PRODUCER)) {
+            metadata.setProducer(metadataNode.get(DoclingMetadataFields.PRODUCER).asText());
+        }
+        if (metadataNode.has(DoclingMetadataFields.SUBJECT)) {
+            metadata.setSubject(metadataNode.get(DoclingMetadataFields.SUBJECT).asText());
+        }
+        if (metadataNode.has(DoclingMetadataFields.KEYWORDS)) {
+            metadata.setKeywords(metadataNode.get(DoclingMetadataFields.KEYWORDS).asText());
+        }
+        if (metadataNode.has(DoclingMetadataFields.LANGUAGE)) {
+            metadata.setLanguage(metadataNode.get(DoclingMetadataFields.LANGUAGE).asText());
+        }
+
+        // Extract dates
+        if (metadataNode.has(DoclingMetadataFields.CREATION_DATE)
+                || metadataNode.has(DoclingMetadataFields.CREATION_DATE_CAMEL)) {
+            String dateStr = metadataNode.has(DoclingMetadataFields.CREATION_DATE)
+                    ? metadataNode.get(DoclingMetadataFields.CREATION_DATE).asText()
+                    : metadataNode.get(DoclingMetadataFields.CREATION_DATE_CAMEL).asText();
+            try {
+                metadata.setCreationDate(java.time.Instant.parse(dateStr));
+            } catch (Exception e) {
+                LOG.debug("Failed to parse creation date: {}", dateStr);
+            }
+        }
+
+        if (metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE)
+                || metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE_CAMEL)) {
+            String dateStr = metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE)
+                    ? metadataNode.get(DoclingMetadataFields.MODIFICATION_DATE).asText()
+                    : metadataNode.get(DoclingMetadataFields.MODIFICATION_DATE_CAMEL).asText();
+            try {
+                metadata.setModificationDate(java.time.Instant.parse(dateStr));
+            } catch (Exception e) {
+                LOG.debug("Failed to parse modification date: {}", dateStr);
+            }
+        }
+
+        // Extract custom metadata if extractAllMetadata is enabled
+        if (configuration.isExtractAllMetadata()) {
+            metadataNode.fields().forEachRemaining(entry -> {
+                String key = entry.getKey();
+                // Skip standard fields we already extracted
+                if (!DoclingMetadataFields.isStandardField(key)) {
+                    com.fasterxml.jackson.databind.JsonNode value = entry.getValue();
+                    if (value.isTextual()) {
+                        metadata.addCustomMetadata(key, value.asText());
+                    } else if (value.isNumber()) {
+                        metadata.addCustomMetadata(key, value.asLong());
+                    } else if (value.isBoolean()) {
+                        metadata.addCustomMetadata(key, value.asBoolean());
+                    } else {
+                        metadata.addCustomMetadata(key, value.toString());
+                    }
+                }
+            });
+        }
+    }
+
+    private void setMetadataHeaders(Exchange exchange, DocumentMetadata metadata) {
+        if (metadata.getTitle() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_TITLE, metadata.getTitle());
+        }
+        if (metadata.getAuthor() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_AUTHOR, metadata.getAuthor());
+        }
+        if (metadata.getCreator() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_CREATOR, metadata.getCreator());
+        }
+        if (metadata.getProducer() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_PRODUCER, metadata.getProducer());
+        }
+        if (metadata.getSubject() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_SUBJECT, metadata.getSubject());
+        }
+        if (metadata.getKeywords() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_KEYWORDS, metadata.getKeywords());
+        }
+        if (metadata.getCreationDate() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_CREATION_DATE, metadata.getCreationDate());
+        }
+        if (metadata.getModificationDate() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_MODIFICATION_DATE, metadata.getModificationDate());
+        }
+        if (metadata.getPageCount() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_PAGE_COUNT, metadata.getPageCount());
+        }
+        if (metadata.getLanguage() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_LANGUAGE, metadata.getLanguage());
+        }
+        if (metadata.getDocumentType() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_DOCUMENT_TYPE, metadata.getDocumentType());
+        }
+        if (metadata.getFormat() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_FORMAT, metadata.getFormat());
+        }
+        if (metadata.getFileSizeBytes() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_FILE_SIZE, metadata.getFileSizeBytes());
+        }
+        if (metadata.getFileName() != null) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_FILE_NAME, metadata.getFileName());
+        }
+        if (metadata.getCustomMetadata() != null && !metadata.getCustomMetadata().isEmpty()) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_CUSTOM, metadata.getCustomMetadata());
+        }
+        if (configuration.isIncludeRawMetadata() && metadata.getRawMetadata() != null
+                && !metadata.getRawMetadata().isEmpty()) {
+            exchange.getIn().setHeader(DoclingHeaders.METADATA_RAW, metadata.getRawMetadata());
         }
     }
 
