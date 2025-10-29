@@ -408,7 +408,18 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         }
 
         if (!Strings.isNullOrEmpty(propertyDefaultValue)) {
-            current.put("default", propertyDefaultValue);
+            if ("boolean".equals(propertyType)) {
+                current.put("default", Boolean.valueOf(propertyDefaultValue));
+            } else if ("number".equals(propertyType) && propertyDefaultValue.contains(".")) {
+                // use float to include decimal
+                current.put("default", Float.valueOf(propertyDefaultValue));
+            } else if ("number".equals(propertyType)) {
+                // use long for integral number
+                current.put("default", Long.valueOf(propertyDefaultValue));
+            } else {
+                // string literal
+                current.put("default", propertyDefaultValue);
+            }
         }
         if (!Strings.isNullOrEmpty(propertyFormat)) {
             current.put("format", propertyFormat);

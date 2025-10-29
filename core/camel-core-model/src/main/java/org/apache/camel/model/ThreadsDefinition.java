@@ -70,7 +70,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
               enums = "Abort,CallerRuns")
     private String rejectedPolicy;
     @XmlAttribute
-    @Metadata(label = "advanced", defaultValue = "true")
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String callerRunsWhenRejected;
 
     public ThreadsDefinition() {
