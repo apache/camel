@@ -343,19 +343,25 @@ NOTE: make sure to properly secure the access to JMX services for production wor
 == How to use a Java Agent
 
 Exposing the JMX metrics with its native protocol may not always be possible (ie, for firewall limitations, security, etc). In this case you may recur to the availability of JSR 160 compatible Java Agents (for instance, https://jolokia.org/reference/html/manual/agents.html#agents-jvm[Jolokia]), which goal is to adapt the JMX interface with HTTP based protocol. With this approach you can run you application attaching a Java Agent whose goal will be to take care of exposing JMX via HTTP. As an example:
-```
+
+[source, java]
+----
 java -javaagent:jsr160-javaagent.jar -jar my-camel-app.jar
-```
+----
+
 will expose certain endpoints (depending on the implementation) which would let you interact with JMX.
 
 Depending on the implementation you will need to provide to a different set of agent configuration. For example, if you're running Jolokia agent, then, you will need to run this configuration to expose a plain HTTP unsecure service:
-```
+
+[source, console]
+----
 java -javaagent:jolokia-agent-jvm-2.1.1-javaagent.jar=protocol=http,useSslClientAuthentication=false,discoveryEnabled=false,host=*,extendedClientCheck=false -jar my-camel-app.jar
-```
+----
+
 From that moment onward you will be able to access the service via:
 
-```
-
+[source, console]
+----
 $ curl http://localhost:8778/jolokia/list/org.apache.camel | jq | more
 {
   "request": {
@@ -381,7 +387,7 @@ $ curl http://localhost:8778/jolokia/list/org.apache.camel | jq | more
           "desc": "ComponentName"
         },
 ...
-```
+----
 
 Each agent implementation may provide a different way to get and execute actions on the various endpoint.
 

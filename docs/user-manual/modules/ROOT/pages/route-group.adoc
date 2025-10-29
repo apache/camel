@@ -88,14 +88,16 @@ The camel API allows to retrieve all routes of a group and then perform various 
 
 Here is an example to suspend all routes of a group:
 
-```java
+[source, java]
+----
+java
 List<Route> routes = context.getRoutesByGroup("order");
 
 for (Route route : routes) {
     System.out.println("Suspend routeId=" + route.getId() + " for group=" + route.getGroup());
     route.getRouteController().suspendRoute(route.getId());
 }
-```
+----
 
 
 == Monitoring
@@ -104,18 +106,20 @@ Camel has optional support for xref:jmx.adoc[JMX management]. This includes mana
 
 To get all failed changes for a group:
 
-```java
+[source, java]
+----
 ManagedCamelContext managedContext = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 ManagedRouteGroupMBean managedRouteGroup = managedContext.getManagedRouteGroup("order");
 
 if(managedRouteGroup!=null){
     System.out.println("Group order has " + managedRouteGroup.getExchangesFailed() + " failed exchanges");
 }
-```
+----
 
 To get all failed changes for every route in a group:
 
-```java
+[source, java]
+----
 ManagedCamelContext managedContext = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
 List<ManagedRouteMBean> routes = managedContext.getManagedRoutesByGroup(flowId);
@@ -123,4 +127,4 @@ List<ManagedRouteMBean> routes = managedContext.getManagedRoutesByGroup(flowId);
 for (ManagedRouteMBean route : routes) {
 	System.out.println("RouteId=" + route.getRouteId() + " has " + route.getExchangesFailed() + " failed exchanges");
 }
-```
+----

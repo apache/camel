@@ -73,13 +73,14 @@ interface.
 Ideally, there should be two concrete implementations of the services: one of the remote service (if applicable) and
 another for the container service: 
 
-```
+[source, bash]
+----
               MyService
                  / \
                 /   \
                /     \
  MyRemoteService    MyContainerService
-```
+----
                      
 
 In most cases, a specialized service factory class is responsible for creating the service according to runtime
@@ -254,9 +255,10 @@ Assuming Podman is properly installed and configured to behave like docker (i.e.
 
 On most systems that should be similar to the following command: 
 
-```
+[source, console]
+----
 export DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock
-```
+----
 
 ==== OS X and Windows
 

@@ -27,9 +27,10 @@ You can use the above variables for MDC depending on the logging framework you'r
 
 If you're using Java DSL you can include any customized information by adding that using low level MDC API:
 
-```java
+[source, java]
+----
         org.slf4j.MDC.put("myKey", "myValue");
-```
+----
 
 Each MDC should be now able to include that information.
 
