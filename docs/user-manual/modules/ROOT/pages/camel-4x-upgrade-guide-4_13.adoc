@@ -95,7 +95,7 @@ so this can be configured globally.
 
 Also, most of the components above supports using a header to provide a custom template, then this must now be turned on via `allowTemplateFromHeader=true` on the endpoint or component.
 
-== Camel Spring Boot
+=== Camel Spring Boot
 
 Remove the deprecated `camel.springboot.xxx` configuration syntax. Use `camel.main.xxx` syntax
 which is standard across all runtimes.

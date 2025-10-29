@@ -98,7 +98,7 @@ The Spring Boot auto-configuration names has also been renamed
 | camel.dataformat.zipfile | camel.dataformat.zip-file
 |====
 
-==== Message History
+=== Message History
 
 The message history output has changed to include source column, which refers to the Java class/XML file
 from the DSL the message was at the given time. (line precise error reporting).
