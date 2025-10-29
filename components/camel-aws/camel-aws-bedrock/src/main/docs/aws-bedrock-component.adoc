@@ -691,6 +691,8 @@ Camel-AWS Bedrock component provides the following operation on the producer sid
 - invokeTextModelStreaming
 - invokeImageModelStreaming
 - invokeEmbeddingsModelStreaming
+- converse
+- converseStream
 
 === Streaming Support
 
@@ -726,6 +728,68 @@ All text generation models support streaming:
 - Mistral AI (all models)
 - Cohere Command models
 - Amazon Nova models
+
+=== Converse API Support
+
+The Converse API provides a unified, model-agnostic interface for conversational AI interactions with AWS Bedrock models. It offers several advantages over the legacy InvokeModel API:
+
+- *Unified Interface*: Single API across all supported models (Claude, Llama, Mistral, etc.)
+- *Multi-turn Conversations*: Native support for conversation history with user/assistant roles
+- *Tool Use & Function Calling*: Built-in support for tools and function calling
+- *System Prompts*: First-class support for system-level instructions
+- *Structured Responses*: Consistent response format across all models
+- *Streaming Support*: Real-time streaming with the `converseStream` operation
+
+==== Converse Operations
+
+Two operations are provided:
+
+*converse*: Standard request-response conversation
+[source]
+--------------------------------------------------------------------------------
+aws-bedrock://label?operation=converse&modelId=anthropic.claude-3-sonnet-20240229-v1:0
+--------------------------------------------------------------------------------
+
+*converseStream*: Streaming conversation with real-time chunk delivery
+[source]
+--------------------------------------------------------------------------------
+aws-bedrock://label?operation=converseStream&modelId=anthropic.claude-3-sonnet-20240229-v1:0
+--------------------------------------------------------------------------------
+
+==== Converse Configuration Options
+
+Converse API uses message headers for configuration:
+
+- `CamelAwsBedrockConverseMessages` (required): List of Message objects representing the conversation
+- `CamelAwsBedrockConverseSystem`: List of SystemContentBlock for system-level instructions
+- `CamelAwsBedrockConverseInferenceConfig`: InferenceConfiguration for temperature, maxTokens, etc.
+- `CamelAwsBedrockConverseToolConfig`: ToolConfiguration for function calling support
+- `CamelAwsBedrockConverseAdditionalFields`: Document for model-specific additional fields
+
+For streaming operations, you can also use:
+- `CamelAwsBedrockStreamOutputMode`: Set to "complete" (default) or "chunks"
+
+==== Converse Response Headers
+
+When a conversation completes, the following headers are set:
+
+- `CamelAwsBedrockConverseStopReason`: Why the model stopped (e.g., "end_turn", "max_tokens")
+- `CamelAwsBedrockConverseUsage`: TokenUsage object with input/output token counts
+- `CamelAwsBedrockConverseOutputMessage`: The complete Message object from the model
+- `CamelAwsBedrockChunkCount`: (streaming only) Number of chunks received
+
+==== Supported Models for Converse API
+
+The Converse API supports all modern foundation models on Bedrock:
+
+- Anthropic Claude 3 family (Haiku, Sonnet, Opus)
+- Anthropic Claude 3.5 family (Sonnet v2, Haiku)
+- Amazon Nova family (Micro, Lite, Pro)
+- Meta Llama 3.x models
+- Mistral AI models
+- Cohere Command R models
+
+NOTE: Legacy models (Claude 2.x, Claude Instant) are not supported by the Converse API. Use the `invokeTextModel` operation for those models.
 
 == Examples
 
@@ -927,6 +991,192 @@ and you can then send to the direct endpoint something like
         for (String chunk : chunks) {
             System.out.println("Chunk: " + chunk);
         }
+--------------------------------------------------------------------------------
+
+- converse: this operation uses the unified Converse API for model-agnostic conversations.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:converse")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=converse&modelId=" + BedrockModels.ANTROPHIC_CLAUDE_V3.model)
+    .to("log:response");
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:converse", exchange -> {
+            // Create a conversation message
+            List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
+            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+                            .fromText("What is Apache Camel and what are its main features?"))
+                    .build());
+
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, messages);
+
+            // Optional: Add inference configuration
+            software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration inferenceConfig
+                    = software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration.builder()
+                            .maxTokens(500)
+                            .temperature(0.7f)
+                            .build();
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_INFERENCE_CONFIG, inferenceConfig);
+
+            // Optional: Add system prompt
+            List<software.amazon.awssdk.services.bedrockruntime.model.SystemContentBlock> systemPrompt = new ArrayList<>();
+            systemPrompt.add(software.amazon.awssdk.services.bedrockruntime.model.SystemContentBlock
+                    .fromText("You are a helpful assistant that explains software concepts clearly and concisely."));
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_SYSTEM, systemPrompt);
+        });
+
+        // Get the response text
+        String response = result.getMessage().getBody(String.class);
+
+        // Get metadata from headers
+        String stopReason = result.getMessage().getHeader(BedrockConstants.CONVERSE_STOP_REASON, String.class);
+        software.amazon.awssdk.services.bedrockruntime.model.TokenUsage usage
+                = result.getMessage().getHeader(BedrockConstants.CONVERSE_USAGE,
+                        software.amazon.awssdk.services.bedrockruntime.model.TokenUsage.class);
+
+        System.out.println("Response: " + response);
+        System.out.println("Stop reason: " + stopReason);
+        System.out.println("Input tokens: " + usage.inputTokens());
+        System.out.println("Output tokens: " + usage.outputTokens());
+--------------------------------------------------------------------------------
+
+- converseStream (Complete Mode): this operation uses the Converse API with streaming, accumulating the complete response.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:converse_stream")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=converseStream&modelId=" + BedrockModels.ANTROPHIC_CLAUDE_V3.model)
+    .to("log:response");
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:converse_stream", exchange -> {
+            // Create a conversation message
+            List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
+            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+                            .fromText("Explain the Enterprise Integration Patterns in three sentences."))
+                    .build());
+
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, messages);
+            exchange.getMessage().setHeader(BedrockConstants.STREAM_OUTPUT_MODE, "complete");
+
+            // Optional: Add inference configuration
+            software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration inferenceConfig
+                    = software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration.builder()
+                            .maxTokens(300)
+                            .temperature(0.5f)
+                            .build();
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_INFERENCE_CONFIG, inferenceConfig);
+        });
+
+        // Get the complete streamed response
+        String response = result.getMessage().getBody(String.class);
+        Integer chunkCount = result.getMessage().getHeader(BedrockConstants.STREAMING_CHUNK_COUNT, Integer.class);
+
+        System.out.println("Response: " + response);
+        System.out.println("Received " + chunkCount + " chunks");
+--------------------------------------------------------------------------------
+
+- converseStream (Chunks Mode): this operation uses the Converse API with streaming, emitting individual chunks.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:converse_stream_chunks")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=converseStream&modelId=" + BedrockModels.ANTROPHIC_CLAUDE_V3.model)
+    .split(body())
+        .to("websocket:chat-output");  // Send each chunk to websocket
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:converse_stream_chunks", exchange -> {
+            // Create a conversation message
+            List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
+            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+                            .fromText("Write a haiku about software integration."))
+                    .build());
+
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, messages);
+            exchange.getMessage().setHeader(BedrockConstants.STREAM_OUTPUT_MODE, "chunks");
+        });
+
+        // Get the list of chunks
+        List<String> chunks = result.getMessage().getBody(List.class);
+
+        // Process each chunk as it was received
+        for (String chunk : chunks) {
+            System.out.println("Chunk: " + chunk);
+        }
+--------------------------------------------------------------------------------
+
+- Multi-turn Conversation with Converse API: demonstrates maintaining conversation history.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:conversation")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=converse&modelId=" + BedrockModels.ANTROPHIC_CLAUDE_V3.model)
+    .to("log:response");
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        // Maintain conversation history
+        List<software.amazon.awssdk.services.bedrockruntime.model.Message> conversationHistory = new ArrayList<>();
+
+        // First turn
+        conversationHistory.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+                        .fromText("What is Apache Camel?"))
+                .build());
+
+        Exchange result1 = template.send("direct:conversation", exchange -> {
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES,
+                    new ArrayList<>(conversationHistory));
+        });
+
+        // Add assistant's response to history
+        software.amazon.awssdk.services.bedrockruntime.model.Message assistantMessage
+                = result1.getMessage().getHeader(BedrockConstants.CONVERSE_OUTPUT_MESSAGE,
+                        software.amazon.awssdk.services.bedrockruntime.model.Message.class);
+        conversationHistory.add(assistantMessage);
+
+        // Second turn - follow-up question
+        conversationHistory.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+                        .fromText("Can you give me a simple example?"))
+                .build());
+
+        Exchange result2 = template.send("direct:conversation", exchange -> {
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES,
+                    new ArrayList<>(conversationHistory));
+        });
+
+        String followUpResponse = result2.getMessage().getBody(String.class);
+        System.out.println("Follow-up response: " + followUpResponse);
 --------------------------------------------------------------------------------
 
 == Dependencies
