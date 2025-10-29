@@ -61,8 +61,14 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "enableOCR": target.setEnableOCR(property(camelContext, boolean.class, value)); return true;
         case "evictidleconnections":
         case "evictIdleConnections": target.setEvictIdleConnections(property(camelContext, boolean.class, value)); return true;
+        case "extractallmetadata":
+        case "extractAllMetadata": target.setExtractAllMetadata(property(camelContext, boolean.class, value)); return true;
         case "includelayoutinfo":
         case "includeLayoutInfo": target.setIncludeLayoutInfo(property(camelContext, boolean.class, value)); return true;
+        case "includemetadatainheaders":
+        case "includeMetadataInHeaders": target.setIncludeMetadataInHeaders(property(camelContext, boolean.class, value)); return true;
+        case "includerawmetadata":
+        case "includeRawMetadata": target.setIncludeRawMetadata(property(camelContext, boolean.class, value)); return true;
         case "maxconnectionsperroute":
         case "maxConnectionsPerRoute": target.setMaxConnectionsPerRoute(property(camelContext, int.class, value)); return true;
         case "maxfilesize":
@@ -135,8 +141,14 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "enableOCR": return boolean.class;
         case "evictidleconnections":
         case "evictIdleConnections": return boolean.class;
+        case "extractallmetadata":
+        case "extractAllMetadata": return boolean.class;
         case "includelayoutinfo":
         case "includeLayoutInfo": return boolean.class;
+        case "includemetadatainheaders":
+        case "includeMetadataInHeaders": return boolean.class;
+        case "includerawmetadata":
+        case "includeRawMetadata": return boolean.class;
         case "maxconnectionsperroute":
         case "maxConnectionsPerRoute": return int.class;
         case "maxfilesize":
@@ -210,8 +222,14 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "enableOCR": return target.isEnableOCR();
         case "evictidleconnections":
         case "evictIdleConnections": return target.isEvictIdleConnections();
+        case "extractallmetadata":
+        case "extractAllMetadata": return target.isExtractAllMetadata();
         case "includelayoutinfo":
         case "includeLayoutInfo": return target.isIncludeLayoutInfo();
+        case "includemetadatainheaders":
+        case "includeMetadataInHeaders": return target.isIncludeMetadataInHeaders();
+        case "includerawmetadata":
+        case "includeRawMetadata": return target.isIncludeRawMetadata();
         case "maxconnectionsperroute":
         case "maxConnectionsPerRoute": return target.getMaxConnectionsPerRoute();
         case "maxfilesize":

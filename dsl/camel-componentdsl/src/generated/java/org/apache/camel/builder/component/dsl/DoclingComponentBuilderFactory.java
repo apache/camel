@@ -627,6 +627,57 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * Extract all available metadata fields including custom/raw fields.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: metadata
+         * 
+         * @param extractAllMetadata the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder extractAllMetadata(boolean extractAllMetadata) {
+            doSetProperty("extractAllMetadata", extractAllMetadata);
+            return this;
+        }
+    
+        
+        /**
+         * Include metadata in message headers when extracting metadata.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: metadata
+         * 
+         * @param includeMetadataInHeaders the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder includeMetadataInHeaders(boolean includeMetadataInHeaders) {
+            doSetProperty("includeMetadataInHeaders", includeMetadataInHeaders);
+            return this;
+        }
+    
+        
+        /**
+         * Include raw metadata as returned by the parser.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: metadata
+         * 
+         * @param includeRawMetadata the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder includeRawMetadata(boolean includeRawMetadata) {
+            doSetProperty("includeRawMetadata", includeRawMetadata);
+            return this;
+        }
+    
+        
+        /**
          * Header name for API key authentication.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -745,6 +796,9 @@ public interface DoclingComponentBuilderFactory {
             case "batchSize": getOrCreateConfiguration((DoclingComponent) component).setBatchSize((int) value); return true;
             case "batchTimeout": getOrCreateConfiguration((DoclingComponent) component).setBatchTimeout((long) value); return true;
             case "splitBatchResults": getOrCreateConfiguration((DoclingComponent) component).setSplitBatchResults((boolean) value); return true;
+            case "extractAllMetadata": getOrCreateConfiguration((DoclingComponent) component).setExtractAllMetadata((boolean) value); return true;
+            case "includeMetadataInHeaders": getOrCreateConfiguration((DoclingComponent) component).setIncludeMetadataInHeaders((boolean) value); return true;
+            case "includeRawMetadata": getOrCreateConfiguration((DoclingComponent) component).setIncludeRawMetadata((boolean) value); return true;
             case "apiKeyHeader": getOrCreateConfiguration((DoclingComponent) component).setApiKeyHeader((java.lang.String) value); return true;
             case "authenticationScheme": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationScheme((org.apache.camel.component.docling.AuthenticationScheme) value); return true;
             case "authenticationToken": getOrCreateConfiguration((DoclingComponent) component).setAuthenticationToken((java.lang.String) value); return true;

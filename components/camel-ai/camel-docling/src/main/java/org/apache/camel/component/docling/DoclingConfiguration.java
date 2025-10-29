@@ -31,7 +31,7 @@ public class DoclingConfiguration implements Cloneable {
 
     @UriParam
     @Metadata(required = true, defaultValue = "CONVERT_TO_MARKDOWN", description = "The operation to perform",
-              enums = "CONVERT_TO_MARKDOWN,CONVERT_TO_HTML,CONVERT_TO_JSON,EXTRACT_TEXT,EXTRACT_STRUCTURED_DATA,SUBMIT_ASYNC_CONVERSION,CHECK_CONVERSION_STATUS,BATCH_CONVERT_TO_MARKDOWN,BATCH_CONVERT_TO_HTML,BATCH_CONVERT_TO_JSON,BATCH_EXTRACT_TEXT,BATCH_EXTRACT_STRUCTURED_DATA")
+              enums = "CONVERT_TO_MARKDOWN,CONVERT_TO_HTML,CONVERT_TO_JSON,EXTRACT_TEXT,EXTRACT_STRUCTURED_DATA,SUBMIT_ASYNC_CONVERSION,CHECK_CONVERSION_STATUS,BATCH_CONVERT_TO_MARKDOWN,BATCH_CONVERT_TO_HTML,BATCH_CONVERT_TO_JSON,BATCH_EXTRACT_TEXT,BATCH_EXTRACT_STRUCTURED_DATA,EXTRACT_METADATA")
     private DoclingOperations operation = DoclingOperations.CONVERT_TO_MARKDOWN;
 
     @UriParam(label = "advanced")
@@ -173,6 +173,18 @@ public class DoclingConfiguration implements Cloneable {
     @Metadata(description = "Split batch results into individual exchanges (one per document) instead of single BatchProcessingResults",
               defaultValue = "false")
     private boolean splitBatchResults = false;
+
+    @UriParam(label = "metadata")
+    @Metadata(description = "Include metadata in message headers when extracting metadata", defaultValue = "true")
+    private boolean includeMetadataInHeaders = true;
+
+    @UriParam(label = "metadata")
+    @Metadata(description = "Extract all available metadata fields including custom/raw fields", defaultValue = "false")
+    private boolean extractAllMetadata = false;
+
+    @UriParam(label = "metadata")
+    @Metadata(description = "Include raw metadata as returned by the parser", defaultValue = "false")
+    private boolean includeRawMetadata = false;
 
     public DoclingOperations getOperation() {
         return operation;
@@ -444,6 +456,30 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setSplitBatchResults(boolean splitBatchResults) {
         this.splitBatchResults = splitBatchResults;
+    }
+
+    public boolean isIncludeMetadataInHeaders() {
+        return includeMetadataInHeaders;
+    }
+
+    public void setIncludeMetadataInHeaders(boolean includeMetadataInHeaders) {
+        this.includeMetadataInHeaders = includeMetadataInHeaders;
+    }
+
+    public boolean isExtractAllMetadata() {
+        return extractAllMetadata;
+    }
+
+    public void setExtractAllMetadata(boolean extractAllMetadata) {
+        this.extractAllMetadata = extractAllMetadata;
+    }
+
+    public boolean isIncludeRawMetadata() {
+        return includeRawMetadata;
+    }
+
+    public void setIncludeRawMetadata(boolean includeRawMetadata) {
+        this.includeRawMetadata = includeRawMetadata;
     }
 
     public DoclingConfiguration copy() {

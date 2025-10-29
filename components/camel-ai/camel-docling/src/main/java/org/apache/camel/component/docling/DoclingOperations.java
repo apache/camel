@@ -76,6 +76,11 @@ public enum DoclingOperations {
     /**
      * Extract structured data from multiple documents in a batch (docling-serve only)
      */
-    BATCH_EXTRACT_STRUCTURED_DATA
+    BATCH_EXTRACT_STRUCTURED_DATA,
+
+    /**
+     * Extract document metadata (author, title, page count, creation date, etc.)
+     */
+    EXTRACT_METADATA
 
 }
