@@ -772,6 +772,106 @@ public interface BedrockEndpointBuilderFactory {
         public String awsBedrockChunkCount() {
             return "CamelAwsBedrockChunkCount";
         }
+        /**
+         * The conversation messages for Converse API.
+         * 
+         * The option is a: {@code List<Message>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockConverseMessages}.
+         */
+        public String awsBedrockConverseMessages() {
+            return "CamelAwsBedrockConverseMessages";
+        }
+        /**
+         * The system prompts for Converse API.
+         * 
+         * The option is a: {@code List<SystemContentBlock>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockConverseSystem}.
+         */
+        public String awsBedrockConverseSystem() {
+            return "CamelAwsBedrockConverseSystem";
+        }
+        /**
+         * The inference configuration for Converse API.
+         * 
+         * The option is a: {@code InferenceConfiguration} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockConverseInferenceConfig}.
+         */
+        public String awsBedrockConverseInferenceConfig() {
+            return "CamelAwsBedrockConverseInferenceConfig";
+        }
+        /**
+         * The tool configuration for Converse API.
+         * 
+         * The option is a: {@code ToolConfiguration} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockConverseToolConfig}.
+         */
+        public String awsBedrockConverseToolConfig() {
+            return "CamelAwsBedrockConverseToolConfig";
+        }
+        /**
+         * The additional model request fields for Converse API.
+         * 
+         * The option is a: {@code
+         * software.amazon.awssdk.core.document.Document} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockConverseAdditionalFields}.
+         */
+        public String awsBedrockConverseAdditionalFields() {
+            return "CamelAwsBedrockConverseAdditionalFields";
+        }
+        /**
+         * The stop reason from Converse API response.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockConverseStopReason}.
+         */
+        public String awsBedrockConverseStopReason() {
+            return "CamelAwsBedrockConverseStopReason";
+        }
+        /**
+         * The usage metrics from Converse API response.
+         * 
+         * The option is a: {@code TokenUsage} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockConverseUsage}.
+         */
+        public String awsBedrockConverseUsage() {
+            return "CamelAwsBedrockConverseUsage";
+        }
+        /**
+         * The output message from Converse API response.
+         * 
+         * The option is a: {@code Message} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockConverseOutputMessage}.
+         */
+        public String awsBedrockConverseOutputMessage() {
+            return "CamelAwsBedrockConverseOutputMessage";
+        }
     }
     static BedrockEndpointBuilder endpointBuilder(String componentName, String path) {
         class BedrockEndpointBuilderImpl extends AbstractEndpointBuilder implements BedrockEndpointBuilder, AdvancedBedrockEndpointBuilder {

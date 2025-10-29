@@ -35,9 +35,16 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
+import software.amazon.awssdk.services.bedrockruntime.model.ContentBlock;
+import software.amazon.awssdk.services.bedrockruntime.model.ConverseRequest;
+import software.amazon.awssdk.services.bedrockruntime.model.ConverseResponse;
+import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamRequest;
+import software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithResponseStreamRequest;
+import software.amazon.awssdk.services.bedrockruntime.model.SystemContentBlock;
+import software.amazon.awssdk.services.bedrockruntime.model.ToolConfiguration;
 
 /**
  * A Producer which sends messages to the Amazon Bedrock Service <a href="http://aws.amazon.com/bedrock/">AWS
@@ -72,6 +79,12 @@ public class BedrockProducer extends DefaultProducer {
                 break;
             case invokeEmbeddingsModelStreaming:
                 invokeEmbeddingsModelStreaming(getEndpoint().getBedrockRuntimeClient(), exchange);
+                break;
+            case converse:
+                converse(getEndpoint().getBedrockRuntimeClient(), exchange);
+                break;
+            case converseStream:
+                converseStream(exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -502,6 +515,232 @@ public class BedrockProducer extends DefaultProducer {
         }
         if (metadata.getTokenCount() != null) {
             message.setHeader(BedrockConstants.STREAMING_TOKEN_COUNT, metadata.getTokenCount());
+        }
+        message.setHeader(BedrockConstants.STREAMING_CHUNK_COUNT, metadata.getChunkCount());
+    }
+
+    private void converse(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange) throws InvalidPayloadException {
+        ConverseRequest request;
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getMessage().getMandatoryBody();
+            if (payload instanceof ConverseRequest) {
+                request = (ConverseRequest) payload;
+            } else {
+                throw new IllegalArgumentException(
+                        "Converse operation requires ConverseRequest in POJO mode");
+            }
+        } else {
+            // Build request from headers and body
+            ConverseRequest.Builder builder = ConverseRequest.builder();
+
+            // Set model ID
+            builder.modelId(getConfiguration().getModelId());
+
+            // Get messages from header or body
+            @SuppressWarnings("unchecked")
+            List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages
+                    = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_MESSAGES, List.class);
+            if (messages != null) {
+                builder.messages(messages);
+            } else {
+                throw new IllegalArgumentException(
+                        "Converse operation requires messages in header " + BedrockConstants.CONVERSE_MESSAGES);
+            }
+
+            // Optional: System prompts
+            @SuppressWarnings("unchecked")
+            List<SystemContentBlock> system
+                    = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_SYSTEM, List.class);
+            if (system != null) {
+                builder.system(system);
+            }
+
+            // Optional: Inference configuration
+            InferenceConfiguration inferenceConfig
+                    = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_INFERENCE_CONFIG, InferenceConfiguration.class);
+            if (inferenceConfig != null) {
+                builder.inferenceConfig(inferenceConfig);
+            }
+
+            // Optional: Tool configuration
+            ToolConfiguration toolConfig
+                    = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_TOOL_CONFIG, ToolConfiguration.class);
+            if (toolConfig != null) {
+                builder.toolConfig(toolConfig);
+            }
+
+            // Optional: Additional model request fields
+            software.amazon.awssdk.core.document.Document additionalFields = exchange.getMessage()
+                    .getHeader(BedrockConstants.CONVERSE_ADDITIONAL_MODEL_REQUEST_FIELDS,
+                            software.amazon.awssdk.core.document.Document.class);
+            if (additionalFields != null) {
+                builder.additionalModelRequestFields(additionalFields);
+            }
+
+            request = builder.build();
+        }
+
+        try {
+            ConverseResponse response = bedrockRuntimeClient.converse(request);
+
+            org.apache.camel.Message message = getMessageForResponse(exchange);
+
+            // Set the output message content as body
+            if (response.output() != null && response.output().message() != null) {
+                software.amazon.awssdk.services.bedrockruntime.model.Message outputMessage = response.output().message();
+                message.setHeader(BedrockConstants.CONVERSE_OUTPUT_MESSAGE, outputMessage);
+
+                // Extract text content from the message
+                StringBuilder textContent = new StringBuilder();
+                for (ContentBlock content : outputMessage.content()) {
+                    if (content.text() != null) {
+                        textContent.append(content.text());
+                    }
+                }
+                message.setBody(textContent.toString());
+            }
+
+            // Set metadata headers
+            if (response.stopReason() != null) {
+                message.setHeader(BedrockConstants.CONVERSE_STOP_REASON, response.stopReason().toString());
+            }
+            if (response.usage() != null) {
+                message.setHeader(BedrockConstants.CONVERSE_USAGE, response.usage());
+            }
+
+        } catch (AwsServiceException ase) {
+            LOG.trace("Converse command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+    }
+
+    private void converseStream(Exchange exchange) throws InvalidPayloadException {
+        ConverseStreamRequest request;
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getMessage().getMandatoryBody();
+            if (payload instanceof ConverseStreamRequest) {
+                request = (ConverseStreamRequest) payload;
+            } else {
+                throw new IllegalArgumentException(
+                        "ConverseStream operation requires ConverseStreamRequest in POJO mode");
+            }
+        } else {
+            // Build request from headers and body
+            ConverseStreamRequest.Builder builder = ConverseStreamRequest.builder();
+
+            // Set model ID
+            builder.modelId(getConfiguration().getModelId());
+
+            // Get messages from header or body
+            @SuppressWarnings("unchecked")
+            List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages
+                    = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_MESSAGES, List.class);
+            if (messages != null) {
+                builder.messages(messages);
+            } else {
+                throw new IllegalArgumentException(
+                        "ConverseStream operation requires messages in header " + BedrockConstants.CONVERSE_MESSAGES);
+            }
+
+            // Optional: System prompts
+            @SuppressWarnings("unchecked")
+            List<SystemContentBlock> system
+                    = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_SYSTEM, List.class);
+            if (system != null) {
+                builder.system(system);
+            }
+
+            // Optional: Inference configuration
+            InferenceConfiguration inferenceConfig
+                    = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_INFERENCE_CONFIG, InferenceConfiguration.class);
+            if (inferenceConfig != null) {
+                builder.inferenceConfig(inferenceConfig);
+            }
+
+            // Optional: Tool configuration
+            ToolConfiguration toolConfig
+                    = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_TOOL_CONFIG, ToolConfiguration.class);
+            if (toolConfig != null) {
+                builder.toolConfig(toolConfig);
+            }
+
+            // Optional: Additional model request fields
+            software.amazon.awssdk.core.document.Document additionalFields = exchange.getMessage()
+                    .getHeader(BedrockConstants.CONVERSE_ADDITIONAL_MODEL_REQUEST_FIELDS,
+                            software.amazon.awssdk.core.document.Document.class);
+            if (additionalFields != null) {
+                builder.additionalModelRequestFields(additionalFields);
+            }
+
+            request = builder.build();
+        }
+
+        processConverseStreamingRequest(request, exchange);
+    }
+
+    private void processConverseStreamingRequest(ConverseStreamRequest request, Exchange exchange) {
+        try {
+            String streamOutputMode = getConfiguration().getStreamOutputMode();
+            if (streamOutputMode == null) {
+                streamOutputMode = "complete";
+            }
+
+            // Check if mode is overridden in headers
+            if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(BedrockConstants.STREAM_OUTPUT_MODE))) {
+                streamOutputMode = exchange.getIn().getHeader(BedrockConstants.STREAM_OUTPUT_MODE, String.class);
+            }
+
+            org.apache.camel.Message message = getMessageForResponse(exchange);
+            org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.StreamMetadata metadata
+                    = new org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.StreamMetadata();
+
+            if ("chunks".equals(streamOutputMode)) {
+                // Chunks mode - emit each chunk as separate message
+                List<String> allChunks = new ArrayList<>();
+                getEndpoint().getBedrockRuntimeAsyncClient().converseStream(
+                        request,
+                        org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.createChunksHandler(
+                                metadata,
+                                allChunks,
+                                null))
+                        .join();
+
+                message.setBody(allChunks);
+                if (getConfiguration().isIncludeStreamingMetadata()) {
+                    setConverseStreamingMetadata(message, metadata);
+                }
+            } else {
+                // Complete mode - accumulate all chunks and return complete response
+                StringBuilder fullText = new StringBuilder();
+                getEndpoint().getBedrockRuntimeAsyncClient().converseStream(
+                        request,
+                        org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.createCompleteHandler(
+                                metadata,
+                                fullText))
+                        .join();
+
+                message.setBody(fullText.toString());
+                if (getConfiguration().isIncludeStreamingMetadata()) {
+                    setConverseStreamingMetadata(message, metadata);
+                }
+            }
+
+        } catch (AwsServiceException ase) {
+            LOG.trace("Converse Stream command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+    }
+
+    private void setConverseStreamingMetadata(
+            org.apache.camel.Message message,
+            org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.StreamMetadata metadata) {
+        if (metadata.getStopReason() != null) {
+            message.setHeader(BedrockConstants.CONVERSE_STOP_REASON, metadata.getStopReason());
+        }
+        if (metadata.getUsage() != null) {
+            message.setHeader(BedrockConstants.CONVERSE_USAGE, metadata.getUsage());
         }
         message.setHeader(BedrockConstants.STREAMING_CHUNK_COUNT, metadata.getChunkCount());
     }

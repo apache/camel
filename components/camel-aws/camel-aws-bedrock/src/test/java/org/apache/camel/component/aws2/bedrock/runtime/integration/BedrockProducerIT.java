@@ -26,6 +26,7 @@ import org.apache.camel.component.aws2.bedrock.BedrockModels;
 import org.apache.camel.component.aws2.bedrock.runtime.BedrockConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
@@ -44,6 +45,11 @@ class BedrockProducerIT extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    @BeforeEach
+    public void resetMocks() {
+        result.reset();
+    }
 
     @Test
     public void testInvokeTitanExpressModel() throws InterruptedException {
@@ -867,6 +873,59 @@ class BedrockProducerIT extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void testConverseWithClaudeModel() throws InterruptedException {
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:converse_claude", exchange -> {
+            // Create a message using the Converse API
+            java.util.List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new java.util.ArrayList<>();
+            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+                            .fromText("What is the capital of France?"))
+                    .build());
+
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, messages);
+
+            // Optional: Add inference configuration
+            software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration inferenceConfig
+                    = software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration.builder()
+                            .maxTokens(100)
+                            .temperature(0.7f)
+                            .build();
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_INFERENCE_CONFIG, inferenceConfig);
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testConverseStreamWithClaudeModel() throws InterruptedException {
+        result.expectedMessageCount(1);
+        final Exchange result = template.send("direct:converse_stream_claude", exchange -> {
+            // Create a message using the Converse API
+            java.util.List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new java.util.ArrayList<>();
+            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+                            .fromText("Tell me a short joke about Java programming"))
+                    .build());
+
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, messages);
+            exchange.getMessage().setHeader(BedrockConstants.STREAM_OUTPUT_MODE, "complete");
+
+            // Optional: Add inference configuration
+            software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration inferenceConfig
+                    = software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration.builder()
+                            .maxTokens(200)
+                            .temperature(0.9f)
+                            .build();
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_INFERENCE_CONFIG, inferenceConfig);
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -1056,6 +1115,18 @@ class BedrockProducerIT extends CamelTestSupport {
                         .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=invokeTextModel&modelId="
                             + BedrockModels.MISTRAL_SMALL_2402.model)
                         .log("Completions: ${body}")
+                        .to(result);
+
+                from("direct:converse_claude")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=converse&modelId="
+                            + BedrockModels.ANTROPHIC_CLAUDE_V3.model)
+                        .log("Converse response: ${body}")
+                        .to(result);
+
+                from("direct:converse_stream_claude")
+                        .to("aws-bedrock:label?accessKey=RAW({{aws.manual.access.key}})&secretKey=RAW({{aws.manual.secret.key}})&region=us-east-1&operation=converseStream&modelId="
+                            + BedrockModels.ANTROPHIC_CLAUDE_V3.model)
+                        .log("Converse stream response: ${body}")
                         .to(result);
             }
         };

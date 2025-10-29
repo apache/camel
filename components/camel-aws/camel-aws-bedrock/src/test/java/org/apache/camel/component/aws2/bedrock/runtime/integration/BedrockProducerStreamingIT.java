@@ -61,10 +61,8 @@ class BedrockProducerStreamingIT extends CamelTestSupport {
     private MockEndpoint result;
 
     @BeforeEach
-    public void resetMocks() throws InterruptedException {
+    public void resetMocks() {
         result.reset();
-        // Add small delay to avoid AWS rate limiting between tests
-        Thread.sleep(1000);
     }
 
     @Test

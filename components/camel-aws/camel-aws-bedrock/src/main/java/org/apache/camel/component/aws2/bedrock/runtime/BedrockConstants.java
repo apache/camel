@@ -36,4 +36,21 @@ public interface BedrockConstants {
     String STREAMING_TOKEN_COUNT = "CamelAwsBedrockTokenCount";
     @Metadata(description = "The number of chunks received in streaming response", javaType = "Integer")
     String STREAMING_CHUNK_COUNT = "CamelAwsBedrockChunkCount";
+    @Metadata(description = "The conversation messages for Converse API", javaType = "List<Message>")
+    String CONVERSE_MESSAGES = "CamelAwsBedrockConverseMessages";
+    @Metadata(description = "The system prompts for Converse API", javaType = "List<SystemContentBlock>")
+    String CONVERSE_SYSTEM = "CamelAwsBedrockConverseSystem";
+    @Metadata(description = "The inference configuration for Converse API", javaType = "InferenceConfiguration")
+    String CONVERSE_INFERENCE_CONFIG = "CamelAwsBedrockConverseInferenceConfig";
+    @Metadata(description = "The tool configuration for Converse API", javaType = "ToolConfiguration")
+    String CONVERSE_TOOL_CONFIG = "CamelAwsBedrockConverseToolConfig";
+    @Metadata(description = "The additional model request fields for Converse API",
+              javaType = "software.amazon.awssdk.core.document.Document")
+    String CONVERSE_ADDITIONAL_MODEL_REQUEST_FIELDS = "CamelAwsBedrockConverseAdditionalFields";
+    @Metadata(description = "The stop reason from Converse API response", javaType = "String")
+    String CONVERSE_STOP_REASON = "CamelAwsBedrockConverseStopReason";
+    @Metadata(description = "The usage metrics from Converse API response", javaType = "TokenUsage")
+    String CONVERSE_USAGE = "CamelAwsBedrockConverseUsage";
+    @Metadata(description = "The output message from Converse API response", javaType = "Message")
+    String CONVERSE_OUTPUT_MESSAGE = "CamelAwsBedrockConverseOutputMessage";
 }
