@@ -90,7 +90,7 @@ public class ValidatePredicateExceptionFactoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .validate().simple("${body} contains 'Camel'").predicateExceptionFactory(new MyExceptionFactory())
+                        .validate(new MyExceptionFactory()).simple("${body} contains 'Camel'")
                         .id("myValidate")
                         .to("mock:result");
             }

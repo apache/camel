@@ -13,6 +13,29 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.15 to 4.16
 
+=== EIPs
+
+The `validate` EIP in Java DSL has changed avoid having to use `.end()` to correctly continue building the route.
+Other EIPs such as `setBody` and `transform` does not require to use `.end()` and as such we are making this the same behavior.
+
+For example if stacking multiple validates then you would have to end `.end()` each time:
+
+[source,java]
+----
+    .validate(body().isNotNull()).end()
+    .validate(body().isInstanceOf(String.class)).end()
+    .validate(body().isGreaterThan("0")).end()
+----
+
+Should now be:
+
+[source,java]
+----
+    .validate(body().isNotNull())
+    .validate(body().isInstanceOf(String.class))
+    .validate(body().isGreaterThan("0"))
+----
+
 === camel-core
 
 The `tryConvertTo` method in Camel type converters will no longer in case of no converter suitable,
