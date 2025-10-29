@@ -48,10 +48,21 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
             this.requestUriPattern = requestUriPattern;
         }
 
-        public String getAs2To() { return as2To; }
-        public String getDecryptingKey() { return decryptingKey; }
-        public String getSigningKey() { return signingKey; }
-        public String getRequestUriPattern() { return requestUriPattern; } // New getter
+        public String getAs2To() {
+            return as2To;
+        }
+
+        public String getDecryptingKey() {
+            return decryptingKey;
+        }
+
+        public String getSigningKey() {
+            return signingKey;
+        }
+
+        public String getRequestUriPattern() {
+            return requestUriPattern;
+        } // New getter
     }
 
     private KeyPair decryptingKPA;
@@ -92,11 +103,15 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
         return new RouteBuilder() {
             public void configure() {
                 // Consumer A: Uses keys registered as 'keyPairA'
-                from("as2://server/listen?requestUriPattern=/consumerA&decryptingPrivateKey=#" + ConsumerConfig.CONSUMER_A.getDecryptingKey() + "&signingPrivateKey=#" + ConsumerConfig.CONSUMER_A.getSigningKey())
+                from("as2://server/listen?requestUriPattern=/consumerA&decryptingPrivateKey=#"
+                     + ConsumerConfig.CONSUMER_A.getDecryptingKey() + "&signingPrivateKey=#"
+                     + ConsumerConfig.CONSUMER_A.getSigningKey())
                         .to("mock:consumerA");
 
                 // Consumer B: Uses keys registered as 'keyPairB'
-                from("as2://server/listen?requestUriPattern=/consumerB&decryptingPrivateKey=#" + ConsumerConfig.CONSUMER_B.getDecryptingKey() + "&signingPrivateKey=#" + ConsumerConfig.CONSUMER_B.getSigningKey())
+                from("as2://server/listen?requestUriPattern=/consumerB&decryptingPrivateKey=#"
+                     + ConsumerConfig.CONSUMER_B.getDecryptingKey() + "&signingPrivateKey=#"
+                     + ConsumerConfig.CONSUMER_B.getSigningKey())
                         .to("mock:consumerB");
             }
         };
@@ -171,11 +186,11 @@ public class AS2ServerTwoConsumerBase extends AS2ServerSecTestBase {
 
         return clientConnection().send(
                 EDI_MESSAGE,
-                requestUri,                 // Use argument
-                SUBJECT,                    // Use static
-                FROM,                       // Use static
-                as2To,                      // Use argument
-                as2From,                    // Use argument
+                requestUri,
+                SUBJECT,
+                FROM,
+                as2To,
+                as2From,
                 structure,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII),
                 null,

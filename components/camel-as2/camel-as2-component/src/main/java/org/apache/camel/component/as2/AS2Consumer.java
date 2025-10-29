@@ -99,6 +99,19 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
 
         String uri = properties.computeIfAbsent("requestUriPattern", param -> "/").toString();
 
+        // Check if the configuration for this specific URI path has already been registered
+        // (e.g., by the default "/" fallback or another consumer).
+        // If not, create and register it now using the endpoint's configured keys/certs.
+        if (as2ServerConnection.getConfigurationForPath(uri).isEmpty()) {
+            AS2ServerConnection.AS2ConsumerConfiguration consumerConfig = new AS2ServerConnection.AS2ConsumerConfiguration(
+                    getEndpoint().getSigningAlgorithm(),
+                    getEndpoint().getSigningCertificateChain(),
+                    getEndpoint().getSigningPrivateKey(),
+                    getEndpoint().getDecryptingPrivateKey(),
+                    getEndpoint().getValidateSigningCertificateChain());
+            as2ServerConnection.registerConsumerConfiguration(uri, consumerConfig);
+        }
+
         as2ServerConnection.listen(uri, this);
     }
 

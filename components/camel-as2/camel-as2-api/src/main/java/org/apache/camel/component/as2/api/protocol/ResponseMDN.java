@@ -27,14 +27,7 @@ import java.util.Properties;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
-import org.apache.camel.component.as2.api.AS2Constants;
-import org.apache.camel.component.as2.api.AS2Header;
-import org.apache.camel.component.as2.api.AS2ServerManager;
-import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
-import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
-import org.apache.camel.component.as2.api.AS2TransferEncoding;
-import org.apache.camel.component.as2.api.InvalidAS2NameException;
+import org.apache.camel.component.as2.api.*;
 import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.DispositionMode;
@@ -85,15 +78,28 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     private final String as2Version;
     private final String serverFQDN;
-    private final AS2SignatureAlgorithm signingAlgorithm;
-    private final Certificate[] signingCertificateChain;
-    private final PrivateKey signingPrivateKey;
-    private final PrivateKey decryptingPrivateKey;
     private final String mdnMessageTemplate;
-    private final Certificate[] validateSigningCertificateChain;
+
+    private AS2SignatureAlgorithm signingAlgorithm;
+    private Certificate[] signingCertificateChain;
+    private PrivateKey signingPrivateKey;
+    private PrivateKey decryptingPrivateKey;
+    private Certificate[] validateSigningCertificateChain;
+    private boolean keysAreDynamic = false; // Flag indicating if security keys/certs must be dynamically fetched from the HttpContext
 
     private final Lock lock = new ReentrantLock();
     private VelocityEngine velocityEngine;
+
+    public ResponseMDN(String as2Version, String serverFQDN, String mdnMessageTemplate) {
+        this.as2Version = as2Version;
+        this.serverFQDN = serverFQDN;
+        if (!StringUtils.isBlank(mdnMessageTemplate)) {
+            this.mdnMessageTemplate = mdnMessageTemplate;
+        } else {
+            this.mdnMessageTemplate = DEFAULT_MDN_MESSAGE_TEMPLATE;
+        }
+        this.keysAreDynamic = true;
+    }
 
     public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm,
                        Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey,
@@ -124,6 +130,18 @@ public class ResponseMDN implements HttpResponseInterceptor {
             // receipt in a multipart/report)
             LOG.debug("MDN not return due to response status code: {}", statusCode);
             return;
+        }
+
+        if (this.keysAreDynamic) {
+            // Dynamically load path-specific security material from the HttpContext,
+            // which was populated by AS2ConsumerConfigInterceptor.
+            this.signingAlgorithm = (AS2SignatureAlgorithm) context.getAttribute(AS2ServerConnection.AS2_SIGNING_ALGORITHM);
+            this.signingCertificateChain
+                    = (Certificate[]) context.getAttribute(AS2ServerConnection.AS2_SIGNING_CERTIFICATE_CHAIN);
+            this.signingPrivateKey = (PrivateKey) context.getAttribute(AS2ServerConnection.AS2_SIGNING_PRIVATE_KEY);
+            this.decryptingPrivateKey = (PrivateKey) context.getAttribute(AS2ServerConnection.AS2_DECRYPTING_PRIVATE_KEY);
+            this.validateSigningCertificateChain
+                    = (Certificate[]) context.getAttribute(AS2ServerConnection.AS2_VALIDATE_SIGNING_CERTIFICATE_CHAIN);
         }
 
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);

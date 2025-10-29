@@ -21,8 +21,12 @@ import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.URI;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -35,9 +39,7 @@ import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.io.AS2BHttpServerConnection;
 import org.apache.camel.component.as2.api.protocol.ResponseMDN;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.hc.core5.http.ConnectionClosedException;
-import org.apache.hc.core5.http.HttpException;
-import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.config.Http1Config;
 import org.apache.hc.core5.http.impl.io.HttpService;
 import org.apache.hc.core5.http.io.HttpRequestHandler;
@@ -64,6 +66,12 @@ public class AS2ServerConnection {
     private static final String REQUEST_LISTENER_THREAD_NAME_PREFIX = "AS2Svr-";
     private static final String REQUEST_HANDLER_THREAD_NAME_PREFIX = "AS2Hdlr-";
 
+    public static final String AS2_DECRYPTING_PRIVATE_KEY = "AS2_DECRYPTING_PRIVATE_KEY";
+    public static final String AS2_VALIDATE_SIGNING_CERTIFICATE_CHAIN = "AS2_VALIDATE_SIGNING_CERTIFICATE_CHAIN";
+    public static final String AS2_SIGNING_PRIVATE_KEY = "AS2_SIGNING_PRIVATE_KEY";
+    public static final String AS2_SIGNING_CERTIFICATE_CHAIN = "AS2_SIGNING_CERTIFICATE_CHAIN";
+    public static final String AS2_SIGNING_ALGORITHM = "AS2_SIGNING_ALGORITHM";
+
     private ServerSocket serversocket;
     private RequestListenerService listenerService;
     private RequestAcceptorThread acceptorThread;
@@ -77,6 +85,189 @@ public class AS2ServerConnection {
     private final PrivateKey decryptingPrivateKey;
     private final Certificate[] validateSigningCertificateChain;
     private final AS2SignatureAlgorithm signingAlgorithm;
+
+    /**
+     * Stores the configuration for each consumer endpoint path (e.g., "/consumerA")
+     */
+    private final Map<String, AS2ConsumerConfiguration> consumerConfigurations = new ConcurrentHashMap<>();
+
+    /**
+     * Simple wrapper class to associate the AS2ConsumerConfiguration with the specific request URI path that was
+     * matched. Used exclusively by the ThreadLocal state.
+     */
+    private static class ThreadLocalConfigWrapper {
+        final AS2ConsumerConfiguration config;
+        final String requestUriPath;
+
+        ThreadLocalConfigWrapper(AS2ConsumerConfiguration config, String requestUriPath) {
+            this.config = config;
+            this.requestUriPath = requestUriPath;
+        }
+    }
+
+    /**
+     * Stores the request-specific AS2ConsumerConfiguration and path. Used for post-processing logic (like asynchronous
+     * MDN) after the main HttpService handling is complete.
+     */
+    private static final ThreadLocal<ThreadLocalConfigWrapper> CURRENT_CONSUMER_CONFIG = new ThreadLocal<>();
+
+    /**
+     * Configuration data holding all necessary security material (signing keys/certs and decryption keys/certs) for a
+     * single AS2 consumer endpoint. This immutable object is looked up per request URI.
+     */
+    public static class AS2ConsumerConfiguration {
+        private final Certificate[] signingCertificateChain;
+        private final PrivateKey signingPrivateKey;
+        private final PrivateKey decryptingPrivateKey;
+        private final Certificate[] validateSigningCertificateChain;
+        private final AS2SignatureAlgorithm signingAlgorithm;
+
+        public AS2ConsumerConfiguration(
+                                        AS2SignatureAlgorithm signingAlgorithm,
+                                        Certificate[] signingCertificateChain,
+                                        PrivateKey signingPrivateKey,
+                                        PrivateKey decryptingPrivateKey,
+                                        Certificate[] validateSigningCertificateChain) {
+            this.signingAlgorithm = signingAlgorithm;
+            this.signingCertificateChain = signingCertificateChain;
+            this.signingPrivateKey = signingPrivateKey;
+            this.decryptingPrivateKey = decryptingPrivateKey;
+            this.validateSigningCertificateChain = validateSigningCertificateChain;
+        }
+
+        // Getters
+        public Certificate[] getValidateSigningCertificateChain() {
+            return validateSigningCertificateChain;
+        }
+
+        public Certificate[] getSigningCertificateChain() {
+            return signingCertificateChain;
+        }
+
+        public AS2SignatureAlgorithm getSigningAlgorithm() {
+            return signingAlgorithm;
+        }
+
+        public PrivateKey getSigningPrivateKey() {
+            return signingPrivateKey;
+        }
+
+        public PrivateKey getDecryptingPrivateKey() {
+            return decryptingPrivateKey;
+        }
+    }
+
+    /**
+     * Retrieves the specific AS2 consumer configuration associated with the given request path.
+     *
+     * @param  path The canonical request URI path (e.g., "/consumerA").
+     * @return      An Optional containing the configuration if a match is found, otherwise empty.
+     */
+    public Optional<AS2ConsumerConfiguration> getConfigurationForPath(String path) {
+        return Optional.ofNullable(consumerConfigurations.get(path));
+    }
+
+    /**
+     * Dynamically determines and injects the AS2 security configuration (keys, certificates, and algorithm) for the
+     * incoming HTTP request.
+     *
+     * This method performs three main tasks: 1. Looks up the correct AS2ConsumerConfiguration based on the request URI
+     * path. 2. Injects the decryption and signing security material into the HttpContext for use by downstream
+     * processors (like the AS2Consumer and ResponseMDN). 3. Stores the configuration in a ThreadLocal for use by
+     * asynchronous MDN logic.
+     *
+     * @param  request The incoming HTTP request.
+     * @param  context The shared execution context for the request lifecycle.
+     * @return         The AS2ConsumerConfiguration object found, or null if none was matched.
+     */
+    private AS2ConsumerConfiguration setupConfigurationForRequest(ClassicHttpRequest request, HttpContext context) {
+        String requestUri = request.getRequestUri();
+        String requestUriPath = cleanUpPath(requestUri);
+
+        // 1. LOOKUP: Find the specific consumer configuration
+        AS2ConsumerConfiguration config = AS2ServerConnection.this
+                .getConfigurationForPath(requestUriPath).orElse(null);
+
+        // 2. Logging BEFORE injection (CRITICAL for debugging path issues)
+        LOG.debug("Processing request. Incoming URI: {}, Canonical Path: {}. Config Found: {}",
+                requestUri, requestUriPath, (config != null));
+
+        // 3. Handle missing config
+        if (config == null) {
+            LOG.warn("No AS2 consumer configuration found for canonical path: {}. Encrypted messages will likely fail.",
+                    requestUriPath);
+            return null;
+        }
+
+        // 4. INJECTION: Inject dynamic security keys into the HttpContext
+        context.setAttribute(AS2_DECRYPTING_PRIVATE_KEY, config.getDecryptingPrivateKey());
+        context.setAttribute(AS2_VALIDATE_SIGNING_CERTIFICATE_CHAIN, config.getValidateSigningCertificateChain());
+        context.setAttribute(AS2_SIGNING_PRIVATE_KEY, config.getSigningPrivateKey());
+        context.setAttribute(AS2_SIGNING_CERTIFICATE_CHAIN, config.getSigningCertificateChain());
+        context.setAttribute(AS2_SIGNING_ALGORITHM, config.getSigningAlgorithm());
+
+        // 5. CRITICAL READ-BACK CHECK: Immediately check if the key is retrievable from the context
+        Object checkKey = context.getAttribute(AS2_DECRYPTING_PRIVATE_KEY);
+
+        if (checkKey == null) {
+            LOG.error(
+                    "FATAL: Decrypting Private Key failed to be read back from HttpContext immediately after injection for path: {}",
+                    requestUriPath);
+        } else if (!(checkKey instanceof PrivateKey)) {
+            LOG.error("FATAL: Key in HttpContext is not a PrivateKey object! Found type: {}", checkKey.getClass().getName());
+        } else {
+            LOG.debug("Context injection confirmed: Decrypting Key set successfully into HttpContext. Key type: {}",
+                    checkKey.getClass().getName());
+        }
+
+        // 6. Set ThreadLocal for later MDN processing
+        ThreadLocalConfigWrapper wrapper = new ThreadLocalConfigWrapper(config, requestUriPath);
+        CURRENT_CONSUMER_CONFIG.set(wrapper);
+
+        return config;
+    }
+
+    /**
+     * Extracts and normalizes the path component from the request URI.
+     *
+     * This ensures consistency by stripping query parameters and scheme/authority, and defaults to "/" if the path is
+     * empty or parsing fails.
+     *
+     * @param  requestUri The full request URI string from the HTTP request line.
+     * @return            The canonical path, starting with a "/", without query parameters.
+     */
+    private String cleanUpPath(String requestUri) {
+        try {
+            URI uri = new URI(requestUri);
+            String path = uri.getPath();
+            // Ensure path is not null and normalize to "/" if it is empty/null after parsing
+            if (path == null || path.isEmpty()) {
+                return "/";
+            }
+            return path;
+        } catch (Exception e) {
+            // Should not happen for a valid HTTP request line
+            LOG.warn("Error parsing request URI: {}", requestUri, e);
+            return "/"; // Default to root path in case of error
+        }
+    }
+
+    /**
+     * Interceptor that executes early in the request processing chain to find the correct
+     * {@link AS2ConsumerConfiguration} for the incoming request URI and injects its security material
+     * (keys/certs/algorithm) into the {@link HttpContext} and {@link ThreadLocal} storage.
+     */
+    private class AS2ConsumerConfigInterceptor implements HttpRequestInterceptor {
+
+        @Override
+        public void process(HttpRequest request, EntityDetails entityDetails, HttpContext context)
+                throws HttpException, IOException {
+            if (request instanceof ClassicHttpRequest) {
+                // Now safely calling the method on the outer class instance (AS2ServerConnection.this)
+                AS2ServerConnection.this.setupConfigurationForRequest((ClassicHttpRequest) request, context);
+            }
+        }
+    }
 
     class RequestListenerService {
 
@@ -93,12 +284,7 @@ public class AS2ServerConnection {
             // Set up HTTP protocol processor for incoming connections
             final HttpProcessor inhttpproc = initProtocolProcessor(
                     as2Version, originServer, serverFqdn,
-                    AS2ServerConnection.this.signingAlgorithm,
-                    AS2ServerConnection.this.signingCertificateChain,
-                    AS2ServerConnection.this.signingPrivateKey,
-                    AS2ServerConnection.this.decryptingPrivateKey,
-                    mdnMessageTemplate,
-                    validateSigningCertificateChain);
+                    mdnMessageTemplate, validateSigningCertificateChain);
 
             registry = new RequestHandlerRegistry<>();
             HttpServerRequestHandler handler = new BasicHttpServerRequestHandler(registry);
@@ -187,10 +373,16 @@ public class AS2ServerConnection {
                     this.httpService.handleRequest(this.serverConnection, context);
 
                     HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+
+                    // Safely retrieve the AS2 consumer configuration and path from ThreadLocal storage.
+                    AS2ConsumerConfiguration config = Optional.ofNullable(CURRENT_CONSUMER_CONFIG.get())
+                            .map(w -> w.config)
+                            .orElse(null);
+
                     String recipientAddress = coreContext.getAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS,
                             String.class);
 
-                    if (recipientAddress != null) {
+                    if (recipientAddress != null && config != null) {
                         // Send the MDN asynchronously.
 
                         DispositionNotificationMultipartReportEntity multipartReportEntity = coreContext.getAttribute(
@@ -200,15 +392,15 @@ public class AS2ServerConnection {
                                 AS2ServerConnection.this.as2Version,
                                 AS2ServerConnection.this.originServer,
                                 AS2ServerConnection.this.serverFqdn,
-                                AS2ServerConnection.this.signingCertificateChain,
-                                AS2ServerConnection.this.signingPrivateKey);
+                                config.getSigningCertificateChain(),
+                                config.getSigningPrivateKey());
 
                         HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
                         AS2SignedDataGenerator gen = ResponseMDN.createSigningGenerator(
                                 request,
-                                AS2ServerConnection.this.signingAlgorithm,
-                                AS2ServerConnection.this.signingCertificateChain,
-                                AS2ServerConnection.this.signingPrivateKey);
+                                config.getSigningAlgorithm(),
+                                config.getSigningCertificateChain(),
+                                config.getSigningPrivateKey());
 
                         MultipartMimeEntity asyncReceipt = multipartReportEntity;
                         if (gen != null) {
@@ -269,6 +461,17 @@ public class AS2ServerConnection {
         this.validateSigningCertificateChain = validateSigningCertificateChain;
         this.signingAlgorithm = signingAlgorithm;
 
+        // Create and register a default consumer configuration for the root path ('/').
+        // This ensures that all incoming requests have a fallback configuration for decryption
+        // and MDN signing, even if they don't match a specific Camel route path.
+        AS2ServerConnection.AS2ConsumerConfiguration consumerConfig = new AS2ServerConnection.AS2ConsumerConfiguration(
+                signingAlgorithm,
+                signingCertificateChain,
+                signingPrivateKey,
+                decryptingPrivateKey,
+                validateSigningCertificateChain);
+        registerConsumerConfiguration("/", consumerConfig);
+
         listenerService = new RequestListenerService(
                 this.as2Version,
                 this.originServer,
@@ -282,15 +485,25 @@ public class AS2ServerConnection {
     }
 
     public Certificate[] getValidateSigningCertificateChain() {
-        return validateSigningCertificateChain;
+        return Optional.ofNullable(CURRENT_CONSUMER_CONFIG.get())
+                .map(w -> w.config.getValidateSigningCertificateChain())
+                .orElse(null);
     }
 
     public PrivateKey getSigningPrivateKey() {
-        return signingPrivateKey;
+        return Optional.ofNullable(CURRENT_CONSUMER_CONFIG.get())
+                .map(w -> w.config.getSigningPrivateKey())
+                .orElse(null);
     }
 
     public PrivateKey getDecryptingPrivateKey() {
-        return decryptingPrivateKey;
+        return Optional.ofNullable(CURRENT_CONSUMER_CONFIG.get())
+                .map(w -> w.config.getDecryptingPrivateKey())
+                .orElse(null);
+    }
+
+    public void registerConsumerConfiguration(String path, AS2ConsumerConfiguration config) {
+        consumerConfigurations.put(path, config);
     }
 
     public void close() {
@@ -330,6 +543,7 @@ public class AS2ServerConnection {
             lock.lock();
             try {
                 listenerService.unregisterHandler(requestUri);
+                consumerConfigurations.remove(requestUri);
             } finally {
                 lock.unlock();
             }
@@ -340,17 +554,15 @@ public class AS2ServerConnection {
             String as2Version,
             String originServer,
             String serverFqdn,
-            AS2SignatureAlgorithm signatureAlgorithm,
-            Certificate[] signingCertificateChain,
-            PrivateKey signingPrivateKey,
-            PrivateKey decryptingPrivateKey,
             String mdnMessageTemplate,
             Certificate[] validateSigningCertificateChain) {
-        return HttpProcessorBuilder.create().add(new ResponseContent(true)).add(new ResponseServer(originServer))
-                .add(new ResponseDate()).add(new ResponseConnControl()).add(new ResponseMDN(
-                        as2Version, serverFqdn,
-                        signatureAlgorithm, signingCertificateChain, signingPrivateKey, decryptingPrivateKey,
-                        mdnMessageTemplate, validateSigningCertificateChain))
+        return HttpProcessorBuilder.create()
+                .addFirst(new AS2ConsumerConfigInterceptor()) // Sets up the request-specific keys and certificates in the HttpContext
+                .add(new ResponseContent(true))
+                .add(new ResponseServer(originServer))
+                .add(new ResponseDate())
+                .add(new ResponseConnControl())
+                .add(new ResponseMDN(as2Version, serverFqdn, mdnMessageTemplate))
                 .build();
     }
 

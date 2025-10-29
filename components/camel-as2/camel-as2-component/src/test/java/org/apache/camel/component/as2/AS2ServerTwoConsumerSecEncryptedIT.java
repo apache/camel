@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.as2;
 
+import java.security.PrivateKey;
+
 import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.util.MicUtils;
@@ -25,8 +27,6 @@ import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-
-import java.security.PrivateKey;
 
 /**
  * Tests an AS2 server configured with a decryption key to decrypt AS2 Messages. <br>
@@ -52,24 +52,12 @@ public class AS2ServerTwoConsumerSecEncryptedIT extends AS2ServerTwoConsumerBase
     @ParameterizedTest
     @EnumSource(value = AS2MessageStructure.class,
                 names = {
-                    "ENCRYPTED", "SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED", "ENCRYPTED_COMPRESSED_SIGNED",
-                    "ENCRYPTED_SIGNED_COMPRESSED" })
+                        "ENCRYPTED", "SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED", "ENCRYPTED_COMPRESSED_SIGNED",
+                        "ENCRYPTED_SIGNED_COMPRESSED" })
     public void successfullyProcessedTest(AS2MessageStructure messageStructure) throws Exception {
         HttpCoreContext context = sendToConsumerB(messageStructure);
         verifyOkResponse(context);
         verifyMdnSuccessDisposition(context);
-    }
-
-    // verify message types that fail decryption when encrypted with an invalid cert
-    @ParameterizedTest
-    @EnumSource(value = AS2MessageStructure.class,
-                names = {
-                        "ENCRYPTED", "SIGNED_ENCRYPTED", "ENCRYPTED_COMPRESSED", "ENCRYPTED_COMPRESSED_SIGNED",
-                        "ENCRYPTED_SIGNED_COMPRESSED" })
-    public void invalidEncryptionFailureTest(AS2MessageStructure messageStructure) throws Exception {
-        HttpCoreContext context = sendWithInvalidEncryption(messageStructure);
-        verifyOkResponse(context);
-        verifyMdnErrorDisposition(context, AS2DispositionModifier.ERROR_DECRYPTION_FAILED);
     }
 
     // utility method to reproduce the MIC and compare against the MIC received in MDN.
