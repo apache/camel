@@ -233,7 +233,7 @@ There is one single exception for ServiceNow Metadata Extension since it is used
 
 More details could be found in CAMEL-22013.
 
-== camel-spring-boot
+=== camel-spring-boot
 
 Upgraded to Spring Boot 3.5.0.
 
@@ -243,14 +243,14 @@ The `camel-jetty-starter` has been deprecated in favor of `camel-platform-http-s
 
 The `camel-undertow-starter` has been deprecated in favor of `camel-platform-http-starter` to use the HTTP server from Spring Boot.
 
-== camel-langchain4j-tokenizer
+=== camel-langchain4j-tokenizer
 
 The code was upgraded to LangChain4j version 1.0.0, which brings a few breaking changes:
 
 - By default, tokenization now uses segment sizes
 - To tokenize by tokens, the model used in the system must be provided
 
-== Known regressions
+=== Known regressions
 
 On Windows, Camel Jbang export is no more working out of the box. A workaround consists in providing `--maven-wrapper=false`.
 

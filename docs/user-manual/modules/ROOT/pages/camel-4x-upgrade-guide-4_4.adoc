@@ -267,9 +267,9 @@ Removed `token` from the URI's path in favor of setting it through a `token` que
 
 Deprecated support for the old Swagger 2.0 spec. Only OpenAPI v3 specs is supported from Camel 4.5 onwards.
 
-== Camel Spring Boot
+=== Camel Spring Boot
 
-=== Ordering of BOM imports
+==== Ordering of BOM imports
 
 When using Camel on Spring Boot, it's recommended to use BOMs to import Camel and Spring dependencies.
 In Camel 4.4 onwards we changed the order to let Camel be first as shown below:
@@ -301,14 +301,14 @@ In Camel 4.4 onwards we changed the order to let Camel be first as shown below:
 In previous versions, then we would have `spring-boot-dependencies` before `camel-spring-boot-bom`. However, to better
 align and ensure Camel starters are using supported dependencies, then it's recommended to let Camel be first.
 
-=== Auto Configuration
+==== Auto Configuration
 
 The route controller configuration has been moved from general main to its own group.
 All keys started with `camel.springboot.routesController` should be renamed to `camel.routecontroller.`, for example
 `camel.springboot.routeControllerBackOffDelay` should be renamed to `camel.routecontroller.backOffDelay`.
 And the option `camel.springboot.routeControllerSuperviseEnabled` has been renamed to `camel.routecontroller.enabled`.
 
-=== Routes Collector
+==== Routes Collector
 
 Camel Spring Boot will not honor the `camel.springboot.includeNonSingletons` option (default false). This means
 that only singleton `RouteBuilder` beans is added by default. Previously then prototype scoped beans would be added as well.

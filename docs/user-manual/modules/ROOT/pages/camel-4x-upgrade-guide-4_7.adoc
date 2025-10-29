@@ -44,7 +44,7 @@ The `SupervisingRouteController` has now been pre-configured to report `DOWN` du
 giving up starting a route. It is the `UnhealthyOnExhausted` and `UnhealthyOnRestarting` options that have been changed to be default `true`.
 To have previous behavior, you can set these options to `false`.
 
-== camel-cloud
+=== camel-cloud
 
 The camel-cloud component has been deprecated.
 
