@@ -91,7 +91,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
     @XmlAttribute
-    @Metadata(label = "security", defaultValue = "false")
+    @Metadata(label = "security")
     private String accessExternalSchemaProtocols;
 
     public JaxbDataFormat() {
@@ -390,8 +390,8 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
      * Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and
      * Include element. Examples of protocols are file, http, jar:file.
      *
-     * false or none to deny all access to external references; a specific protocol, such as file, to give permission to
-     * only the protocol; the keyword all to grant permission to all protocols.
+     * empty, false or none to deny all access to external references; a specific protocol, such as file, to give
+     * permission to only the protocol; the keyword all to grant permission to all protocols.
      */
     public void setAccessExternalSchemaProtocols(String accessExternalSchemaProtocols) {
         this.accessExternalSchemaProtocols = accessExternalSchemaProtocols;

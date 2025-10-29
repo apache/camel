@@ -2713,7 +2713,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteJaxbDataFormat(String name, JaxbDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("accessExternalSchemaProtocols", def.getAccessExternalSchemaProtocols(), "false");
+        doWriteAttribute("accessExternalSchemaProtocols", def.getAccessExternalSchemaProtocols(), null);
         doWriteAttribute("schema", def.getSchema(), null);
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
         doWriteAttribute("prettyPrint", def.getPrettyPrint(), "true");
