@@ -40,15 +40,28 @@ public class DumpModelAsYamlSourceLocationTest extends DumpModelAsYamlTestSuppor
         assertNotNull(yaml);
         log.info(yaml);
 
-        Assertions.assertTrue(yaml.contains("sourceLineNumber: 67"));
-        Assertions.assertTrue(yaml.contains("sourceLineNumber: 68"));
-        Assertions.assertTrue(yaml.contains("sourceLineNumber: 69"));
+        Assertions.assertTrue(yaml.contains("sourceLineNumber: 80"));
+        Assertions.assertTrue(yaml.contains("sourceLineNumber: 81"));
+        Assertions.assertTrue(yaml.contains("sourceLineNumber: 82"));
         Assertions.assertTrue(yaml.contains("sourceLocation: DumpModelAsYamlSourceLocationTest.java"));
     }
 
     @Test
     public void testDumpModelAsYamlExternal() throws Exception {
         String yaml = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("cool"));
+        assertNotNull(yaml);
+        log.info(yaml);
+
+        Assertions.assertTrue(yaml.contains("sourceLineNumber: 25"));
+        Assertions.assertTrue(yaml.contains("sourceLineNumber: 26"));
+        Assertions.assertTrue(yaml.contains("sourceLineNumber: 27"));
+        Assertions.assertTrue(yaml.contains("sourceLocation: MyCoolRoute.java"));
+    }
+
+    @Test
+    public void testDumpModelAsYamlSourceLocation() throws Exception {
+        String yaml = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("cool"),
+                true, true, false, true);
         assertNotNull(yaml);
         log.info(yaml);
 

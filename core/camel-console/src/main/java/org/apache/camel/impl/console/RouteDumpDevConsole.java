@@ -43,8 +43,8 @@ import org.apache.camel.util.json.Jsoner;
 @DevConsole(name = "route-dump", description = "Dump route in XML or YAML format")
 public class RouteDumpDevConsole extends AbstractDevConsole {
 
-    private static final Pattern SOURCE_LOCATION_PATTERN = Pattern.compile("(\\ssourceLocation=\"(.*?)\")");
-    private static final Pattern SOURCE_LINE_PATTERN = Pattern.compile("(\\ssourceLineNumber=\"(.*?)\")");
+    private static final Pattern XML_SOURCE_LOCATION_PATTERN = Pattern.compile("(\\ssourceLocation=\"(.*?)\")");
+    private static final Pattern XML_SOURCE_LINE_PATTERN = Pattern.compile("(\\ssourceLineNumber=\"(.*?)\")");
 
     /**
      * To output in either xml, yaml, or text format
@@ -131,10 +131,15 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                     dump = mrb.dumpRouteAsXml(true, false, true);
                 } else if ("yaml".equals(format)) {
                     jo.put("format", "yaml");
-                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
+                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters), false, true);
                 }
                 if (dump != null) {
-                    List<JsonObject> code = loadSourceAsJson(new StringReader(dump));
+                    List<JsonObject> code;
+                    if (format == null || "xml".equals(format)) {
+                        code = xmlLoadSourceAsJson(new StringReader(dump));
+                    } else {
+                        code = yamlLoadSourceAsJson(new StringReader(dump));
+                    }
                     if (code != null) {
                         jo.put("code", code);
                     }
@@ -188,7 +193,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
         return o1.getRouteId().compareTo(o2.getRouteId());
     }
 
-    private static List<JsonObject> loadSourceAsJson(Reader reader) {
+    private static List<JsonObject> xmlLoadSourceAsJson(Reader reader) {
         List<JsonObject> code = new ArrayList<>();
         try {
             LineNumberReader lnr = new LineNumberReader(reader);
@@ -198,11 +203,11 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                 if (t != null) {
                     // extra source location from code line
                     String idx = null;
-                    Matcher m = SOURCE_LOCATION_PATTERN.matcher(t);
+                    Matcher m = XML_SOURCE_LOCATION_PATTERN.matcher(t);
                     if (m.find()) {
                         t = m.replaceFirst("");
                     }
-                    m = SOURCE_LINE_PATTERN.matcher(t);
+                    m = XML_SOURCE_LINE_PATTERN.matcher(t);
                     if (m.find()) {
                         idx = m.group(2);
                         t = m.replaceFirst("");
@@ -211,6 +216,44 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
                     c.put("line", idx != null ? Integer.parseInt(idx) : -1);
                     c.put("code", Jsoner.escape(t));
                     code.add(c);
+                }
+            } while (t != null);
+            IOHelper.close(lnr);
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return code.isEmpty() ? null : code;
+    }
+
+    private static List<JsonObject> yamlLoadSourceAsJson(Reader reader) {
+        List<JsonObject> code = new ArrayList<>();
+        try {
+            LineNumberReader lnr = new LineNumberReader(reader);
+            String t;
+            do {
+                t = lnr.readLine();
+                if (t != null) {
+                    // extra source location from code line
+                    if (t.contains("sourceLocation: ")) {
+                        // skip this line
+                    } else if (t.contains("sourceLineNumber: ")) {
+                        String idx = StringHelper.after(t, "sourceLineNumber: ").trim();
+                        if (!code.isEmpty()) {
+                            // assign line number to previous code line
+                            JsonObject c = code.get(code.size() - 1);
+                            try {
+                                c.put("line", Integer.parseInt(idx));
+                            } catch (NumberFormatException e) {
+                                // ignore
+                            }
+                        }
+                    } else {
+                        JsonObject c = new JsonObject();
+                        c.put("code", Jsoner.escape(t));
+                        c.put("line", -1);
+                        code.add(c);
+                    }
                 }
             } while (t != null);
             IOHelper.close(lnr);

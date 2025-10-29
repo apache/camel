@@ -350,7 +350,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             CamelContext camelContext, NamedNode def, Resource resource,
             ModelToYAMLDumper dumper, String kind, StringBuilder sbLocal, StringBuilder sbLog) {
         try {
-            String dump = dumper.dumpModelAsYaml(camelContext, def, resolvePlaceholders, uriAsParameters, generatedIds);
+            String dump = dumper.dumpModelAsYaml(camelContext, def, resolvePlaceholders, uriAsParameters, generatedIds, false);
             sbLocal.append(dump);
             appendLogDump(resource, dump, sbLog);
         } catch (Exception e) {
