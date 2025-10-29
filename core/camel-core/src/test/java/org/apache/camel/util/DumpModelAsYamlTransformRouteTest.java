@@ -41,7 +41,7 @@ public class DumpModelAsYamlTransformRouteTest extends DumpModelAsYamlTestSuppor
     @Test
     public void testDumpModelAsYamlUriAsParameters() throws Exception {
         String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"),
-                true, true, true);
+                true, true, true, false);
         assertNotNull(out);
         log.info(out);
 

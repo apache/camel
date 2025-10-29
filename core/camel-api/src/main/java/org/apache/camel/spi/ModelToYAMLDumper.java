@@ -50,12 +50,14 @@ public interface ModelToYAMLDumper {
      * @param  resolvePlaceholders whether to resolve property placeholders in the dumped YAML
      * @param  uriAsParameters     whether to expand uri into a key/value parameters
      * @param  generatedIds        whether to include auto generated IDs
+     * @param  sourceLocation      whether to include source location:line
      * @return                     the output in YAML (is formatted)
      * @throws Exception           is throw if error marshalling to YAML
      */
     String dumpModelAsYaml(
             CamelContext context, NamedNode definition,
-            boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds)
+            boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds,
+            boolean sourceLocation)
             throws Exception;
 
     /**

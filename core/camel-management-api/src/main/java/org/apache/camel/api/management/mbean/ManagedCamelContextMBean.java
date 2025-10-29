@@ -252,6 +252,10 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Dumps the routes as YAML")
     String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds) throws Exception;
 
+    @ManagedOperation(description = "Dumps the routes as YAML")
+    String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds, boolean sourceLocation)
+            throws Exception;
+
     /**
      * Creates the endpoint by the given uri
      *

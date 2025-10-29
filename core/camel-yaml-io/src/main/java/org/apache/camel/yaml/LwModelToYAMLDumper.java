@@ -61,20 +61,20 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
 
     @Override
     public String dumpModelAsYaml(CamelContext context, NamedNode definition) throws Exception {
-        return dumpModelAsYaml(context, definition, false, false, true);
+        return dumpModelAsYaml(context, definition, false, false, true, false);
     }
 
     @Override
     public String dumpModelAsYaml(
             CamelContext context, NamedNode definition, boolean resolvePlaceholders,
-            boolean uriAsParameters, boolean generatedIds)
+            boolean uriAsParameters, boolean generatedIds, boolean sourceLocation)
             throws Exception {
         Properties properties = new Properties();
         Map<String, String> namespaces = new LinkedHashMap<>();
         Map<String, KeyValueHolder<Integer, String>> locations = new HashMap<>();
         Consumer<RouteDefinition> extractor = route -> {
             extractNamespaces(route, namespaces);
-            if (context.isDebugging()) {
+            if (sourceLocation || context.isDebugging()) {
                 extractSourceLocations(route, locations);
             }
             resolveEndpointDslUris(route);
@@ -97,7 +97,7 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                     doWriteAttribute("id", def.getId());
                 }
                 // write location information
-                if (context.isDebugging()) {
+                if (sourceLocation || context.isDebugging()) {
                     String loc = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLocation();
                     int line = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
                     if (line != -1) {

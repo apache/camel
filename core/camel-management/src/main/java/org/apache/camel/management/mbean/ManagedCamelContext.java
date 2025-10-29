@@ -609,6 +609,13 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     @Override
     public String dumpRoutesAsYaml(boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds)
             throws Exception {
+        return dumpRoutesAsYaml(resolvePlaceholders, uriAsParameters, true, false);
+    }
+
+    @Override
+    public String dumpRoutesAsYaml(
+            boolean resolvePlaceholders, boolean uriAsParameters, boolean generatedIds, boolean sourceLocation)
+            throws Exception {
         List<RouteDefinition> routes = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinitions();
         if (routes.isEmpty()) {
             return null;
@@ -624,7 +631,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
 
         return PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, def, resolvePlaceholders, uriAsParameters,
-                generatedIds);
+                generatedIds, sourceLocation);
     }
 
     @Override

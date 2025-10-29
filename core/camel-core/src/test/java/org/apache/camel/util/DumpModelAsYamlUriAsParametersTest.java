@@ -30,7 +30,7 @@ public class DumpModelAsYamlUriAsParametersTest extends DumpModelAsYamlTestSuppo
     @Test
     public void testDumpModelAsYaml() throws Exception {
         String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"),
-                true, true, true);
+                true, true, true, false);
         assertNotNull(out);
         log.info(out);
 
@@ -43,7 +43,7 @@ public class DumpModelAsYamlUriAsParametersTest extends DumpModelAsYamlTestSuppo
     @Test
     public void testDumpModelAsYamlGeneratedIds() throws Exception {
         String out = PluginHelper.getModelToYAMLDumper(context).dumpModelAsYaml(context, context.getRouteDefinition("myRoute"),
-                true, true, false);
+                true, true, false, false);
         assertNotNull(out);
         log.info(out);
 

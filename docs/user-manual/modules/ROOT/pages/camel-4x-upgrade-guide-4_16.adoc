@@ -18,6 +18,9 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The `tryConvertTo` method in Camel type converters will no longer in case of no converter suitable,
 mark this as a _miss_ for any same future converter attempts to immediately be identified as a _miss_.
 
+The `ModelToYAMLDumper` and `ModelToXMLDumper` has added `boolean sourceLocation` as parameter to the 2nd
+`dumpModelAsYaml` methods.
+
 === camel-kamelet
 
 The kamelet component is now parsing endpoint parameters using _raw mode_ to ensure when using sensitive parameters
