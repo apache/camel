@@ -34,7 +34,7 @@
     <properties>
         <supportLevel>Experimental</supportLevel>
         <!-- Make use of native access during IT test execution only -->
-        <camel.failsafe.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.failsafe.fork.additional-vmargs>
+        <camel.surefire.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>

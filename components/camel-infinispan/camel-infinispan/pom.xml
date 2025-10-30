@@ -220,7 +220,7 @@
                             <systemPropertyVariables>
                                 <infinispan.test.jgroups.protocol>tcp</infinispan.test.jgroups.protocol>
                             </systemPropertyVariables>
-                            <argLine>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
+                            <argLine>${camel.failsafe.fork.vmargs} --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
