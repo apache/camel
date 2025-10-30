@@ -123,7 +123,9 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n        Description: %s", mp.getDescription()));
             }
             sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
-            sb.append(String.format("\n        Step Id: %s", mp.getStepId()));
+            if (mp.getStepId() != null) {
+                sb.append(String.format("\n        Step Id: %s", mp.getStepId()));
+            }
             sb.append(String.format("\n        Level: %d", mp.getLevel()));
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
@@ -233,7 +235,9 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             }
             jo.put("state", mp.getState());
             jo.put("disabled", mp.getDisabled());
-            jo.put("stepId", mp.getStepId());
+            if (mp.getStepId() != null) {
+                jo.put("stepId", mp.getStepId());
+            }
 
             String line = ConsoleHelper.loadSourceLine(getCamelContext(), mp.getSourceLocation(), mp.getSourceLineNumber());
             if (line != null) {
