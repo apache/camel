@@ -73,7 +73,6 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
         chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
-        chatModel = ModelHelper.loadFromEnv();
 
         // Initialize tempDirPat
         tempDirPath = tempDir.toString();
@@ -99,9 +98,10 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
         assertTrue(response.toLowerCase().contains("read"),
-                "Response should indicate the possibility of reading a file");
+                "Response should indicate the possibility of reading a file but was: " + response);
         assertFalse(response.toLowerCase().contains("edit"),
-                "Response should indicate the possibility of editing a file because edit_file is not part of the filtered MCP tools");
+                "Response should indicate the possibility of editing a file because edit_file is not part of the filtered MCP tools but was: "
+                                                             + response);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
         assertTrue(response.toLowerCase().contains("camel-mcp-test.txt"),
-                "Response should contain our file");
+                "Response should contain our file but was: " + response);
     }
 
     @Test
@@ -130,7 +130,7 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
         mockEndpoint.assertIsSatisfied();
         assertNotNull(response, "AI response should not be null");
         assertTrue(response.toLowerCase().contains(TEST_FILE_CONTENT.toLowerCase()),
-                "Response should contain the content of our file");
+                "Response should contain the content of our file but was: " + response);
     }
 
     private McpClient createMcpClient() {
