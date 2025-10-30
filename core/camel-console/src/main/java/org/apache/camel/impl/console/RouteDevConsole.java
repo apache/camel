@@ -41,7 +41,6 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -371,74 +370,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 .sorted(Comparator.comparingInt(ManagedProcessorMBean::getIndex))
                 .toList();
 
-        for (ManagedProcessorMBean mp : mps) {
-            JsonObject jo = new JsonObject();
-            arr.add(jo);
-
-            jo.put("id", mp.getProcessorId());
-            if (mp.getNodePrefixId() != null) {
-                jo.put("nodePrefixId", mp.getNodePrefixId());
-            }
-            if (mp.getDescription() != null) {
-                jo.put("description", mp.getDescription());
-            }
-            if (mp.getNote() != null) {
-                jo.put("note", mp.getNote());
-            }
-            if (mp.getSourceLocation() != null) {
-                String loc = mp.getSourceLocation();
-                if (mp.getSourceLineNumber() != null) {
-                    loc += ":" + mp.getSourceLineNumber();
-                }
-                jo.put("source", loc);
-            }
-            jo.put("state", mp.getState());
-            jo.put("disabled", mp.getDisabled());
-            String line = ConsoleHelper.loadSourceLine(getCamelContext(), mp.getSourceLocation(), mp.getSourceLineNumber());
-            if (line != null) {
-                JsonArray ca = new JsonArray();
-                jo.put("code", ca);
-                JsonObject c = new JsonObject();
-                if (mp.getSourceLineNumber() != null) {
-                    c.put("line", mp.getSourceLineNumber());
-                }
-                c.put("code", Jsoner.escape(line));
-                c.put("match", true);
-                ca.add(c);
-            }
-            jo.put("processor", mp.getProcessorName());
-            jo.put("level", mp.getLevel());
-            final JsonObject stats = getStatsObject(mp);
-            jo.put("statistics", stats);
-        }
-    }
-
-    private static JsonObject getStatsObject(ManagedProcessorMBean mp) {
-        JsonObject stats = new JsonObject();
-        stats.put("idleSince", mp.getIdleSince());
-        stats.put("exchangesTotal", mp.getExchangesTotal());
-        stats.put("exchangesFailed", mp.getExchangesFailed());
-        stats.put("exchangesInflight", mp.getExchangesInflight());
-        stats.put("meanProcessingTime", mp.getMeanProcessingTime());
-        stats.put("maxProcessingTime", mp.getMaxProcessingTime());
-        stats.put("minProcessingTime", mp.getMinProcessingTime());
-        if (mp.getExchangesTotal() > 0) {
-            stats.put("lastProcessingTime", mp.getLastProcessingTime());
-            stats.put("deltaProcessingTime", mp.getDeltaProcessingTime());
-        }
-        Date last = mp.getLastExchangeCreatedTimestamp();
-        if (last != null) {
-            stats.put("lastCreatedExchangeTimestamp", last.getTime());
-        }
-        last = mp.getLastExchangeCompletedTimestamp();
-        if (last != null) {
-            stats.put("lastCompletedExchangeTimestamp", last.getTime());
-        }
-        last = mp.getLastExchangeFailureTimestamp();
-        if (last != null) {
-            stats.put("lastFailedExchangeTimestamp", last.getTime());
-        }
-        return stats;
+        ProcessorDevConsole.includeProcessors(getCamelContext(), arr, Integer.MAX_VALUE, mps);
     }
 
     protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {

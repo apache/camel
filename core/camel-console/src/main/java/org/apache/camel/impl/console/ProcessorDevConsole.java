@@ -211,7 +211,13 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         // sort processors by index
         mps.sort(Comparator.comparingInt(ManagedProcessorMBean::getIndex));
 
-        for (ManagedProcessorMBean mp : mps) {
+        // include processors into the array
+        includeProcessors(getCamelContext(), arr, max, mps);
+    }
+
+    public static void includeProcessors(CamelContext camelContext, JsonArray arr, int max, List<ManagedProcessorMBean> mps) {
+        for (int i = 0; i < mps.size(); i++) {
+            ManagedProcessorMBean mp = mps.get(i);
             if (arr.size() > max) {
                 return;
             }
@@ -238,17 +244,35 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             }
             jo.put("state", mp.getState());
             jo.put("disabled", mp.getDisabled());
-            String line = ConsoleHelper.loadSourceLine(getCamelContext(), mp.getSourceLocation(), mp.getSourceLineNumber());
-            if (line != null) {
-                JsonArray ca = new JsonArray();
-                jo.put("code", ca);
-                JsonObject c = new JsonObject();
-                if (mp.getSourceLineNumber() != null) {
-                    c.put("line", mp.getSourceLineNumber());
+
+            // calculate end line number
+            ManagedProcessorMBean mp2 = i < mps.size() - 1 ? mps.get(i + 1) : null;
+            Integer end = mp2 != null ? mp2.getSourceLineNumber() : null;
+            if (mp.getSourceLineNumber() != null) {
+                if (end == null) {
+                    end = mp.getSourceLineNumber() + 5;
+                } else {
+                    // clip so we do not read ahead to far, as we just want a snippet of the source code
+                    end = Math.min(mp.getSourceLineNumber() + 5, end);
                 }
+            }
+
+            JsonArray ca = new JsonArray();
+            List<String> lines
+                    = ConsoleHelper.loadSourceLines(camelContext, mp.getSourceLocation(), mp.getSourceLineNumber(), end);
+            int pos = mp.getSourceLineNumber();
+            for (String line : lines) {
+                JsonObject c = new JsonObject();
+                c.put("line", pos);
                 c.put("code", Jsoner.escape(line));
-                c.put("match", true);
+                if (pos == mp.getSourceLineNumber()) {
+                    c.put("match", true);
+                }
                 ca.add(c);
+                pos++;
+            }
+            if (!ca.isEmpty()) {
+                jo.put("code", ca);
             }
             jo.put("processor", mp.getProcessorName());
             jo.put("level", mp.getLevel());

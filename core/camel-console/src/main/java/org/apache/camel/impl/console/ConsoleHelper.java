@@ -84,10 +84,19 @@ public final class ConsoleHelper {
     }
 
     public static String loadSourceLine(CamelContext camelContext, String location, Integer lineNumber) {
-        if (location == null || lineNumber == null) {
+        List<String> lines = loadSourceLines(camelContext, location, lineNumber, lineNumber + 1);
+        if (lines.size() == 1) {
+            return lines.get(0);
+        }
+        return null;
+    }
+
+    public static List<String> loadSourceLines(CamelContext camelContext, String location, Integer start, Integer end) {
+        if (location == null || start == null) {
             return null;
         }
 
+        List<String> answer = new ArrayList<>();
         try {
             location = LoggerHelper.stripSourceLocationLineNumber(location);
             Resource resource = PluginHelper.getResourceLoader(camelContext).resolveResource(location);
@@ -99,8 +108,8 @@ public final class ConsoleHelper {
                     t = reader.readLine();
                     if (t != null) {
                         i++;
-                        if (i == lineNumber) {
-                            return t;
+                        if (i >= start && (end == null || i < end)) {
+                            answer.add(t);
                         }
                     }
                 } while (t != null);
@@ -110,7 +119,7 @@ public final class ConsoleHelper {
             // ignore
         }
 
-        return null;
+        return answer;
     }
 
     public static Integer extractSourceLocationLineNumber(String location) {
