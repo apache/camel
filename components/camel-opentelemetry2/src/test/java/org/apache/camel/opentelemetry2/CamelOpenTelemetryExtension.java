@@ -58,13 +58,13 @@ import org.slf4j.MarkerFactory;
  * Adapted from
  * https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk/testing/src/main/java/io/opentelemetry/sdk/testing/junit5/OpenTelemetryExtension.java
  */
-final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEachCallback {
+public final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEachCallback {
 
     /**
      * Returns an extension with a default SDK initialized with an in-memory span exporter and W3C trace context
      * propagation.
      */
-    static CamelOpenTelemetryExtension create() {
+    public static CamelOpenTelemetryExtension create() {
         InMemorySpanExporter spanExporter = InMemorySpanExporter.create();
         SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
                 //.addSpanProcessor(LeakDetectingSpanProcessor.create())
