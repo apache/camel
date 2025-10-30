@@ -32,8 +32,6 @@ import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.support.component.AbstractApiConsumer;
-import org.apache.camel.support.component.ApiConsumerHelper;
-import org.apache.camel.support.component.ApiMethod;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntityContainer;
@@ -57,17 +55,13 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     private static final Logger LOG = LoggerFactory.getLogger(AS2Consumer.class);
 
     private static final String HANDLER_PROPERTY = "handler";
-    private static final String REQUEST_URI_PROPERTY = "requestUri";
 
     private AS2ServerConnection as2ServerConnection;
     private AS2ServerManager apiProxy;
-    private final ApiMethod apiMethod;
     private final Map<String, Object> properties;
 
     public AS2Consumer(AS2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-
-        apiMethod = ApiConsumerHelper.findMethod(endpoint, this);
 
         properties = new HashMap<>();
         properties.putAll(endpoint.getEndpointProperties());

@@ -34,7 +34,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
 
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
-import org.apache.camel.component.as2.api.entity.MultipartMimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.io.AS2BHttpServerConnection;
 import org.apache.camel.component.as2.api.protocol.ResponseMDN;
@@ -85,11 +84,6 @@ public class AS2ServerConnection {
     private final String as2Version;
     private final String originServer;
     private final String serverFqdn;
-    private final Certificate[] signingCertificateChain;
-    private final PrivateKey signingPrivateKey;
-    private final PrivateKey decryptingPrivateKey;
-    private final Certificate[] validateSigningCertificateChain;
-    private final AS2SignatureAlgorithm signingAlgorithm;
     private final String userName;
     private final String password;
     private final String accessToken;
@@ -285,14 +279,13 @@ public class AS2ServerConnection {
         public RequestListenerService(String as2Version,
                                       String originServer,
                                       String serverFqdn,
-                                      String mdnMessageTemplate,
-                                      Certificate[] validateSigningCertificateChain)
-                                                                                     throws IOException {
+                                      String mdnMessageTemplate)
+                                                                 throws IOException {
 
             // Set up HTTP protocol processor for incoming connections
             final HttpProcessor inhttpproc = initProtocolProcessor(
                     as2Version, originServer, serverFqdn,
-                    mdnMessageTemplate, validateSigningCertificateChain);
+                    mdnMessageTemplate);
 
             registry = new RequestHandlerRegistry<>();
             HttpServerRequestHandler handler = new BasicHttpServerRequestHandler(registry);
@@ -415,7 +408,6 @@ public class AS2ServerConnection {
                                 config.getSigningCertificateChain(),
                                 config.getSigningPrivateKey());
 
-                        MultipartMimeEntity asyncReceipt = multipartReportEntity;
                         if (gen != null) {
                             // send a signed MDN
                             MultipartSignedEntity multipartSignedEntity = null;
@@ -471,15 +463,9 @@ public class AS2ServerConnection {
         this.originServer = ObjectHelper.notNull(originServer, "userAgent");
         this.serverFqdn = ObjectHelper.notNull(serverFqdn, "serverFqdn");
         final Integer parserServerPortNumber = ObjectHelper.notNull(serverPortNumber, "serverPortNumber");
-        this.signingCertificateChain = signingCertificateChain;
-        this.signingPrivateKey = signingPrivateKey;
-        this.decryptingPrivateKey = decryptingPrivateKey;
-        this.validateSigningCertificateChain = validateSigningCertificateChain;
         this.userName = userName;
         this.password = password;
         this.accessToken = accessToken;
-
-        this.signingAlgorithm = signingAlgorithm;
 
         // Create and register a default consumer configuration for the root path ('/').
         // This ensures that all incoming requests have a fallback configuration for decryption
@@ -496,8 +482,7 @@ public class AS2ServerConnection {
                 this.as2Version,
                 this.originServer,
                 this.serverFqdn,
-                mdnMessageTemplate,
-                validateSigningCertificateChain);
+                mdnMessageTemplate);
 
         acceptorThread = new RequestAcceptorThread(parserServerPortNumber, sslContext, listenerService);
         acceptorThread.setDaemon(true);
@@ -574,8 +559,7 @@ public class AS2ServerConnection {
             String as2Version,
             String originServer,
             String serverFqdn,
-            String mdnMessageTemplate,
-            Certificate[] validateSigningCertificateChain) {
+            String mdnMessageTemplate) {
         return HttpProcessorBuilder.create()
                 .addFirst(new AS2ConsumerConfigInterceptor()) // Sets up the request-specific keys and certificates in the HttpContext
                 .add(new ResponseContent(true))
