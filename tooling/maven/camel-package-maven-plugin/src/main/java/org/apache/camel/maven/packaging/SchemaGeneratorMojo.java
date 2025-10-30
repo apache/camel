@@ -812,7 +812,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // stream cache
         docComment = findJavaDoc(null, "streamCache", null, classElement, true);
-        ep = createOption("streamCache", "Stream Cache", "attribute", "java.lang.Booleam", false, "", "", docComment, false,
+        ep = createOption("streamCache", "Stream Cache", "attribute", "java.lang.Boolean", false, "", "", docComment, false,
                 null,
                 false, null, null, false, false);
         eipOptions.add(ep);

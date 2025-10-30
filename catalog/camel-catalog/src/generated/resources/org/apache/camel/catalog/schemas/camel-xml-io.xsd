@@ -11704,7 +11704,7 @@ To configure the ordering of the routes being started.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether stream caching is enabled on this route.
+Whether stream caching is enabled on this route. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
