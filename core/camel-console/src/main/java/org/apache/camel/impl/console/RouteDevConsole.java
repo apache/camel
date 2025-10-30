@@ -99,6 +99,12 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (mrb.getDescription() != null) {
                 sb.append(String.format("\n    Description: %s", mrb.getDescription()));
             }
+            if (mrb.isCreatedByKamelet()) {
+                sb.append(String.format("\n    Created By Kamelet: %s", true));
+            }
+            if (mrb.isCreatedByRouteTemplate()) {
+                sb.append(String.format("\n    Created By Route Template: %s", true));
+            }
             sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
             sb.append(String.format("\n    Remote: %s", mrb.isRemoteEndpoint()));
             if (mrb.getSourceLocation() != null) {
@@ -271,6 +277,8 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (mrb.getDescription() != null) {
                 jo.put("description", mrb.getDescription());
             }
+            jo.put("createdByKamelet", mrb.isCreatedByKamelet());
+            jo.put("createdByRouteTemplate", mrb.isCreatedByRouteTemplate());
             jo.put("from", mrb.getEndpointUri());
             jo.put("remote", mrb.isRemoteEndpoint());
             if (mrb.getSourceLocation() != null) {
