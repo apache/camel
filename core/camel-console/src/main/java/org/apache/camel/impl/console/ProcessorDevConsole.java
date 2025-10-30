@@ -109,8 +109,13 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         // sort processors by index
         mps.sort(Comparator.comparingInt(ManagedProcessorMBean::getIndex));
 
+        includeProcessorsText(sb, max, counter, mps);
+    }
+
+    public static void includeProcessorsText(
+            StringBuilder sb, int max, AtomicInteger counter, List<ManagedProcessorMBean> mps) {
         for (ManagedProcessorMBean mp : mps) {
-            if (counter.incrementAndGet() > max) {
+            if (counter != null && counter.incrementAndGet() > max) {
                 return;
             }
             sb.append("\n");
@@ -126,6 +131,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n        Note: %s", mp.getNote()));
             }
             sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
+            sb.append(String.format("\n        Step Id: %s", mp.getStepId()));
             sb.append(String.format("\n        Level: %d", mp.getLevel()));
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
@@ -212,10 +218,11 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         mps.sort(Comparator.comparingInt(ManagedProcessorMBean::getIndex));
 
         // include processors into the array
-        includeProcessors(getCamelContext(), arr, max, mps);
+        includeProcessorsJSon(getCamelContext(), arr, max, mps);
     }
 
-    public static void includeProcessors(CamelContext camelContext, JsonArray arr, int max, List<ManagedProcessorMBean> mps) {
+    public static void includeProcessorsJSon(
+            CamelContext camelContext, JsonArray arr, int max, List<ManagedProcessorMBean> mps) {
         for (int i = 0; i < mps.size(); i++) {
             ManagedProcessorMBean mp = mps.get(i);
             if (arr.size() > max) {
@@ -244,6 +251,7 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             }
             jo.put("state", mp.getState());
             jo.put("disabled", mp.getDisabled());
+            jo.put("stepId", mp.getStepId());
 
             // calculate end line number
             ManagedProcessorMBean mp2 = i < mps.size() - 1 ? mps.get(i + 1) : null;
