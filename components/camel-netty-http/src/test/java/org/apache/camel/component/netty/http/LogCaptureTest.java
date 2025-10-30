@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http;
 
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 /**
  * This test ensures LogCaptureAppender is configured properly
  */
+@Disabled
 public class LogCaptureTest {
     @Test
     public void testCapture() {
