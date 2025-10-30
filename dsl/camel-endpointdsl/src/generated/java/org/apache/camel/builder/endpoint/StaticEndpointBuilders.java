@@ -12019,6 +12019,54 @@ public class StaticEndpointBuilders {
         return SwiftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OpenTelemetry2 (camel-opentelemetry2)
+     * Implementation of Camel Opentelemetry based on the Camel Telemetry spec
+     * 
+     * Category: monitoring
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-opentelemetry2
+     * 
+     * Syntax: <code>opentelemetry2:metricsType:metricsName</code>
+     * 
+     * Path parameter: metricType (required)
+     * Type of metrics
+     * There are 3 enums and the value can be one of: counter, summary, timer
+     * 
+     * Path parameter: metricName (required)
+     * Name of metric
+     * 
+     * @param path metricsType:metricsName
+     * @return the dsl builder
+     */
+    public static OpenTelemetryEndpointBuilderFactory.OpenTelemetryEndpointBuilder opentelemetry2(String path) {
+        return opentelemetry2("opentelemetry2", path);
+    }
+    /**
+     * OpenTelemetry2 (camel-opentelemetry2)
+     * Implementation of Camel Opentelemetry based on the Camel Telemetry spec
+     * 
+     * Category: monitoring
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-opentelemetry2
+     * 
+     * Syntax: <code>opentelemetry2:metricsType:metricsName</code>
+     * 
+     * Path parameter: metricType (required)
+     * Type of metrics
+     * There are 3 enums and the value can be one of: counter, summary, timer
+     * 
+     * Path parameter: metricName (required)
+     * Name of metric
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path metricsType:metricsName
+     * @return the dsl builder
+     */
+    public static OpenTelemetryEndpointBuilderFactory.OpenTelemetryEndpointBuilder opentelemetry2(String componentName, String path) {
+        return OpenTelemetryEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * OptaPlanner (camel-optaplanner)
      * Solve planning problems with OptaPlanner.
      * 

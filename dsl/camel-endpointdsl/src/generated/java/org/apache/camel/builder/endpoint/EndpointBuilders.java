@@ -266,6 +266,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.OBSEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Olingo2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Olingo4EndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.OpenTelemetryEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.OpensearchEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.OpenshiftBuildConfigsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.OpenshiftBuildsEndpointBuilderFactory,
