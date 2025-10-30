@@ -35,7 +35,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 @UriEndpoint(firstVersion = "4.17.0", scheme = "opentelemetry2", title = "OpenTelemetry2",
-             remote = false, syntax = "opentelemetry2:metricsType:metricsName", producerOnly = true,
+             remote = false, syntax = "opentelemetry2:metricType:metricName", producerOnly = true,
              category = { Category.MONITORING },
              headersClass = OpenTelemetryConstants.class)
 public class OpenTelemetryEndpoint extends DefaultEndpoint {

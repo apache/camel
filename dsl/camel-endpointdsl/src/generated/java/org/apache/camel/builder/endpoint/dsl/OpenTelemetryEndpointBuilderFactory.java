@@ -268,7 +268,7 @@ public interface OpenTelemetryEndpointBuilderFactory {
          * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-opentelemetry2
          * 
-         * Syntax: <code>opentelemetry2:metricsType:metricsName</code>
+         * Syntax: <code>opentelemetry2:metricType:metricName</code>
          * 
          * Path parameter: metricType (required)
          * Type of metrics
@@ -278,7 +278,7 @@ public interface OpenTelemetryEndpointBuilderFactory {
          * Path parameter: metricName (required)
          * Name of metric
          * 
-         * @param path metricsType:metricsName
+         * @param path metricType:metricName
          * @return the dsl builder
          */
         default OpenTelemetryEndpointBuilder opentelemetry2(String path) {
@@ -293,7 +293,7 @@ public interface OpenTelemetryEndpointBuilderFactory {
          * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-opentelemetry2
          * 
-         * Syntax: <code>opentelemetry2:metricsType:metricsName</code>
+         * Syntax: <code>opentelemetry2:metricType:metricName</code>
          * 
          * Path parameter: metricType (required)
          * Type of metrics
@@ -305,7 +305,7 @@ public interface OpenTelemetryEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path metricsType:metricsName
+         * @param path metricType:metricName
          * @return the dsl builder
          */
         default OpenTelemetryEndpointBuilder opentelemetry2(String componentName, String path) {
