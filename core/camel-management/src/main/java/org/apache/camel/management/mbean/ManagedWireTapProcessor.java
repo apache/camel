@@ -70,6 +70,11 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
     }
 
     @Override
+    public String getDestination() {
+        return uri;
+    }
+
+    @Override
     public WireTapProcessor getProcessor() {
         return (WireTapProcessor) super.getProcessor();
     }

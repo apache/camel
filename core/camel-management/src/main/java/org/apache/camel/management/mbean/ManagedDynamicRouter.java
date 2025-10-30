@@ -74,6 +74,11 @@ public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDyn
     }
 
     @Override
+    public String getDestination() {
+        return uri;
+    }
+
+    @Override
     public Boolean getSupportExtendedInformation() {
         return true;
     }

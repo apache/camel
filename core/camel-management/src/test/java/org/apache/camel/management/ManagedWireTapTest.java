@@ -77,6 +77,9 @@ public class ManagedWireTapTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "Uri");
         assertEquals("direct:${header.whereto}", uri);
 
+        String destination = (String) mbeanServer.getAttribute(on, "Destination");
+        assertEquals("direct:${header.whereto}", destination);
+
         Boolean dynamicUri = (Boolean) mbeanServer.getAttribute(on, "DynamicUri");
         assertTrue(dynamicUri);
 

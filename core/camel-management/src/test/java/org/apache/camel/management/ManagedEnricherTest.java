@@ -79,6 +79,9 @@ public class ManagedEnricherTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "Expression");
         assertEquals("direct:${header.whereto}", uri);
 
+        String destination = (String) mbeanServer.getAttribute(on, "Destination");
+        assertEquals("direct:${header.whereto}", destination);
+
         TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
         assertEquals(2, data.size());

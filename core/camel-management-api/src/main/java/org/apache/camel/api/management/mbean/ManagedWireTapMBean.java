@@ -21,7 +21,7 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedWireTapMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
+public interface ManagedWireTapMBean extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
 
     @ManagedAttribute(description = "The uri of the endpoint to wiretap to. The uri can be dynamic computed using the expressions.",
                       mask = true)

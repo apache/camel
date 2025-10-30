@@ -79,6 +79,11 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
     }
 
     @Override
+    public String getDestination() {
+        return uri;
+    }
+
+    @Override
     public String getExpressionLanguage() {
         return getDefinition().getExpression().getLanguage();
     }

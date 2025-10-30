@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedDestinationAware;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -109,10 +110,11 @@ public class ProcessorDevConsole extends AbstractDevConsole {
         // sort processors by index
         mps.sort(Comparator.comparingInt(ManagedProcessorMBean::getIndex));
 
-        includeProcessorsText(sb, max, counter, mps);
+        includeProcessorsText(getCamelContext(), sb, max, counter, mps);
     }
 
     public static void includeProcessorsText(
+            CamelContext camelContext,
             StringBuilder sb, int max, AtomicInteger counter, List<ManagedProcessorMBean> mps) {
         for (ManagedProcessorMBean mp : mps) {
             if (counter != null && counter.incrementAndGet() > max) {
@@ -131,7 +133,9 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 sb.append(String.format("\n        Note: %s", mp.getNote()));
             }
             sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
-            sb.append(String.format("\n        Step Id: %s", mp.getStepId()));
+            if (mp.getStepId() != null) {
+                sb.append(String.format("\n        Step Id: %s", mp.getStepId()));
+            }
             sb.append(String.format("\n        Level: %d", mp.getLevel()));
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
@@ -140,6 +144,13 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 }
                 sb.append(String.format("\n        Source: %s", loc));
             }
+
+            // processors which can send to a destination (such as to/toD/poll etc)
+            String destination = getDestination(camelContext, mp);
+            if (destination != null) {
+                sb.append(String.format("\n        Uri: %s", destination));
+            }
+
             sb.append(String.format("\n        State: %s", mp.getState()));
             sb.append(String.format("\n        Disabled: %s", mp.getDisabled()));
             sb.append(String.format("\n        Total: %s", mp.getExchangesTotal()));
@@ -251,7 +262,9 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             }
             jo.put("state", mp.getState());
             jo.put("disabled", mp.getDisabled());
-            jo.put("stepId", mp.getStepId());
+            if (mp.getStepId() != null) {
+                jo.put("stepId", mp.getStepId());
+            }
 
             // calculate end line number
             ManagedProcessorMBean mp2 = i < mps.size() - 1 ? mps.get(i + 1) : null;
@@ -286,9 +299,30 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             }
             jo.put("processor", mp.getProcessorName());
             jo.put("level", mp.getLevel());
+
+            // processors which can send to a destination (such as to/toD/poll etc)
+            String destination = getDestination(camelContext, mp);
+            if (destination != null) {
+                jo.put("uri", destination);
+            }
+
             final JsonObject stats = getStatsObject(mp);
             jo.put("statistics", stats);
         }
+    }
+
+    private static String getDestination(CamelContext camelContext, ManagedProcessorMBean mp) {
+        // processors which can send to a destination (such as to/toD/poll etc)
+        String kind = mp.getProcessorName();
+        if ("dynamicRouter".equals(kind) || "enrich".equals(kind) || "pollEnrich".equals(kind) || "poll".equals(kind)
+                || "toD".equals(kind) || "to".equals(kind) || "wireTap".equals(kind)) {
+            ManagedCamelContext mcc = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+            ManagedDestinationAware mda = mcc.getManagedProcessor(mp.getProcessorId(), ManagedDestinationAware.class);
+            if (mda != null) {
+                return mda.getDestination();
+            }
+        }
+        return null;
     }
 
     private static JsonObject getStatsObject(ManagedProcessorMBean mp) {

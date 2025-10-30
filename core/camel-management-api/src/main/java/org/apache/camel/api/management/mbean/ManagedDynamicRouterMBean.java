@@ -21,7 +21,7 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedDynamicRouterMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
+public interface ManagedDynamicRouterMBean extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
 
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();

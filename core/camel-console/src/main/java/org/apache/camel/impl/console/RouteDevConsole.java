@@ -204,7 +204,7 @@ public class RouteDevConsole extends AbstractDevConsole {
         // sort processors by index
         mps.sort(Comparator.comparingInt(ManagedProcessorMBean::getIndex));
 
-        ProcessorDevConsole.includeProcessorsText(sb, 0, null, mps);
+        ProcessorDevConsole.includeProcessorsText(getCamelContext(), sb, 0, null, mps);
     }
 
     @Override

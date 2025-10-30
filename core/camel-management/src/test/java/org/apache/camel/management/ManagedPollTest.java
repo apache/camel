@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisabledOnOs(OS.AIX)
-public class ManagedDynamicRouterTest extends ManagementTestSupport {
+public class ManagedPollTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -44,16 +44,12 @@ public class ManagedDynamicRouterTest extends ManagementTestSupport {
     }
 
     @Test
-    public void testManageDynamicRouter() throws Exception {
+    public void testManagePoll() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
-        foo.expectedMessageCount(2);
+        foo.expectedBodiesReceived("Hello World");
 
-        MockEndpoint bar = getMockEndpoint("mock:bar");
-        bar.expectedMessageCount(1);
-
-        template.sendBodyAndHeader("direct:start", "Hello World", "whereTo", "direct:foo");
-        template.sendBodyAndHeader("direct:start", "Bye World", "whereTo", "direct:foo");
-        template.sendBodyAndHeader("direct:start", "Hi World", "whereTo", "direct:bar");
+        template.sendBody("seda:foo", "Hello World");
+        template.sendBodyAndHeader("direct:start", "Hello", "whereto", "foo");
 
         assertMockEndpointsSatisfied();
 
@@ -73,18 +69,15 @@ public class ManagedDynamicRouterTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
-        String lan = (String) mbeanServer.getAttribute(on, "ExpressionLanguage");
-        assertEquals("header", lan);
-
-        String uri = (String) mbeanServer.getAttribute(on, "Expression");
-        assertEquals("whereTo", uri);
+        Long timout = (Long) mbeanServer.getAttribute(on, "Timeout");
+        assertEquals(1000, timout.longValue());
 
         String destination = (String) mbeanServer.getAttribute(on, "Destination");
-        assertEquals("whereTo", destination);
+        assertEquals("seda:${header.whereto}", destination);
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
-        assertEquals(2, data.size());
+        assertEquals(1, data.size());
     }
 
     @Override
@@ -93,15 +86,8 @@ public class ManagedDynamicRouterTest extends ManagementTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .dynamicRouter(header("whereTo")).id("mysend");
-
-                from("direct:foo")
-                        .to("mock:foo")
-                        .removeHeader("whereTo");
-
-                from("direct:bar")
-                        .to("mock:bar")
-                        .removeHeader("whereTo");
+                        .poll("seda:${header.whereto}", 1000).id("mysend")
+                        .to("mock:foo");
             }
         };
     }

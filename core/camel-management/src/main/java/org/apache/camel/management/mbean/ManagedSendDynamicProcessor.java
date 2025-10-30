@@ -75,6 +75,11 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
     }
 
     @Override
+    public String getDestination() {
+        return uri;
+    }
+
+    @Override
     public String getUri() {
         return uri;
     }

@@ -16,25 +16,13 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import javax.management.openmbean.TabularData;
-
 import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedPollMBean extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
+/**
+ * Processors that can send messages to endpoints, either static or dynamic.
+ */
+public interface ManagedDestinationAware extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Destination as Endpoint URI",
-                      mask = true)
+    @ManagedAttribute(description = "Destination as endpoint URI (static) or expression (dynamic)", mask = true)
     String getDestination();
-
-    @ManagedAttribute(description = "Variable to store the received message body (only body, not headers)")
-    String getVariableReceive();
-
-    @ManagedAttribute(description = "Timeout in millis when polling from the external service")
-    Long getTimeout();
-
-    @Override
-    @ManagedOperation(description = "Statistics of the endpoints that has been poll enriched from")
-    TabularData extendedInformation();
-
 }

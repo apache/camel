@@ -21,7 +21,7 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedPollEnricherMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
+public interface ManagedPollEnricherMBean extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
 
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();

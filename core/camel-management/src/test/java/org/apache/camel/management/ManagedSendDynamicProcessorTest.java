@@ -79,6 +79,9 @@ public class ManagedSendDynamicProcessorTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "Uri");
         assertEquals("direct:${header.whereto}", uri);
 
+        String destination = (String) mbeanServer.getAttribute(on, "Destination");
+        assertEquals("direct:${header.whereto}", destination);
+
         Boolean optimised = (Boolean) mbeanServer.getAttribute(on, "Optimised");
         assertFalse(optimised);
 

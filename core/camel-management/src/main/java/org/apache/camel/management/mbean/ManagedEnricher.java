@@ -79,6 +79,11 @@ public class ManagedEnricher extends ManagedProcessor implements ManagedEnricher
     }
 
     @Override
+    public String getDestination() {
+        return uri;
+    }
+
+    @Override
     public String getExpressionLanguage() {
         return getDefinition().getExpression().getLanguage();
     }

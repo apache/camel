@@ -78,6 +78,9 @@ public class ManagedPollEnricherTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "Expression");
         assertEquals("seda:${header.whereto}", uri);
 
+        String destination = (String) mbeanServer.getAttribute(on, "Destination");
+        assertEquals("seda:${header.whereto}", destination);
+
         TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
         assertEquals(1, data.size());

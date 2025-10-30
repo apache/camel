@@ -21,7 +21,8 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedSendDynamicProcessorMBean extends ManagedProcessorMBean, ManagedExtendedInformation {
+public interface ManagedSendDynamicProcessorMBean
+        extends ManagedProcessorMBean, ManagedExtendedInformation, ManagedDestinationAware {
 
     @ManagedAttribute(description = "The uri of the endpoint to send to. The uri can be dynamic computed using the expressions.",
                       mask = true)
