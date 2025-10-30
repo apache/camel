@@ -260,16 +260,18 @@ public class ProcessorDevConsole extends AbstractDevConsole {
             JsonArray ca = new JsonArray();
             List<String> lines
                     = ConsoleHelper.loadSourceLines(camelContext, mp.getSourceLocation(), mp.getSourceLineNumber(), end);
-            int pos = mp.getSourceLineNumber();
+            Integer pos = mp.getSourceLineNumber();
             for (String line : lines) {
                 JsonObject c = new JsonObject();
                 c.put("line", pos);
                 c.put("code", Jsoner.escape(line));
-                if (pos == mp.getSourceLineNumber()) {
+                if (pos != null && pos.equals(mp.getSourceLineNumber())) {
                     c.put("match", true);
                 }
                 ca.add(c);
-                pos++;
+                if (pos != null) {
+                    pos++;
+                }
             }
             if (!ca.isEmpty()) {
                 jo.put("code", ca);

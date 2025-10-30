@@ -93,7 +93,7 @@ public final class ConsoleHelper {
 
     public static List<String> loadSourceLines(CamelContext camelContext, String location, Integer start, Integer end) {
         if (location == null || start == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<String> answer = new ArrayList<>();
