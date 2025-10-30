@@ -1,0 +1,384 @@
+= OpenTelemetry2 Component
+:doctitle: OpenTelemetry2
+:shortname: opentelemetry2
+:artifactid: camel-opentelemetry2
+:description: Implementation of Camel Opentelemetry based on the Camel Telemetry spec
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: opentelemetry2
+
+*Since Camel {since}*
+
+*{component-header}*
+
+== OpenTelemetry Tracer
+
+This module is the implementation of the common `camel-telemetry` interface based on https://opentelemetry.io/[OpenTelemetry] technology. The name used here as `camel-opentelemetry2` is done to distinguish on the existing `camel-opentelemetry` which was based on an older Camel tracing specification. You're invited to start replacing the older `camel-opentelemetry` with this one instead as it may become the default component in future version of Camel.
+
+NOTE: this component has slight differences compared to the `camel-openetelemetry` and is meant to solve a few inconsistencies identified.
+
+=== Configuration
+
+
+The configuration properties for the OpenTelemetry2 tracer are:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Option |Default |Description
+|`excludePatterns` |  | Sets exclude pattern that will disable tracing for those spans that matches the pattern. The variable is a comma separated values of filters to execute (eg, `log*,direct*,setBody*`, ...)
+|`traceProcessors` | `false` | Setting this to true will create new OpenTelemetry Spans for each Camel Processors.
+Use the excludePattern property to filter out Processors
+|`traceHeadersInclusion`| false | Add the generated telemetry `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` Exchange headers.
+|=======================================================================
+
+[[OpenTelemetry-Collection]]
+=== Collect OpenTelemetry traces
+
+The OpenTelemetry Protocol (OTLP) is a general-purpose protocol for transferring telemetry data, including traces, from applications to a backend.
+For instance, You can use the Jaeger project which provides an open source all in one tracing application.
+See details how to run it in https://www.jaegertracing.io/docs/latest/getting-started/[Jaeger getting started guide].
+
+=== MDC logging
+
+You can leverage the `traceHeadersInclusion` to include the generated `CAMEL_TRACE_ID` and `CAMEL_SPAN_ID` into the Camel Exchange and together with `camel-mdc` you can make those headers available in the MDC context (via `camel.mdc.customHeaders=CAMEL_TRACE_ID,CAMEL_SPAN_ID` configuration). This is the idiomatic way in Camel.
+
+As an alternative, you can add Mapped Diagnostic Context tracing information (ie, `trace_id` and `span_id`) adding the specific https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md[Opentelemetry Logger MDC auto instrumentation]. The logging configuration depends on the logging framework you're using.
+
+== OpenTelemetry Meter
+
+The OpenTelemetry component allows the collection of various metrics directly from Camel routes.
+Supported metric types are xref:#OpenTelemetryComponent-counter[counter], xref:#OpenTelemetryComponent-summary[summary],
+and xref:#OpenTelemetryComponent-timer[timer].
+
+To get started, Maven users need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-opentelemetry2</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+opentelemetry2:[ counter | summary | timer ]:metricname[?options]
+----
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+[[OpenTelemetry-meter]]
+=== Opetntelemetry Meter
+
+OpenTelemetry meter configuration involves setting up a `MeterProvider` that is responsible for creating `Meter` instances.
+These `Meters` are then used to create instruments like counters or histograms.
+
+Key aspects include defining the resource (a set of attributes defining the telemetry source),
+a reader to read the aggregated state of metrics, and an exporter to export metrics out of process
+
+See https://opentelemetry.io/docs/languages/java/sdk/#sdkmeterprovider[SdkMeterProvider documentation]
+for details on how to configure this.
+
+=== Usage of producers
+
+Each meter has a type and name. Supported types are xref:#OpenTelemetryComponent-counter[counter],
+xref:#OpenTelemetryComponent-summary[distribution summary], and xref:#OpenTelemetryComponent-timer[timer].
+If no type is provided, then a xref:#OpenTelemetryComponent-counter[counter], is used by default.
+
+The meter name is a string that is evaluated as a `Simple` expression. In addition to using the `CamelMetricsName`
+header (see below), this allows selecting the meter depending on exchange data.
+
+The optional `attributes` URI parameter is a comma-separated string, consisting of `key=value` expressions.
+Both `key` and `value` are strings that are also evaluated as `Simple` expressions.
+
+For example, the URI parameter `attributes.X=${header.Y}` would assign the current value of header `Y` to the key `X`.
+
+==== Headers
+
+The meter name defined in URI can be overridden by populating a header with name `CamelMetricsName`.
+The meter attributes defined as URI parameters can be augmented by populating a header with name `CamelMetricsAttributes`.
+
+For example
+
+[source,java]
+----
+from("direct:in")
+    .setHeader(OpenTelemetryConstants.HEADER_METRIC_NAME, constant("new.name"))
+    .setHeader(OpenTelemetryConstants.HEADER_METRIC_ATTRIBUTES, constant(Attributes.of(AttributeKey.stringKey("dynamic-key"), "dynamic-value")))
+    .to("opentelemetry2:counter:name.not.used?attributes.key=value")
+    .to("direct:out");
+----
+
+will update a counter with name `new.name` instead of `name.not.used` using the
+tag `dynamic-key` with value `dynamic-value` in addition to the tag `key` with value `value`.
+
+All Metrics specific headers are removed from the message once the OpenTelemetry endpoint finishes processing the exchange. While processing the exchange
+the OpenTelemetry endpoint will catch all exceptions and write log entry using level `warn`.
+
+
+[[OpenTelemetryComponent-counter]]
+=== Counter
+
+----
+opentelemetry:counter:name[?options]
+----
+
+==== Options
+
+[width="100%",options="header"]
+|=====================================================
+|Name |Default |Description
+|increment  |- |Long value to add to the counter
+|decrement |- |Long value to subtract from the counter
+|=====================================================
+
+If neither `increment` or `decrement` is defined then value of the counter will
+be incremented by one. If `increment` and `decrement` are both defined
+only the increment operation is called.
+
+[source,java]
+----
+// update counter 'simple.counter' by 7
+from("direct:in")
+    .to("opentelemetry2:counter:simple.counter?increment=7")
+    .to("direct:out");
+----
+
+[source,java]
+----
+// increment counter 'simple.counter' by 1
+from("direct:in")
+    .to("opentelemetry2:counter:simple.counter")
+    .to("direct:out");
+----
+
+Both `increment` and `decrement` values are evaluated as `Simple` expressions with a Long result, e.g.,
+if header `X` contains a value that evaluates to `3`, the `simple.counter` counter is decremented by 3:
+
+[source,java]
+----
+// decrement counter 'simple.counter' by 3
+from("direct:in")
+    .to("opentelemetry2:counter:simple.counter?decrement=${header.X}")
+    .to("direct:out");
+----
+
+==== Headers
+
+Message headers can be used to override `increment` and `decrement` values specified in the OpenTelemetry endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|====================================================================
+|Name |Description |Expected type
+|CamelMetricsCounterIncrement  |Override increment value in URI |Long
+|CamelMetricsCounterDecrement  |Override decrement value in URI |Long
+|====================================================================
+
+[source,java]
+----
+// update counter simple.counter by 417
+from("direct:in")
+    .setHeader(OpenTelemetryConstants.HEADER_COUNTER_INCREMENT, constant(417))
+    .to("opentelemetry2:counter:simple.counter?increment=7")
+    .to("direct:out");
+----
+
+[source,java]
+----
+// updates counter using simple language to evaluate body.length
+from("direct:in")
+    .setHeader(OpenTelemetryConstants.HEADER_COUNTER_INCREMENT, simple("${body.length}"))
+    .to("opentelemetry2:counter:body.len")
+    .to("direct:out");
+
+----
+
+[[OpenTelemetryComponent-summary]]
+=== Distribution Summary
+
+----
+opentelemetry:summary:metricname[?options]
+----
+
+==== Options
+
+[width="100%",options="header"]
+|===================================
+|Name |Default |Description
+|value |- |Value to use in histogram
+|===================================
+
+If `value` is not set nothing is added to histogram and warning is logged.
+
+[source,java]
+----
+// adds value 9923 to 'simple.histogram'
+from("direct:in")
+    .to("opentelemetry2:summary:simple.histogram?value=9923")
+    .to("direct:out");
+----
+
+[source,java]
+----
+// nothing is added to 'simple.histogram'; warning is logged
+from("direct:in")
+    .to("opentelemetry2:summary:simple.histogram")
+    .to("direct:out");
+
+----
+
+The histogram `value` is evaluated as a `Simple` expressions with a Long result. For example,
+if header `X` contains a value that evaluates to `3`, this value is registered with the `simple.histogram`:
+
+[source,java]
+----
+from("direct:in")
+    .to("opentelemetry2:summary:simple.histogram?value=${header.X}")
+    .to("direct:out");
+
+----
+
+==== Headers
+
+A specific Message header can be used to override the value specified in
+the OpenTelemetry endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|=================================================================
+|Name |Description |Expected type
+|CamelMetricsHistogramValue |Override histogram value in URI |Long
+|=================================================================
+
+[source,java]
+----
+// adds value 992.0 to 'simple.histogram'
+from("direct:in")
+    .setHeader(OpenTelemetryConstants.HEADER_HISTOGRAM_VALUE, constant(992))
+    .to("opentelemetry2:summary:simple.histogram?value=700")
+    .to("direct:out")
+
+----
+
+[[OpenTelemetryComponent-timer]]
+=== Timer
+
+----
+opentelemetry:timer:metricname[?options]
+----
+
+==== Options
+
+[width="100%",options="header"]
+|==========================
+|Name |Default |Description
+|action |- |start or stop
+|==========================
+
+If no `action` or invalid value is provided then warning is logged without any timer update.
+
+[source,java]
+----
+// measure time spent in route "direct:calculate"
+from("direct:in")
+    .to("opentelemetry2:timer:simple.timer?action=start")
+    .to("direct:calculate")
+    .to("opentelemetry2:timer:simple.timer?action=stop");
+----
+
+`TimerTask` objects are stored as Exchange properties between different Metrics component calls.
+
+The timer `action` is evaluated as a `Simple` expression returning a result of type `OpenTelemetryTimerAction`.
+
+==== Headers
+
+A specific Message header can be used to override action value specified in
+the OpenTelemetry endpoint URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|=======================================================================
+|Name |Description |Expected type
+|CamelMetricsTimerAction |Override timer action in URI
+|`org.apache.camel.component.opentelemetry.OpenTelemetryTimerAction`
+|=======================================================================
+
+[source,java]
+----
+// sets timer action using header
+from("direct:in")
+    .setHeader(OpenTelemetryConstants.HEADER_TIMER_ACTION, OpenTelemetryTimerAction.start)
+    .to("opentelemetry2:timer:simple.timer")
+    .to("direct:out");
+----
+
+== OpenTelemetry Configuration
+
+=== Using with standalone Camel
+
+If you use `camel-main` as standalone Camel, then you can enable and use OpenTelemetry without Java code.
+
+Add `camel-opentelemetry2` component in your POM, and configure in `application.properties`:
+
+[source,properties]
+----
+camel.opentelemetry2.enabled = true
+# you can configure the other options
+# camel.opentelemetry2.traceProcessors = true
+----
+
+When starting the application, you may need to configure a few OpenTelemetry SDK variables, as you can see in te following example:
+
+```bash
+$ java -Dotel.metrics.exporter=none -Dotel.logs.exporter=none -jar my-app.jar
+```
+
+[[OpenTelemetry-JavaAgent]]
+=== Java Agent
+
+Your application will require a Java agent in order to get the traces generated by the Camel application and push to the tracing server.
+
+NOTE: certain runtimes (ie, Quarkus) may provide an inner client which pushes traces to the server. Make sure to read each specific Camel runtime documentation.
+
+Download the https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/[latest version].
+
+This package includes the instrumentation agent as well as instrumentation for all supported libraries and all available data exporters. The package provides a completely automatic, out-of-the-box experience. Enable the instrumentation agent using the `-javaagent` flag to the JVM.
+
+[source,bash]
+----
+java -javaagent:path/to/opentelemetry-javaagent.jar \
+     -Dotel. ... \
+     -jar myapp.jar
+----
+
+By default, the OpenTelemetry Java agent uses https://github.com/open-telemetry/opentelemetry-java/tree/main/exporters/otlp[OTLP exporter] configured to send data to https://github.com/open-telemetry/opentelemetry-collector/blob/main/receiver/otlpreceiver/README.md[OpenTelemetry collector] at `http://localhost:4318`.
+
+Configuration parameters are passed as Java system properties (`-D` flags) or as environment variables. See https://opentelemetry.io/docs/zero-code/java/agent/configuration/[the configuration documentation] for the full list of configuration items. For example:
+
+[source,bash]
+----
+java -javaagent:path/to/opentelemetry-javaagent.jar \
+     -Dotel.service.name=your-service-name \
+     -Dotel.traces.exporter=otlp \
+     -jar myapp.jar
+----

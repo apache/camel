@@ -282,6 +282,7 @@
 *** xref:openstack-neutron-component.adoc[OpenStack Neutron]
 *** xref:openstack-nova-component.adoc[OpenStack Nova]
 *** xref:openstack-swift-component.adoc[OpenStack Swift]
+** xref:opentelemetry2-component.adoc[OpenTelemetry2]
 ** xref:optaplanner-component.adoc[OptaPlanner]
 ** xref:paho-component.adoc[Paho]
 ** xref:paho-mqtt5-component.adoc[Paho MQTT 5]
