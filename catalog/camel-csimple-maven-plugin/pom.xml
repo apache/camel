@@ -126,6 +126,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
+                        <version>${commons-io-version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <goalPrefix>camel-csimple</goalPrefix>
                     <mojoDependencies>
