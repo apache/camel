@@ -488,7 +488,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@messageformat/date-skeleton", "npm:1.0.1"],\
             ["@messageformat/number-skeleton", "npm:1.1.0"],\
             ["@messageformat/parser", "npm:5.1.0"],\
-            ["@messageformat/runtime", "npm:3.0.1"],\
+            ["@messageformat/runtime", "npm:3.0.2"],\
             ["make-plural", "npm:7.1.0"],\
             ["safe-identifier", "npm:0.4.2"]\
           ],\
@@ -524,10 +524,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@messageformat/runtime", [\
-        ["npm:3.0.1", {\
-          "packageLocation": "./.yarn/cache/@messageformat-runtime-npm-3.0.1-c9ecf3b770-e69c3b0b37.zip/node_modules/@messageformat/runtime/",\
+        ["npm:3.0.2", {\
+          "packageLocation": "./.yarn/cache/@messageformat-runtime-npm-3.0.2-9447cbb656-df2dd9b5e6.zip/node_modules/@messageformat/runtime/",\
           "packageDependencies": [\
-            ["@messageformat/runtime", "npm:3.0.1"],\
+            ["@messageformat/runtime", "npm:3.0.2"],\
             ["make-plural", "npm:7.1.0"]\
           ],\
           "linkType": "HARD"\
