@@ -49,10 +49,10 @@ public class NettySSLClientCertHeadersTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
         getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME,
-                "CN=arlu15,OU=Sun Java System Application Server,O=Sun Microsystems,L=Santa Clara,ST=California,C=US");
+                "SERIALNUMBER=1234567890, CN=CommonName, OU=Unit, O=Org, L=Loc, ST=State, C=US");
         getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME,
-                "CN=arlu15,OU=Sun Java System Application Server,O=Sun Microsystems,L=Santa Clara,ST=California,C=US");
-        getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_SERIAL_NO, "1210701502");
+                "SERIALNUMBER=1234567890, CN=CommonName, OU=Unit, O=Org, L=Loc, ST=State, C=US");
+        getMockEndpoint("mock:input").expectedHeaderReceived(NettyConstants.NETTY_SSL_CLIENT_CERT_SERIAL_NO, "1234567890");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {

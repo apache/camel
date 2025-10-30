@@ -160,11 +160,11 @@ public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint, End
 
                 Principal subject = cert.getSubjectX500Principal();
                 if (subject != null) {
-                    message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME, subject.getName());
+                    message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME, subject.toString());
                 }
                 Principal issuer = cert.getIssuerX500Principal();
                 if (issuer != null) {
-                    message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME, issuer.getName());
+                    message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME, issuer.toString());
                 }
                 BigInteger serial = cert.getSerialNumber();
                 if (serial != null) {
