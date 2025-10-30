@@ -29,8 +29,8 @@
     <properties>
         <skipITs.s390x>true</skipITs.s390x>
         <skipITs.ppc64le>true</skipITs.ppc64le>
-        <!-- Make use of native access during IT test execution only -->
-        <camel.failsafe.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.failsafe.fork.additional-vmargs>
+        <!-- Make use of native access during unit test execution only -->
+        <camel.surefire.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <artifactId>camel-javascript</artifactId>
