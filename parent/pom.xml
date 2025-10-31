@@ -248,7 +248,7 @@
         <ibm-secrets-manager-version>2.0.22</ibm-secrets-manager-version>
         <ibm-watson-sdk-version>16.0.0</ibm-watson-sdk-version>
         <ical4j-version>4.2.0</ical4j-version>
-        <icu4j-version>77.1</icu4j-version>
+        <icu4j-version>78.1</icu4j-version>
         <ignite-version>2.17.0</ignite-version>
         <impsort-maven-plugin-version>1.12.0</impsort-maven-plugin-version>
         <infinispan-version>15.2.5.Final</infinispan-version>
