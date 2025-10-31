@@ -32,9 +32,6 @@ import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.support.component.AbstractApiConsumer;
-import org.apache.camel.support.component.ApiConsumerHelper;
-import org.apache.camel.support.component.ApiMethod;
-import org.apache.camel.support.component.ApiMethodHelper;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntityContainer;
@@ -58,17 +55,13 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     private static final Logger LOG = LoggerFactory.getLogger(AS2Consumer.class);
 
     private static final String HANDLER_PROPERTY = "handler";
-    private static final String REQUEST_URI_PROPERTY = "requestUri";
 
     private AS2ServerConnection as2ServerConnection;
     private AS2ServerManager apiProxy;
-    private final ApiMethod apiMethod;
     private final Map<String, Object> properties;
 
     public AS2Consumer(AS2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-
-        apiMethod = ApiConsumerHelper.findMethod(endpoint, this);
 
         properties = new HashMap<>();
         properties.putAll(endpoint.getEndpointProperties());
@@ -98,18 +91,36 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
         as2ServerConnection = getEndpoint().getAS2ServerConnection();
         apiProxy = new AS2ServerManager(as2ServerConnection);
 
-        // invoke the API method to start listening
-        ApiMethodHelper.invokeMethod(apiProxy, apiMethod, properties);
+        String uri = properties.computeIfAbsent("requestUriPattern", param -> "/").toString();
+
+        // Check if the configuration for this specific URI path has already been registered
+        // (e.g., by the default "/" fallback or another consumer).
+        // If not, create and register it now using the endpoint's configured keys/certs.
+        if (as2ServerConnection.getConfigurationForPath(uri).isEmpty()) {
+            AS2ServerConnection.AS2ConsumerConfiguration consumerConfig = new AS2ServerConnection.AS2ConsumerConfiguration(
+                    getEndpoint().getSigningAlgorithm(),
+                    getEndpoint().getSigningCertificateChain(),
+                    getEndpoint().getSigningPrivateKey(),
+                    getEndpoint().getDecryptingPrivateKey(),
+                    getEndpoint().getValidateSigningCertificateChain());
+            as2ServerConnection.registerConsumerConfiguration(uri, consumerConfig);
+        }
+
+        as2ServerConnection.listen(uri, this);
     }
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
 
-        if (apiProxy != null) {
-            String uri = properties.get("requestUriPattern").toString();
-            apiProxy.unlisten(uri);
+        if (as2ServerConnection != null) {
+            // Resolve the unique URI pattern for this consumer
+            String uri = properties.computeIfAbsent("requestUriPattern", param -> "/").toString();
+
+            // Unregister this consumer from the shared AS2ServerConnection
+            as2ServerConnection.unlisten(uri);
         }
+
+        super.doStop();
     }
 
     @Override
@@ -125,8 +136,8 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
             ApplicationEntity ediEntity
                     = HttpMessageUtils.extractEdiPayload(request,
                             new HttpMessageUtils.DecrpytingAndSigningInfo(
-                                    as2ServerConnection.getValidateSigningCertificateChain(),
-                                    as2ServerConnection.getDecryptingPrivateKey()));
+                                    getEndpoint().getValidateSigningCertificateChain(),
+                                    getEndpoint().getDecryptingPrivateKey()));
 
             // Set AS2 Interchange property and EDI message into body of input message.
             Exchange exchange = createExchange(false);
