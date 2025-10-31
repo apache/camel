@@ -477,7 +477,7 @@
         <scala-datasonnet-version>2.13.17</scala-datasonnet-version>
         <shiro-version>2.0.5</shiro-version>
         <sisu-maven-plugin-version>0.9.0.M4</sisu-maven-plugin-version>
-        <slack-api-model-version>1.45.4</slack-api-model-version>
+        <slack-api-model-version>1.46.0</slack-api-model-version>
         <slf4j-api-version>2.0.17</slf4j-api-version>
         <slf4j-version>2.0.17</slf4j-version>
         <smack-version>4.3.5</smack-version>
