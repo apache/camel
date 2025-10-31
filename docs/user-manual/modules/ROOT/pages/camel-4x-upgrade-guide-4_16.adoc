@@ -44,6 +44,11 @@ mark this as a _miss_ for any same future converter attempts to immediately be i
 The `ModelToYAMLDumper` and `ModelToXMLDumper` has added `boolean sourceLocation` as parameter to the 2nd
 `dumpModelAsYaml` methods.
 
+=== camel-as2
+
+This component has been improved to better support using different security algorithms isolated per context-path
+but sharing the same server port. If you use `camel-as2` then consider testing that everything is still working as expected when upgrading.
+
 === camel-kamelet
 
 The kamelet component is now parsing endpoint parameters using _raw mode_ to ensure when using sensitive parameters
