@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: PR Build (Camel 4)
+name: Build and test
 
 on:
   pull_request:
@@ -29,7 +29,7 @@ on:
       - Jenkinsfile.*
       - NOTICE.txt
 
-permissions: 
+permissions:
   contents: read
 
 jobs:
@@ -81,3 +81,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-mvnd-install: 'true'
           artifact-upload-suffix: java-${{ matrix.java }}
+      - name: mvn test parent pom dependencies changed
+        uses: ./.github/actions/detect-dependencies
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
