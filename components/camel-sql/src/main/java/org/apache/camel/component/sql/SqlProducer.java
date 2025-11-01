@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ResourceHelper;
@@ -149,7 +151,7 @@ public class SqlProducer extends DefaultProducer {
             Exchange exchange, PreparedStatementCreator statementCreator,
             String sql, String preparedQuery, Boolean shouldRetrieveGeneratedKeys) {
         LOG.trace("jdbcTemplate.execute: {}", preparedQuery);
-        return jdbcTemplate.execute(statementCreator, new PreparedStatementCallback<Object>() {
+        return fetchJdbcTemplate(exchange).execute(statementCreator, new PreparedStatementCallback<Object>() {
             public Object doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 Object data = null;
                 ResultSet rs = null;
@@ -249,7 +251,7 @@ public class SqlProducer extends DefaultProducer {
         ResultSet rs = null;
 
         try {
-            con = jdbcTemplate.getDataSource().getConnection();
+            con = fetchJdbcTemplate(exchange).getDataSource().getConnection();
             ps = statementCreator.createPreparedStatement(con);
             ResultSetIterator iterator = null;
 
@@ -318,6 +320,14 @@ public class SqlProducer extends DefaultProducer {
                 sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
             }
         }
+    }
+
+    protected JdbcTemplate fetchJdbcTemplate(Exchange exchange) {
+        DataSource ds = exchange.getMessage().getHeader(SqlConstants.SQL_DATA_SOURCE, DataSource.class);
+        if (ds != null) {
+            return new JdbcTemplate(ds);
+        }
+        return jdbcTemplate;
     }
 
     public void setParametersCount(int parametersCount) {

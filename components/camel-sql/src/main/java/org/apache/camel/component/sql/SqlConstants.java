@@ -80,6 +80,11 @@ public final class SqlConstants {
     @Metadata(label = "producer", javaType = "Iterator")
     public static final String SQL_PARAMETERS = "CamelSqlParameters";
 
+    @Metadata(label = "producer",
+              description = "To use a specific DataSource to operate on another database than the pre configured DataSource on the component",
+              javaType = "javax.sql.DataSource")
+    public static final String SQL_DATA_SOURCE = "CamelSqlDataSource";
+
     private SqlConstants() {
         // Utility class
     }

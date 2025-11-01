@@ -2730,6 +2730,19 @@ public interface SqlEndpointBuilderFactory {
         public String sqlParameters() {
             return "CamelSqlParameters";
         }
+        /**
+         * To use a specific DataSource to operate on another database than the
+         * pre configured DataSource on the component.
+         * 
+         * The option is a: {@code javax.sql.DataSource} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code SqlDataSource}.
+         */
+        public String sqlDataSource() {
+            return "CamelSqlDataSource";
+        }
     }
     static SqlEndpointBuilder endpointBuilder(String componentName, String path) {
         class SqlEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlEndpointBuilder, AdvancedSqlEndpointBuilder {
