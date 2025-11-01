@@ -720,6 +720,36 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to use OAuth2 body authentication.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param oauth2BodyAuthentication the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2BodyAuthentication(boolean oauth2BodyAuthentication) {
+            doSetProperty("oauth2BodyAuthentication", oauth2BodyAuthentication);
+            return this;
+        }
+        /**
+         * Whether to use OAuth2 body authentication.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param oauth2BodyAuthentication the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder oauth2BodyAuthentication(String oauth2BodyAuthentication) {
+            doSetProperty("oauth2BodyAuthentication", oauth2BodyAuthentication);
+            return this;
+        }
+        /**
          * Default expiration time for cached OAuth2 tokens, in seconds. Used if
          * token response does not contain 'expires_in' field.
          * 
