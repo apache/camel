@@ -207,6 +207,10 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     @Override
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
+        if (this.getRouteConfiguration() != null) {
+            // this is part of route configuration
+            return this.getRouteConfiguration().onException(exceptionType);
+        }
         getExceptions().add(exceptionType.getName());
         return this;
     }

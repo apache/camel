@@ -2256,6 +2256,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return               the exception builder to configure
      */
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
+        if (this.getRouteConfiguration() != null) {
+            // this is part of route configuration
+            return this.getRouteConfiguration().onException(exceptionType);
+        }
         OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
         addOutput(answer);
         return answer;
@@ -2271,6 +2275,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public OnExceptionDefinition onException(
             Class<? extends Throwable> exceptionType1, Class<? extends Throwable> exceptionType2) {
+        if (this.getRouteConfiguration() != null) {
+            // this is part of route configuration
+            return this.getRouteConfiguration().onException(exceptionType1, exceptionType2);
+        }
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptionType1, exceptionType2));
         addOutput(answer);
         return answer;
@@ -2288,6 +2296,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public OnExceptionDefinition onException(
             Class<? extends Throwable> exceptionType1, Class<? extends Throwable> exceptionType2,
             Class<? extends Throwable> exceptionType3) {
+        if (this.getRouteConfiguration() != null) {
+            // this is part of route configuration
+            return this.getRouteConfiguration().onException(exceptionType1, exceptionType2, exceptionType2);
+        }
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptionType1, exceptionType2, exceptionType3));
         addOutput(answer);
         return answer;
@@ -2302,6 +2314,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SafeVarargs
     public final OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
+        if (this.getRouteConfiguration() != null) {
+            // this is part of route configuration
+            return this.getRouteConfiguration().onException(exceptions);
+        }
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
         addOutput(answer);
         return answer;
