@@ -95,6 +95,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "multipartUpload": target.setMultipartUpload(property(camelContext, boolean.class, value)); return true;
         case "multipartuploadname":
         case "multipartUploadName": target.setMultipartUploadName(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauth2bodyauthentication":
+        case "oauth2BodyAuthentication": target.setOauth2BodyAuthentication(property(camelContext, boolean.class, value)); return true;
         case "oauth2cachetokens":
         case "oauth2CacheTokens": target.setOauth2CacheTokens(property(camelContext, boolean.class, value)); return true;
         case "oauth2cachedtokensdefaultexpiryseconds":
@@ -230,6 +232,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "multipartUpload": return boolean.class;
         case "multipartuploadname":
         case "multipartUploadName": return java.lang.String.class;
+        case "oauth2bodyauthentication":
+        case "oauth2BodyAuthentication": return boolean.class;
         case "oauth2cachetokens":
         case "oauth2CacheTokens": return boolean.class;
         case "oauth2cachedtokensdefaultexpiryseconds":
@@ -366,6 +370,8 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "multipartUpload": return target.isMultipartUpload();
         case "multipartuploadname":
         case "multipartUploadName": return target.getMultipartUploadName();
+        case "oauth2bodyauthentication":
+        case "oauth2BodyAuthentication": return target.isOauth2BodyAuthentication();
         case "oauth2cachetokens":
         case "oauth2CacheTokens": return target.isOauth2CacheTokens();
         case "oauth2cachedtokensdefaultexpiryseconds":

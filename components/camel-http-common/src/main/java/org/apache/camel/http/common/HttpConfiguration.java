@@ -19,7 +19,6 @@ package org.apache.camel.http.common;
 import java.io.Serializable;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriParam;
 
 public class HttpConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -43,20 +42,20 @@ public class HttpConfiguration implements Serializable {
     private String oauth2Scope;
     @Metadata(label = "producer,security", description = "OAuth2 Resource Indicator")
     private String oauth2ResourceIndicator;
-    @UriParam(label = "producer,security", defaultValue = "false",
+    @Metadata(label = "producer,security",
               description = "Whether to cache OAuth2 client tokens.")
     private boolean oauth2CacheTokens;
-    @UriParam(label = "producer,security", defaultValue = "3600",
+    @Metadata(label = "producer,security", defaultValue = "3600",
               description = "Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain 'expires_in' field.")
     private long oauth2CachedTokensDefaultExpirySeconds = 3600L;
-    @UriParam(label = "producer,security", defaultValue = "5",
+    @Metadata(label = "producer,security", defaultValue = "5",
               description = "Amount of time which is deducted from OAuth2 tokens expiry time to compensate for the time it takes OAuth2 Token Endpoint to send the token over http, in seconds. "
                             +
                             "Set this parameter to high value if you OAuth2 Token Endpoint answers slowly or you tokens expire quickly. "
                             +
                             "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
-    private long oauth2CachedTokensExpirationMarginSeconds = 5L;
-    @UriParam(label = "producer,security", defaultValue = "false",
+    private long oauth2CachedTokensExpirationMarginSeconds = 5;
+    @Metadata(label = "producer,security",
               description = "Whether to use OAuth2 body authentication.")
     private boolean oauth2BodyAuthentication;
     @Metadata(label = "producer,security", description = "Authentication domain to use with NTLM")

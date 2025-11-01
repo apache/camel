@@ -161,8 +161,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     private String oauth2TokenEndpoint;
     @UriParam(label = "producer,security", description = "OAuth2 scope")
     private String oauth2Scope;
-    @UriParam(label = "producer,security", defaultValue = "false", description = "Whether to cache OAuth2 client tokens.")
-    private boolean oauth2CacheTokens = false;
+    @UriParam(label = "producer,security", description = "Whether to cache OAuth2 client tokens.")
+    private boolean oauth2CacheTokens;
     @UriParam(label = "producer,security", defaultValue = "3600",
               description = "Default expiration time for cached OAuth2 tokens, in seconds. Used if token response does not contain 'expires_in' field.")
     private long oauth2CachedTokensDefaultExpirySeconds = 3600L;
@@ -172,7 +172,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
                             "Set this parameter to high value if you OAuth2 Token Endpoint answers slowly or you tokens expire quickly. "
                             +
                             "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
-    private long oauth2CachedTokensExpirationMarginSeconds = 5L;
+    private long oauth2CachedTokensExpirationMarginSeconds = 5;
+    @UriParam(label = "producer,security",
+              description = "Whether to use OAuth2 body authentication.")
+    private boolean oauth2BodyAuthentication;
     @Deprecated
     @UriParam(label = "producer,security", description = "Authentication domain to use with NTLM")
     private String authDomain;
@@ -911,5 +914,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
      */
     public void setOauth2CachedTokensExpirationMarginSeconds(long cachedTokensExpirationMarginSeconds) {
         this.oauth2CachedTokensExpirationMarginSeconds = cachedTokensExpirationMarginSeconds;
+    }
+
+    public boolean isOauth2BodyAuthentication() {
+        return oauth2BodyAuthentication;
+    }
+
+    /**
+     * Whether to use OAuth2 body authentication.
+     */
+    public void setOauth2BodyAuthentication(boolean oauth2BodyAuthentication) {
+        this.oauth2BodyAuthentication = oauth2BodyAuthentication;
     }
 }
