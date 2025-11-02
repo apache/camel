@@ -12061,6 +12061,54 @@ public class StaticEndpointBuilders {
         return SwiftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OpenTelemetry Metrics (camel-opentelemetry-metrics)
+     * Camel metrics based on the Camel Telemetry spec
+     * 
+     * Category: monitoring
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-opentelemetry-metrics
+     * 
+     * Syntax: <code>opentelemetry-metrics:metricType:metricName</code>
+     * 
+     * Path parameter: metricType (required)
+     * Type of metrics
+     * There are 3 enums and the value can be one of: counter, summary, timer
+     * 
+     * Path parameter: metricName (required)
+     * Name of metric
+     * 
+     * @param path metricType:metricName
+     * @return the dsl builder
+     */
+    public static OpenTelemetryEndpointBuilderFactory.OpenTelemetryEndpointBuilder opentelemetryMetrics(String path) {
+        return opentelemetryMetrics("opentelemetry-metrics", path);
+    }
+    /**
+     * OpenTelemetry Metrics (camel-opentelemetry-metrics)
+     * Camel metrics based on the Camel Telemetry spec
+     * 
+     * Category: monitoring
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-opentelemetry-metrics
+     * 
+     * Syntax: <code>opentelemetry-metrics:metricType:metricName</code>
+     * 
+     * Path parameter: metricType (required)
+     * Type of metrics
+     * There are 3 enums and the value can be one of: counter, summary, timer
+     * 
+     * Path parameter: metricName (required)
+     * Name of metric
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path metricType:metricName
+     * @return the dsl builder
+     */
+    public static OpenTelemetryEndpointBuilderFactory.OpenTelemetryEndpointBuilder opentelemetryMetrics(String componentName, String path) {
+        return OpenTelemetryEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * OptaPlanner (camel-optaplanner)
      * Solve planning problems with OptaPlanner.
      * 

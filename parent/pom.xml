@@ -2168,6 +2168,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-opentelemetry-metrics</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-opentelemetry2</artifactId>
                 <version>${project.version}</version>
             </dependency>

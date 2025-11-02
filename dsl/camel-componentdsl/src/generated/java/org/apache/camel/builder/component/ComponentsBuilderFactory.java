@@ -3620,6 +3620,19 @@ public interface ComponentsBuilderFactory {
         return OpenstackSwiftComponentBuilderFactory.openstackSwift();
     }
     /**
+     * OpenTelemetry Metrics (camel-opentelemetry-metrics)
+     * Camel metrics based on the Camel Telemetry spec
+     * 
+     * Category: monitoring
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-opentelemetry-metrics
+     * 
+     * @return the dsl builder
+     */
+    static OpentelemetryMetricsComponentBuilderFactory.OpentelemetryMetricsComponentBuilder opentelemetryMetrics() {
+        return OpentelemetryMetricsComponentBuilderFactory.opentelemetryMetrics();
+    }
+    /**
      * OptaPlanner (camel-optaplanner)
      * Solve planning problems with OptaPlanner.
      * 
