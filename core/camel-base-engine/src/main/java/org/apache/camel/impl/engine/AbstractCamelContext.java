@@ -3556,7 +3556,11 @@ public abstract class AbstractCamelContext extends BaseService
                 } else {
                     // start the route service
                     routeServices.put(routeService.getId(), routeService);
-                    if (shouldStartRoutes()) {
+                    // special situation if Camel is stopping and we do graceful shutdown, and process remainder
+                    // inflight messages, and they trigger a dynamic endpoint (toD) that calls a kamelet, then
+                    // we need to allow creating the kamelet route to be able to process the inflight message
+                    boolean stoppingDynamicKamelet = isStopping() && routeService.getRoute().isCreatedByKamelet();
+                    if (shouldStartRoutes() || stoppingDynamicKamelet) {
                         final StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
                         StartupStep step
                                 = startupStepRecorder.beginStep(Route.class, routeService.getId(), "Start Route Services");
