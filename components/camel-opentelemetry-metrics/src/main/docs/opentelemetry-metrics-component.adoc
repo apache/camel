@@ -14,10 +14,6 @@
 
 *{component-header}*
 
-
-[[OpenTelemetry-Collection]]
-=== Collect OpenTelemetry Metrics
-
 The OpenTelemetry Metrics component allows the collection of various metrics directly from Camel routes.
 Supported metric types are xref:#OpenTelemetryComponent-counter[counter], xref:#OpenTelemetryComponent-summary[summary],
 and xref:#OpenTelemetryComponent-timer[timer].
