@@ -76,6 +76,17 @@ Dapr’s secret management building block enables secure retrieval of secrets fr
 === 5. *configuration*:
 Dapr’s configuration building block allows applications to retrieve dynamic configuration values from external configuration stores. The configuration operation fetches values associated with keys specified in configKeys. This operation requires the configStore name, and the configKeys.
 
+=== 6. *lock*:
+Lock management in Dapr allows your application to coordinate access to shared resources using a distributed lock mechanism. This is useful for ensuring mutual exclusion across services. For these operations, `storeName`, `resourceId` and `lockOwner` are mandatory.
+
+==== Lock Operations
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`tryLock` |Attempts to acquire a lock on a resource for a specific duration. For this operation `expiryInSeconds` is required. Returns a `Boolean` – `true` if the lock was successfully acquired, `false` otherwise.
+|`unlock` |Releases a previously acquired lock. Returns an `UnlockResponseStatus` enum indicating whether the lock was successfully released.
+|===
+
 === Dapr Consumer operations
 
 === 1. *pubSub*:
@@ -262,6 +273,38 @@ from("direct:start")
   })
   .to("dapr:configuration?configStore=myStore")
   .log("Received config updates from Dapr: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `lock: tryLock` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.RESOURCE_ID, "myResource");
+    exchange.getIn().setHeader(DaprConstants.STORE_NAME, "myStore");
+  })
+  .to("dapr:lock?lockOperation=tryLock&storeName=myStore&expiryInSeconds=100")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `lock: unlock` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.RESOURCE_ID, "myResource");
+    exchange.getIn().setHeader(DaprConstants.STORE_NAME, "myStore");
+  })
+  .to("dapr:lock?lockOperation=unlock&storeName=myStore")
   .to("mock:result");
 --------------------------------------------------------------------------------
 

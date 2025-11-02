@@ -129,4 +129,17 @@ public class DaprConstants {
     @Metadata(label = "common", description = "The raw configuration update response",
               javaType = "Map<String, io.dapr.client.domain.ConfigurationItem")
     public static final String RAW_CONFIG_RESPONSE = HEADER_PREFIX + "RawConfigResponse";
+    @Metadata(label = "producer", description = "The lock operation to perform on the store. " +
+                                                "Required for DaprOperation.lock operation",
+              javaType = "LockOperation", defaultValue = "tryLock",
+              enums = "tryLock, unlock")
+    public static final String LOCK_OPERATION = HEADER_PREFIX + "LockOperation";
+    @Metadata(label = "producer", description = "The lock store name", javaType = "String")
+    public static final String STORE_NAME = HEADER_PREFIX + "StoreName";
+    @Metadata(label = "producer", description = "The resource Id for the lock", javaType = "String")
+    public static final String RESOURCE_ID = HEADER_PREFIX + "ResourceId";
+    @Metadata(label = "producer", description = "The lock owner identifier for the lock", javaType = "String")
+    public static final String LOCK_OWNER = HEADER_PREFIX + "LockOwner";
+    @Metadata(label = "producer", description = "The expiry time in seconds for the lock", javaType = "Integer")
+    public static final String EXPIRY_IN_SECONDS = HEADER_PREFIX + "ExpiryInSeconds";
 }

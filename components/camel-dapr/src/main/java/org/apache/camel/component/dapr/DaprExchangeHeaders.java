@@ -132,6 +132,26 @@ public class DaprExchangeHeaders {
         return getObjectFromHeaders(exchange, DaprConstants.CONFIG_KEYS, String.class);
     }
 
+    public static LockOperation getLockOperationFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.LOCK_OPERATION, LockOperation.class);
+    }
+
+    public static String getStoreNameFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.STORE_NAME, String.class);
+    }
+
+    public static String getResourceIdFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.RESOURCE_ID, String.class);
+    }
+
+    public static String getLockOwnerFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.LOCK_OWNER, String.class);
+    }
+
+    public static Integer getExpiryInSecondsFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.EXPIRY_IN_SECONDS, Integer.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(headerName, classType);
     }

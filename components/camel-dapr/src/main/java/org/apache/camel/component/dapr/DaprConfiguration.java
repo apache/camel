@@ -18,6 +18,7 @@ package org.apache.camel.component.dapr;
 
 import java.util.List;
 
+import io.dapr.client.DaprClient;
 import io.dapr.client.DaprPreviewClient;
 import io.dapr.client.domain.HttpExtension;
 import io.dapr.client.domain.StateOptions.Concurrency;
@@ -34,6 +35,12 @@ public class DaprConfiguration implements Cloneable {
     @UriPath(label = "producer", enums = "invokeService, state")
     @Metadata(required = true)
     private DaprOperation operation;
+    @UriParam(label = "common", description = "The Dapr Client")
+    @Metadata(autowired = true)
+    private DaprClient client;
+    @UriParam(label = "consumer", description = "The Dapr Preview Cliet")
+    @Metadata(autowired = true)
+    private DaprPreviewClient previewClient;
     @UriParam(label = "producer", description = "Target service to invoke. Can be a Dapr App ID, a named HTTPEndpoint, " +
                                                 "or a FQDN/public URL")
     private String serviceToInvoke;
@@ -68,9 +75,6 @@ public class DaprConfiguration implements Cloneable {
     private Concurrency concurrency;
     @UriParam(label = "producer", description = "Consistency level to use with state operations", enums = "EVENTUAL, STRONG")
     private Consistency consistency;
-    @UriParam(label = "consumer", description = "The client to consume messages by the consumer")
-    @Metadata(autowired = true)
-    private DaprPreviewClient previewClient;
     @UriParam(label = "common", description = "The name of the Dapr Pub/Sub component to use. This identifies which underlying "
                                               + "messaging system Dapr will interact with for publishing or subscribing to events.")
     private String pubSubName;
@@ -85,6 +89,17 @@ public class DaprConfiguration implements Cloneable {
     private String bindingOperation;
     @UriParam(label = "common", description = "List of keys for configuration operation")
     private String configKeys;
+    @UriParam(label = "producer", enums = "tryLock, unlock", defaultValue = "tryLock",
+              description = "The lock operation to perform on the store. Required for DaprOperation.lock operation")
+    private LockOperation lockOperation = LockOperation.tryLock;
+    @UriParam(label = "producer", description = "The lock store name")
+    private String storeName;
+    @UriParam(label = "producer", description = "The resource Id for the lock")
+    private String resourceId;
+    @UriParam(label = "producer", description = "The lock owner identifier for the lock")
+    private String lockOwner;
+    @UriParam(label = "producer", description = "The expiry time in seconds for the lock")
+    private Integer expiryInSeconds;
 
     /**
      * The Dapr <b>building block operation</b> to perform with this component
@@ -95,6 +110,28 @@ public class DaprConfiguration implements Cloneable {
 
     public void setOperation(DaprOperation operation) {
         this.operation = operation;
+    }
+
+    /**
+     * The <b>client</b>
+     */
+    public DaprClient getClient() {
+        return client;
+    }
+
+    public void setClient(DaprClient client) {
+        this.client = client;
+    }
+
+    /**
+     * The <b>preview client</b>
+     */
+    public DaprPreviewClient getPreviewClient() {
+        return previewClient;
+    }
+
+    public void setPreviewClient(DaprPreviewClient previewClient) {
+        this.previewClient = previewClient;
     }
 
     /**
@@ -302,17 +339,6 @@ public class DaprConfiguration implements Cloneable {
     }
 
     /**
-     * The <b>preview client</b> to consume messages by the consumer.
-     */
-    public DaprPreviewClient getPreviewClient() {
-        return previewClient;
-    }
-
-    public void setPreviewClient(DaprPreviewClient previewClient) {
-        this.previewClient = previewClient;
-    }
-
-    /**
      * The <b>name</b> of the Dapr binding to invoke.
      */
     public String getBindingName() {
@@ -351,6 +377,61 @@ public class DaprConfiguration implements Cloneable {
 
     public void setConfigKeys(String configKeys) {
         this.configKeys = configKeys;
+    }
+
+    /**
+     * The <b>lock operation</b> to perform on the store. Required for DaprOperation.lock operation
+     */
+    public LockOperation getLockOperation() {
+        return lockOperation;
+    }
+
+    public void setLockOperation(LockOperation lockOperation) {
+        this.lockOperation = lockOperation;
+    }
+
+    /**
+     * The lock <b>store name</b>
+     */
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    /**
+     * The <b>resource Id</b> for the lock
+     */
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    /**
+     * The <b>lock owner</b> identifier for the lock
+     */
+    public String getLockOwner() {
+        return lockOwner;
+    }
+
+    public void setLockOwner(String lockOwner) {
+        this.lockOwner = lockOwner;
+    }
+
+    /**
+     * The <b>expiry time</b> in seconds for the lock
+     */
+    public Integer getExpiryInSeconds() {
+        return expiryInSeconds;
+    }
+
+    public void setExpiryInSeconds(Integer expiryInSeconds) {
+        this.expiryInSeconds = expiryInSeconds;
     }
 
     public DaprConfiguration copy() {

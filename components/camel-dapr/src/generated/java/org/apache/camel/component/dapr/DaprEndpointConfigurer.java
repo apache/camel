@@ -29,6 +29,7 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bindingOperation": target.getConfiguration().setBindingOperation(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "client": target.getConfiguration().setClient(property(camelContext, io.dapr.client.DaprClient.class, value)); return true;
         case "concurrency": target.getConfiguration().setConcurrency(property(camelContext, io.dapr.client.domain.StateOptions.Concurrency.class, value)); return true;
         case "configkeys":
         case "configKeys": target.getConfiguration().setConfigKeys(property(camelContext, java.lang.String.class, value)); return true;
@@ -43,17 +44,25 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "expiryinseconds":
+        case "expiryInSeconds": target.getConfiguration().setExpiryInSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "httpextension":
         case "httpExtension": target.getConfiguration().setHttpExtension(property(camelContext, io.dapr.client.domain.HttpExtension.class, value)); return true;
         case "key": target.getConfiguration().setKey(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "lockoperation":
+        case "lockOperation": target.getConfiguration().setLockOperation(property(camelContext, org.apache.camel.component.dapr.LockOperation.class, value)); return true;
+        case "lockowner":
+        case "lockOwner": target.getConfiguration().setLockOwner(property(camelContext, java.lang.String.class, value)); return true;
         case "methodtoinvoke":
         case "methodToInvoke": target.getConfiguration().setMethodToInvoke(property(camelContext, java.lang.String.class, value)); return true;
         case "previewclient":
         case "previewClient": target.getConfiguration().setPreviewClient(property(camelContext, io.dapr.client.DaprPreviewClient.class, value)); return true;
         case "pubsubname":
         case "pubSubName": target.getConfiguration().setPubSubName(property(camelContext, java.lang.String.class, value)); return true;
+        case "resourceid":
+        case "resourceId": target.getConfiguration().setResourceId(property(camelContext, java.lang.String.class, value)); return true;
         case "secretstore":
         case "secretStore": target.getConfiguration().setSecretStore(property(camelContext, java.lang.String.class, value)); return true;
         case "servicetoinvoke":
@@ -62,6 +71,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "stateOperation": target.getConfiguration().setStateOperation(property(camelContext, org.apache.camel.component.dapr.StateOperation.class, value)); return true;
         case "statestore":
         case "stateStore": target.getConfiguration().setStateStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "storename":
+        case "storeName": target.getConfiguration().setStoreName(property(camelContext, java.lang.String.class, value)); return true;
         case "topic": target.getConfiguration().setTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "verb": target.getConfiguration().setVerb(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -70,7 +81,7 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"httpExtension", "previewClient"};
+        return new String[]{"client", "httpExtension", "previewClient"};
     }
 
     @Override
@@ -82,6 +93,7 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bindingOperation": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "client": return io.dapr.client.DaprClient.class;
         case "concurrency": return io.dapr.client.domain.StateOptions.Concurrency.class;
         case "configkeys":
         case "configKeys": return java.lang.String.class;
@@ -96,17 +108,25 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "expiryinseconds":
+        case "expiryInSeconds": return java.lang.Integer.class;
         case "httpextension":
         case "httpExtension": return io.dapr.client.domain.HttpExtension.class;
         case "key": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "lockoperation":
+        case "lockOperation": return org.apache.camel.component.dapr.LockOperation.class;
+        case "lockowner":
+        case "lockOwner": return java.lang.String.class;
         case "methodtoinvoke":
         case "methodToInvoke": return java.lang.String.class;
         case "previewclient":
         case "previewClient": return io.dapr.client.DaprPreviewClient.class;
         case "pubsubname":
         case "pubSubName": return java.lang.String.class;
+        case "resourceid":
+        case "resourceId": return java.lang.String.class;
         case "secretstore":
         case "secretStore": return java.lang.String.class;
         case "servicetoinvoke":
@@ -115,6 +135,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "stateOperation": return org.apache.camel.component.dapr.StateOperation.class;
         case "statestore":
         case "stateStore": return java.lang.String.class;
+        case "storename":
+        case "storeName": return java.lang.String.class;
         case "topic": return java.lang.String.class;
         case "verb": return java.lang.String.class;
         default: return null;
@@ -131,6 +153,7 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bindingOperation": return target.getConfiguration().getBindingOperation();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "client": return target.getConfiguration().getClient();
         case "concurrency": return target.getConfiguration().getConcurrency();
         case "configkeys":
         case "configKeys": return target.getConfiguration().getConfigKeys();
@@ -145,17 +168,25 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "expiryinseconds":
+        case "expiryInSeconds": return target.getConfiguration().getExpiryInSeconds();
         case "httpextension":
         case "httpExtension": return target.getConfiguration().getHttpExtension();
         case "key": return target.getConfiguration().getKey();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "lockoperation":
+        case "lockOperation": return target.getConfiguration().getLockOperation();
+        case "lockowner":
+        case "lockOwner": return target.getConfiguration().getLockOwner();
         case "methodtoinvoke":
         case "methodToInvoke": return target.getConfiguration().getMethodToInvoke();
         case "previewclient":
         case "previewClient": return target.getConfiguration().getPreviewClient();
         case "pubsubname":
         case "pubSubName": return target.getConfiguration().getPubSubName();
+        case "resourceid":
+        case "resourceId": return target.getConfiguration().getResourceId();
         case "secretstore":
         case "secretStore": return target.getConfiguration().getSecretStore();
         case "servicetoinvoke":
@@ -164,6 +195,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "stateOperation": return target.getConfiguration().getStateOperation();
         case "statestore":
         case "stateStore": return target.getConfiguration().getStateStore();
+        case "storename":
+        case "storeName": return target.getConfiguration().getStoreName();
         case "topic": return target.getConfiguration().getTopic();
         case "verb": return target.getConfiguration().getVerb();
         default: return null;
