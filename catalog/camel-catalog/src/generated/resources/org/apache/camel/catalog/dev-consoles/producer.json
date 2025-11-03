@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "producer",
+    "title": "Producers",
+    "description": "Display information about Camel producers",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.ProducerDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.16.0-SNAPSHOT"
+  }
+}
+
