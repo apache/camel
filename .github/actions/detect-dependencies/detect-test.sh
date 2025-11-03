@@ -25,7 +25,7 @@ detect_changed_properties() {
     grep -vE '^\+\+\+|---' | \
     grep -E 'version|dependency|artifact' | \
     sed -E 's/^[+-]\s*<([^>]+)>.*/\1/' | \
-    sort -u
+    sort -u || true
 }
 
 find_affected_modules() {
