@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry.integration;
+package org.apache.camel.metrics.integration;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import io.opentelemetry.exporter.logging.LoggingMetricExporter;
-import io.opentelemetry.sdk.metrics.data.HistogramPointData;
+import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.RoutesBuilder;
@@ -40,11 +40,9 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test class for OpenTelemetry Timer metric autoconfiguration in a Camel route.
+ * Test class for OpenTelemetry Counter metric autoconfiguration in a Camel route.
  */
-public class TimerRouteAutoConfigIT extends CamelTestSupport {
-
-    private static final long DELAY = 20L;
+public class CounterRouteAutoConfigIT extends CamelTestSupport {
 
     @BeforeAll
     public static void init() {
@@ -59,15 +57,14 @@ public class TimerRouteAutoConfigIT extends CamelTestSupport {
     }
 
     @Test
-    public void testOverrideMetricsName() throws Exception {
+    public void testIncrement() throws Exception {
         Logger logger = Logger.getLogger(LoggingMetricExporter.class.getName());
         MemoryLogHandler handler = new MemoryLogHandler();
         logger.addHandler(handler);
 
-        Object body = new Object();
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:out");
-        mockEndpoint.expectedBodiesReceived(body);
-        template.sendBody("direct:in1", body);
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(1);
+        template.sendBody("direct:in1", new Object());
 
         // capture logs from the LoggingMetricExporter
         await().atMost(Duration.ofMillis(1000L)).until(handler::hasLogs);
@@ -78,16 +75,15 @@ public class TimerRouteAutoConfigIT extends CamelTestSupport {
         for (LogRecord log : logs) {
             if (log.getParameters() != null && log.getParameters().length > 0) {
                 MetricData metricData = (MetricData) log.getParameters()[0];
-                assertEquals("A", metricData.getName());
+                assertEquals("B", metricData.getName());
 
                 PointData pd = metricData.getData().getPoints().stream().findFirst().orElse(null);
-                assertInstanceOf(HistogramPointData.class, pd, "Expected LongPointData");
-                assertEquals(1L, ((HistogramPointData) pd).getCount());
-                assertTrue(((HistogramPointData) pd).getMin() >= DELAY);
+                assertInstanceOf(LongPointData.class, pd, "Expected LongPointData");
+                assertEquals(5, ((LongPointData) pd).getValue());
                 dataCount++;
             }
         }
-        assertTrue(dataCount > 0, "No metric data found with name A");
+        assertTrue(dataCount > 0, "No metric data found with name B");
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -97,10 +93,8 @@ public class TimerRouteAutoConfigIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:in1")
-                        .to("opentelemetry-metrics:timer:A?action=start")
-                        .delay(DELAY)
-                        .to("opentelemetry-metrics:timer:A?action=stop")
-                        .to("mock:out");
+                        .to("opentelemetry-metrics:counter:B?increment=5")
+                        .to("mock:result");
             }
         };
     }

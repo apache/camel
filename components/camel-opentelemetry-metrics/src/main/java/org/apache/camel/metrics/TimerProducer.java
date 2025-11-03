@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry;
+package org.apache.camel.metrics;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,7 +26,7 @@ import io.opentelemetry.api.metrics.Meter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
-import static org.apache.camel.opentelemetry.OpenTelemetryConstants.HEADER_TIMER_ACTION;
+import static org.apache.camel.metrics.OpenTelemetryConstants.HEADER_TIMER_ACTION;
 
 public class TimerProducer extends AbstractOpenTelemetryProducer<LongHistogram> {
 

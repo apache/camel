@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry;
+package org.apache.camel.metrics;
 
 import io.opentelemetry.api.metrics.Meter;
 import org.apache.camel.Producer;
@@ -34,10 +34,10 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 @ExtendWith(MockitoExtension.class)
-public class DistributionSummaryEndpointTest {
+public class CounterEndpointTest {
 
     private static final String METRICS_NAME = "metrics.name";
-    private static final Double VALUE = Long.valueOf(System.currentTimeMillis()).doubleValue();
+    private static final Long VALUE = System.currentTimeMillis();
 
     @Mock
     private Meter meter;
@@ -48,7 +48,7 @@ public class DistributionSummaryEndpointTest {
 
     @BeforeEach
     public void setUp() {
-        endpoint = new OpenTelemetryEndpoint(null, null, meter, InstrumentType.DISTRIBUTION_SUMMARY, METRICS_NAME);
+        endpoint = new OpenTelemetryEndpoint(null, null, meter, InstrumentType.COUNTER, METRICS_NAME);
         inOrder = Mockito.inOrder(meter);
     }
 
@@ -58,8 +58,7 @@ public class DistributionSummaryEndpointTest {
     }
 
     @Test
-    public void testHistogramEndpoint() {
-        assertThat(endpoint, is(notNullValue()));
+    public void testCounterEndpoint() {
         assertThat(endpoint.getMeter(), is(meter));
         assertThat(endpoint.getMetricName(), is(METRICS_NAME));
     }
@@ -68,18 +67,30 @@ public class DistributionSummaryEndpointTest {
     public void testCreateProducer() {
         Producer producer = endpoint.createProducer();
         assertThat(producer, is(notNullValue()));
-        assertThat(producer, is(instanceOf(DistributionSummaryProducer.class)));
+        assertThat(producer, is(instanceOf(CounterProducer.class)));
     }
 
     @Test
-    public void testGetValue() {
-        assertThat(endpoint.getValue(), is(nullValue()));
+    public void testGetIncrement() {
+        assertThat(endpoint.getIncrement(), is(nullValue()));
     }
 
     @Test
-    public void testSetValue() {
-        assertThat(endpoint.getValue(), is(nullValue()));
-        endpoint.setValue(VALUE.toString());
-        assertThat(Double.valueOf(endpoint.getValue()), is(VALUE));
+    public void testSetIncrement() {
+        assertThat(endpoint.getIncrement(), is(nullValue()));
+        endpoint.setIncrement(VALUE.toString());
+        assertThat(Long.valueOf(endpoint.getIncrement()), is(VALUE));
+    }
+
+    @Test
+    public void testGetDecrement() {
+        assertThat(endpoint.getDecrement(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetDecrement() {
+        assertThat(endpoint.getDecrement(), is(nullValue()));
+        endpoint.setDecrement(VALUE.toString());
+        assertThat(Long.valueOf(endpoint.getDecrement()), is(VALUE));
     }
 }

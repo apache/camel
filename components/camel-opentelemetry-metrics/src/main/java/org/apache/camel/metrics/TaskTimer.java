@@ -14,31 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry.integration;
+package org.apache.camel.metrics;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.LogRecord;
+import java.util.concurrent.TimeUnit;
 
-public class MemoryLogHandler extends ConsoleHandler {
-    private List<LogRecord> logs = new ArrayList<>();
+public class TaskTimer {
+    private long startTime;
 
-    public MemoryLogHandler() {
-        super();
+    public TaskTimer() {
+        startTime = System.nanoTime();
     }
 
-    public boolean hasLogs() {
-        return !logs.isEmpty();
+    public long getStartTime() {
+        return startTime;
     }
 
-    public List<LogRecord> getLogs() {
-        return new ArrayList<>(logs);
+    public long duration(TimeUnit unit) {
+        if (startTime > 0) {
+            return unit.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+        }
+        return 0;
     }
 
-    @Override
-    public void publish(LogRecord record) {
-        super.publish(record);
-        logs.add(record);
+    public void stop() {
+        startTime = 0;
     }
 }
