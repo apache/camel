@@ -165,8 +165,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String camelVersion;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version")
-    protected String kameletsVersion;
+            "--kamelets-version" }, description = "Apache Camel Kamelets version",
+                        defaultValue = RuntimeType.KAMELETS_VERSION)
+    protected String kameletsVersion = RuntimeType.KAMELETS_VERSION;
 
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
                         description = "Profile to export (dev, test, or prod).")

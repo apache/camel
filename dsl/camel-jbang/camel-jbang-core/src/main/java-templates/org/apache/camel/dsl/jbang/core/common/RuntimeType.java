@@ -28,6 +28,7 @@ public enum RuntimeType {
 
     public static final String QUARKUS_VERSION = "${quarkus-version}";
     public static final String SPRING_BOOT_VERSION = "${spring-boot-version}";
+    public static final String KAMELETS_VERSION = "${camel-kamelets-catalog-version}";
 
     public static RuntimeType fromValue(String value) {
         value = value.toLowerCase(Locale.ROOT);
