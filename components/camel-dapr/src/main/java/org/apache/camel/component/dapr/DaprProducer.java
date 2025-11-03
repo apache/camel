@@ -33,7 +33,7 @@ public class DaprProducer extends DefaultProducer {
     public DaprProducer(final Endpoint endpoint, DaprConfiguration configuration) {
         super(endpoint);
         this.configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
-        this.manager = new DaprOperationManager(configurationOptionsProxy);
+        this.manager = new DaprOperationManager(configurationOptionsProxy, getEndpoint());
     }
 
     @Override

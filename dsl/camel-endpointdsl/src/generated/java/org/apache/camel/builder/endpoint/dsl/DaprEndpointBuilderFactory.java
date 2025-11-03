@@ -44,6 +44,35 @@ public interface DaprEndpointBuilderFactory {
             return (AdvancedDaprEndpointConsumerBuilder) this;
         }
         /**
+         * The Dapr Client.
+         * 
+         * The option is a: <code>io.dapr.client.DaprClient</code> type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointConsumerBuilder client(io.dapr.client.DaprClient client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * The Dapr Client.
+         * 
+         * The option will be converted to a
+         * <code>io.dapr.client.DaprClient</code> type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointConsumerBuilder client(String client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
          * List of keys for configuration operation.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -118,7 +147,7 @@ public interface DaprEndpointBuilderFactory {
             return this;
         }
         /**
-         * The client to consume messages by the consumer.
+         * The Dapr Preview Cliet.
          * 
          * The option is a: <code>io.dapr.client.DaprPreviewClient</code> type.
          * 
@@ -132,7 +161,7 @@ public interface DaprEndpointBuilderFactory {
             return this;
         }
         /**
-         * The client to consume messages by the consumer.
+         * The Dapr Preview Cliet.
          * 
          * The option will be converted to a
          * <code>io.dapr.client.DaprPreviewClient</code> type.
@@ -286,6 +315,35 @@ public interface DaprEndpointBuilderFactory {
             return (AdvancedDaprEndpointProducerBuilder) this;
         }
 
+        /**
+         * The Dapr Client.
+         * 
+         * The option is a: <code>io.dapr.client.DaprClient</code> type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder client(io.dapr.client.DaprClient client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * The Dapr Client.
+         * 
+         * The option will be converted to a
+         * <code>io.dapr.client.DaprClient</code> type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder client(String client) {
+            doSetProperty("client", client);
+            return this;
+        }
         /**
          * List of keys for configuration operation.
          * 
@@ -464,6 +522,35 @@ public interface DaprEndpointBuilderFactory {
             return this;
         }
         /**
+         * The expiry time in seconds for the lock.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param expiryInSeconds the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder expiryInSeconds(Integer expiryInSeconds) {
+            doSetProperty("expiryInSeconds", expiryInSeconds);
+            return this;
+        }
+        /**
+         * The expiry time in seconds for the lock.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param expiryInSeconds the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder expiryInSeconds(String expiryInSeconds) {
+            doSetProperty("expiryInSeconds", expiryInSeconds);
+            return this;
+        }
+        /**
          * HTTP method to use when invoking the service. Accepts verbs like GET,
          * POST, PUT, DELETE, etc. Creates a minimal HttpExtension with no
          * headers or query params. Takes precedence over verb.
@@ -513,6 +600,54 @@ public interface DaprEndpointBuilderFactory {
             return this;
         }
         /**
+         * The lock operation to perform on the store. Required for
+         * DaprOperation.lock operation.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.dapr.LockOperation</code> type.
+         * 
+         * Default: tryLock
+         * Group: producer
+         * 
+         * @param lockOperation the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder lockOperation(org.apache.camel.component.dapr.LockOperation lockOperation) {
+            doSetProperty("lockOperation", lockOperation);
+            return this;
+        }
+        /**
+         * The lock operation to perform on the store. Required for
+         * DaprOperation.lock operation.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.dapr.LockOperation</code> type.
+         * 
+         * Default: tryLock
+         * Group: producer
+         * 
+         * @param lockOperation the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder lockOperation(String lockOperation) {
+            doSetProperty("lockOperation", lockOperation);
+            return this;
+        }
+        /**
+         * The lock owner identifier for the lock.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param lockOwner the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder lockOwner(String lockOwner) {
+            doSetProperty("lockOwner", lockOwner);
+            return this;
+        }
+        /**
          * The name of the method or route to invoke on the target service.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -524,6 +659,20 @@ public interface DaprEndpointBuilderFactory {
          */
         default DaprEndpointProducerBuilder methodToInvoke(String methodToInvoke) {
             doSetProperty("methodToInvoke", methodToInvoke);
+            return this;
+        }
+        /**
+         * The resource Id for the lock.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param resourceId the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder resourceId(String resourceId) {
+            doSetProperty("resourceId", resourceId);
             return this;
         }
         /**
@@ -603,6 +752,20 @@ public interface DaprEndpointBuilderFactory {
          */
         default DaprEndpointProducerBuilder stateStore(String stateStore) {
             doSetProperty("stateStore", stateStore);
+            return this;
+        }
+        /**
+         * The lock store name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param storeName the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder storeName(String storeName) {
+            doSetProperty("storeName", storeName);
             return this;
         }
         /**
@@ -689,6 +852,35 @@ public interface DaprEndpointBuilderFactory {
             return (AdvancedDaprEndpointBuilder) this;
         }
 
+        /**
+         * The Dapr Client.
+         * 
+         * The option is a: <code>io.dapr.client.DaprClient</code> type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder client(io.dapr.client.DaprClient client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * The Dapr Client.
+         * 
+         * The option will be converted to a
+         * <code>io.dapr.client.DaprClient</code> type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointBuilder client(String client) {
+            doSetProperty("client", client);
+            return this;
+        }
         /**
          * List of keys for configuration operation.
          * 
@@ -1285,6 +1477,68 @@ public interface DaprEndpointBuilderFactory {
          */
         public String daprRawConfigResponse() {
             return "CamelDaprRawConfigResponse";
+        }
+        /**
+         * The lock operation to perform on the store. Required for
+         * DaprOperation.lock operation.
+         * 
+         * The option is a: {@code LockOperation} type.
+         * 
+         * Default: tryLock
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprLockOperation}.
+         */
+        public String daprLockOperation() {
+            return "CamelDaprLockOperation";
+        }
+        /**
+         * The lock store name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprStoreName}.
+         */
+        public String daprStoreName() {
+            return "CamelDaprStoreName";
+        }
+        /**
+         * The resource Id for the lock.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprResourceId}.
+         */
+        public String daprResourceId() {
+            return "CamelDaprResourceId";
+        }
+        /**
+         * The lock owner identifier for the lock.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprLockOwner}.
+         */
+        public String daprLockOwner() {
+            return "CamelDaprLockOwner";
+        }
+        /**
+         * The expiry time in seconds for the lock.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DaprExpiryInSeconds}.
+         */
+        public String daprExpiryInSeconds() {
+            return "CamelDaprExpiryInSeconds";
         }
     }
     static DaprEndpointBuilder endpointBuilder(String componentName, String path) {

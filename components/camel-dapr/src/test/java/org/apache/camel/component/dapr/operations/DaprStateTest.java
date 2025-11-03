@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfiguration;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
 import org.apache.camel.component.dapr.DaprConstants;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.component.dapr.DaprOperation;
 import org.apache.camel.component.dapr.StateOperation;
 import org.apache.camel.support.DefaultExchange;
@@ -56,9 +57,12 @@ public class DaprStateTest extends CamelTestSupport {
 
     @Mock
     private DaprClient client;
+    @Mock
+    private DaprEndpoint endpoint;
 
     @Test
     void testSave() throws Exception {
+        when(endpoint.getClient()).thenReturn(client);
         when(client.saveState(anyString(), anyString(), any(), any(Object.class), any()))
                 .thenReturn(Mono.empty());
 
@@ -72,8 +76,8 @@ public class DaprStateTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("myBody");
 
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
 
         assertNotNull(operationResponse);
         assertEquals(new State<>("myKey", "myBody", null, null), operationResponse.getBody());
@@ -89,7 +93,7 @@ public class DaprStateTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
 
         // case 1: stateStore, payload and key empty
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
         assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));
 
         // case 2: payload and key empty
@@ -107,6 +111,7 @@ public class DaprStateTest extends CamelTestSupport {
 
     @Test
     void testSaveBulk() throws Exception {
+        when(endpoint.getClient()).thenReturn(client);
         when(client.saveBulkState(any())).thenReturn(Mono.empty());
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -121,8 +126,8 @@ public class DaprStateTest extends CamelTestSupport {
         List<State<?>> states = List.of(state1, state2);
         exchange.getMessage().setHeader(DaprConstants.STATES, states);
 
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
         SaveStateRequest saveStateRequest = (SaveStateRequest) operationResponse.getBody();
 
         assertNotNull(operationResponse);
@@ -139,7 +144,7 @@ public class DaprStateTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
 
         // case 1: stateStore and states empty
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
         assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));
 
         // case 2: states empty
@@ -156,6 +161,7 @@ public class DaprStateTest extends CamelTestSupport {
     void testGet() throws Exception {
         State<byte[]> mockResult = new State<>("myKey", "myValue".getBytes(StandardCharsets.UTF_8), null, null);
 
+        when(endpoint.getClient()).thenReturn(client);
         when(client.getState(any(GetStateRequest.class), eq(TypeRef.get(byte[].class)))).thenReturn(Mono.just(mockResult));
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -167,8 +173,8 @@ public class DaprStateTest extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
 
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
         State<byte[]> saveStateRequest = (State<byte[]>) operationResponse.getBody();
 
         assertNotNull(operationResponse);
@@ -185,7 +191,7 @@ public class DaprStateTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
 
         // case 1: stateStore and key empty
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
         assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));
 
         // case 2: key empty
@@ -202,6 +208,7 @@ public class DaprStateTest extends CamelTestSupport {
     void testGetBulk() throws Exception {
         List<State<byte[]>> mockResult = List.of(new State<>("myKey", "myValue".getBytes(StandardCharsets.UTF_8), null, null));
 
+        when(endpoint.getClient()).thenReturn(client);
         when(client.getBulkState(any(GetBulkStateRequest.class), eq(TypeRef.get(byte[].class))))
                 .thenReturn(Mono.just(mockResult));
 
@@ -214,8 +221,8 @@ public class DaprStateTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(DaprConstants.KEYS, List.of("myKey"));
 
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
         List<State<byte[]>> getStateRequest = (List<State<byte[]>>) operationResponse.getBody();
 
         assertNotNull(operationResponse);
@@ -232,7 +239,7 @@ public class DaprStateTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
 
         // case 1: stateStore and keys empty
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
         assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));
 
         // case 2: keys empty
@@ -246,6 +253,7 @@ public class DaprStateTest extends CamelTestSupport {
 
     @Test
     void testDelete() throws Exception {
+        when(endpoint.getClient()).thenReturn(client);
         when(client.deleteState(any(DeleteStateRequest.class))).thenReturn(Mono.empty());
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -257,8 +265,8 @@ public class DaprStateTest extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
 
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
         DeleteStateRequest deleteStateRequest = (DeleteStateRequest) operationResponse.getBody();
 
         assertNotNull(operationResponse);
@@ -276,7 +284,7 @@ public class DaprStateTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
 
         // case 1: stateStore and key empty
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
         assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));
 
         // case 2: key empty
@@ -291,6 +299,7 @@ public class DaprStateTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     void testExecuteTransaction() throws Exception {
+        when(endpoint.getClient()).thenReturn(client);
         when(client.executeStateTransaction(any(ExecuteStateTransactionRequest.class))).thenReturn(Mono.empty());
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -305,8 +314,8 @@ public class DaprStateTest extends CamelTestSupport {
                 = List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
         exchange.getIn().setHeader(DaprConstants.TRANSACTIONS, transactions);
 
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
         ExecuteStateTransactionRequest executeRequest = (ExecuteStateTransactionRequest) operationResponse.getBody();
 
         assertNotNull(operationResponse);
@@ -324,7 +333,7 @@ public class DaprStateTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
 
         // case 1: stateStore and transactions empty
-        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy);
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
         assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));
 
         // case 2: transactions empty

@@ -22,19 +22,21 @@ import java.util.Map;
 import io.dapr.client.DaprClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.component.dapr.DaprOperation;
 
 public class DaprOperationManager {
     private final DaprConfigurationOptionsProxy configurationOptionsProxy;
     private final Map<DaprOperation, DaprOperationHandler> handlerMap = new EnumMap<>(DaprOperation.class);
 
-    public DaprOperationManager(DaprConfigurationOptionsProxy configurationOptionsProxy) {
+    public DaprOperationManager(DaprConfigurationOptionsProxy configurationOptionsProxy, DaprEndpoint endpoint) {
         this.configurationOptionsProxy = configurationOptionsProxy;
-        handlerMap.put(DaprOperation.invokeService, new DaprServiceInvocationHandler(configurationOptionsProxy));
-        handlerMap.put(DaprOperation.state, new DaprStateHandler(configurationOptionsProxy));
-        handlerMap.put(DaprOperation.pubSub, new DaprPubSubHandler(configurationOptionsProxy));
-        handlerMap.put(DaprOperation.invokeBinding, new DaprInvokeBindingHandler(configurationOptionsProxy));
-        handlerMap.put(DaprOperation.configuration, new DaprConfigurationHandler(configurationOptionsProxy));
+        handlerMap.put(DaprOperation.invokeService, new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint));
+        handlerMap.put(DaprOperation.state, new DaprStateHandler(configurationOptionsProxy, endpoint));
+        handlerMap.put(DaprOperation.pubSub, new DaprPubSubHandler(configurationOptionsProxy, endpoint));
+        handlerMap.put(DaprOperation.invokeBinding, new DaprInvokeBindingHandler(configurationOptionsProxy, endpoint));
+        handlerMap.put(DaprOperation.configuration, new DaprConfigurationHandler(configurationOptionsProxy, endpoint));
+        handlerMap.put(DaprOperation.lock, new DaprLockHandler(configurationOptionsProxy, endpoint));
     }
 
     public DaprOperationResponse process(Exchange exchange, DaprClient client) throws Exception {
@@ -47,6 +49,6 @@ public class DaprOperationManager {
 
         handler.validateConfiguration(exchange);
 
-        return handler.handle(exchange, client);
+        return handler.handle(exchange);
     }
 }

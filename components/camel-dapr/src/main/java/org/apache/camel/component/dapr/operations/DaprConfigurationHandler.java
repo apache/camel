@@ -24,18 +24,21 @@ import io.dapr.client.domain.ConfigurationItem;
 import io.dapr.client.domain.GetConfigurationRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 public class DaprConfigurationHandler implements DaprOperationHandler {
 
     private final DaprConfigurationOptionsProxy configurationOptionsProxy;
+    private final DaprEndpoint endpoint;
 
-    public DaprConfigurationHandler(DaprConfigurationOptionsProxy configurationOptionsProxy) {
+    public DaprConfigurationHandler(DaprConfigurationOptionsProxy configurationOptionsProxy, DaprEndpoint endpoint) {
         this.configurationOptionsProxy = configurationOptionsProxy;
+        this.endpoint = endpoint;
     }
 
     @Override
-    public DaprOperationResponse handle(Exchange exchange, DaprClient client) {
+    public DaprOperationResponse handle(Exchange exchange) {
         String configStore = configurationOptionsProxy.getConfigStore(exchange);
         List<String> configKeys = configurationOptionsProxy.getConfigKeysAsList(exchange);
         Map<String, String> metadata = configurationOptionsProxy.getMetadata(exchange);
@@ -43,6 +46,7 @@ public class DaprConfigurationHandler implements DaprOperationHandler {
         GetConfigurationRequest configRequest = new GetConfigurationRequest(configStore, configKeys);
         configRequest.setMetadata(metadata);
 
+        DaprClient client = endpoint.getClient();
         Map<String, ConfigurationItem> response = client.getConfiguration(configRequest).block();
 
         return DaprOperationResponse.createFromConfig(response);

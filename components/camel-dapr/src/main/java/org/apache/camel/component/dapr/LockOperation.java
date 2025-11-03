@@ -16,12 +16,7 @@
  */
 package org.apache.camel.component.dapr;
 
-public enum DaprOperation {
-    invokeService,
-    state,
-    pubSub,
-    invokeBinding,
-    secret,
-    configuration,
-    lock
+public enum LockOperation {
+    tryLock,
+    unlock
 }

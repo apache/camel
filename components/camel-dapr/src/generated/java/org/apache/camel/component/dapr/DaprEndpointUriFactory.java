@@ -23,10 +23,11 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(24);
+        Set<String> props = new HashSet<>(30);
         props.add("bindingName");
         props.add("bindingOperation");
         props.add("bridgeErrorHandler");
+        props.add("client");
         props.add("concurrency");
         props.add("configKeys");
         props.add("configStore");
@@ -35,17 +36,22 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("eTag");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("expiryInSeconds");
         props.add("httpExtension");
         props.add("key");
         props.add("lazyStartProducer");
+        props.add("lockOperation");
+        props.add("lockOwner");
         props.add("methodToInvoke");
         props.add("operation");
         props.add("previewClient");
         props.add("pubSubName");
+        props.add("resourceId");
         props.add("secretStore");
         props.add("serviceToInvoke");
         props.add("stateOperation");
         props.add("stateStore");
+        props.add("storeName");
         props.add("topic");
         props.add("verb");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);

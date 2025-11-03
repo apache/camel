@@ -145,6 +145,26 @@ public class DaprConfigurationOptionsProxy {
         return configuration.getConfigKeysAsList();
     }
 
+    public LockOperation getLockOperation(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getLockOperationFromHeaders, configuration::getLockOperation, exchange);
+    }
+
+    public String getStoreName(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getStoreNameFromHeaders, configuration::getStoreName, exchange);
+    }
+
+    public String getResourceId(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getResourceIdFromHeaders, configuration::getResourceId, exchange);
+    }
+
+    public String getLockOwner(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getLockOwnerFromHeaders, configuration::getLockOwner, exchange);
+    }
+
+    public Integer getExpiryInSeconds(final Exchange exchange) {
+        return getOption(DaprExchangeHeaders::getExpiryInSecondsFromHeaders, configuration::getExpiryInSeconds, exchange);
+    }
+
     private <R> R getOption(final Function<Exchange, R> exchangeFn, final Supplier<R> fallbackFn, final Exchange exchange) {
         // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
         return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(exchangeFn.apply(exchange))

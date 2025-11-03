@@ -20,6 +20,7 @@ import io.dapr.client.DaprClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfiguration;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.component.dapr.DaprOperation;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -43,11 +44,14 @@ public class DaprInvokeServiceTest extends CamelTestSupport {
 
     @Mock
     private DaprClient client;
+    @Mock
+    private DaprEndpoint endpoint;
 
     @Test
     void testInvokeService() throws Exception {
         final byte[] mockResponse = "hello".getBytes();
 
+        when(endpoint.getClient()).thenReturn(client);
         when(client.invokeMethod(anyString(), anyString(), any(Object.class), any(), eq(byte[].class)))
                 .thenReturn(Mono.just(mockResponse));
 
@@ -60,8 +64,8 @@ public class DaprInvokeServiceTest extends CamelTestSupport {
         final Exchange exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("myBody");
 
-        final DaprServiceInvocationHandler operation = new DaprServiceInvocationHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprServiceInvocationHandler operation = new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
 
         assertNotNull(operationResponse);
         assertEquals(mockResponse, operationResponse.getBody());
@@ -77,7 +81,7 @@ public class DaprInvokeServiceTest extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
 
-        final DaprServiceInvocationHandler operation = new DaprServiceInvocationHandler(configurationOptionsProxy);
+        final DaprServiceInvocationHandler operation = new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint);
         assertDoesNotThrow(() -> operation.validateConfiguration(exchange));
     }
 
@@ -91,7 +95,7 @@ public class DaprInvokeServiceTest extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
 
-        final DaprServiceInvocationHandler operation = new DaprServiceInvocationHandler(configurationOptionsProxy);
+        final DaprServiceInvocationHandler operation = new DaprServiceInvocationHandler(configurationOptionsProxy, endpoint);
         Exception ex = assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));
 
         assertEquals("serviceToInvoke and methodToInvoke are mandatory to invoke a service", ex.getMessage());

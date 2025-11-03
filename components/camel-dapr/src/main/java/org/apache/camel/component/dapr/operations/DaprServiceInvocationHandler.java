@@ -24,23 +24,27 @@ import io.dapr.client.DaprHttp;
 import io.dapr.client.domain.HttpExtension;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 public class DaprServiceInvocationHandler implements DaprOperationHandler {
 
     private final DaprConfigurationOptionsProxy configurationOptionsProxy;
+    private final DaprEndpoint endpoint;
 
-    public DaprServiceInvocationHandler(DaprConfigurationOptionsProxy configurationOptionsProxy) {
+    public DaprServiceInvocationHandler(DaprConfigurationOptionsProxy configurationOptionsProxy, DaprEndpoint endpoint) {
         this.configurationOptionsProxy = configurationOptionsProxy;
+        this.endpoint = endpoint;
     }
 
     @Override
-    public DaprOperationResponse handle(Exchange exchange, DaprClient client) {
+    public DaprOperationResponse handle(Exchange exchange) {
         Object payload = exchange.getIn().getBody();
         HttpExtension httpExtension = initHttpExtension(exchange);
         String service = configurationOptionsProxy.getServiceToInvoke(exchange);
         String method = configurationOptionsProxy.getMethodToInvoke(exchange);
 
+        DaprClient client = endpoint.getClient();
         final byte[] response = client.invokeMethod(service, method, payload, httpExtension, byte[].class).block();
 
         return DaprOperationResponse.create(response);

@@ -24,6 +24,7 @@ import io.dapr.client.domain.GetSecretRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dapr.DaprConfiguration;
 import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
+import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.component.dapr.DaprOperation;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -45,11 +46,14 @@ public class DaprSecretTest extends CamelTestSupport {
 
     @Mock
     private DaprClient client;
+    @Mock
+    private DaprEndpoint endpoint;
 
     @Test
     void testGetSecret() throws Exception {
         final Map<String, String> mockResponse = Map.of("myKey", "myVal");
 
+        when(endpoint.getClient()).thenReturn(client);
         when(client.getSecret(any(GetSecretRequest.class))).thenReturn(Mono.just(mockResponse));
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -60,8 +64,8 @@ public class DaprSecretTest extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
 
-        final DaprSecretHandler operation = new DaprSecretHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprSecretHandler operation = new DaprSecretHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
 
         assertNotNull(operationResponse);
         assertEquals(mockResponse, operationResponse.getBody());
@@ -72,6 +76,7 @@ public class DaprSecretTest extends CamelTestSupport {
         final Map<String, Map<String, String>> mockResponse = Map.of("secretKey1", Map.of("myKey1", "myVal1"),
                 "secretKey2", Map.of("myKey2", "myVal2"));
 
+        when(endpoint.getClient()).thenReturn(client);
         when(client.getBulkSecret(any(GetBulkSecretRequest.class))).thenReturn(Mono.just(mockResponse));
 
         DaprConfiguration configuration = new DaprConfiguration();
@@ -81,8 +86,8 @@ public class DaprSecretTest extends CamelTestSupport {
 
         final Exchange exchange = new DefaultExchange(context);
 
-        final DaprSecretHandler operation = new DaprSecretHandler(configurationOptionsProxy);
-        final DaprOperationResponse operationResponse = operation.handle(exchange, client);
+        final DaprSecretHandler operation = new DaprSecretHandler(configurationOptionsProxy, endpoint);
+        final DaprOperationResponse operationResponse = operation.handle(exchange);
 
         assertNotNull(operationResponse);
         assertEquals(mockResponse, operationResponse.getBody());
@@ -95,7 +100,7 @@ public class DaprSecretTest extends CamelTestSupport {
         DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
 
         final Exchange exchange = new DefaultExchange(context);
-        final DaprSecretHandler operation = new DaprSecretHandler(configurationOptionsProxy);
+        final DaprSecretHandler operation = new DaprSecretHandler(configurationOptionsProxy, endpoint);
 
         // case 1: secretStore is empty
         assertThrows(IllegalArgumentException.class, () -> operation.validateConfiguration(exchange));

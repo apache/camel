@@ -51,6 +51,22 @@ public interface DaprComponentBuilderFactory {
     interface DaprComponentBuilder extends ComponentBuilder<DaprComponent> {
     
         /**
+         * The Dapr Client.
+         * 
+         * The option is a: &lt;code&gt;io.dapr.client.DaprClient&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder client(io.dapr.client.DaprClient client) {
+            doSetProperty("client", client);
+            return this;
+        }
+    
+        /**
          * List of keys for configuration operation.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -174,7 +190,7 @@ public interface DaprComponentBuilderFactory {
         }
     
         /**
-         * The client to consume messages by the consumer.
+         * The Dapr Preview Cliet.
          * 
          * The option is a:
          * &lt;code&gt;io.dapr.client.DaprPreviewClient&lt;/code&gt; type.
@@ -268,6 +284,21 @@ public interface DaprComponentBuilderFactory {
         }
     
         /**
+         * The expiry time in seconds for the lock.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param expiryInSeconds the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder expiryInSeconds(java.lang.Integer expiryInSeconds) {
+            doSetProperty("expiryInSeconds", expiryInSeconds);
+            return this;
+        }
+    
+        /**
          * HTTP method to use when invoking the service. Accepts verbs like GET,
          * POST, PUT, DELETE, etc. Creates a minimal HttpExtension with no
          * headers or query params. Takes precedence over verb.
@@ -326,6 +357,40 @@ public interface DaprComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The lock operation to perform on the store. Required for
+         * DaprOperation.lock operation.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.dapr.LockOperation&lt;/code&gt; type.
+         * 
+         * Default: tryLock
+         * Group: producer
+         * 
+         * @param lockOperation the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder lockOperation(org.apache.camel.component.dapr.LockOperation lockOperation) {
+            doSetProperty("lockOperation", lockOperation);
+            return this;
+        }
+    
+        /**
+         * The lock owner identifier for the lock.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param lockOwner the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder lockOwner(java.lang.String lockOwner) {
+            doSetProperty("lockOwner", lockOwner);
+            return this;
+        }
+    
         /**
          * The name of the method or route to invoke on the target service.
          * 
@@ -338,6 +403,21 @@ public interface DaprComponentBuilderFactory {
          */
         default DaprComponentBuilder methodToInvoke(java.lang.String methodToInvoke) {
             doSetProperty("methodToInvoke", methodToInvoke);
+            return this;
+        }
+    
+        /**
+         * The resource Id for the lock.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param resourceId the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder resourceId(java.lang.String resourceId) {
+            doSetProperty("resourceId", resourceId);
             return this;
         }
     
@@ -408,6 +488,21 @@ public interface DaprComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The lock store name.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param storeName the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder storeName(java.lang.String storeName) {
+            doSetProperty("storeName", storeName);
+            return this;
+        }
+    
         
         /**
          * The HTTP verb to use for invoking the method.
@@ -467,6 +562,7 @@ public interface DaprComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "client": getOrCreateConfiguration((DaprComponent) component).setClient((io.dapr.client.DaprClient) value); return true;
             case "configKeys": getOrCreateConfiguration((DaprComponent) component).setConfigKeys((java.lang.String) value); return true;
             case "configStore": getOrCreateConfiguration((DaprComponent) component).setConfigStore((java.lang.String) value); return true;
             case "configuration": ((DaprComponent) component).setConfiguration((org.apache.camel.component.dapr.DaprConfiguration) value); return true;
@@ -480,14 +576,19 @@ public interface DaprComponentBuilderFactory {
             case "concurrency": getOrCreateConfiguration((DaprComponent) component).setConcurrency((io.dapr.client.domain.StateOptions.Concurrency) value); return true;
             case "consistency": getOrCreateConfiguration((DaprComponent) component).setConsistency((io.dapr.client.domain.StateOptions.Consistency) value); return true;
             case "eTag": getOrCreateConfiguration((DaprComponent) component).setETag((java.lang.String) value); return true;
+            case "expiryInSeconds": getOrCreateConfiguration((DaprComponent) component).setExpiryInSeconds((java.lang.Integer) value); return true;
             case "httpExtension": getOrCreateConfiguration((DaprComponent) component).setHttpExtension((io.dapr.client.domain.HttpExtension) value); return true;
             case "key": getOrCreateConfiguration((DaprComponent) component).setKey((java.lang.String) value); return true;
             case "lazyStartProducer": ((DaprComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "lockOperation": getOrCreateConfiguration((DaprComponent) component).setLockOperation((org.apache.camel.component.dapr.LockOperation) value); return true;
+            case "lockOwner": getOrCreateConfiguration((DaprComponent) component).setLockOwner((java.lang.String) value); return true;
             case "methodToInvoke": getOrCreateConfiguration((DaprComponent) component).setMethodToInvoke((java.lang.String) value); return true;
+            case "resourceId": getOrCreateConfiguration((DaprComponent) component).setResourceId((java.lang.String) value); return true;
             case "secretStore": getOrCreateConfiguration((DaprComponent) component).setSecretStore((java.lang.String) value); return true;
             case "serviceToInvoke": getOrCreateConfiguration((DaprComponent) component).setServiceToInvoke((java.lang.String) value); return true;
             case "stateOperation": getOrCreateConfiguration((DaprComponent) component).setStateOperation((org.apache.camel.component.dapr.StateOperation) value); return true;
             case "stateStore": getOrCreateConfiguration((DaprComponent) component).setStateStore((java.lang.String) value); return true;
+            case "storeName": getOrCreateConfiguration((DaprComponent) component).setStoreName((java.lang.String) value); return true;
             case "verb": getOrCreateConfiguration((DaprComponent) component).setVerb((java.lang.String) value); return true;
             case "autowiredEnabled": ((DaprComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
