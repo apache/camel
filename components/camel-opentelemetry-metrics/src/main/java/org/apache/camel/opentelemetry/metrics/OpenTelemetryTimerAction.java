@@ -14,29 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry;
+package org.apache.camel.opentelemetry.metrics;
 
-import java.util.concurrent.TimeUnit;
-
-public class TaskTimer {
-    private long startTime;
-
-    public TaskTimer() {
-        startTime = System.nanoTime();
-    }
-
-    public long getStartTime() {
-        return startTime;
-    }
-
-    public long duration(TimeUnit unit) {
-        if (startTime > 0) {
-            return unit.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
-        }
-        return 0;
-    }
-
-    public void stop() {
-        startTime = 0;
-    }
+public enum OpenTelemetryTimerAction {
+    START,
+    STOP
 }

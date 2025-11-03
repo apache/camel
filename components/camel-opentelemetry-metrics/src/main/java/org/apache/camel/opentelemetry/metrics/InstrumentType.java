@@ -14,9 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry;
+package org.apache.camel.opentelemetry.metrics;
 
-public enum OpenTelemetryTimerAction {
-    START,
-    STOP
+import org.apache.camel.RuntimeCamelException;
+
+public enum InstrumentType {
+    COUNTER("counter"),
+    TIMER("timer"),
+    DISTRIBUTION_SUMMARY("summary");
+
+    InstrumentType(String name) {
+        this.name = name;
+    }
+
+    private final String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public static InstrumentType getByName(String name) {
+        for (InstrumentType type : values()) {
+            if (type.name.equalsIgnoreCase(name)) {
+                return type;
+            }
+        }
+        throw new RuntimeCamelException("Unsupported instrument type " + name);
+    }
 }

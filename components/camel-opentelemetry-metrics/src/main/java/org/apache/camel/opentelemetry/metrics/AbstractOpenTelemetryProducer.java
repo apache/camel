@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry;
+package org.apache.camel.opentelemetry.metrics;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,11 +29,11 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.opentelemetry.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
-import static org.apache.camel.opentelemetry.OpenTelemetryConstants.HEADER_METRIC_ATTRIBUTES;
-import static org.apache.camel.opentelemetry.OpenTelemetryConstants.HEADER_METRIC_DESCRIPTION;
-import static org.apache.camel.opentelemetry.OpenTelemetryConstants.HEADER_METRIC_NAME;
-import static org.apache.camel.opentelemetry.OpenTelemetryConstants.HEADER_PREFIX;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.CAMEL_CONTEXT_ATTRIBUTE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_ATTRIBUTES;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_DESCRIPTION;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_PREFIX;
 
 abstract public class AbstractOpenTelemetryProducer<T> extends DefaultProducer {
 

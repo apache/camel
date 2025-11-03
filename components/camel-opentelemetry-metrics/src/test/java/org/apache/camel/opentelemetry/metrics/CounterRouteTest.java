@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentelemetry;
+package org.apache.camel.opentelemetry.metrics;
 
 import java.util.Collection;
 
@@ -30,10 +30,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.opentelemetry.OpenTelemetryConstants.HEADER_COUNTER_DECREMENT;
-import static org.apache.camel.opentelemetry.OpenTelemetryConstants.HEADER_COUNTER_INCREMENT;
-import static org.apache.camel.opentelemetry.OpenTelemetryConstants.HEADER_METRIC_ATTRIBUTES;
-import static org.apache.camel.opentelemetry.OpenTelemetryConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_COUNTER_DECREMENT;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_COUNTER_INCREMENT;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_ATTRIBUTES;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
