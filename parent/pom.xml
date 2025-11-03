@@ -325,7 +325,7 @@
         <javax-json-api-version>1.1.4</javax-json-api-version>
         <jsonschema-generator-version>4.38.0</jsonschema-generator-version>
         <jsonassert-version>1.5.3</jsonassert-version>
-        <json-path-version>2.9.0</json-path-version>
+        <json-path-version>2.10.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
         <json-smart-version>2.6.0</json-smart-version>
         <jsonata-version>0.9.9</jsonata-version>
