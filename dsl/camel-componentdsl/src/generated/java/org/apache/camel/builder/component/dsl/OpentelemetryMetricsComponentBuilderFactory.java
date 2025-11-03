@@ -21,7 +21,7 @@ import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.opentelemetry.OpenTelemetryComponent;
+import org.apache.camel.opentelemetry.metrics.OpenTelemetryComponent;
 
 /**
  * Camel metrics based on the Camel Telemetry spec
