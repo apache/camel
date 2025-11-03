@@ -4,7 +4,7 @@
     "name": "aws-xray",
     "title": "AWS XRay",
     "description": "Enable Distributed tracing using AWS XRay",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.21.0",
     "label": "monitoring,microservice",
     "supportLevel": "Stable",

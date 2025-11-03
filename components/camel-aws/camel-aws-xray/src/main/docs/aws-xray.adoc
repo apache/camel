@@ -1,10 +1,11 @@
-= AWS XRay Component
+= AWS XRay Component (deprecated)
 :doctitle: AWS XRay
 :shortname: aws-xray
 :artifactid: camel-aws-xray
 :description: Enable Distributed tracing using AWS XRay
 :since: 2.21
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: aws-xray
@@ -15,6 +16,8 @@ The camel-aws-xray component is used for tracing and timing incoming and outgoin
 
 Events (subsegments) are captured for incoming and outgoing messages being sent to/from Camel.
 
+NOTE: https://aws.amazon.com/blogs/mt/announcing-aws-x-ray-sdks-daemon-end-of-support-and-opentelemetry-migration/[Amazon has announced]
+that AWS XRay is deprecated and will be EOL in 2027
 
 == Configuration
 
