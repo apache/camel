@@ -14,31 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.metrics;
+package org.apache.camel.opentelemetry;
 
-import org.apache.camel.RuntimeCamelException;
+import java.util.concurrent.TimeUnit;
 
-public enum InstrumentType {
-    COUNTER("counter"),
-    TIMER("timer"),
-    DISTRIBUTION_SUMMARY("summary");
+public class TaskTimer {
+    private long startTime;
 
-    InstrumentType(String name) {
-        this.name = name;
+    public TaskTimer() {
+        startTime = System.nanoTime();
     }
 
-    private final String name;
-
-    public String getName() {
-        return name;
+    public long getStartTime() {
+        return startTime;
     }
 
-    public static InstrumentType getByName(String name) {
-        for (InstrumentType type : values()) {
-            if (type.name.equalsIgnoreCase(name)) {
-                return type;
-            }
+    public long duration(TimeUnit unit) {
+        if (startTime > 0) {
+            return unit.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
         }
-        throw new RuntimeCamelException("Unsupported instrument type " + name);
+        return 0;
+    }
+
+    public void stop() {
+        startTime = 0;
     }
 }

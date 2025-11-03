@@ -14,12 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.metrics;
+package org.apache.camel.opentelemetry;
 
 import io.opentelemetry.api.metrics.Meter;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,24 +28,18 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 @ExtendWith(MockitoExtension.class)
-public class OpenTelemetryEndpointTest {
+public class TimerEndpointTest {
 
     private static final String METRICS_NAME = "metrics.name";
 
     @Mock
     private Meter meter;
-
-    @Mock
-    private Processor processor;
-
-    @Mock
-    private Exchange exchange;
-
-    @Mock
-    private Message in;
 
     private OpenTelemetryEndpoint endpoint;
 
@@ -56,18 +47,8 @@ public class OpenTelemetryEndpointTest {
 
     @BeforeEach
     public void setUp() {
-        endpoint = new OpenTelemetryEndpoint(null, null, meter, InstrumentType.COUNTER, METRICS_NAME) {
-            @Override
-            public Producer createProducer() {
-                return null;
-            }
-
-            @Override
-            protected String createEndpointUri() {
-                return "not real endpoint";
-            }
-        };
-        inOrder = Mockito.inOrder(meter, processor, exchange, in);
+        endpoint = new OpenTelemetryEndpoint(null, null, meter, InstrumentType.TIMER, METRICS_NAME);
+        inOrder = Mockito.inOrder(meter);
     }
 
     @AfterEach
@@ -76,23 +57,28 @@ public class OpenTelemetryEndpointTest {
     }
 
     @Test
-    public void testAbstractMetricsEndpoint() {
-        assertThat(endpoint.getMetricName(), is(METRICS_NAME));
+    public void testTimerEndpoint() {
+        assertThat(endpoint, is(notNullValue()));
         assertThat(endpoint.getMeter(), is(meter));
-    }
-
-    @Test
-    public void testIsSingleton() {
-        assertThat(endpoint.isSingleton(), is(true));
-    }
-
-    @Test
-    public void testGetRegistry() {
-        assertThat(endpoint.getMeter(), is(meter));
-    }
-
-    @Test
-    public void testGetMetricsName() {
         assertThat(endpoint.getMetricName(), is(METRICS_NAME));
+    }
+
+    @Test
+    public void testCreateProducer() {
+        Producer producer = endpoint.createProducer();
+        assertThat(producer, is(notNullValue()));
+        assertThat(producer, is(instanceOf(TimerProducer.class)));
+    }
+
+    @Test
+    public void testGetAction() {
+        assertThat(endpoint.getAction(), is(nullValue()));
+    }
+
+    @Test
+    public void testSetAction() {
+        assertThat(endpoint.getAction(), is(nullValue()));
+        endpoint.setAction(OpenTelemetryTimerAction.START.name());
+        assertThat(OpenTelemetryTimerAction.valueOf(endpoint.getAction()), is(OpenTelemetryTimerAction.START));
     }
 }

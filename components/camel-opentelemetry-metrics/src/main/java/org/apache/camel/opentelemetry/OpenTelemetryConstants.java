@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.metrics;
+package org.apache.camel.opentelemetry;
 
 import org.apache.camel.spi.Metadata;
 

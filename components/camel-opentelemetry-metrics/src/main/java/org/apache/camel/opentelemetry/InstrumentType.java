@@ -14,31 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.metrics.integration;
+package org.apache.camel.opentelemetry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.LogRecord;
+import org.apache.camel.RuntimeCamelException;
 
-public class MemoryLogHandler extends ConsoleHandler {
-    private List<LogRecord> logs = new ArrayList<>();
+public enum InstrumentType {
+    COUNTER("counter"),
+    TIMER("timer"),
+    DISTRIBUTION_SUMMARY("summary");
 
-    public MemoryLogHandler() {
-        super();
+    InstrumentType(String name) {
+        this.name = name;
     }
 
-    public boolean hasLogs() {
-        return !logs.isEmpty();
+    private final String name;
+
+    public String getName() {
+        return name;
     }
 
-    public List<LogRecord> getLogs() {
-        return new ArrayList<>(logs);
-    }
-
-    @Override
-    public void publish(LogRecord record) {
-        super.publish(record);
-        logs.add(record);
+    public static InstrumentType getByName(String name) {
+        for (InstrumentType type : values()) {
+            if (type.name.equalsIgnoreCase(name)) {
+                return type;
+            }
+        }
+        throw new RuntimeCamelException("Unsupported instrument type " + name);
     }
 }
