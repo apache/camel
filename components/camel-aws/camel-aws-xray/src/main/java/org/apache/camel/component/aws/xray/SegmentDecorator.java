@@ -24,6 +24,7 @@ import org.apache.camel.component.aws.xray.decorators.AbstractSegmentDecorator;
 /**
  * This interface represents a decorator specific to the component/endpoint being instrumented.
  */
+@Deprecated
 public interface SegmentDecorator {
 
     /* Prefix for camel component tag */

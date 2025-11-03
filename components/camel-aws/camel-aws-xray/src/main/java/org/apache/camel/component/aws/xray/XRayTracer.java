@@ -69,6 +69,7 @@ import org.slf4j.LoggerFactory;
  * {@link #addExcludePattern(String)} and {@link #setExcludePatterns(Set)} can be used to provide the <em>routeId</em>
  * of the routes to exclude from monitoring.
  */
+@Deprecated
 public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
 
     /** Header value kept in the message of the exchange **/

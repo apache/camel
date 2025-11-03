@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.aws.xray.XRayTracer.sanitizeName;
 
+@Deprecated
 public class TraceAnnotatedTracingStrategy implements InterceptStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

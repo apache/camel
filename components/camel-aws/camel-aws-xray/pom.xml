@@ -29,7 +29,7 @@
     <artifactId>camel-aws-xray</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: AWS :: XRay</name>
+    <name>Camel :: AWS :: XRay (deprecated)</name>
     <description>Enable Distributed tracing using AWS XRay</description>
 
     <properties>
