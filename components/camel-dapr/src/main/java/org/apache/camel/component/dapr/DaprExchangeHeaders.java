@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dapr;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -150,6 +152,42 @@ public class DaprExchangeHeaders {
 
     public static Integer getExpiryInSecondsFromHeaders(final Exchange exchange) {
         return getObjectFromHeaders(exchange, DaprConstants.EXPIRY_IN_SECONDS, Integer.class);
+    }
+
+    public static WorkflowOperation getWorkflowOperationFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.WORKFLOW_OPERATION, WorkflowOperation.class);
+    }
+
+    public static String getWorkflowClassFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.WORKFLOW_CLASS, String.class);
+    }
+
+    public static String getWorkflowVersionFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.WORKFLOW_VERSION, String.class);
+    }
+
+    public static String getWorkflowInstanceIdFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.WORKFLOW_INSTANCE_ID, String.class);
+    }
+
+    public static Instant getWorkflowStartTimeFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.WORKFLOW_START_TIME, Instant.class);
+    }
+
+    public static String getReasonFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.REASON, String.class);
+    }
+
+    public static boolean getWorkflowIOFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.GET_WORKFLOW_IO, boolean.class);
+    }
+
+    public static Duration getTimeoutFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.GET_WORKFLOW_IO, Duration.class);
+    }
+
+    public static String getEventNameFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DaprConstants.EVENT_NAME, String.class);
     }
 
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {

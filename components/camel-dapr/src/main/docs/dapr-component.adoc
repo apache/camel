@@ -87,6 +87,24 @@ Lock management in Dapr allows your application to coordinate access to shared r
 |`unlock` |Releases a previously acquired lock. Returns an `UnlockResponseStatus` enum indicating whether the lock was successfully released.
 |===
 
+=== 7. *workflow*:
+Dapr Workflows enable developers to write long-running, persistent, and reliable processes as code. Dapr Workflow simplifies complex, stateful coordination requirements in microservice architectures. 
+
+==== Workflow Operations
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Operation |Description
+|`scheduleNew` |Schedules a new workflow instance to be created. Requires `workflowClass` and optional `workflowVersion`, `workflowInstanceId`, `workflowStartTime`. The message body is used as the workflow input.
+|`terminate` |Terminates a running workflow instance. Requires `workflowInstanceId`. The message body can be used to provide an output for the terminated workflow.
+|`purge` |Purges the metadata of a workflow instance from the state store. Requires `workflowInstanceId`.
+|`suspend` |Suspends a running workflow instance. Requires `workflowInstanceId` and a `reason`.
+|`resume` |Resumes a suspended workflow instance. Requires `workflowInstanceId` and a `reason`.
+|`state` |Gets the current runtime state of a workflow instance. Requires `workflowInstanceId`.
+|`waitForInstanceStart` |Waits for a workflow instance to start running. Requires `workflowInstanceId` and a `timeout`.
+|`waitForInstanceCompletion` |Waits for a workflow instance to complete. Requires `workflowInstanceId` and a `timeout`.
+|`raiseEvent` |Sends an event to a running workflow instance that is waiting for it. Requires `workflowInstanceId` and `eventName`. The message body is used as the event payload.
+|===
+
 === Dapr Consumer operations
 
 === 1. *pubSub*:
@@ -305,6 +323,148 @@ from("direct:start")
     exchange.getIn().setHeader(DaprConstants.STORE_NAME, "myStore");
   })
   .to("dapr:lock?lockOperation=unlock&storeName=myStore")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `workflow: scheduleNew` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .setBody(input)
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.WORKFLOW_CLASS, "my.package.MyWorkflow");
+  })
+  .to("dapr:workflow?workflowOperation=scheduleNew")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `workflow: terminate` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .setBody(ouput)
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
+  })
+  .to("dapr:workflow?workflowOperation=terminate")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `workflow: purge` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
+  })
+  .to("dapr:workflow?workflowOperation=purge")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `workflow: suspend` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
+    exchange.getIn().setHeader(DaprConstants.REASON, "Suspended for maintenance.");
+  })
+  .to("dapr:workflow?workflowOperation=suspend")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `workflow: resume` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
+    exchange.getIn().setHeader(DaprConstants.REASON, "Maintenance complete.");
+  })
+  .to("dapr:workflow?workflowOperation=resume")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `workflow: state` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
+  })
+  .to("dapr:workflow?workflowOperation=state")
+  .log("Workflow state: ${body}")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `workflow: waitForInstanceStart` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
+    exchange.getIn().setHeader(DaprConstants.TIMEOUT, Duration.ofSeconds(30));
+  })
+  .to("dapr:workflow?workflowOperation=waitForInstanceStart")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `workflow: waitForInstanceCompletion` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
+    exchange.getIn().setHeader(DaprConstants.TIMEOUT, Duration.ofSeconds(30));
+  })
+  .to("dapr:workflow?workflowOperation=waitForInstanceCompletion")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- `workflow: raiseEvent` -
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .process(exchange -> {
+    // set the header you want the producer to evaluate, refer to the previous
+    // section to learn about the headers that can be set
+    // e.g.:
+    exchange.getIn().setHeader(DaprConstants.WORKFLOW_INSTANCE_ID, "myWorkflowInstanceId");
+  })
+  .to("dapr:workflow?workflowOperation=raiseEvent&eventName=MyEvent")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
