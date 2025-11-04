@@ -30,19 +30,20 @@ detect_changed_properties() {
 
 find_affected_modules() {
   local property_name="$1"
-
+  local mavenBinary=${2}
   local affected=()
+
   while IFS= read -r pom; do
     if grep -q "\${${property_name}}" "$pom"; then
-      affected+=("$(dirname "$pom")")
+      affected+=("$pom")
     fi
   done < <(find . -name "pom.xml")
 
   affected_transformed=""
 
-  for dir in "${affected[@]}"; do
-      base=$(basename "$dir")
-      affected_transformed+=":$base,"
+  for pom in "${affected[@]}"; do
+      artifactId=$($mavenBinary -f "$pom" help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+      affected_transformed+=":$artifactId,"
   done
 
   echo "$affected_transformed"
@@ -66,7 +67,7 @@ main() {
   modules_affected=""
 
   while read -r prop; do
-    modules=$(find_affected_modules "$prop")
+    modules=$(find_affected_modules "$prop" $mavenBinary)
     modules_affected+="$modules"
   done <<< "$changed_props"
 
