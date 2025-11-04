@@ -168,7 +168,7 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
         assertThat(result.getException()).isNull();
 
         assertThat(result.getIn().getBody()).isInstanceOfSatisfying(SearchResponse.class,
-                c -> assertThat(c.rowRecords.size() == 1));
+                c -> assertThat(c.getRowRecords().size() == 1));
     }
 
     @Test

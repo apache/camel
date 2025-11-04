@@ -356,10 +356,6 @@
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.24.3</log4j2-version>
         <logback-version>1.5.20</logback-version>
-        <!-- This is exclusively required in camel-milvus as the dependency is leaking a build time annotation
-            TODO: remove when this issue is solved https://github.com/milvus-io/milvus-sdk-java/issues/1651
-        -->
-        <lombok-version>1.18.42</lombok-version>
         <lucene-version>9.12.0</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.4.6</littleproxy-version>
@@ -394,7 +390,7 @@
         <micrometer-tracing-version>1.5.5</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <milo-version>1.0.8</milo-version>
-        <milvus-client-version>2.6.6</milvus-client-version>
+        <milvus-client-version>2.6.7</milvus-client-version>
         <mina-version>2.2.4</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
