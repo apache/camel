@@ -1439,7 +1439,7 @@ public class Run extends CamelCommand {
             jbangArgs.add("-Dcamel.jbang.version=" + camelVersion);
         }
         if (kameletsVersion != null) {
-            jbangArgs.add("-Dcamel-kamelets.version=" + kameletsVersion);
+            jbangArgs.add("--kamelets-version=" + kameletsVersion);
         }
         // tooling may signal to run JMX debugger in suspended mode via JVM system property
         // which we must include in args as well
