@@ -1333,8 +1333,10 @@ public class AggregateProcessor extends BaseProcessorSupport
 
         @Override
         public void run() {
-            // only run if CamelContext has been fully started
-            if (!camelContext.getStatus().isStarted()) {
+            // only run if CamelContext has been fully started or is stopping (when completeAllOnStop is enabled)
+            boolean allow = camelContext.getStatus().isStarted()
+                    || (completeAllOnStop && camelContext.getStatus().isStopping());
+            if (!allow) {
                 LOG.trace("Completion interval task cannot start due CamelContext({}) has not been started yet",
                         camelContext.getName());
                 return;
