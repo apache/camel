@@ -205,7 +205,7 @@
         <google-api-services-mail-version>v1-rev20250630-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
         <google-cloud-bigquery-version>2.55.3</google-cloud-bigquery-version>
-        <google-cloud-core-version>2.61.0</google-cloud-core-version>
+        <google-cloud-core-version>2.62.0</google-cloud-core-version>
         <google-cloud-functions-version>2.69.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.0.2</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.143.0</google-cloud-pubsub-version>
