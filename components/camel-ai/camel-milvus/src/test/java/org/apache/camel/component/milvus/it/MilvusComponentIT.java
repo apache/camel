@@ -204,7 +204,7 @@ public class MilvusComponentIT extends MilvusTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(result.getMessage().getBody(SearchResponse.class).rowRecords.size() == 2);
+        assertThat(result.getMessage().getBody(SearchResponse.class).getRowRecords().size() == 2);
     }
 
     @Test
@@ -263,7 +263,7 @@ public class MilvusComponentIT extends MilvusTestSupport {
 
         assertThat(result).isNotNull();
         assertThat(result.getException()).isNull();
-        assertThat(result.getMessage().getBody(SearchResponse.class).rowRecords.size() == 0);
+        assertThat(result.getMessage().getBody(SearchResponse.class).getRowRecords().size() == 0);
     }
 
     private List<List<Float>> generateFloatVectors(int count) {
