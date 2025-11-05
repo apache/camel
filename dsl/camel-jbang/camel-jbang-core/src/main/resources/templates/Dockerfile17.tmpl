@@ -82,7 +82,7 @@
 # when running the container
 #
 ###
-FROM registry.access.redhat.com/ubi8/openjdk-17:1.21
+FROM registry.access.redhat.com/ubi8/openjdk-17:1.23
 
 COPY --chown=185 target/{{ .AppJar }} /deployments/
 
