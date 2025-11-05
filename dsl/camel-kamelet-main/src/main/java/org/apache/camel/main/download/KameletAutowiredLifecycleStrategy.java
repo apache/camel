@@ -74,10 +74,8 @@ public class KameletAutowiredLifecycleStrategy extends MainAutowiredLifecycleStr
             return false;
         } else {
             // is the component stubbed, then it should not autowire
-            for (String n : stubPattern.split(",")) {
-                if (PatternHelper.matchPattern(n, stubPattern)) {
-                    return false;
-                }
+            if (PatternHelper.matchPatterns(name, stubPattern.split(","))) {
+                return false;
             }
         }
         return true;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main.download;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -25,6 +26,7 @@ import org.apache.camel.impl.engine.DefaultLanguageResolver;
 import org.apache.camel.main.stub.StubLanguage;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.model.LanguageModel;
 
 /**
@@ -32,8 +34,9 @@ import org.apache.camel.tooling.model.LanguageModel;
  */
 public final class DependencyDownloaderLanguageResolver extends DefaultLanguageResolver {
 
-    private static final String ACCEPTED_STUB_NAMES
-            = "constant,exchangeProperty,header,ref,simple,variable";
+    private static final String[] ACCEPTED_STUB_NAMES = new String[] {
+            "constant", "exchangeProperty", "header", "ref", "simple", "variable"
+    };
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final DependencyDownloader downloader;
@@ -87,7 +90,12 @@ public final class DependencyDownloaderLanguageResolver extends DefaultLanguageR
         }
 
         // we are stubbing but need to accept the following
-        return ACCEPTED_STUB_NAMES.contains(name);
+        if (Arrays.asList(ACCEPTED_STUB_NAMES).contains(name)) {
+            return true;
+        }
+
+        boolean stubbed = PatternHelper.matchPatterns(name, stubPattern.split(","));
+        return !stubbed;
     }
 
 }

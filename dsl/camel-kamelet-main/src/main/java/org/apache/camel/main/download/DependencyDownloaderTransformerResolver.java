@@ -26,6 +26,7 @@ import org.apache.camel.main.stub.StubTransformer;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.model.TransformerModel;
 
 /**
@@ -80,8 +81,9 @@ public final class DependencyDownloaderTransformerResolver extends DefaultTransf
         if (stubPattern == null) {
             return true;
         }
-        // we are stubbing
-        return false;
+
+        boolean stubbed = PatternHelper.matchPatterns(name, stubPattern.split(","));
+        return !stubbed;
     }
 
 }
