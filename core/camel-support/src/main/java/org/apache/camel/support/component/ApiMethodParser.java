@@ -330,7 +330,7 @@ public abstract class ApiMethodParser<T> {
         try {
             return forName(className, classLoader);
         } catch (ClassNotFoundException e1) {
-            throw new IllegalArgumentException("Error loading class " + className);
+            throw new IllegalArgumentException("Error loading class " + className, e1);
         }
     }
 

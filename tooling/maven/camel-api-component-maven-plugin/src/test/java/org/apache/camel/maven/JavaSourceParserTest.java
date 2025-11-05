@@ -29,7 +29,7 @@ public class JavaSourceParserTest {
 
     @Test
     public void testGetMethodsAddress() throws Exception {
-        final JavaSourceParser parser = new JavaSourceParser();
+        final JavaSourceParser parser = new JavaSourceParser(this.getClass().getClassLoader());
 
         parser.parse(JavaSourceParserTest.class.getResourceAsStream("/AddressGateway.java"), null);
         assertEquals(4, parser.getMethodSignatures().size());
@@ -44,7 +44,7 @@ public class JavaSourceParserTest {
 
     @Test
     public void testGetMethodsCustomer() throws Exception {
-        final JavaSourceParser parser = new JavaSourceParser();
+        final JavaSourceParser parser = new JavaSourceParser(this.getClass().getClassLoader());
 
         parser.parse(JavaSourceParserTest.class.getResourceAsStream("/CustomerGateway.java"), null);
         assertEquals(7, parser.getMethodSignatures().size());
@@ -58,7 +58,7 @@ public class JavaSourceParserTest {
 
     @Test
     public void testGetMethodsDispute() throws Exception {
-        final JavaSourceParser parser = new JavaSourceParser();
+        final JavaSourceParser parser = new JavaSourceParser(this.getClass().getClassLoader());
 
         parser.parse(JavaSourceParserTest.class.getResourceAsStream("/DisputeGateway.java"), null);
         assertEquals(9, parser.getMethodSignatures().size());
@@ -75,7 +75,7 @@ public class JavaSourceParserTest {
 
     @Test
     public void testWildcard() throws Exception {
-        final JavaSourceParser parser = new JavaSourceParser();
+        final JavaSourceParser parser = new JavaSourceParser(this.getClass().getClassLoader());
 
         parser.parse(new FileInputStream("src/test/java/org/apache/camel/component/test/TestProxy.java"), null);
         assertEquals(11, parser.getMethodSignatures().size());
@@ -88,7 +88,7 @@ public class JavaSourceParserTest {
 
     @Test
     public void testNested() throws Exception {
-        final JavaSourceParser parser = new JavaSourceParser();
+        final JavaSourceParser parser = new JavaSourceParser(this.getClass().getClassLoader());
 
         parser.parse(new FileInputStream("src/test/java/org/apache/camel/component/test/NestedProxy.java"), "Order");
         assertEquals(1, parser.getMethodSignatures().size());
@@ -102,7 +102,7 @@ public class JavaSourceParserTest {
 
     @Test
     public void testClassJavadoc() throws Exception {
-        final JavaSourceParser parser = new JavaSourceParser();
+        final JavaSourceParser parser = new JavaSourceParser(this.getClass().getClassLoader());
 
         parser.parse(JavaSourceParserTest.class.getResourceAsStream("/DisputeGateway.java"), null);
 
@@ -118,7 +118,7 @@ public class JavaSourceParserTest {
 
     @Test
     public void testMethodJavadoc() throws Exception {
-        final JavaSourceParser parser = new JavaSourceParser();
+        final JavaSourceParser parser = new JavaSourceParser(this.getClass().getClassLoader());
 
         parser.parse(JavaSourceParserTest.class.getResourceAsStream("/DisputeGateway.java"), null);
 
