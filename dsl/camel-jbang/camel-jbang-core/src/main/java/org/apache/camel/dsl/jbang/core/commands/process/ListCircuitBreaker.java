@@ -222,7 +222,7 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
             try {
                 return (Row) clone();
             } catch (CloneNotSupportedException e) {
-                return null;
+                throw new RuntimeException(e);
             }
         }
     }
