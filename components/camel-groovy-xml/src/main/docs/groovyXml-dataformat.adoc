@@ -4,7 +4,7 @@
 :artifactid: camel-groovy-xml
 :description: Transform between XML and Groovy Node (Map structure) objects.
 :since: 4.15
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: groovy-xml

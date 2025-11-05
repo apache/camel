@@ -8,7 +8,7 @@
     "firstVersion": "4.15.0",
     "label": "cloud,document",
     "javaType": "org.apache.camel.component.aws2.textract.Textract2Component",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-textract",
     "version": "4.17.0-SNAPSHOT",

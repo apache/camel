@@ -4,7 +4,7 @@
 :artifactid: camel-aws2-transcribe
 :description: Automatically convert speech to text using AWS Transcribe service
 :since: 4.15
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

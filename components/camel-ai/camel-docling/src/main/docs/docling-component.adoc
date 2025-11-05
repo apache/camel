@@ -4,7 +4,7 @@
 :artifactid: camel-docling
 :description: Process documents using Docling library for parsing and conversion.
 :since: 4.15
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

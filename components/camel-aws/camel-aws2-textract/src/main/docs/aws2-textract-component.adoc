@@ -4,7 +4,7 @@
 :artifactid: camel-aws2-textract
 :description: Extract text and data from documents using AWS Textract and AWS SDK version 2.x.
 :since: 4.15
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

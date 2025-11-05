@@ -4,7 +4,7 @@
 :artifactid: camel-resilience4j-micrometer
 :description: Micrometer statistics for Resilience4j
 :since: 4.15
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: resilience4j-micrometer

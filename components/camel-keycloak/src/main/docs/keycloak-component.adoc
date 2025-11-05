@@ -4,7 +4,7 @@
 :artifactid: camel-keycloak
 :description: Manage Keycloak instances via Admin API.
 :since: 4.15
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
@@ -4275,4 +4275,3 @@ beans:
       allPermissionsRequired: false
 ----
 ====
-
