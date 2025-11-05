@@ -4,7 +4,7 @@
     "name": "stomp",
     "title": "Stomp",
     "description": "Send and receive messages to\/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.12.0",
     "label": "messaging",
     "javaType": "org.apache.camel.component.stomp.StompComponent",

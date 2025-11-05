@@ -1,10 +1,11 @@
-= Stomp Component
+= Stomp Component (deprecated)
 :doctitle: Stomp
 :shortname: stomp
 :artifactid: camel-stomp
 :description: Send and receive messages to/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.
 :since: 2.12
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

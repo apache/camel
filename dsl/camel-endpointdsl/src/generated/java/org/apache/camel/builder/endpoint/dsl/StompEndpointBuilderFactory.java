@@ -775,6 +775,7 @@ public interface StompEndpointBuilderFactory {
          * @param path destination
          * @return the dsl builder
          */
+        @Deprecated
         default StompEndpointBuilder stomp(String path) {
             return StompEndpointBuilderFactory.endpointBuilder("stomp", path);
         }
@@ -797,6 +798,7 @@ public interface StompEndpointBuilderFactory {
          * @param path destination
          * @return the dsl builder
          */
+        @Deprecated
         default StompEndpointBuilder stomp(String componentName, String path) {
             return StompEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

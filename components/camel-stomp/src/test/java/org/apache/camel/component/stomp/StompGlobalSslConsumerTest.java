@@ -19,7 +19,9 @@ package org.apache.camel.component.stomp;
 import org.apache.camel.CamelContext;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Disabled;
 
+@Disabled("Starting with Artmis 2.43, test can be played only one by one")
 public class StompGlobalSslConsumerTest extends StompConsumerTest {
 
     @Override

@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.fusesource.hawtbuf.AsciiBuffer;
 
+@Deprecated(since = "4.17")
 public class StompConsumer extends DefaultConsumer {
 
     AsciiBuffer id;
