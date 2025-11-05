@@ -50,8 +50,12 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "contentType": getOrCreateConfiguration(target).setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "etag":
         case "eTag": getOrCreateConfiguration(target).setETag(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventname":
+        case "eventName": getOrCreateConfiguration(target).setEventName(property(camelContext, java.lang.String.class, value)); return true;
         case "expiryinseconds":
         case "expiryInSeconds": getOrCreateConfiguration(target).setExpiryInSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "getworkflowio":
+        case "getWorkflowIO": getOrCreateConfiguration(target).setGetWorkflowIO(property(camelContext, boolean.class, value)); return true;
         case "httpextension":
         case "httpExtension": getOrCreateConfiguration(target).setHttpExtension(property(camelContext, io.dapr.client.domain.HttpExtension.class, value)); return true;
         case "key": getOrCreateConfiguration(target).setKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -67,6 +71,7 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "previewClient": getOrCreateConfiguration(target).setPreviewClient(property(camelContext, io.dapr.client.DaprPreviewClient.class, value)); return true;
         case "pubsubname":
         case "pubSubName": getOrCreateConfiguration(target).setPubSubName(property(camelContext, java.lang.String.class, value)); return true;
+        case "reason": getOrCreateConfiguration(target).setReason(property(camelContext, java.lang.String.class, value)); return true;
         case "resourceid":
         case "resourceId": getOrCreateConfiguration(target).setResourceId(property(camelContext, java.lang.String.class, value)); return true;
         case "secretstore":
@@ -79,15 +84,28 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "stateStore": getOrCreateConfiguration(target).setStateStore(property(camelContext, java.lang.String.class, value)); return true;
         case "storename":
         case "storeName": getOrCreateConfiguration(target).setStoreName(property(camelContext, java.lang.String.class, value)); return true;
+        case "timeout": getOrCreateConfiguration(target).setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "topic": getOrCreateConfiguration(target).setTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "verb": getOrCreateConfiguration(target).setVerb(property(camelContext, java.lang.String.class, value)); return true;
+        case "workflowclass":
+        case "workflowClass": getOrCreateConfiguration(target).setWorkflowClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "workflowclient":
+        case "workflowClient": getOrCreateConfiguration(target).setWorkflowClient(property(camelContext, io.dapr.workflows.client.DaprWorkflowClient.class, value)); return true;
+        case "workflowinstanceid":
+        case "workflowInstanceId": getOrCreateConfiguration(target).setWorkflowInstanceId(property(camelContext, java.lang.String.class, value)); return true;
+        case "workflowoperation":
+        case "workflowOperation": getOrCreateConfiguration(target).setWorkflowOperation(property(camelContext, org.apache.camel.component.dapr.WorkflowOperation.class, value)); return true;
+        case "workflowstarttime":
+        case "workflowStartTime": getOrCreateConfiguration(target).setWorkflowStartTime(property(camelContext, java.time.Instant.class, value)); return true;
+        case "workflowversion":
+        case "workflowVersion": getOrCreateConfiguration(target).setWorkflowVersion(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"client", "httpExtension", "previewClient"};
+        return new String[]{"client", "httpExtension", "previewClient", "workflowClient"};
     }
 
     @Override
@@ -113,8 +131,12 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "contentType": return java.lang.String.class;
         case "etag":
         case "eTag": return java.lang.String.class;
+        case "eventname":
+        case "eventName": return java.lang.String.class;
         case "expiryinseconds":
         case "expiryInSeconds": return java.lang.Integer.class;
+        case "getworkflowio":
+        case "getWorkflowIO": return boolean.class;
         case "httpextension":
         case "httpExtension": return io.dapr.client.domain.HttpExtension.class;
         case "key": return java.lang.String.class;
@@ -130,6 +152,7 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "previewClient": return io.dapr.client.DaprPreviewClient.class;
         case "pubsubname":
         case "pubSubName": return java.lang.String.class;
+        case "reason": return java.lang.String.class;
         case "resourceid":
         case "resourceId": return java.lang.String.class;
         case "secretstore":
@@ -142,8 +165,21 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "stateStore": return java.lang.String.class;
         case "storename":
         case "storeName": return java.lang.String.class;
+        case "timeout": return java.time.Duration.class;
         case "topic": return java.lang.String.class;
         case "verb": return java.lang.String.class;
+        case "workflowclass":
+        case "workflowClass": return java.lang.String.class;
+        case "workflowclient":
+        case "workflowClient": return io.dapr.workflows.client.DaprWorkflowClient.class;
+        case "workflowinstanceid":
+        case "workflowInstanceId": return java.lang.String.class;
+        case "workflowoperation":
+        case "workflowOperation": return org.apache.camel.component.dapr.WorkflowOperation.class;
+        case "workflowstarttime":
+        case "workflowStartTime": return java.time.Instant.class;
+        case "workflowversion":
+        case "workflowVersion": return java.lang.String.class;
         default: return null;
         }
     }
@@ -172,8 +208,12 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "contentType": return getOrCreateConfiguration(target).getContentType();
         case "etag":
         case "eTag": return getOrCreateConfiguration(target).getETag();
+        case "eventname":
+        case "eventName": return getOrCreateConfiguration(target).getEventName();
         case "expiryinseconds":
         case "expiryInSeconds": return getOrCreateConfiguration(target).getExpiryInSeconds();
+        case "getworkflowio":
+        case "getWorkflowIO": return getOrCreateConfiguration(target).isGetWorkflowIO();
         case "httpextension":
         case "httpExtension": return getOrCreateConfiguration(target).getHttpExtension();
         case "key": return getOrCreateConfiguration(target).getKey();
@@ -189,6 +229,7 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "previewClient": return getOrCreateConfiguration(target).getPreviewClient();
         case "pubsubname":
         case "pubSubName": return getOrCreateConfiguration(target).getPubSubName();
+        case "reason": return getOrCreateConfiguration(target).getReason();
         case "resourceid":
         case "resourceId": return getOrCreateConfiguration(target).getResourceId();
         case "secretstore":
@@ -201,8 +242,21 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
         case "stateStore": return getOrCreateConfiguration(target).getStateStore();
         case "storename":
         case "storeName": return getOrCreateConfiguration(target).getStoreName();
+        case "timeout": return getOrCreateConfiguration(target).getTimeout();
         case "topic": return getOrCreateConfiguration(target).getTopic();
         case "verb": return getOrCreateConfiguration(target).getVerb();
+        case "workflowclass":
+        case "workflowClass": return getOrCreateConfiguration(target).getWorkflowClass();
+        case "workflowclient":
+        case "workflowClient": return getOrCreateConfiguration(target).getWorkflowClient();
+        case "workflowinstanceid":
+        case "workflowInstanceId": return getOrCreateConfiguration(target).getWorkflowInstanceId();
+        case "workflowoperation":
+        case "workflowOperation": return getOrCreateConfiguration(target).getWorkflowOperation();
+        case "workflowstarttime":
+        case "workflowStartTime": return getOrCreateConfiguration(target).getWorkflowStartTime();
+        case "workflowversion":
+        case "workflowVersion": return getOrCreateConfiguration(target).getWorkflowVersion();
         default: return null;
         }
     }

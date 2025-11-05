@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.dapr.client.domain.ConfigurationItem;
+import io.dapr.workflows.client.WorkflowInstanceStatus;
 import org.apache.camel.component.dapr.DaprConstants;
 
 public class DaprOperationResponse {
@@ -54,6 +55,21 @@ public class DaprOperationResponse {
         }
 
         return create(body, responseHeaders);
+    }
+
+    public static DaprOperationResponse createFromWorkflowStatus(WorkflowInstanceStatus workflowStatus) {
+        Map<String, Object> responseHeaders = new HashMap<>();
+
+        responseHeaders.put(DaprConstants.WORKFLOW_NAME, workflowStatus.getName());
+        responseHeaders.put(DaprConstants.WORKFLOW_CREATED_AT, workflowStatus.getCreatedAt());
+        responseHeaders.put(DaprConstants.WORKFLOW_UPDATED_AT, workflowStatus.getLastUpdatedAt());
+        responseHeaders.put(DaprConstants.WORKFLOW_SERIALIZED_INPUT, workflowStatus.getSerializedInput());
+        responseHeaders.put(DaprConstants.WORKFLOW_SERIALIZED_OUTPUT, workflowStatus.getSerializedOutput());
+        responseHeaders.put(DaprConstants.WORKFLOW_FAILURE_DETAILS, workflowStatus.getFailureDetails());
+        responseHeaders.put(DaprConstants.IS_WORKFLOW_RUNNING, workflowStatus.isRunning());
+        responseHeaders.put(DaprConstants.IS_WORKFLOW_COMPLETED, workflowStatus.isCompleted());
+
+        return create(workflowStatus, responseHeaders);
     }
 
     public Object getBody() {

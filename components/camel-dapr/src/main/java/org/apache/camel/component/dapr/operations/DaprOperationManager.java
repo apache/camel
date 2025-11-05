@@ -37,6 +37,7 @@ public class DaprOperationManager {
         handlerMap.put(DaprOperation.invokeBinding, new DaprInvokeBindingHandler(configurationOptionsProxy, endpoint));
         handlerMap.put(DaprOperation.configuration, new DaprConfigurationHandler(configurationOptionsProxy, endpoint));
         handlerMap.put(DaprOperation.lock, new DaprLockHandler(configurationOptionsProxy, endpoint));
+        handlerMap.put(DaprOperation.workflow, new DaprWorkflowHandler(configurationOptionsProxy, endpoint));
     }
 
     public DaprOperationResponse process(Exchange exchange, DaprClient client) throws Exception {

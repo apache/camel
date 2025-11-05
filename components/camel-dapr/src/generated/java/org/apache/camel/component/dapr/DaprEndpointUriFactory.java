@@ -23,7 +23,7 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(40);
         props.add("bindingName");
         props.add("bindingOperation");
         props.add("bridgeErrorHandler");
@@ -34,9 +34,11 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("consistency");
         props.add("contentType");
         props.add("eTag");
+        props.add("eventName");
         props.add("exceptionHandler");
         props.add("exchangePattern");
         props.add("expiryInSeconds");
+        props.add("getWorkflowIO");
         props.add("httpExtension");
         props.add("key");
         props.add("lazyStartProducer");
@@ -46,14 +48,22 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("operation");
         props.add("previewClient");
         props.add("pubSubName");
+        props.add("reason");
         props.add("resourceId");
         props.add("secretStore");
         props.add("serviceToInvoke");
         props.add("stateOperation");
         props.add("stateStore");
         props.add("storeName");
+        props.add("timeout");
         props.add("topic");
         props.add("verb");
+        props.add("workflowClass");
+        props.add("workflowClient");
+        props.add("workflowInstanceId");
+        props.add("workflowOperation");
+        props.add("workflowStartTime");
+        props.add("workflowVersion");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptyMap();

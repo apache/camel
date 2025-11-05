@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.dapr;
 
-public enum DaprOperation {
-    invokeService,
+public enum WorkflowOperation {
+    scheduleNew,
+    terminate,
+    purge,
+    suspend,
+    resume,
     state,
-    pubSub,
-    invokeBinding,
-    secret,
-    configuration,
-    lock,
-    workflow
+    waitForInstanceStart,
+    waitForInstanceCompletion,
+    raiseEvent
 }

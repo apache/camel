@@ -54,6 +54,12 @@
       <version>${dapr-version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>io.dapr</groupId>
+      <artifactId>dapr-sdk-workflows</artifactId>
+      <version>${dapr-workflow-version}</version>
+    </dependency>
+    
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>

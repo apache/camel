@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dapr;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 import io.dapr.client.DaprClient;
@@ -23,6 +25,7 @@ import io.dapr.client.DaprPreviewClient;
 import io.dapr.client.domain.HttpExtension;
 import io.dapr.client.domain.StateOptions.Concurrency;
 import io.dapr.client.domain.StateOptions.Consistency;
+import io.dapr.workflows.client.DaprWorkflowClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -32,16 +35,20 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DaprConfiguration implements Cloneable {
 
-    @UriPath(label = "producer", enums = "invokeService, state")
+    @UriPath(label = "producer", enums = "invokeService, state, pubSub, invokeBinding, secret, configuration, lock, workflow")
     @Metadata(required = true)
     private DaprOperation operation;
     @UriParam(label = "common", description = "The Dapr Client")
     @Metadata(autowired = true)
     private DaprClient client;
-    @UriParam(label = "consumer", description = "The Dapr Preview Cliet")
+    @UriParam(label = "common", description = "The Dapr Preview Client")
     @Metadata(autowired = true)
     private DaprPreviewClient previewClient;
-    @UriParam(label = "producer", description = "Target service to invoke. Can be a Dapr App ID, a named HTTPEndpoint, " +
+    @UriParam(label = "producer", description = "The Dapr Workflow Client")
+    @Metadata(autowired = true)
+    private DaprWorkflowClient workflowClient;
+    @UriParam(label = "producer", description = "Target service to invoke. Can be a Dapr App ID, a named HTTPEndpoint, "
+                                                +
                                                 "or a FQDN/public URL")
     private String serviceToInvoke;
     @UriParam(label = "producer", description = "The name of the method or route to invoke on the target service")
@@ -100,6 +107,28 @@ public class DaprConfiguration implements Cloneable {
     private String lockOwner;
     @UriParam(label = "producer", description = "The expiry time in seconds for the lock")
     private Integer expiryInSeconds;
+    @UriParam(label = "producer",
+              enums = "scheduleNew, terminate, purge, suspend, resume, state, waitForInstanceStart, waitForInstanceCompletion, raiseEvent",
+              defaultValue = "scheduleNew",
+              description = "The workflow operation to perform. Required for DaprOperation.workflow operation")
+    private WorkflowOperation workflowOperation = WorkflowOperation.scheduleNew;
+    @UriParam(label = "producer", description = "The FQCN of the class which implements io.dapr.workflows.Workflow")
+    private String workflowClass;
+    @UriParam(label = "producer", description = "The version of the workflow to start")
+    private String workflowVersion;
+    @UriParam(label = "producer", description = "The instance ID of the workflow")
+    private String workflowInstanceId;
+    @UriParam(label = "producer", description = "The start time of the new workflow")
+    private Instant workflowStartTime;
+    @UriParam(label = "producer", description = "Reason for suspending/resuming the workflow instance")
+    private String reason;
+    @UriParam(label = "producer",
+              description = "Set true to fetch the workflow instance's inputs, outputs, and custom status, or false to omit")
+    private boolean getWorkflowIO;
+    @UriParam(label = "producer", description = "The amount of time to wait for the workflow instance to start/complete")
+    private Duration timeout;
+    @UriParam(label = "producer", description = "The name of the event. Event names are case-insensitive")
+    private String eventName;
 
     /**
      * The Dapr <b>building block operation</b> to perform with this component
@@ -132,6 +161,17 @@ public class DaprConfiguration implements Cloneable {
 
     public void setPreviewClient(DaprPreviewClient previewClient) {
         this.previewClient = previewClient;
+    }
+
+    /**
+     * The <b>preview client</b>
+     */
+    public DaprWorkflowClient getWorkflowClient() {
+        return workflowClient;
+    }
+
+    public void setWorkflowClient(DaprWorkflowClient workflowClient) {
+        this.workflowClient = workflowClient;
     }
 
     /**
@@ -432,6 +472,105 @@ public class DaprConfiguration implements Cloneable {
 
     public void setExpiryInSeconds(Integer expiryInSeconds) {
         this.expiryInSeconds = expiryInSeconds;
+    }
+
+    /**
+     * The <b>workflow operation</b> to perform. Required for DaprOperation.workflow operation
+     */
+    public WorkflowOperation getWorkflowOperation() {
+        return workflowOperation;
+    }
+
+    public void setWorkflowOperation(WorkflowOperation workflowOperation) {
+        this.workflowOperation = workflowOperation;
+    }
+
+    /**
+     * The FQCN of the <b>class</b> which implements io.dapr.workflows.Workflow
+     */
+    public String getWorkflowClass() {
+        return workflowClass;
+    }
+
+    public void setWorkflowClass(String workflowClass) {
+        this.workflowClass = workflowClass;
+    }
+
+    /**
+     * The <b>version</b> of the workflow to start
+     */
+    public String getWorkflowVersion() {
+        return workflowVersion;
+    }
+
+    public void setWorkflowVersion(String workflowVersion) {
+        this.workflowVersion = workflowVersion;
+    }
+
+    /**
+     * The <b>instance ID</b> of the workflow to start
+     */
+    public String getWorkflowInstanceId() {
+        return workflowInstanceId;
+    }
+
+    public void setWorkflowInstanceId(String workflowInstanceId) {
+        this.workflowInstanceId = workflowInstanceId;
+    }
+
+    /**
+     * The <b>start time</b> of the new workflow
+     */
+    public Instant getWorkflowStartTime() {
+        return workflowStartTime;
+    }
+
+    public void setWorkflowStartTime(Instant workflowStartTime) {
+        this.workflowStartTime = workflowStartTime;
+    }
+
+    /**
+     * <b>Reason</b> for suspending/resuming the workflow instance
+     */
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    /**
+     * Set <b>true</b> to fetch the workflow instance's inputs, outputs, and custom status, or <b>false</b> to omit
+     */
+    public boolean isGetWorkflowIO() {
+        return getWorkflowIO;
+    }
+
+    public void setGetWorkflowIO(boolean getWorkflowIO) {
+        this.getWorkflowIO = getWorkflowIO;
+    }
+
+    /**
+     * The amount of <b>time to wait for the workflow instance to start/complete
+     */
+    public Duration getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Duration timeout) {
+        this.timeout = timeout;
+    }
+
+    /**
+     * The name of the <b>event</b>. Event names are case-insensitive
+     */
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 
     public DaprConfiguration copy() {

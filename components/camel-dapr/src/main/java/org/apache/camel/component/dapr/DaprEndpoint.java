@@ -19,6 +19,7 @@ package org.apache.camel.component.dapr;
 import io.dapr.client.DaprClient;
 import io.dapr.client.DaprClientBuilder;
 import io.dapr.client.DaprPreviewClient;
+import io.dapr.workflows.client.DaprWorkflowClient;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -40,6 +41,7 @@ public class DaprEndpoint extends DefaultEndpoint {
     private DaprConfiguration configuration;
     private DaprClient client;
     private DaprPreviewClient previewClient;
+    private DaprWorkflowClient workflowClient;
 
     public DaprEndpoint(String uri, DaprComponent component, final DaprConfiguration configuration) {
         super(uri, component);
@@ -72,6 +74,8 @@ public class DaprEndpoint extends DefaultEndpoint {
         client = configuration.getClient() != null ? configuration.getClient() : new DaprClientBuilder().build();
         previewClient = configuration.getPreviewClient() != null
                 ? configuration.getPreviewClient() : new DaprClientBuilder().buildPreviewClient();
+        workflowClient
+                = configuration.getWorkflowClient() != null ? configuration.getWorkflowClient() : new DaprWorkflowClient();
     }
 
     /**
@@ -97,5 +101,12 @@ public class DaprEndpoint extends DefaultEndpoint {
      */
     public DaprPreviewClient getPreviewClient() {
         return previewClient;
+    }
+
+    /**
+     * The DaprWorkflowClient
+     */
+    public DaprWorkflowClient getWorkflowClient() {
+        return workflowClient;
     }
 }
