@@ -93,7 +93,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class,
                         defaultValue = "status",
-                        description = "Action to start, stop, clear, list status, or dump messages")
+                        description = "Action to start, stop, clear, status, or dump messages")
     String action;
 
     @CommandLine.Option(names = { "--endpoint", "--uri" },
