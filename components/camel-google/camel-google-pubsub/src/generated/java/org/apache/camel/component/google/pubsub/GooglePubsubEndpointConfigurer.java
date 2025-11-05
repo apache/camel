@@ -34,6 +34,8 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "includeallgoogleproperties":
         case "includeAllGoogleProperties": target.setIncludeAllGoogleProperties(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -77,6 +79,8 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "includeallgoogleproperties":
         case "includeAllGoogleProperties": return boolean.class;
         case "lazystartproducer":
@@ -116,6 +120,8 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "includeallgoogleproperties":
         case "includeAllGoogleProperties": return target.isIncludeAllGoogleProperties();
         case "lazystartproducer":

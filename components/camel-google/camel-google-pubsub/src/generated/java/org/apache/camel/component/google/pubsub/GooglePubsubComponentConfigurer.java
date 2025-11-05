@@ -29,6 +29,8 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "publishercachesize":
@@ -54,6 +56,8 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "endpoint": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "publishercachesize":
@@ -80,6 +84,8 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "endpoint": return target.getEndpoint();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "publishercachesize":

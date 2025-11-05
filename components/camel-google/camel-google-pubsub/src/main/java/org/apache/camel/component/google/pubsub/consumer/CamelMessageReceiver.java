@@ -25,7 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
 import org.apache.camel.component.google.pubsub.GooglePubsubConsumer;
 import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
-import org.apache.camel.component.google.pubsub.GooglePubsubHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class CamelMessageReceiver implements MessageReceiver {
             loggerId = this.getClass().getName();
         }
         localLog = LoggerFactory.getLogger(loggerId);
-        headerFilterStrategy = new GooglePubsubHeaderFilterStrategy(endpoint.isIncludeAllGoogleProperties());
+        headerFilterStrategy = endpoint.getHeaderFilterStrategy();
     }
 
     @Override
