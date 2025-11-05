@@ -94,7 +94,12 @@ public final class DependencyDownloaderLanguageResolver extends DefaultLanguageR
             return true;
         }
 
-        boolean stubbed = PatternHelper.matchPatterns(name, stubPattern.split(","));
+        boolean stubbed = false;
+        for (String n : stubPattern.split(",")) {
+            if (n.startsWith("language:")) {
+                stubbed |= PatternHelper.matchPattern(name, n.substring(9));
+            }
+        }
         return !stubbed;
     }
 
