@@ -29,7 +29,7 @@
 
     <artifactId>camel-stomp</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Stomp</name>
+    <name>Camel :: Stomp (Deprecated)</name>
     <description>Camel Stomp client</description>
 
     <properties>

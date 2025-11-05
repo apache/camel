@@ -25,6 +25,7 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.fusesource.stomp.client.BlockingConnection;
 import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
@@ -35,6 +36,7 @@ import static org.fusesource.stomp.client.Constants.MESSAGE_ID;
 import static org.fusesource.stomp.client.Constants.SEND;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
+@Disabled("Starting with Artmis 2.43, test can be played only one by one")
 public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
 
     @BindToRegistry("customHeaderFilterStrategy")

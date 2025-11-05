@@ -26,6 +26,7 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 
 @Component("stomp")
+@Deprecated(since = "4.17")
 public class StompComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")

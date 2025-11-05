@@ -60,6 +60,7 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination",
              category = { Category.MESSAGING })
+@Deprecated(since = "4.17")
 public class StompEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation {
 

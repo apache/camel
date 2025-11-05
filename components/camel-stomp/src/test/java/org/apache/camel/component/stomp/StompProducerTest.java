@@ -27,6 +27,7 @@ import org.fusesource.hawtbuf.AsciiBuffer;
 import org.fusesource.stomp.client.BlockingConnection;
 import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled("Starting with Artmis 2.43, test can be played only one by one")
 public class StompProducerTest extends StompBaseTest {
     private static final Logger LOG = LoggerFactory.getLogger(StompProducerTest.class);
 
