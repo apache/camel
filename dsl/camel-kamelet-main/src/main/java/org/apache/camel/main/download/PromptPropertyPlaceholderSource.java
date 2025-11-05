@@ -17,6 +17,7 @@
 package org.apache.camel.main.download;
 
 import org.apache.camel.Ordered;
+import org.apache.camel.main.MainConstants;
 import org.apache.camel.spi.PropertiesSource;
 
 public class PromptPropertyPlaceholderSource implements PropertiesSource, Ordered {
@@ -33,6 +34,11 @@ public class PromptPropertyPlaceholderSource implements PropertiesSource, Ordere
 
     @Override
     public String getProperty(String name, String defaultValue) {
+        if (MainConstants.CLOUD_PROPERTIES_LOCATION.equals(name)) {
+            // skip prompt for this internal option
+            return null;
+        }
+
         String answer;
         if (defaultValue != null) {
             answer = System.console().readLine("Enter optional value for %s (%s): ", name, defaultValue);
