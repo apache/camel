@@ -516,6 +516,24 @@ The camel.vault.ibm supports 10 options, which are listed below.
 |===
 
 
+=== Camel CyberArk Conjur Vault configurations
+The camel.vault.cyberark supports 9 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.vault.cyberark.account* | The CyberArk Conjur account name |  | String
+| *camel.vault.cyberark.apiKey* | The API key for authentication |  | String
+| *camel.vault.cyberark.authToken* | Pre-authenticated token to use |  | String
+| *camel.vault.cyberark.certificate{zwsp}Path* | Path to the SSL certificate for verification |  | String
+| *camel.vault.cyberark.password* | The password for authentication |  | String
+| *camel.vault.cyberark.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
+| *camel.vault.cyberark.url* | The CyberArk Conjur instance URL |  | String
+| *camel.vault.cyberark.username* | The username for authentication |  | String
+| *camel.vault.cyberark.verifySsl* | Whether to verify SSL certificates | false | boolean
+|===
+
+
 === Camel OpenTelemetry configurations
 The camel.opentelemetry supports 10 options, which are listed below.
 

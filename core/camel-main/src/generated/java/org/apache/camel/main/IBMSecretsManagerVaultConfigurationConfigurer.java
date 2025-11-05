@@ -27,6 +27,8 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": target.setCyberArkVaultConfiguration(property(camelContext, org.apache.camel.vault.CyberArkVaultConfiguration.class, value)); return true;
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": target.setEventStreamBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
         case "eventstreamconsumerpolltimeout":
@@ -68,6 +70,8 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": return org.apache.camel.vault.CyberArkVaultConfiguration.class;
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": return java.lang.String.class;
         case "eventstreamconsumerpolltimeout":
@@ -110,6 +114,8 @@ public class IBMSecretsManagerVaultConfigurationConfigurer extends org.apache.ca
         case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": return target.getCyberArkVaultConfiguration();
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": return target.getEventStreamBootstrapServers();
         case "eventstreamconsumerpolltimeout":

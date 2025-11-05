@@ -1173,6 +1173,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-cyberark-vault</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-dapr</artifactId>
                 <version>${project.version}</version>
             </dependency>

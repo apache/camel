@@ -73,6 +73,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.Cw2EndpointBuilderFactory.Cw2Builders,
             org.apache.camel.builder.endpoint.dsl.CxfEndpointBuilderFactory.CxfBuilders,
             org.apache.camel.builder.endpoint.dsl.CxfRsEndpointBuilderFactory.CxfRsBuilders,
+            org.apache.camel.builder.endpoint.dsl.CyberArkVaultEndpointBuilderFactory.CyberArkVaultBuilders,
             org.apache.camel.builder.endpoint.dsl.DJLEndpointBuilderFactory.DJLBuilders,
             org.apache.camel.builder.endpoint.dsl.DMSEndpointBuilderFactory.DMSBuilders,
             org.apache.camel.builder.endpoint.dsl.DaprEndpointBuilderFactory.DaprBuilders,

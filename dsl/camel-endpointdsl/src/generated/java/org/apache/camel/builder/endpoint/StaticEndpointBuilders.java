@@ -3386,6 +3386,46 @@ public class StaticEndpointBuilders {
         return CxfRsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * CyberArk Vault (camel-cyberark-vault)
+     * Retrieve secrets from CyberArk Conjur Vault.
+     * 
+     * Category: cloud,security
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-cyberark-vault
+     * 
+     * Syntax: <code>cyberark-vault:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static CyberArkVaultEndpointBuilderFactory.CyberArkVaultEndpointBuilder cyberarkVault(String path) {
+        return cyberarkVault("cyberark-vault", path);
+    }
+    /**
+     * CyberArk Vault (camel-cyberark-vault)
+     * Retrieve secrets from CyberArk Conjur Vault.
+     * 
+     * Category: cloud,security
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-cyberark-vault
+     * 
+     * Syntax: <code>cyberark-vault:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static CyberArkVaultEndpointBuilderFactory.CyberArkVaultEndpointBuilder cyberarkVault(String componentName, String path) {
+        return CyberArkVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Dapr (camel-dapr)
      * Dapr component which interfaces with Dapr Building Blocks.
      * 

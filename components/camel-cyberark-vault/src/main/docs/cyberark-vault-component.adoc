@@ -1,0 +1,419 @@
+= CyberArk Vault Component
+:doctitle: CyberArk Vault
+:shortname: cyberark-vault
+:artifactid: camel-cyberark-vault
+:description: Retrieve secrets from CyberArk Conjur Vault.
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Security
+:camel-spring-boot-name: cyberark-vault
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The CyberArk Vault component supports https://www.cyberark.com/products/conjur/[CyberArk Conjur] Vault service.
+
+Prerequisites
+
+You must have access to a CyberArk Conjur instance and have the necessary credentials
+(username/password, API key, or auth token) to access it.
+
+== URI Format
+
+-------------------------
+cyberark-vault:label[?options]
+-------------------------
+
+Where `label` is a logical name for the endpoint.
+
+You can specify the secret ID either as a URI parameter or via message header:
+
+[source,java]
+----
+// Using URI parameter
+.to("cyberark-vault:secret?secretId=db/password&...")
+
+// Using message header
+.setHeader(CyberArkVaultConstants.SECRET_ID, constant("db/password"))
+.to("cyberark-vault:secret?...")
+----
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+=== Authentication Methods
+
+The component supports multiple authentication methods with CyberArk Conjur:
+
+1. **Username/Password Authentication**: Use username and password to authenticate
+2. **API Key Authentication**: Use username and API key (recommended for programmatic access)
+3. **Pre-authenticated Token**: Use a pre-obtained authentication token
+
+=== Using CyberArk Conjur Vault Property Function
+
+To use this function, you'll need to provide credentials to CyberArk Conjur Service as environment variables:
+
+[source,bash]
+----
+export CAMEL_VAULT_CYBERARK_URL=https://conjur.example.com
+export CAMEL_VAULT_CYBERARK_ACCOUNT=myaccount
+export CAMEL_VAULT_CYBERARK_USERNAME=admin
+export CAMEL_VAULT_CYBERARK_PASSWORD=secretpassword
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.cyberark.url=https://conjur.example.com
+camel.vault.cyberark.account=myaccount
+camel.vault.cyberark.username=admin
+camel.vault.cyberark.password=secretpassword
+----
+
+NOTE: If you're running the application on a Kubernetes based cloud platform, you can initialize the environment variables from a Secret or ConfigMap to enhance security.
+
+For API key authentication:
+
+[source,bash]
+----
+export CAMEL_VAULT_CYBERARK_URL=https://conjur.example.com
+export CAMEL_VAULT_CYBERARK_ACCOUNT=myaccount
+export CAMEL_VAULT_CYBERARK_USERNAME=host/myapp
+export CAMEL_VAULT_CYBERARK_API_KEY=3ahx8dy3...
+----
+
+Or in `application.properties`:
+
+[source,properties]
+----
+camel.vault.cyberark.url=https://conjur.example.com
+camel.vault.cyberark.account=myaccount
+camel.vault.cyberark.username=host/myapp
+camel.vault.cyberark.apiKey=3ahx8dy3...
+----
+
+=== Examples
+
+==== Property Placeholders
+
+At this point, you can access secrets using property placeholders in your routes:
+
+[source,java]
+----
+from("direct:start")
+    .setHeader("DatabasePassword", simple("{{cyberark:db/password}}"))
+    .to("...");
+----
+
+You can also specify a default value in case the secret doesn't exist:
+
+[source,java]
+----
+from("direct:start")
+    .setHeader("Password", simple("{{cyberark:db/password:defaultPassword}}"))
+    .to("...");
+----
+
+==== Retrieve JSON Field from Secret
+
+If your secret contains JSON data, you can extract specific fields:
+
+[source,java]
+----
+from("direct:start")
+    .setHeader("Username", simple("{{cyberark:database#username}}"))
+    .setHeader("Password", simple("{{cyberark:database#password}}"))
+    .to("...");
+----
+
+==== Using the Component Endpoint
+
+You can also use the component endpoint directly:
+
+Using URI parameter:
+[source,java]
+----
+from("direct:start")
+    .to("cyberark-vault:secret?secretId=db/password&url=https://conjur.example.com&account=myaccount&username=admin&password=secretpass")
+    .log("Retrieved secret: ${body}");
+----
+
+Using message header for dynamic secret retrieval:
+[source,java]
+----
+from("direct:start")
+    .setHeader(CyberArkVaultConstants.SECRET_ID, simple("${header.secretName}"))
+    .to("cyberark-vault:secret?url=https://conjur.example.com&account=myaccount&username=admin&password=secretpass")
+    .log("Retrieved secret: ${body}");
+----
+
+=== SSL Certificate Verification
+
+By default, SSL certificate verification is enabled. You can disable it for testing purposes (not recommended for production):
+
+[source,properties]
+----
+camel.vault.cyberark.verifySsl=false
+----
+
+Or provide a custom certificate path:
+
+[source,properties]
+----
+camel.vault.cyberark.certificatePath=/path/to/cert.pem
+----
+
+=== Setting Up CyberArk Conjur for Testing
+
+Before you can use the component or run integration tests, you need to set up a CyberArk Conjur instance and configure policies to define which secrets (variables) are available.
+
+==== Step 1: Start Conjur with Docker
+
+The easiest way to get started is using the official https://github.com/cyberark/conjur-quickstart[Conjur Quickstart]:
+
+[source,bash]
+----
+# Clone the quickstart repository
+git clone https://github.com/cyberark/conjur-quickstart.git
+cd conjur-quickstart
+
+# Start Conjur and database
+docker-compose up -d
+
+# Wait for services to be ready
+sleep 15
+
+# The admin API key will be displayed in the logs
+docker-compose logs conjur_server | grep "admin API key"
+----
+
+Default connection details:
+- **URL**: `http://localhost:8080`
+- **Account**: `myConjurAccount`
+- **Username**: `admin`
+- **API Key**: Check the container logs (see command above)
+
+==== Step 2: Load Conjur Policy
+
+CyberArk Conjur requires you to define variables in a **policy file** before you can set their values. Here's how to create and load a policy:
+
+**Automated Script:**
+
+You can also use this automated script to load the policy:
+
+[source,bash]
+----
+#!/bin/bash
+
+# Replace with your actual API key from the Conjur logs
+API_KEY="your-api-key-here"
+
+# Create policy file
+cat > test-secrets.yaml <<'EOF'
+- !variable database
+- !variable simple-secret
+- !variable app/config
+- !variable test/secret
+- !variable production/database
+- !variable api/credentials
+- !variable db/primary
+- !variable db/replica
+- !variable cache/redis
+EOF
+
+# Copy to client container
+echo "Copying policy to conjur_client..."
+docker cp test-secrets.yaml conjur_client:/tmp/test-secrets.yaml
+
+# Initialize Conjur CLI
+echo "Initializing Conjur CLI..."
+docker exec conjur_client conjur init -u http://conjur_server -a myConjurAccount --force
+
+# Login
+echo "Logging in..."
+echo "$API_KEY" | docker exec -i conjur_client conjur login -i admin
+
+# Load policy
+echo "Loading policy..."
+docker exec conjur_client conjur policy load -b root -f /tmp/test-secrets.yaml
+
+if [ $? -eq 0 ]; then
+    echo "✅ Policy loaded successfully!"
+else
+    echo "❌ Policy load failed"
+    exit 1
+fi
+
+# Clean up
+rm test-secrets.yaml
+----
+
+Save as `load-policy.sh`, make it executable (`chmod +x load-policy.sh`), update the API_KEY, and run it.
+
+=== Running Integration Tests
+
+The component includes integration tests that require a running CyberArk Conjur instance. The tests are **disabled by default** and only run when specific system properties are provided.
+
+==== Prerequisites
+
+1. A running CyberArk Conjur instance (see "Setting Up CyberArk Conjur for Testing" above)
+2. Conjur policies loaded with the required variables (see Step 2 above)
+3. Valid Conjur credentials (URL, account, username, API key)
+
+==== Required System Properties
+
+The integration tests require these system properties:
+
+- `camel.cyberark.url` - CyberArk Conjur URL (e.g., `http://localhost:8080`)
+- `camel.cyberark.account` - Conjur account name (e.g., `myConjurAccount`)
+- `camel.cyberark.username` - Admin username (e.g., `admin`)
+- `camel.cyberark.apiKey` - Admin API key
+
+==== Running All Integration Tests
+
+[source,bash]
+----
+cd components/camel-cyberark-vault
+
+mvn clean verify \
+  -Dcamel.cyberark.url=http://localhost:8080 \
+  -Dcamel.cyberark.account=myConjurAccount \
+  -Dcamel.cyberark.username=admin \
+  -Dcamel.cyberark.apiKey=YOUR_API_KEY_HERE
+----
+
+Replace `YOUR_API_KEY_HERE` with the actual API key from your Conjur instance.
+
+==== Running Specific Test Classes
+
+[source,bash]
+----
+# Run properties function tests
+mvn clean verify -Dit.test=CyberArkVaultPropertiesSourceIT \
+  -Dcamel.cyberark.url=http://localhost:8080 \
+  -Dcamel.cyberark.account=myConjurAccount \
+  -Dcamel.cyberark.username=admin \
+  -Dcamel.cyberark.apiKey=YOUR_API_KEY_HERE
+
+# Run producer endpoint tests
+mvn clean verify -Dit.test=CyberArkVaultProducerIT \
+  -Dcamel.cyberark.url=http://localhost:8080 \
+  -Dcamel.cyberark.account=myConjurAccount \
+  -Dcamel.cyberark.username=admin \
+  -Dcamel.cyberark.apiKey=YOUR_API_KEY_HERE
+----
+
+==== Skipping Integration Tests (Default)
+
+By default, integration tests are skipped when system properties are not provided:
+
+[source,bash]
+----
+# This will skip all integration tests
+mvn clean install
+----
+
+==== Test Scenarios Covered
+
+The integration tests cover:
+
+1. **Property Function Tests** (`CyberArkVaultPropertiesSourceIT`)
+   - Simple secret retrieval using `{{cyberark:secret}}`
+   - JSON field extraction using `{{cyberark:secret#field}}`
+   - Default values using `{{cyberark:secret:defaultValue}}`
+   - Complex secret paths with slashes
+
+2. **Component Endpoint Tests** (`CyberArkVaultProducerIT`)
+   - Secret retrieval via component endpoint
+   - Dynamic secret ID via message headers
+   - Header verification (SECRET_ID, SECRET_VALUE)
+
+3. **Multiple Secrets Tests** (`CyberArkVaultMultipleSecretsIT`)
+   - Multiple secrets in a single route
+   - Multiple database configurations
+   - Connection string construction
+
+==== CI/CD Integration Example
+
+For GitHub Actions:
+
+[source,yaml]
+----
+name: Integration Tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: SuperSecretPg
+        ports:
+          - 5432:5432
+
+      conjur:
+        image: cyberark/conjur
+        env:
+          DATABASE_URL: postgres://postgres:SuperSecretPg@postgres/postgres
+          CONJUR_DATA_KEY: W0BuL24xJMVfGNTKRxcC4xv76cKE7wNJh0AKXdvmnxk=
+        ports:
+          - 8080:80
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+
+      - name: Initialize Conjur and Load Policies
+        run: |
+          # Wait for Conjur to start
+          sleep 15
+
+          # Create account and extract API key
+          API_KEY=$(docker exec conjur conjurctl account create myConjurAccount | grep "API key" | awk '{print $NF}')
+          echo "CONJUR_API_KEY=$API_KEY" >> $GITHUB_ENV
+
+          # Load test policies here...
+
+      - name: Run Integration Tests
+        run: |
+          mvn clean verify \
+            -Dcamel.cyberark.url=http://localhost:8080 \
+            -Dcamel.cyberark.account=myConjurAccount \
+            -Dcamel.cyberark.username=admin \
+            -Dcamel.cyberark.apiKey=${{ env.CONJUR_API_KEY }}
+----
+
+=== Best Practices
+
+1. **Use API Keys**: For programmatic access, use API keys instead of passwords
+2. **Enable SSL Verification**: Always verify SSL certificates in production
+3. **Least Privilege**: Grant only necessary permissions to the Conjur identity
+4. **Secret Rotation**: Regularly rotate secrets and API keys
+5. **Environment Variables**: Use environment variables or secure configuration for credentials

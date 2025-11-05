@@ -1,0 +1,1 @@
+../../../../../components/camel-cyberark-vault/src/main/docs/cyberark-vault-component.adoc

@@ -30,6 +30,7 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
     private KubernetesConfigmapsVaultConfigurationProperties kubernetesConfigmaps;
     private IBMSecretsManagerVaultConfigurationProperties ibmSecretsManager;
     private SpringCloudConfigConfigurationProperties springConfig;
+    private CyberArkVaultConfigurationProperties cyberark;
 
     public VaultConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -65,6 +66,9 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
         }
         if (springConfig != null) {
             springConfig.close();
+        }
+        if (cyberark != null) {
+            cyberark.close();
         }
     }
 
@@ -138,5 +142,13 @@ public class VaultConfigurationProperties extends VaultConfiguration implements 
             springConfig = new SpringCloudConfigConfigurationProperties(parent);
         }
         return springConfig;
+    }
+
+    @Override
+    public CyberArkVaultConfigurationProperties cyberark() {
+        if (cyberark == null) {
+            cyberark = new CyberArkVaultConfigurationProperties(parent);
+        }
+        return cyberark;
     }
 }

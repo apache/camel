@@ -488,4 +488,45 @@ public class MainVaultTest {
         Assertions.assertEquals("http://ibm.cloud.com", cfg.getServiceUrl());
         main.stop();
     }
+
+    @Test
+    public void testMainCyberarkConjur() {
+        Main main = new Main();
+
+        main.addInitialProperty("camel.vault.cyberark.url", "http://conjur.com");
+        main.addInitialProperty("camel.vault.cyberark.authToken", "token");
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        CyberArkVaultConfiguration cfg = context.getVaultConfiguration().cyberark();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("token", cfg.getAuthToken());
+        Assertions.assertEquals("http://conjur.com", cfg.getUrl());
+        main.stop();
+    }
+
+    @Test
+    public void testMainCyberarkConjurFluent() {
+        Main main = new Main();
+        main.configure().vault().cyberark()
+                .withAuthToken("token")
+                .withUrl("http://conjur.com")
+                .end();
+
+        main.start();
+
+        CamelContext context = main.getCamelContext();
+        assertNotNull(context);
+
+        CyberArkVaultConfiguration cfg = context.getVaultConfiguration().cyberark();
+        assertNotNull(cfg);
+
+        Assertions.assertEquals("token", cfg.getAuthToken());
+        Assertions.assertEquals("http://conjur.com", cfg.getUrl());
+        main.stop();
+    }
 }

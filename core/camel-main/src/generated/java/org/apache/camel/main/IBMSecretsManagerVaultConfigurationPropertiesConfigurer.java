@@ -24,6 +24,7 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AwsVaultConfiguration", org.apache.camel.vault.AwsVaultConfiguration.class);
         map.put("AzureVaultConfiguration", org.apache.camel.vault.AzureVaultConfiguration.class);
+        map.put("CyberArkVaultConfiguration", org.apache.camel.vault.CyberArkVaultConfiguration.class);
         map.put("EventStreamBootstrapServers", java.lang.String.class);
         map.put("EventStreamConsumerPollTimeout", long.class);
         map.put("EventStreamGroupId", java.lang.String.class);
@@ -51,6 +52,8 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "awsVaultConfiguration": target.setAwsVaultConfiguration(property(camelContext, org.apache.camel.vault.AwsVaultConfiguration.class, value)); return true;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": target.setAzureVaultConfiguration(property(camelContext, org.apache.camel.vault.AzureVaultConfiguration.class, value)); return true;
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": target.setCyberArkVaultConfiguration(property(camelContext, org.apache.camel.vault.CyberArkVaultConfiguration.class, value)); return true;
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": target.setEventStreamBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
         case "eventstreamconsumerpolltimeout":
@@ -97,6 +100,8 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "awsVaultConfiguration": return org.apache.camel.vault.AwsVaultConfiguration.class;
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return org.apache.camel.vault.AzureVaultConfiguration.class;
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": return org.apache.camel.vault.CyberArkVaultConfiguration.class;
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": return java.lang.String.class;
         case "eventstreamconsumerpolltimeout":
@@ -139,6 +144,8 @@ public class IBMSecretsManagerVaultConfigurationPropertiesConfigurer extends org
         case "awsVaultConfiguration": return target.getAwsVaultConfiguration();
         case "azurevaultconfiguration":
         case "azureVaultConfiguration": return target.getAzureVaultConfiguration();
+        case "cyberarkvaultconfiguration":
+        case "cyberArkVaultConfiguration": return target.getCyberArkVaultConfiguration();
         case "eventstreambootstrapservers":
         case "eventStreamBootstrapServers": return target.getEventStreamBootstrapServers();
         case "eventstreamconsumerpolltimeout":
