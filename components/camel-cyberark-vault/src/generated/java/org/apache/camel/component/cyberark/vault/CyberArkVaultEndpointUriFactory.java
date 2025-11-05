@@ -23,7 +23,7 @@ public class CyberArkVaultEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(13);
         props.add("account");
         props.add("apiKey");
         props.add("authToken");
@@ -31,6 +31,7 @@ public class CyberArkVaultEndpointUriFactory extends org.apache.camel.support.co
         props.add("conjurClient");
         props.add("label");
         props.add("lazyStartProducer");
+        props.add("operation");
         props.add("password");
         props.add("secretId");
         props.add("url");

@@ -104,6 +104,38 @@ public interface CyberArkVaultEndpointBuilderFactory {
             return this;
         }
         /**
+         * The operation to perform. It can be getSecret or createSecret.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.cyberark.vault.CyberArkVaultOperations</code> type.
+         * 
+         * Default: getSecret
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default CyberArkVaultEndpointBuilder operation(org.apache.camel.component.cyberark.vault.CyberArkVaultOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform. It can be getSecret or createSecret.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.cyberark.vault.CyberArkVaultOperations</code> type.
+         * 
+         * Default: getSecret
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default CyberArkVaultEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * The secret ID to retrieve from CyberArk Conjur.
          * 
          * The option is a: <code>java.lang.String</code> type.

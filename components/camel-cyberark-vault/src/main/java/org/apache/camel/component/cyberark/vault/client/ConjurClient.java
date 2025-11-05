@@ -39,6 +39,14 @@ public interface ConjurClient extends AutoCloseable {
     String retrieveSecret(String secretId, String version);
 
     /**
+     * Create or update a secret in Conjur
+     *
+     * @param secretId    the ID of the secret to create/update
+     * @param secretValue the value to store
+     */
+    void createSecret(String secretId, String secretValue);
+
+    /**
      * Authenticate with Conjur and obtain an access token
      *
      * @return the access token

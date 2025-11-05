@@ -156,6 +156,47 @@ public class ConjurClientImpl implements ConjurClient {
     }
 
     @Override
+    public void createSecret(String secretId, String secretValue) {
+        try {
+            // Ensure we have a valid token
+            if (authToken == null) {
+                authToken = authenticate();
+            }
+
+            // URL encode the secret ID
+            String encodedSecretId = URLEncoder.encode(secretId, StandardCharsets.UTF_8);
+
+            // Build the secrets endpoint URL for creating/updating
+            String secretsUrl = String.format("%s/secrets/%s/variable/%s",
+                    url, account, encodedSecretId);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(secretsUrl))
+                    .header("Authorization", "Token token=\"" + Base64.getEncoder()
+                            .encodeToString(authToken.getBytes(StandardCharsets.UTF_8)) + "\"")
+                    .header("Content-Type", "text/plain")
+                    .POST(HttpRequest.BodyPublishers.ofString(secretValue))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 201 || response.statusCode() == 200) {
+                LOG.debug("Successfully created/updated secret: {}", secretId);
+            } else if (response.statusCode() == 401) {
+                // Token expired, re-authenticate and retry
+                LOG.debug("Token expired, re-authenticating");
+                authToken = authenticate();
+                createSecret(secretId, secretValue);
+            } else {
+                throw new IOException(
+                        "Failed to create/update secret: HTTP " + response.statusCode() + " - " + response.body());
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("Error creating/updating secret in Conjur: " + secretId, e);
+        }
+    }
+
+    @Override
     public void close() throws Exception {
         authToken = null;
     }

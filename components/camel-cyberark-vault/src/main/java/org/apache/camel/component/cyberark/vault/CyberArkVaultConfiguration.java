@@ -36,6 +36,9 @@ public class CyberArkVaultConfiguration implements Cloneable {
     @UriParam(description = "The secret ID to retrieve from CyberArk Conjur")
     private String secretId;
 
+    @UriParam(defaultValue = "getSecret")
+    private CyberArkVaultOperations operation = CyberArkVaultOperations.getSecret;
+
     @UriParam
     @Metadata(required = true)
     private String url;
@@ -85,6 +88,17 @@ public class CyberArkVaultConfiguration implements Cloneable {
      */
     public void setSecretId(String secretId) {
         this.secretId = secretId;
+    }
+
+    public CyberArkVaultOperations getOperation() {
+        return operation;
+    }
+
+    /**
+     * The operation to perform. It can be getSecret or createSecret
+     */
+    public void setOperation(CyberArkVaultOperations operation) {
+        this.operation = operation;
     }
 
     public String getUrl() {
