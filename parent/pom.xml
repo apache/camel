@@ -416,6 +416,7 @@
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.8</ognl-version>
+        <openai-java-version>4.7.1</openai-java-version>
         <openapi-generator-version>7.17.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.3.2</opensearch-rest-client-version>
@@ -2143,6 +2144,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-openai</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-openapi-java</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3338,6 +3344,11 @@
                         <artifactId>checker-qual</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.openai</groupId>
+                <artifactId>openai-java</artifactId>
+                <version>${openai-java-version}</version>
             </dependency>
 
             <dependency>
