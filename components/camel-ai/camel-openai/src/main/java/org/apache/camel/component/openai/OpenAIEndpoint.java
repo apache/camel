@@ -27,6 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * OpenAI endpoint for chat completion.
@@ -74,10 +75,10 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
         if (client != null) {
             client = null;
         }
+        super.doStop();
     }
 
     protected OpenAIClient createClient() {
@@ -85,25 +86,23 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
         OpenAIOkHttpClient.Builder builder = OpenAIOkHttpClient.builder();
 
-        if (apiKey != null && !apiKey.isEmpty()) {
+        if (ObjectHelper.isNotEmpty(apiKey)) {
             builder.apiKey(apiKey);
         }
 
-        if (configuration.getBaseUrl() != null && !configuration.getBaseUrl().isEmpty()) {
-            builder.baseUrl(configuration.getBaseUrl());
-        }
+        builder.baseUrl(ObjectHelper.notNullOrEmpty(configuration.getBaseUrl(), "baseUrl"));
 
         return builder.build();
     }
 
     protected String resolveApiKey() {
         // Priority: URI parameter > component config > environment variable > application.properties
-        if (configuration.getApiKey() != null && !configuration.getApiKey().isEmpty()) {
+        if (ObjectHelper.isNotEmpty(configuration.getApiKey())) {
             return configuration.getApiKey();
         }
 
         String envApiKey = System.getenv("OPENAI_API_KEY");
-        if (envApiKey != null && !envApiKey.isEmpty()) {
+        if (ObjectHelper.isNotEmpty(envApiKey)) {
             return envApiKey;
         }
 

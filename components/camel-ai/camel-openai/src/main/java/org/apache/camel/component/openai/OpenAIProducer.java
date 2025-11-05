@@ -144,7 +144,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         List<ChatCompletionMessageParam> messages = new ArrayList<>();
 
         addConversationHistory(messages, in, config);
-            
+
         ChatCompletionMessageParam userMessage = buildUserMessage(in);
         messages.add(userMessage);
 
@@ -156,7 +156,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             return;
         }
 
-            
         @SuppressWarnings("unchecked")
         List<ChatCompletionMessageParam> history = in.getHeader(
                 config.getConversationHistoryHeader(),

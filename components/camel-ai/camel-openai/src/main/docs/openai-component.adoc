@@ -3,16 +3,31 @@
 :shortname: openai
 :artifactid: camel-openai
 :description: OpenAI endpoint for chat completion.
-:since: 4.17
+:since: 4.16
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
 
 *Since Camel {since}*
 
 *{component-header}*
 
 The OpenAI component provides integration with OpenAI and OpenAI-compatible APIs for chat completion using the official openai-java SDK.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openai</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 == URI Format
 
@@ -23,69 +38,26 @@ openai:operation[?options]
 
 Currently, only the `chat-completion` operation is supported.
 
-== Component Options
+// component-configure options: START
 
-The component supports the following options:
+// component-configure options: END
 
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *apiKey* | Default API key for all endpoints. Can also be set via OPENAI_API_KEY environment variable or application.properties. | | String
-| *baseUrl* | Default base URL for OpenAI API. Use this to connect to local or third-party OpenAI-compatible providers. | | String
-| *lazyStartProducer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. | false | boolean
-| *autowiredEnabled* | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. | true | boolean
-|===
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
 
-== Endpoint Options
+// endpoint options: START
 
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *apiKey* | OpenAI API key. Can also be set via OPENAI_API_KEY environment variable or application.properties. | | String
-| *baseUrl* | Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can be used for local or third-party providers. | | String
-| *model* | The model to use for chat completion | gpt-3.5-turbo | String
-| *temperature* | Temperature for response generation (0.0 to 2.0) | 1.0 | Double
-| *topP* | Top P for response generation (0.0 to 1.0) | | Double
-| *maxTokens* | Maximum number of tokens to generate | | Integer
-| *streaming* | Enable streaming responses | false | boolean
-| *outputClass* | Fully qualified class name for structured output using response format | | String
-| *jsonSchema* | JSON schema for structured output validation | | String
-| *conversationMemory* | Enable conversation memory per Exchange | false | boolean
-| *conversationHistoryHeader* | Header name for storing conversation history | CamelOpenAIConversationHistory | String
-|===
+// endpoint options: END
 
-== Message Headers
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
 
-=== Input Headers
+== Usage
 
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *CamelOpenAIUserPrompt* | User prompt text. Required when body is a File (for image files) or when you want to combine a prompt with file content (for text files). | | String
-| *CamelOpenAIModel* | Override the model for this message | | String
-| *CamelOpenAITemperature* | Override the temperature for this message | | Double
-| *CamelOpenAITopP* | Override the top P for this message | | Double
-| *CamelOpenAIMaxTokens* | Override the max tokens for this message | | Integer
-| *CamelOpenAIStreaming* | Override streaming setting for this message | | Boolean
-| *CamelOpenAIOutputClass* | Override output class for this message | | String
-| *CamelOpenAIJsonSchema* | Override JSON schema for this message | | String
-| *CamelOpenAIConversationHistory* | List of previous messages for conversation memory | | List<ChatCompletionMessageParam>
-|===
-
-=== Output Headers
-
-[width="100%",cols="2,5,2",options="header"]
-|===
-| Name | Description | Type
-| *CamelOpenAIResponseId* | Response ID from OpenAI | String
-| *CamelOpenAIResponseModel* | Model used for the response | String
-| *CamelOpenAIFinishReason* | Reason why the model stopped generating. Possible values: `stop`, `length`, `content_filter`, `tool_calls`, `function_call`, `refusal` | String
-| *CamelOpenAIPromptTokens* | Number of tokens in the prompt | Long
-| *CamelOpenAICompletionTokens* | Number of tokens in the completion | Long
-| *CamelOpenAITotalTokens* | Total number of tokens used | Long
-|===
-
-== Authentication and Configuration
+=== Authentication and Configuration
 
 The component reads credentials and configuration from multiple sources in the following priority order:
 
@@ -94,12 +66,14 @@ The component reads credentials and configuration from multiple sources in the f
 3. Environment variables (`OPENAI_API_KEY`)
 4. System properties / application.properties (`openai.api.key`)
 
-NOTE: The API key can be omitted if using OpenAI-compatible providers that don't require authentication (e.g., some local LLM servers).
-
-== Examples
+[NOTE]
+====
+The API key can be omitted if using OpenAI-compatible providers that don't require authentication (e.g., some local LLM servers).
+====
 
 === Basic Chat Completion with String Input
 
+.Usage example:
 [source,java]
 ----
 from("direct:chat")
@@ -110,6 +84,7 @@ from("direct:chat")
 
 === Using Configuration from Environment
 
+.Usage example:
 [source,java]
 ----
 // Assumes OPENAI_API_KEY is set in environment
@@ -121,6 +96,7 @@ from("timer:question?repeatCount=1")
 
 === File-Backed Prompt with Text File
 
+.Usage example:
 [source,java]
 ----
 from("file:prompts?noop=true")
@@ -130,6 +106,7 @@ from("file:prompts?noop=true")
 
 The component automatically reads text files (detected by MIME type starting with `text/`) and uses the file content as the prompt. Alternatively, you can provide a user prompt header to combine with the file content:
 
+.Usage example:
 [source,java]
 ----
 from("file:prompts?noop=true")
@@ -140,6 +117,7 @@ from("file:prompts?noop=true")
 
 === Image File Input with Vision Model
 
+.Usage example:
 [source,java]
 ----
 from("file:images?noop=true")
@@ -148,12 +126,16 @@ from("file:images?noop=true")
     .log("Response: ${body}");
 ----
 
-NOTE: When using image files, the `CamelOpenAIUserPrompt` header is required. Supported image formats are detected by MIME type (e.g., `image/png`, `image/jpeg`, `image/gif`, `image/webp`).
+[NOTE]
+====
+When using image files, the `CamelOpenAIUserPrompt` header is required. Supported image formats are detected by MIME type (e.g., `image/png`, `image/jpeg`, `image/gif`, `image/webp`).
+====
 
 === Streaming Response
 
 When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` in the message body. You can consume this iterator using Camel's streaming EIPs or process it directly:
 
+.Usage example:
 [source,yaml]
 ----
 - route:
@@ -185,6 +167,7 @@ When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` 
 
 === Structured Output with outputClass
 
+.Usage example:
 [source,java]
 ----
 public class Person {
@@ -203,6 +186,7 @@ from("direct:structured")
 
 The `jsonSchema` option instructs the model to return JSON that conforms to the provided schema. The response will be valid JSON but is not automatically validated against the schema:
 
+.Usage example:
 [source,java]
 ----
 from("direct:json-schema")
@@ -214,6 +198,7 @@ from("direct:json-schema")
 
 You can also load the schema from a resource file:
 
+.Usage example:
 [source,java]
 ----
 from("direct:json-schema-resource")
@@ -224,10 +209,14 @@ from("direct:json-schema-resource")
     .log("JSON response: ${body}");
 ----
 
-NOTE: For full schema validation, integrate with the `camel-json-validator` component after receiving the response.
+[NOTE]
+====
+For full schema validation, integrate with the `camel-json-validator` component after receiving the response.
+====
 
 === Conversation Memory (Per Exchange)
 
+.Usage example:
 [source,java]
 ----
 from("direct:conversation")
@@ -241,6 +230,7 @@ from("direct:conversation")
 
 === Using Third-Party or Local OpenAI-Compatible Endpoint
 
+.Usage example:
 [source,java]
 ----
 from("direct:local")
@@ -251,6 +241,7 @@ from("direct:local")
 
 === Dynamic Parameters via Headers
 
+.Usage example:
 [source,java]
 ----
 from("direct:dynamic")
@@ -271,7 +262,10 @@ The component accepts the following types of input in the message body:
    * *Text files* (MIME type starting with `text/`): The file content is read and used as the prompt. Optionally, you can set `CamelOpenAIUserPrompt` to combine a prompt with the file content
    * *Image files* (MIME type starting with `image/`): The file is encoded as a base64 data URL and sent to vision-capable models. The `CamelOpenAIUserPrompt` header is **required** when using image files
 
-NOTE: When using `File` input, the component uses `Files.probeContentType()` to detect the file type. Ensure your system has proper MIME type detection configured.
+[NOTE]
+====
+When using `File` input, the component uses `Files.probeContentType()` to detect the file type. Ensure your system has proper MIME type detection configured.
+====
 
 == Output Handling
 
@@ -307,6 +301,7 @@ IMPORTANT:
 
 Example of manual conversation history:
 
+.Usage example:
 [source,java]
 ----
 List<ChatCompletionMessageParam> history = new ArrayList<>();
@@ -329,7 +324,10 @@ This component works with any OpenAI API-compatible endpoint by setting the `bas
 - Local LLM servers (e.g., Ollama, LM Studio, LocalAI)
 - Third-party OpenAI-compatible providers
 
-NOTE: When using local or third-party providers, ensure they support the chat completions API endpoint format. Some providers may have different authentication requirements or API variations.
+[NOTE]
+====
+When using local or third-party providers, ensure they support the chat completions API endpoint format. Some providers may have different authentication requirements or API variations.
+====
 
 == Error Handling
 
@@ -343,16 +341,3 @@ The component may throw the following exceptions:
   ** When invalid JSON schema string is provided
 * `IllegalStateException`: When the endpoint or client cannot be initialized
 * API-specific exceptions from the OpenAI SDK for network errors, authentication failures, rate limiting, etc.
-
-== Dependencies
-
-Add the following dependency to your project:
-
-[source,xml]
-----
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-openai</artifactId>
-    <version>x.x.x</version>
-</dependency>
-----

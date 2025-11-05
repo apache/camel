@@ -273,6 +273,7 @@
 ** xref:milo-browse-component.adoc[OPC UA Browser]
 ** xref:milo-client-component.adoc[OPC UA Client]
 ** xref:milo-server-component.adoc[OPC UA Server]
+** xref:openai-component.adoc[OpenAI]
 ** xref:opensearch-component.adoc[OpenSearch]
 ** xref:openstack-summary.adoc[OpenStack]
 *** xref:openstack-cinder-component.adoc[OpenStack Cinder]
