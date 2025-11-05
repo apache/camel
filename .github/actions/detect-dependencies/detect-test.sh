@@ -45,10 +45,9 @@ find_affected_modules() {
       # artifactId=$($mavenBinary -f "$pom" help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
       # workaround while https://github.com/apache/maven-mvnd/issues/1463 is fixed
       artifactId=$($mavenBinary -f "$pom" help:evaluate -Dexpression=project.artifactId | grep -v '\[')
-      if [ ! -z "$artifactId" ]; then
+      # we can skip any test-infra for the goal of the unit test
+      if [ ! -z "$artifactId" ] && [[ "$artifactId" != *test-infra* ]]; then
         affected_transformed+=":$artifactId,"
-      else
-        echo "⚠️ could not find proper artifactId in $pom" >&2
       fi
   done
 
