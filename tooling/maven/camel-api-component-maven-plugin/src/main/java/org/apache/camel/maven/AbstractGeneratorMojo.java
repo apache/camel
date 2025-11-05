@@ -72,7 +72,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     @Parameter(required = true, defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
-    private ClassLoader projectClassLoader;
+    protected ClassLoader projectClassLoader;
 
     // Thread-safe deferred-construction singleton via nested static class
     private static class VelocityEngineHolder {

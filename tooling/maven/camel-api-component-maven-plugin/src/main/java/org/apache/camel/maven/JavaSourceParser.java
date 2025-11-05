@@ -38,6 +38,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.source.TypeVariableSource;
+import org.jboss.forge.roaster.model.util.Types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +71,12 @@ public class JavaSourceParser {
     private final Map<String, Map<String, String>> parameterDocs = new LinkedHashMap<>();
     private final Map<String, Map<String, String>> setterMethods = new LinkedHashMap<>();
     private final Map<String, Map<String, String>> setterDocs = new LinkedHashMap<>();
+
+    private final ClassLoader classLoader;
+
+    public JavaSourceParser(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
     public void parse(InputStream in, String innerClass) throws IOException {
         parse(new String(in.readAllBytes()), innerClass, false);
@@ -128,7 +135,7 @@ public class JavaSourceParser {
                 methodDocs.put(ms.getName(), doc);
             }
 
-            String result = resolveParameterizedType(rootClazz, clazz, ms, null, ms.getReturnType());
+            String result = resolveParameterizedType(rootClazz, clazz, ms, null, ms.getReturnType(), classLoader);
             if (result.isEmpty()) {
                 result = "void";
             }
@@ -144,7 +151,7 @@ public class JavaSourceParser {
             for (int i = 0; i < list.size(); i++) {
                 ParameterSource ps = list.get(i);
                 String name = ps.getName();
-                String type = resolveParameterizedType(rootClazz, clazz, ms, ps, ps.getType());
+                String type = resolveParameterizedType(rootClazz, clazz, ms, ps, ps.getType(), classLoader);
                 LOG.trace("Parsing parameter #{} ({} {})", i, type, name);
 
                 sb.append(type);
@@ -231,8 +238,8 @@ public class JavaSourceParser {
 
     private static String resolveParameterizedType(
             AbstractGenericCapableJavaSource rootClazz, AbstractGenericCapableJavaSource clazz, MethodSource ms,
-            ParameterSource ps, Type type) {
-        String answer = resolveType(rootClazz, clazz, ms, type);
+            ParameterSource ps, Type type, ClassLoader classLoader) {
+        String answer = resolveType(rootClazz, clazz, ms, type, classLoader);
 
         if (type.isParameterized()) {
             // for parameterized types then it can get complex if they are variables (T, T extends Foo etc)
@@ -333,7 +340,8 @@ public class JavaSourceParser {
     }
 
     private static String resolveType(
-            AbstractGenericCapableJavaSource rootClazz, AbstractGenericCapableJavaSource clazz, MethodSource ms, Type type) {
+            AbstractGenericCapableJavaSource rootClazz, AbstractGenericCapableJavaSource clazz, MethodSource ms, Type type,
+            ClassLoader classLoader) {
         String name = type.getName();
         // if the type is from a type variable (eg T extends Foo generic style)
         // then the type should be returned as-is
@@ -345,7 +353,7 @@ public class JavaSourceParser {
             return type.getName();
         }
 
-        String answer = resolveType(rootClazz, clazz, name);
+        String answer = resolveType(rootClazz, clazz, name, classLoader);
         List<Type> types = type.getTypeArguments();
         if (!types.isEmpty()) {
             if (type.isArray()) {
@@ -353,7 +361,7 @@ public class JavaSourceParser {
             } else {
                 StringJoiner sj = new StringJoiner(", ");
                 for (Type arg : types) {
-                    sj.add(resolveType(rootClazz, clazz, ms, arg));
+                    sj.add(resolveType(rootClazz, clazz, ms, arg, classLoader));
                 }
                 answer = answer + "<" + sj + ">";
             }
@@ -361,7 +369,8 @@ public class JavaSourceParser {
         return answer;
     }
 
-    private static String resolveType(AbstractJavaSource rootClazz, AbstractJavaSource clazz, String type) {
+    private static String resolveType(
+            AbstractJavaSource rootClazz, AbstractJavaSource clazz, String type, ClassLoader classLoader) {
         if ("void".equals(type)) {
             return "void";
         }
@@ -408,6 +417,19 @@ public class JavaSourceParser {
         if (resolvedType.equals(type)) {
             resolvedType = rootClazz.resolveType(type);
         }
+        if (Types.isQualified(resolvedType)) {
+            try {
+                Class.forName(resolvedType, true, classLoader);
+            } catch (ClassNotFoundException e) {
+                // Fallback to package if by any chance the previous parsing
+                // returned some type which does not exist in the classpath.
+                // It's a workaround for bug https://github.com/forge/roaster/issues/223
+                String fallbackType = clazz.getPackage() + "." + type;
+                LOG.info("Class not found for type {}, using instead {}", resolvedType, fallbackType);
+                resolvedType = fallbackType;
+            }
+        }
+
         return resolvedType;
     }
 
