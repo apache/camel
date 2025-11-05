@@ -810,7 +810,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     }
 
-    private static class StatusRow {
+    private static class StatusRow implements Cloneable {
         String pid;
         String name;
         String age;
@@ -825,7 +825,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
             try {
                 return (StatusRow) clone();
             } catch (CloneNotSupportedException e) {
-                return null;
+                throw new RuntimeException(e);
             }
         }
     }

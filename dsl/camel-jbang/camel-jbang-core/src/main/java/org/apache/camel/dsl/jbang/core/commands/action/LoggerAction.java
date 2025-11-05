@@ -168,7 +168,7 @@ public class LoggerAction extends ActionBaseCommand {
             try {
                 return (Row) clone();
             } catch (CloneNotSupportedException e) {
-                return null;
+                throw new RuntimeException(e);
             }
         }
     }
