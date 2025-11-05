@@ -89,7 +89,7 @@ public class KameletMainInjector implements Injector {
                     boolean found = false;
                     String name = ann.value();
                     for (String n : name.split(",")) {
-                        if (PatternHelper.matchPattern(n, stubPattern)) {
+                        if (PatternHelper.matchPatterns(n, stubPattern.split(","))) {
                             found = true;
                             break;
                         }

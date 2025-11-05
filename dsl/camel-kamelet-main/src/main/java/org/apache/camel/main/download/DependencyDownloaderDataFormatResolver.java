@@ -25,6 +25,7 @@ import org.apache.camel.impl.engine.DefaultDataFormatResolver;
 import org.apache.camel.main.stub.StubDataFormat;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.model.DataFormatModel;
 
 /**
@@ -78,7 +79,9 @@ public final class DependencyDownloaderDataFormatResolver extends DefaultDataFor
         if (stubPattern == null) {
             return true;
         }
-        return false;
+
+        boolean stubbed = PatternHelper.matchPatterns(name, stubPattern.split(","));
+        return !stubbed;
     }
 
 }
