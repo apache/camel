@@ -34,6 +34,7 @@
 ** xref:mimeMultipart-dataformat.adoc[MIME Multipart]
 ** xref:parquetAvro-dataformat.adoc[Parquet File]
 ** xref:pgp-dataformat.adoc[PGP]
+** xref:pqc-dataformat.adoc[PQC (Post-Quantum Cryptography)]
 ** xref:protobuf-dataformat.adoc[Protobuf]
 ** xref:protobufJackson-dataformat.adoc[Protobuf Jackson]
 ** xref:rss-dataformat.adoc[RSS]
