@@ -594,10 +594,10 @@ public class Run extends CamelCommand {
             StringJoiner sj = new StringJoiner(",");
             for (String n : stub.split(",")) {
                 // you can either refer to a name or a specific endpoint
-                // if there is a colon then we assume its a specific endpoint then we should not add wildcard
+                // if there is a colon then we assume it's a specific endpoint then we should not add wildcard
                 boolean colon = n.contains(":");
                 if (!colon && !n.endsWith("*")) {
-                    n = n + "*";
+                    n = "component:" + n + "*";
                 }
                 sj.add(n);
             }
