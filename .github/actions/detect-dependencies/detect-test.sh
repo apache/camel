@@ -34,21 +34,33 @@ find_affected_modules() {
   local affected=()
 
   while IFS= read -r pom; do
-    if grep -q "\${${property_name}}" "$pom"; then
-      affected+=("$pom")
+    # skip any target that may have been built previously
+    if [[ "$pom" != */target/* ]]; then
+      # only consider certain modules, nothing else
+      if [[ "$pom" == */catalog/* ]] || \
+          [[ "$pom" == */components/* ]] || \
+          [[ "$pom" == */core/* ]] || \
+          ([[ "$pom" == */dsl/* ]] && [[ "$pom" != */dsl/camel-jbang* ]]); then
+        if grep -q "\${${property_name}}" "$pom"; then
+          affected+=("$pom")
+        fi
+      fi
     fi
   done < <(find . -name "pom.xml")
 
   affected_transformed=""
 
   for pom in "${affected[@]}"; do
+    if [[ -f "$pom" ]]; then
       # artifactId=$($mavenBinary -f "$pom" help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
-      # workaround while https://github.com/apache/maven-mvnd/issues/1463 is fixed
-      artifactId=$($mavenBinary -f "$pom" help:evaluate -Dexpression=project.artifactId | grep -v '\[')
-      # we can skip any test-infra for the goal of the unit test
-      if [ ! -z "$artifactId" ] && [[ "$artifactId" != *test-infra* ]]; then
+      # NOTE: as we use mvnd, we must be aware of certain open issues
+      # - https://github.com/apache/maven-mvnd/issues/1463
+      # - https://github.com/apache/maven-mvnd/issues/1465
+      artifactId=$($mavenBinary -f "$pom" help:evaluate -Dexpression=project.artifactId | grep -v '\[' | grep -v ' ')
+      if [ ! -z "$artifactId" ]; then
         affected_transformed+=":$artifactId,"
       fi
+    fi
   done
 
   echo "$affected_transformed"
@@ -75,6 +87,11 @@ main() {
     modules=$(find_affected_modules "$prop" $mavenBinary)
     modules_affected+="$modules"
   done <<< "$changed_props"
+
+  if [ -z "$modules_affected" ]; then
+    echo "✅ No components affected by property changes detected."
+    exit 0
+  fi
 
   echo "🧪 Testing the following modules $modules_affected and its dependents"
   $mavenBinary $MVND_OPTS clean test -pl "$modules_affected$exclusionList" -amd
