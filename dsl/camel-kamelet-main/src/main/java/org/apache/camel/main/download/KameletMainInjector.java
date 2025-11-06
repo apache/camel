@@ -81,21 +81,27 @@ public class KameletMainInjector implements Injector {
         boolean accept = true;
         if (stubPattern != null && Component.class.isAssignableFrom(type)) {
             accept = accept(type);
-            if (!accept && !"*".equals(stubPattern)) {
+            if (!accept && !("*".equals(stubPattern) || "component:*".equals(stubPattern))) {
                 // grab component name via annotation trick!
                 org.apache.camel.spi.annotations.Component ann
                         = ObjectHelper.getAnnotation(this, org.apache.camel.spi.annotations.Component.class);
                 if (ann != null) {
-                    boolean found = false;
+                    boolean stubbed = false;
                     String name = ann.value();
                     for (String n : name.split(",")) {
-                        if (PatternHelper.matchPatterns(n, stubPattern.split(","))) {
-                            found = true;
-                            break;
+                        for (String p : stubPattern.split(",")) {
+                            if (p.startsWith("component:")) {
+                                p = p.substring(10);
+                            }
+                            stubbed |= PatternHelper.matchPattern(n, p);
                         }
                     }
-                    accept = !found;
+                    accept = !stubbed;
+                } else {
+                    accept = true;
                 }
+            } else {
+                accept = true;
             }
         }
         return accept;

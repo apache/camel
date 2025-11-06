@@ -80,7 +80,17 @@ public class StubComponentAutowireStrategy extends LifecycleStrategySupport impl
     }
 
     private void autowire(String name, String kind, Object target) {
-        boolean stubbed = PatternHelper.matchPatterns(name, pattern.split(","));
+        boolean stubbed = false;
+        for (String n : pattern.split(",")) {
+            if ("component".equals(kind) && n.startsWith("component:")) {
+                n = n.substring(10);
+            } else if ("dataformat".equals(kind) && n.startsWith("dataformat:")) {
+                n = n.substring(11);
+            } else if ("language".equals(kind) && n.startsWith("language:")) {
+                n = n.substring(9);
+            }
+            stubbed |= PatternHelper.matchPattern(name, n);
+        }
         if (stubbed) {
             // do not autowire
         } else {
