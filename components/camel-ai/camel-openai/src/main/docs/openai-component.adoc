@@ -3,7 +3,7 @@
 :shortname: openai
 :artifactid: camel-openai
 :description: OpenAI endpoint for chat completion.
-:since: 4.16
+:since: 4.17
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported

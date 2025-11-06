@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * OpenAI endpoint for chat completion.
  */
-@UriEndpoint(firstVersion = "4.16.0",
+@UriEndpoint(firstVersion = "4.17.0",
              scheme = "openai",
              title = "OpenAI",
              syntax = "openai:operation",

@@ -31,6 +31,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "conversationHistoryHeader": target.getConfiguration().setConversationHistoryHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "conversationmemory":
         case "conversationMemory": target.getConfiguration().setConversationMemory(property(camelContext, boolean.class, value)); return true;
+        case "developermessage":
+        case "developerMessage": target.getConfiguration().setDeveloperMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "jsonschema":
         case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -41,9 +43,14 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
         case "streaming": target.getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
+        case "systemmessage":
+        case "systemMessage": target.getConfiguration().setSystemMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
+        case "tools": target.getConfiguration().setTools(property(camelContext, java.lang.String.class, value)); return true;
         case "topp":
         case "topP": target.getConfiguration().setTopP(property(camelContext, java.lang.Double.class, value)); return true;
+        case "usermessage":
+        case "userMessage": target.getConfiguration().setUserMessage(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -59,6 +66,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "conversationHistoryHeader": return java.lang.String.class;
         case "conversationmemory":
         case "conversationMemory": return boolean.class;
+        case "developermessage":
+        case "developerMessage": return java.lang.String.class;
         case "jsonschema":
         case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
@@ -69,9 +78,14 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "outputclass":
         case "outputClass": return java.lang.String.class;
         case "streaming": return boolean.class;
+        case "systemmessage":
+        case "systemMessage": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
+        case "tools": return java.lang.String.class;
         case "topp":
         case "topP": return java.lang.Double.class;
+        case "usermessage":
+        case "userMessage": return java.lang.String.class;
         default: return null;
         }
     }
@@ -88,6 +102,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "conversationHistoryHeader": return target.getConfiguration().getConversationHistoryHeader();
         case "conversationmemory":
         case "conversationMemory": return target.getConfiguration().isConversationMemory();
+        case "developermessage":
+        case "developerMessage": return target.getConfiguration().getDeveloperMessage();
         case "jsonschema":
         case "jsonSchema": return target.getConfiguration().getJsonSchema();
         case "lazystartproducer":
@@ -98,9 +114,14 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
         case "streaming": return target.getConfiguration().isStreaming();
+        case "systemmessage":
+        case "systemMessage": return target.getConfiguration().getSystemMessage();
         case "temperature": return target.getConfiguration().getTemperature();
+        case "tools": return target.getConfiguration().getTools();
         case "topp":
         case "topP": return target.getConfiguration().getTopP();
+        case "usermessage":
+        case "userMessage": return target.getConfiguration().getUserMessage();
         default: return null;
         }
     }

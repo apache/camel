@@ -35,6 +35,9 @@ public class OpenAIComponent extends DefaultComponent {
     @Metadata(description = "Default base URL for all endpoints")
     private String baseUrl;
 
+    @Metadata(description = "Default model for all endpoints")
+    private String model;
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         OpenAIConfiguration configuration = new OpenAIConfiguration();
@@ -44,6 +47,9 @@ public class OpenAIComponent extends DefaultComponent {
         }
         if (baseUrl != null) {
             configuration.setBaseUrl(baseUrl);
+        }
+        if (model != null) {
+            configuration.setModel(model);
         }
 
         OpenAIEndpoint endpoint = new OpenAIEndpoint(uri, this, configuration);
@@ -68,5 +74,13 @@ public class OpenAIComponent extends DefaultComponent {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 }

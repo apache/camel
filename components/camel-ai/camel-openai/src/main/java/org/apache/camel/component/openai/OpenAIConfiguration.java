@@ -59,8 +59,14 @@ public class OpenAIConfiguration implements Cloneable {
     private String outputClass;
 
     @UriParam
-    @Metadata(description = "JSON schema for structured output validation")
+    @Metadata(description = "JSON schema for structured output validation", supportFileReference = true, largeInput = true,
+              inputLanguage = "json")
     private String jsonSchema;
+
+    @UriParam
+    @Metadata(description = "Tools JSON (array) for function calling; same shape as OpenAI tools", supportFileReference = true,
+              largeInput = true, inputLanguage = "json")
+    private String tools;
 
     @UriParam(defaultValue = "false")
     @Metadata(description = "Enable conversation memory per Exchange")
@@ -69,6 +75,19 @@ public class OpenAIConfiguration implements Cloneable {
     @UriParam(defaultValue = "CamelOpenAIConversationHistory")
     @Metadata(description = "Header name for storing conversation history")
     private String conversationHistoryHeader = "CamelOpenAIConversationHistory";
+
+    @UriParam
+    @Metadata(description = "Default user message text to use when no prompt is provided", largeInput = true)
+    private String userMessage;
+
+    @UriParam
+    @Metadata(description = "System message to prepend. When set and conversationMemory is enabled, the conversation history is reset.",
+              largeInput = true)
+    private String systemMessage;
+
+    @UriParam
+    @Metadata(description = "Developer message to prepend before user messages", largeInput = true)
+    private String developerMessage;
 
     public String getApiKey() {
         return apiKey;
@@ -142,6 +161,14 @@ public class OpenAIConfiguration implements Cloneable {
         this.jsonSchema = jsonSchema;
     }
 
+    public String getTools() {
+        return tools;
+    }
+
+    public void setTools(String tools) {
+        this.tools = tools;
+    }
+
     public boolean isConversationMemory() {
         return conversationMemory;
     }
@@ -156,6 +183,30 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setConversationHistoryHeader(String conversationHistoryHeader) {
         this.conversationHistoryHeader = conversationHistoryHeader;
+    }
+
+    public String getUserMessage() {
+        return userMessage;
+    }
+
+    public void setUserMessage(String userMessage) {
+        this.userMessage = userMessage;
+    }
+
+    public String getSystemMessage() {
+        return systemMessage;
+    }
+
+    public void setSystemMessage(String systemMessage) {
+        this.systemMessage = systemMessage;
+    }
+
+    public String getDeveloperMessage() {
+        return developerMessage;
+    }
+
+    public void setDeveloperMessage(String developerMessage) {
+        this.developerMessage = developerMessage;
     }
 
     public OpenAIConfiguration copy() {

@@ -17,6 +17,7 @@
 package org.apache.camel.component.openai;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +37,10 @@ import com.openai.models.chat.completions.ChatCompletionContentPart;
 import com.openai.models.chat.completions.ChatCompletionContentPartImage;
 import com.openai.models.chat.completions.ChatCompletionContentPartText;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
+import com.openai.models.chat.completions.ChatCompletionDeveloperMessageParam;
 import com.openai.models.chat.completions.ChatCompletionMessageParam;
+import com.openai.models.chat.completions.ChatCompletionSystemMessageParam;
+import com.openai.models.chat.completions.ChatCompletionTool;
 import com.openai.models.chat.completions.ChatCompletionUserMessageParam;
 import com.openai.models.completions.CompletionUsage;
 import org.apache.camel.AsyncCallback;
@@ -44,6 +48,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -55,6 +60,44 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     public OpenAIProducer(OpenAIEndpoint endpoint) {
         super(endpoint);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        OpenAIConfiguration config = getEndpoint().getConfiguration();
+
+        if (ObjectHelper.isNotEmpty(config.getTools())) {
+            String resolved = getEndpoint().getCamelContext().resolvePropertyPlaceholders(config.getTools());
+            String content = resolveResourceContent(resolved);
+            if (content != null) {
+                config.setTools(content);
+            } else {
+                config.setTools(resolved);
+            }
+        }
+
+        if (ObjectHelper.isNotEmpty(config.getJsonSchema())) {
+            String resolved = getEndpoint().getCamelContext().resolvePropertyPlaceholders(config.getJsonSchema());
+            String content = resolveResourceContent(resolved);
+            if (content != null) {
+                config.setJsonSchema(content);
+            } else {
+                config.setJsonSchema(resolved);
+            }
+        }
+
+        super.doStart();
+    }
+
+    private String resolveResourceContent(String property) {
+        try (InputStream is = ResourceHelper.resolveResourceAsInputStream(getEndpoint().getCamelContext(), property)) {
+            if (is != null) {
+                return getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, is);
+            }
+        } catch (Exception e) {
+            // ignore and treat the value as inline content
+        }
+        return null;
     }
 
     @Override
@@ -87,6 +130,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         Boolean streaming = resolveParameter(in, OpenAIConstants.STREAMING, config.isStreaming(), Boolean.class);
         String outputClass = resolveParameter(in, OpenAIConstants.OUTPUT_CLASS, config.getOutputClass(), String.class);
         String jsonSchema = resolveParameter(in, OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
+        String toolsJson = resolveParameter(in, OpenAIConstants.TOOLS, config.getTools(), String.class);
 
         List<ChatCompletionMessageParam> messages = buildMessages(exchange, config);
 
@@ -107,13 +151,18 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             paramsBuilder.maxTokens(maxTokens.longValue());
         }
 
+        if (ObjectHelper.isNotEmpty(toolsJson)) {
+            List<ChatCompletionTool> tools = buildFunctionToolsFromJson(toolsJson);
+            paramsBuilder.tools(tools);
+        }
+
         // Structured output handling
-        if (outputClass != null && !outputClass.isEmpty()) {
+        if (ObjectHelper.isNotEmpty(outputClass)) {
             Class<?> responseClass = getEndpoint().getCamelContext().getClassResolver().resolveClass(outputClass);
             if (responseClass != null) {
                 paramsBuilder.responseFormat(responseClass);
             }
-        } else if (jsonSchema != null && !jsonSchema.isEmpty()) {
+        } else if (ObjectHelper.isNotEmpty(jsonSchema)) {
             // Build OpenAI JSON schema response format from provided schema string
             try {
                 ResponseFormatJsonSchema.JsonSchema.Schema schema = buildSchemaFromJson(jsonSchema);
@@ -143,9 +192,22 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         Message in = exchange.getIn();
         List<ChatCompletionMessageParam> messages = new ArrayList<>();
 
+        // If a system message is configured and conversation memory is enabled, reset history
+        if (ObjectHelper.isNotEmpty(config.getSystemMessage()) && config.isConversationMemory()) {
+            in.removeHeader(config.getConversationHistoryHeader());
+        }
+
+        // Prepend system and developer messages when configured
+        if (ObjectHelper.isNotEmpty(config.getSystemMessage())) {
+            messages.add(createSystemMessage(config.getSystemMessage()));
+        }
+        if (ObjectHelper.isNotEmpty(config.getDeveloperMessage())) {
+            messages.add(createDeveloperMessage(config.getDeveloperMessage()));
+        }
+
         addConversationHistory(messages, in, config);
 
-        ChatCompletionMessageParam userMessage = buildUserMessage(in);
+        ChatCompletionMessageParam userMessage = buildUserMessage(in, config);
         messages.add(userMessage);
 
         return messages;
@@ -165,43 +227,49 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         }
     }
 
-    private ChatCompletionMessageParam buildUserMessage(Message in) throws Exception {
+    private ChatCompletionMessageParam buildUserMessage(Message in, OpenAIConfiguration config) throws Exception {
         Object body = in.getBody();
         String userPrompt = in.getHeader(OpenAIConstants.USER_PROMPT, String.class);
+        if (userPrompt == null || userPrompt.isEmpty() && ObjectHelper.isNotEmpty(config.getUserMessage())) {
+            userPrompt = config.getUserMessage();
+        }
 
-        if (body instanceof String) {
-            return buildTextMessage(in, userPrompt);
+        if (body instanceof File) {
+            return buildFileMessage(in, userPrompt, config);
         } else {
-            return buildFileMessage(in, userPrompt);
+            return buildTextMessage(in, userPrompt, config);
         }
     }
 
-    private ChatCompletionMessageParam buildTextMessage(Message in, String userPrompt) {
+    private ChatCompletionMessageParam buildTextMessage(Message in, String userPrompt, OpenAIConfiguration config) {
         String prompt = userPrompt != null ? userPrompt : in.getBody(String.class);
         if (prompt == null || prompt.isEmpty()) {
-            throw new IllegalArgumentException("Message body or user prompt header must contain the prompt text");
+            throw new IllegalArgumentException("Message body or user message configuration must contain the prompt text");
         }
-
         return createTextMessage(prompt);
     }
 
-    private ChatCompletionMessageParam buildFileMessage(Message in, String userPrompt) throws Exception {
+    private ChatCompletionMessageParam buildFileMessage(Message in, String userPrompt, OpenAIConfiguration config)
+            throws Exception {
         File inputFile = in.getBody(File.class);
         Path path = inputFile.toPath();
         String mime = Files.probeContentType(path);
 
         if (mime != null && mime.startsWith("text/")) {
             // Handle text files - read content and use buildTextMessage logic
-            String fileContent = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
-            String prompt = userPrompt != null ? userPrompt : fileContent;
+            String prompt = userPrompt;
             if (prompt == null || prompt.isEmpty()) {
-                throw new IllegalArgumentException("File content or user prompt header must contain the prompt text");
+                prompt = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+            }
+
+            if (prompt == null || prompt.isEmpty()) {
+                throw new IllegalArgumentException("File content or user message configuration must contain the prompt text");
             }
             return createTextMessage(prompt);
         } else if (mime != null && mime.startsWith("image/")) {
             // Handle image files - require user prompt and combine with image
             if (userPrompt == null || userPrompt.isEmpty()) {
-                throw new IllegalArgumentException("User prompt header must be set when using image File body");
+                throw new IllegalArgumentException("User message configuration must be set when using image File body");
             }
 
             ChatCompletionContentPart imageContentPart = createImageContentPart(inputFile, mime);
@@ -221,6 +289,20 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         return ChatCompletionMessageParam.ofUser(
                 ChatCompletionUserMessageParam.builder()
                         .content(ChatCompletionUserMessageParam.Content.ofText(prompt))
+                        .build());
+    }
+
+    private ChatCompletionMessageParam createSystemMessage(String text) {
+        return ChatCompletionMessageParam.ofSystem(
+                ChatCompletionSystemMessageParam.builder()
+                        .content(ChatCompletionSystemMessageParam.Content.ofText(text))
+                        .build());
+    }
+
+    private ChatCompletionMessageParam createDeveloperMessage(String text) {
+        return ChatCompletionMessageParam.ofDeveloper(
+                ChatCompletionDeveloperMessageParam.builder()
+                        .content(ChatCompletionDeveloperMessageParam.Content.ofText(text))
                         .build());
     }
 
@@ -248,9 +330,14 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             throws Exception {
         ChatCompletion response = getEndpoint().getClient().chat().completions().create(params);
 
-        // Extract response content
-        String content = response.choices().get(0).message().content().orElse("");
-        exchange.getMessage().setBody(content);
+        // if finish reason is tool_calls, set the body to the tool calls
+        if (response.choices().get(0).finishReason().equals(ChatCompletion.Choice.FinishReason.TOOL_CALLS)) {
+            exchange.getMessage().setBody(response.choices().get(0).message().toolCalls());
+        } else {
+            // Extract response content
+            String content = response.choices().get(0).message().content().orElse("");
+            exchange.getMessage().setBody(content);
+        }
         setResponseHeaders(exchange.getMessage(), response);
 
         // Update conversation history if enabled
@@ -347,6 +434,17 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             sb.putAdditionalProperty(e.getKey(), JsonValue.from(e.getValue()));
         }
         return sb.build();
+    }
+
+    private List<ChatCompletionTool> buildFunctionToolsFromJson(String toolsJson) throws Exception {
+        List<ChatCompletionTool> tools = OBJECT_MAPPER.readValue(
+                toolsJson,
+                new com.fasterxml.jackson.core.type.TypeReference<List<ChatCompletionTool>>() {
+                });
+        if (tools == null) {
+            throw new IllegalArgumentException("Tools JSON string parsed to null");
+        }
+        return tools;
     }
 
     private <T> T resolveParameter(Message message, String headerName, T defaultValue, Class<T> type) {
