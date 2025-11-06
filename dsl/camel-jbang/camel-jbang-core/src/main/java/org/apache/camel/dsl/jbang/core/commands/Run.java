@@ -275,8 +275,8 @@ public class Run extends CamelCommand {
     @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
     String[] property;
 
-    @Option(names = { "--stub" }, description = "Stubs all the matching endpoint with the given component name or pattern."
-                                                + " Multiple names can be separated by comma. (all = everything).")
+    @Option(names = { "--stub" }, description = "Stubs all the matching endpoint uri with the given component name or pattern."
+                                                + " Multiple names can be separated by comma. (all = stub all endpoints).")
     String stub;
 
     @Option(names = { "--jfr" }, defaultValue = "false",
@@ -589,7 +589,8 @@ public class Run extends CamelCommand {
 
         if (stub != null) {
             if ("all".equals(stub)) {
-                stub = "*";
+                // stub all components only
+                stub = "component:*";
             }
             // we need to match by wildcard, to make it easier
             StringJoiner sj = new StringJoiner(",");

@@ -80,7 +80,12 @@ public final class DependencyDownloaderDataFormatResolver extends DefaultDataFor
             return true;
         }
 
-        boolean stubbed = PatternHelper.matchPatterns(name, stubPattern.split(","));
+        boolean stubbed = false;
+        for (String n : stubPattern.split(",")) {
+            if (n.startsWith("dataformat:")) {
+                stubbed |= PatternHelper.matchPattern(name, n.substring(11));
+            }
+        }
         return !stubbed;
     }
 
