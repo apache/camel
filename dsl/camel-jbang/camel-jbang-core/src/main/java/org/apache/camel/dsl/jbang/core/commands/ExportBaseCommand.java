@@ -473,12 +473,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 boolean skip = v == null || v.contains("org.apache.camel:camel-core-languages")
                         || v.contains("org.apache.camel:camel-java-joor-dsl")
                         || v.contains("camel-endpointdsl")
+                        || (v.contains("org.apache.camel.kamelets:camel-kamelets"))
                         || !(kamelets) && v.contains("org.apache.camel:camel-kamelet");
                 if (!skip) {
                     answer.add(v);
                 }
                 if (kamelets && v != null && v.contains("org.apache.camel:camel-kamelet")) {
-                    // kamelets need yaml-dsl
+                    // kamelets also need yaml-dsl
+                    answer.add("camel:kamelet");
                     answer.add("camel:yaml-dsl");
                     if (asfKamelets) {
                         // include JARs for official ASF kamelets
@@ -494,7 +496,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
                     for (String d : deps.split(",")) {
                         answer.add(d.trim());
                         if (kamelets && d.contains("org.apache.camel:camel-kamelet")) {
-                            // kamelets need yaml-dsl
+                            // kamelets also need yaml-dsl
+                            answer.add("camel:kamelet");
                             answer.add("camel:yaml-dsl");
                             if (asfKamelets) {
                                 // include JARs for official ASF kamelets

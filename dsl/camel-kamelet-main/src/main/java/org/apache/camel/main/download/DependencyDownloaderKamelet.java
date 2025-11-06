@@ -130,6 +130,16 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
         }
 
         @Override
+        protected void doInit() throws Exception {
+            super.doInit();
+
+            MavenDependencyDownloader downloader = getCamelContext().hasService(MavenDependencyDownloader.class);
+            if (!downloader.alreadyOnClasspath("org.apache.camel.kamelets", "camel-kamelets", kameletsVersion)) {
+                downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets", kameletsVersion, false);
+            }
+        }
+
+        @Override
         protected RouteBuilder builder(YamlDeserializationContext ctx, Node node) {
             Node name = nodeAt(node, "/metadata/name");
             String text = YamlDeserializerSupport.asText(name);
