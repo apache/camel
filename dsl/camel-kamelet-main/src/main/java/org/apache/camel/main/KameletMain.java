@@ -498,7 +498,7 @@ public class KameletMain extends MainCommandLineSupport {
             configure().httpManagementServer().withEnabled(false);
         }
 
-        if (silent || "*".equals(stubPattern)) {
+        if (silent || "*".equals(stubPattern) || "component:*".equals(stubPattern)) {
             // turn off auto-wiring when running in silent mode (or stub = *)
             mainConfigurationProperties.setAutowiredEnabled(false);
             // and turn off fail fast as we stub components

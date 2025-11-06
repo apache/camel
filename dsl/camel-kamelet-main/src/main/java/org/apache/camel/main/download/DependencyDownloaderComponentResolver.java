@@ -146,7 +146,13 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
             return true;
         }
 
-        boolean stubbed = PatternHelper.matchPatterns(name, stubPattern.split(","));
+        boolean stubbed = false;
+        for (String n : stubPattern.split(",")) {
+            if (n.startsWith("component:")) {
+                n = n.substring(10);
+            }
+            stubbed |= PatternHelper.matchPattern(name, n);
+        }
         return !stubbed;
     }
 
