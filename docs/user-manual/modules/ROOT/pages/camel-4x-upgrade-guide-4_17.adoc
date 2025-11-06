@@ -19,6 +19,9 @@ The `camel-kamelets-catalog` JAR is now downloaded on-demand.
 The version of the Kamelets is now specified via `--kamelets-version` option (or via maven dependencies).
 The following option is no longer in use `-Dcamel-kamelets.version`.
 
+Removed automatic fallback to download Kamelet YAML files from GitHub. Instead, kamelets are
+now only loaded from embedded `camel-kamelets` JAR.
+
 === Component deprecation
 
 The `camel-stomp` component is deprecated.
