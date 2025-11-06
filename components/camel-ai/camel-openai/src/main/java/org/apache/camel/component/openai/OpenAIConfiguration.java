@@ -26,8 +26,8 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class OpenAIConfiguration implements Cloneable {
 
-    @UriParam
-    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.")
+    @UriParam(secret = true)
+    @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", secret = true)
     private String apiKey;
 
     @UriParam
@@ -73,8 +73,8 @@ public class OpenAIConfiguration implements Cloneable {
     private boolean conversationMemory = false;
 
     @UriParam(defaultValue = "CamelOpenAIConversationHistory")
-    @Metadata(description = "Header name for storing conversation history")
-    private String conversationHistoryHeader = "CamelOpenAIConversationHistory";
+    @Metadata(description = "Exchange property name for storing conversation history")
+    private String conversationHistoryProperty = "CamelOpenAIConversationHistory";
 
     @UriParam
     @Metadata(description = "Default user message text to use when no prompt is provided", largeInput = true)
@@ -88,6 +88,10 @@ public class OpenAIConfiguration implements Cloneable {
     @UriParam
     @Metadata(description = "Developer message to prepend before user messages", largeInput = true)
     private String developerMessage;
+
+    @UriParam(defaultValue = "false")
+    @Metadata(description = "Store the full response in the exchange property 'CamelOpenAIResponse' in non-streaming mode")
+    private boolean storeFullResponse = false;
 
     public String getApiKey() {
         return apiKey;
@@ -177,12 +181,12 @@ public class OpenAIConfiguration implements Cloneable {
         this.conversationMemory = conversationMemory;
     }
 
-    public String getConversationHistoryHeader() {
-        return conversationHistoryHeader;
+    public String getConversationHistoryProperty() {
+        return conversationHistoryProperty;
     }
 
-    public void setConversationHistoryHeader(String conversationHistoryHeader) {
-        this.conversationHistoryHeader = conversationHistoryHeader;
+    public void setConversationHistoryProperty(String conversationHistoryProperty) {
+        this.conversationHistoryProperty = conversationHistoryProperty;
     }
 
     public String getUserMessage() {
@@ -207,6 +211,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setDeveloperMessage(String developerMessage) {
         this.developerMessage = developerMessage;
+    }
+
+    public boolean isStoreFullResponse() {
+        return storeFullResponse;
+    }
+
+    public void setStoreFullResponse(boolean storeFullResponse) {
+        this.storeFullResponse = storeFullResponse;
     }
 
     public OpenAIConfiguration copy() {

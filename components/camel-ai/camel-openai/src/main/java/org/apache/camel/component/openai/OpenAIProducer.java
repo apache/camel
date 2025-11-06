@@ -184,25 +184,37 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         if (Boolean.TRUE.equals(streaming)) {
             processStreaming(exchange, params);
         } else {
-            processNonStreaming(exchange, params);
+            processNonStreaming(exchange, params, config);
         }
     }
 
-    private List<ChatCompletionMessageParam> buildMessages(Exchange exchange, OpenAIConfiguration config) throws Exception {
+    private List<ChatCompletionMessageParam> buildMessages(Exchange exchange, OpenAIConfiguration config)
+            throws Exception {
         Message in = exchange.getIn();
         List<ChatCompletionMessageParam> messages = new ArrayList<>();
 
-        // If a system message is configured and conversation memory is enabled, reset history
+        // If a system message is configured and conversation memory is enabled, reset
+        // history
         if (ObjectHelper.isNotEmpty(config.getSystemMessage()) && config.isConversationMemory()) {
-            in.removeHeader(config.getConversationHistoryHeader());
+            in.removeHeader(config.getConversationHistoryProperty());
+        }
+
+        String systemPrompt = in.getHeader(OpenAIConstants.SYSTEM_MESSAGE, String.class);
+        String developerPrompt = in.getHeader(OpenAIConstants.DEVELOPER_MESSAGE, String.class);
+        if (systemPrompt == null || systemPrompt.isEmpty() && ObjectHelper.isNotEmpty(config.getSystemMessage())) {
+            systemPrompt = config.getSystemMessage();
+        }
+        if (developerPrompt == null
+                || developerPrompt.isEmpty() && ObjectHelper.isNotEmpty(config.getDeveloperMessage())) {
+            developerPrompt = config.getDeveloperMessage();
         }
 
         // Prepend system and developer messages when configured
-        if (ObjectHelper.isNotEmpty(config.getSystemMessage())) {
-            messages.add(createSystemMessage(config.getSystemMessage()));
+        if (ObjectHelper.isNotEmpty(systemPrompt)) {
+            messages.add(createSystemMessage(systemPrompt));
         }
-        if (ObjectHelper.isNotEmpty(config.getDeveloperMessage())) {
-            messages.add(createDeveloperMessage(config.getDeveloperMessage()));
+        if (ObjectHelper.isNotEmpty(developerPrompt)) {
+            messages.add(createDeveloperMessage(developerPrompt));
         }
 
         addConversationHistory(messages, in, config);
@@ -213,14 +225,16 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         return messages;
     }
 
-    private void addConversationHistory(List<ChatCompletionMessageParam> messages, Message in, OpenAIConfiguration config) {
+    private void addConversationHistory(
+            List<ChatCompletionMessageParam> messages, Message in,
+            OpenAIConfiguration config) {
         if (!config.isConversationMemory()) {
             return;
         }
 
         @SuppressWarnings("unchecked")
-        List<ChatCompletionMessageParam> history = in.getHeader(
-                config.getConversationHistoryHeader(),
+        List<ChatCompletionMessageParam> history = in.getExchange().getProperty(
+                config.getConversationHistoryProperty(),
                 List.class);
         if (history != null) {
             messages.addAll(history);
@@ -229,7 +243,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private ChatCompletionMessageParam buildUserMessage(Message in, OpenAIConfiguration config) throws Exception {
         Object body = in.getBody();
-        String userPrompt = in.getHeader(OpenAIConstants.USER_PROMPT, String.class);
+        String userPrompt = in.getHeader(OpenAIConstants.USER_MESSAGE, String.class);
         if (userPrompt == null || userPrompt.isEmpty() && ObjectHelper.isNotEmpty(config.getUserMessage())) {
             userPrompt = config.getUserMessage();
         }
@@ -244,7 +258,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     private ChatCompletionMessageParam buildTextMessage(Message in, String userPrompt, OpenAIConfiguration config) {
         String prompt = userPrompt != null ? userPrompt : in.getBody(String.class);
         if (prompt == null || prompt.isEmpty()) {
-            throw new IllegalArgumentException("Message body or user message configuration must contain the prompt text");
+            throw new IllegalArgumentException(
+                    "Message body or user message configuration must contain the prompt text");
         }
         return createTextMessage(prompt);
     }
@@ -263,7 +278,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             }
 
             if (prompt == null || prompt.isEmpty()) {
-                throw new IllegalArgumentException("File content or user message configuration must contain the prompt text");
+                throw new IllegalArgumentException(
+                        "File content or user message configuration must contain the prompt text");
             }
             return createTextMessage(prompt);
         } else if (mime != null && mime.startsWith("image/")) {
@@ -326,9 +342,12 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                         .build());
     }
 
-    private void processNonStreaming(Exchange exchange, ChatCompletionCreateParams params)
+    private void processNonStreaming(Exchange exchange, ChatCompletionCreateParams params, OpenAIConfiguration config)
             throws Exception {
         ChatCompletion response = getEndpoint().getClient().chat().completions().create(params);
+        if (config.isStoreFullResponse()) {
+            exchange.setProperty(OpenAIConstants.RESPONSE, response);
+        }
 
         // if finish reason is tool_calls, set the body to the tool calls
         if (response.choices().get(0).finishReason().equals(ChatCompletion.Choice.FinishReason.TOOL_CALLS)) {
@@ -399,10 +418,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             return;
         }
 
-        Message message = exchange.getMessage();
         @SuppressWarnings("unchecked")
-        List<ChatCompletionMessageParam> history = message.getHeader(
-                config.getConversationHistoryHeader(),
+        List<ChatCompletionMessageParam> history = exchange.getProperty(
+                config.getConversationHistoryProperty(),
                 List.class);
 
         if (history == null) {
@@ -417,7 +435,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                         .build());
 
         history.add(assistantMessage);
-        message.setHeader(config.getConversationHistoryHeader(), history);
+        exchange.setProperty(config.getConversationHistoryProperty(), history);
     }
 
     private ResponseFormatJsonSchema.JsonSchema.Schema buildSchemaFromJson(String jsonSchemaString) throws Exception {

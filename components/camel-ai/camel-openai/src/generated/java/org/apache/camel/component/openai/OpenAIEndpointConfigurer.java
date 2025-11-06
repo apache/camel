@@ -27,8 +27,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.getConfiguration().setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
-        case "conversationhistoryheader":
-        case "conversationHistoryHeader": target.getConfiguration().setConversationHistoryHeader(property(camelContext, java.lang.String.class, value)); return true;
+        case "conversationhistoryproperty":
+        case "conversationHistoryProperty": target.getConfiguration().setConversationHistoryProperty(property(camelContext, java.lang.String.class, value)); return true;
         case "conversationmemory":
         case "conversationMemory": target.getConfiguration().setConversationMemory(property(camelContext, boolean.class, value)); return true;
         case "developermessage":
@@ -42,6 +42,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "model": target.getConfiguration().setModel(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "storefullresponse":
+        case "storeFullResponse": target.getConfiguration().setStoreFullResponse(property(camelContext, boolean.class, value)); return true;
         case "streaming": target.getConfiguration().setStreaming(property(camelContext, boolean.class, value)); return true;
         case "systemmessage":
         case "systemMessage": target.getConfiguration().setSystemMessage(property(camelContext, java.lang.String.class, value)); return true;
@@ -62,8 +64,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "apiKey": return java.lang.String.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
-        case "conversationhistoryheader":
-        case "conversationHistoryHeader": return java.lang.String.class;
+        case "conversationhistoryproperty":
+        case "conversationHistoryProperty": return java.lang.String.class;
         case "conversationmemory":
         case "conversationMemory": return boolean.class;
         case "developermessage":
@@ -77,6 +79,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "model": return java.lang.String.class;
         case "outputclass":
         case "outputClass": return java.lang.String.class;
+        case "storefullresponse":
+        case "storeFullResponse": return boolean.class;
         case "streaming": return boolean.class;
         case "systemmessage":
         case "systemMessage": return java.lang.String.class;
@@ -98,8 +102,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "apiKey": return target.getConfiguration().getApiKey();
         case "baseurl":
         case "baseUrl": return target.getConfiguration().getBaseUrl();
-        case "conversationhistoryheader":
-        case "conversationHistoryHeader": return target.getConfiguration().getConversationHistoryHeader();
+        case "conversationhistoryproperty":
+        case "conversationHistoryProperty": return target.getConfiguration().getConversationHistoryProperty();
         case "conversationmemory":
         case "conversationMemory": return target.getConfiguration().isConversationMemory();
         case "developermessage":
@@ -113,6 +117,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "model": return target.getConfiguration().getModel();
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
+        case "storefullresponse":
+        case "storeFullResponse": return target.getConfiguration().isStoreFullResponse();
         case "streaming": return target.getConfiguration().isStreaming();
         case "systemmessage":
         case "systemMessage": return target.getConfiguration().getSystemMessage();

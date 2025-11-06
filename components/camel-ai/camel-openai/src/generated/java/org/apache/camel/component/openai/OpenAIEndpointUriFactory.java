@@ -23,10 +23,10 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(17);
+        Set<String> props = new HashSet<>(18);
         props.add("apiKey");
         props.add("baseUrl");
-        props.add("conversationHistoryHeader");
+        props.add("conversationHistoryProperty");
         props.add("conversationMemory");
         props.add("developerMessage");
         props.add("jsonSchema");
@@ -35,6 +35,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("model");
         props.add("operation");
         props.add("outputClass");
+        props.add("storeFullResponse");
         props.add("streaming");
         props.add("systemMessage");
         props.add("temperature");
@@ -42,7 +43,9 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("topP");
         props.add("userMessage");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("apiKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 

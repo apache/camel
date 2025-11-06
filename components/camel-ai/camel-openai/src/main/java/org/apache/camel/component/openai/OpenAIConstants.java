@@ -22,7 +22,9 @@ package org.apache.camel.component.openai;
 public final class OpenAIConstants {
 
     // Input Headers
-    public static final String USER_PROMPT = "CamelOpenAIUserPrompt";
+    public static final String USER_MESSAGE = "CamelOpenAIUserMessage";
+    public static final String SYSTEM_MESSAGE = "CamelOpenAISystemMessage";
+    public static final String DEVELOPER_MESSAGE = "CamelOpenAIDeveloperMessage";
     public static final String MODEL = "CamelOpenAIModel";
     public static final String TEMPERATURE = "CamelOpenAITemperature";
     public static final String TOP_P = "CamelOpenAITopP";
@@ -31,7 +33,6 @@ public final class OpenAIConstants {
     public static final String OUTPUT_CLASS = "CamelOpenAIOutputClass";
     public static final String JSON_SCHEMA = "CamelOpenAIJsonSchema";
     public static final String TOOLS = "CamelOpenAITools";
-    public static final String CONVERSATION_HISTORY = "CamelOpenAIConversationHistory";
 
     // Output Headers
     public static final String RESPONSE_MODEL = "CamelOpenAIResponseModel";
@@ -40,6 +41,9 @@ public final class OpenAIConstants {
     public static final String PROMPT_TOKENS = "CamelOpenAIPromptTokens";
     public static final String COMPLETION_TOKENS = "CamelOpenAICompletionTokens";
     public static final String TOTAL_TOKENS = "CamelOpenAITotalTokens";
+
+    // Output Exchange Properties
+    public static final String RESPONSE = "CamelOpenAIResponse";
 
     private OpenAIConstants() {
         // Utility class
