@@ -493,9 +493,9 @@ public abstract class BaseMainSupport extends BaseService {
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                             if (!Files.isDirectory(file)) {
                                 if (file.getFileName().toString().endsWith(".properties")) {
-                                    try {
+                                    try (InputStream is = Files.newInputStream(file)) {
                                         Properties prop = new Properties();
-                                        prop.load(Files.newInputStream(file));
+                                        prop.load(is);
                                         cp.putAll(loc, prop);
                                     } catch (IOException e) {
                                         LOG.warn(
