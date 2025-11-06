@@ -25,6 +25,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 @UriParams
+@Deprecated(since = "4.17")
 public class StompConfiguration implements Cloneable {
     @UriParam(defaultValue = "tcp://localhost:61613")
     @Metadata(required = true)

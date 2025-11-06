@@ -18,3 +18,7 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The `camel-kamelets-catalog` JAR is now downloaded on-demand.
 The version of the Kamelets is now specified via `--kamelets-version` option (or via maven dependencies).
 The following option is no longer in use `-Dcamel-kamelets.version`.
+
+=== Component deprecation
+
+The `camel-stomp` component is deprecated.

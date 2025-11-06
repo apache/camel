@@ -14880,6 +14880,7 @@ public class StaticEndpointBuilders {
      * @param path destination
      * @return the dsl builder
      */
+    @Deprecated
     public static StompEndpointBuilderFactory.StompEndpointBuilder stomp(String path) {
         return stomp("stomp", path);
     }
@@ -14902,6 +14903,7 @@ public class StaticEndpointBuilders {
      * @param path destination
      * @return the dsl builder
      */
+    @Deprecated
     public static StompEndpointBuilderFactory.StompEndpointBuilder stomp(String componentName, String path) {
         return StompEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

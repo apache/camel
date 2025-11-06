@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultAsyncProducer;
 
+@Deprecated(since = "4.17")
 public class StompProducer extends DefaultAsyncProducer implements Processor {
 
     private final StompEndpoint stompEndpoint;
