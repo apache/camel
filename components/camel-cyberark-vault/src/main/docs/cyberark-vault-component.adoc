@@ -112,6 +112,25 @@ camel.vault.cyberark.username=host/myapp
 camel.vault.cyberark.apiKey=3ahx8dy3...
 ----
 
+=== Operations
+
+The component supports the following operations:
+
+* **getSecret** (default) - Retrieve a secret value from CyberArk Conjur
+* **createSecret** - Create or update a secret in CyberArk Conjur
+
+You can specify the operation either as a URI parameter or via message header:
+
+[source,java]
+----
+// Using URI parameter
+.to("cyberark-vault:secret?operation=getSecret&secretId=db/password&...")
+
+// Using message header
+.setHeader(CyberArkVaultConstants.OPERATION, constant(CyberArkVaultOperations.createSecret))
+.to("cyberark-vault:secret?...")
+----
+
 === Examples
 
 ==== Property Placeholders
@@ -146,15 +165,15 @@ from("direct:start")
     .to("...");
 ----
 
-==== Using the Component Endpoint
+==== Retrieve a Secret (getSecret)
 
-You can also use the component endpoint directly:
+You can retrieve a secret using the component endpoint:
 
 Using URI parameter:
 [source,java]
 ----
 from("direct:start")
-    .to("cyberark-vault:secret?secretId=db/password&url=https://conjur.example.com&account=myaccount&username=admin&password=secretpass")
+    .to("cyberark-vault:secret?operation=getSecret&secretId=db/password&url=https://conjur.example.com&account=myaccount&username=admin&password=secretpass")
     .log("Retrieved secret: ${body}");
 ----
 
@@ -163,8 +182,50 @@ Using message header for dynamic secret retrieval:
 ----
 from("direct:start")
     .setHeader(CyberArkVaultConstants.SECRET_ID, simple("${header.secretName}"))
-    .to("cyberark-vault:secret?url=https://conjur.example.com&account=myaccount&username=admin&password=secretpass")
+    .to("cyberark-vault:secret?operation=getSecret&url=https://conjur.example.com&account=myaccount&username=admin&password=secretpass")
     .log("Retrieved secret: ${body}");
+----
+
+Retrieve a specific version of a secret:
+[source,java]
+----
+from("direct:start")
+    .setHeader(CyberArkVaultConstants.SECRET_VERSION, constant("3"))
+    .to("cyberark-vault:secret?secretId=db/password&url=https://conjur.example.com&account=myaccount&username=admin&apiKey=3ahx8dy3...")
+    .log("Retrieved secret version 3: ${body}");
+----
+
+==== Create or Update a Secret (createSecret)
+
+To create or update a secret, use the createSecret operation with the secret value in the message body or header:
+
+Using message body:
+[source,java]
+----
+from("direct:start")
+    .setBody(constant("mySecretValue123"))
+    .to("cyberark-vault:secret?operation=createSecret&secretId=app/apikey&url=https://conjur.example.com&account=myaccount&username=admin&apiKey=3ahx8dy3...")
+    .log("Secret created/updated");
+----
+
+Using message header:
+[source,java]
+----
+from("direct:start")
+    .setHeader(CyberArkVaultConstants.SECRET_VALUE, constant("myNewPassword"))
+    .setHeader(CyberArkVaultConstants.SECRET_ID, constant("db/password"))
+    .to("cyberark-vault:secret?operation=createSecret&url=https://conjur.example.com&account=myaccount&username=admin&apiKey=3ahx8dy3...")
+    .log("Secret created/updated");
+----
+
+Dynamic secret creation:
+[source,java]
+----
+from("direct:start")
+    .setBody(simple("${header.newSecretValue}"))
+    .setHeader(CyberArkVaultConstants.SECRET_ID, simple("${header.secretPath}"))
+    .to("cyberark-vault:secret?operation=createSecret&url=https://conjur.example.com&account=myaccount&username=admin&apiKey=3ahx8dy3...")
+    .log("Secret ${header.secretPath} created/updated");
 ----
 
 === SSL Certificate Verification
