@@ -316,7 +316,7 @@ public class KameletMain extends MainCommandLineSupport {
         return mavenSettingsSecurity;
     }
 
-    public DownloadListener getDownlroadListener() {
+    public DownloadListener getDownloadListener() {
         return downloadListener;
     }
 
