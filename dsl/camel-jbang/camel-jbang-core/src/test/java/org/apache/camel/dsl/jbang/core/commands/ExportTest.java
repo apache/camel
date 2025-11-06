@@ -217,18 +217,28 @@ class ExportTest {
 
         if (rt == RuntimeType.main) {
             Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-kamelet", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-http", null));
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-sql", null));
             Assertions
                     .assertFalse(
                             containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
         } else if (rt == RuntimeType.springBoot) {
             Assertions.assertTrue(
                     containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-kamelet-starter", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-http-starter", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-sql-starter", null));
             Assertions
                     .assertFalse(
                             containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));
         } else if (rt == RuntimeType.quarkus) {
             Assertions.assertTrue(
                     containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-kamelet", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-http", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-sql", null));
             Assertions
                     .assertFalse(
                             containsDependency(model.getDependencies(), "org.apache.camel.kamelets", "camel-kamelets", null));

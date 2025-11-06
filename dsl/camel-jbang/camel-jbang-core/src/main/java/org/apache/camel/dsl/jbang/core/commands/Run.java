@@ -1431,6 +1431,9 @@ public class Run extends CamelCommand {
         if (camelVersion != null) {
             cmds.remove("--camel-version=" + camelVersion);
         }
+        if (kameletsVersion != null) {
+            cmds.remove("--kamelets-version=" + kameletsVersion);
+        }
         // need to use jbang command to specify camel version
         List<String> jbangArgs = new ArrayList<>();
         jbangArgs.add("jbang");
@@ -1439,7 +1442,11 @@ public class Run extends CamelCommand {
             jbangArgs.add("-Dcamel.jbang.version=" + camelVersion);
         }
         if (kameletsVersion != null) {
-            jbangArgs.add("-Dcamel-kamelets.version=" + kameletsVersion);
+            if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.16.0")) {
+                jbangArgs.add("-Dcamel-kamelets.version=" + camelVersion);
+            } else {
+                cmds.add("--kamelets-version=" + kameletsVersion);
+            }
         }
         // tooling may signal to run JMX debugger in suspended mode via JVM system property
         // which we must include in args as well
@@ -1460,6 +1467,10 @@ public class Run extends CamelCommand {
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);
+
+        if (verbose) {
+            printer().println(String.join(" ", jbangArgs));
+        }
 
         if (background) {
             return runBackgroundProcess(pb, "Camel Main");
@@ -1495,6 +1506,9 @@ public class Run extends CamelCommand {
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
 
+        if (verbose) {
+            printer().println(String.join(" ", cmds));
+        }
         return runBackgroundProcess(pb, "Camel Main");
     }
 
@@ -1641,6 +1655,10 @@ public class Run extends CamelCommand {
         jbangArgs.add(CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/CustomCamelJBang.java");
 
         jbangArgs.addAll(cmds);
+
+        if (verbose) {
+            printer().println(String.join(" ", jbangArgs));
+        }
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(jbangArgs);

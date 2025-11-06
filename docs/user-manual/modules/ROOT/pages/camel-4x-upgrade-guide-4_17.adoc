@@ -13,6 +13,15 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.16 to 4.17
 
+=== camel-jbang
+
+The `camel-kamelets-catalog` JAR is now downloaded on-demand.
+The version of the Kamelets is now specified via `--kamelets-version` option (or via maven dependencies).
+The following option is no longer in use `-Dcamel-kamelets.version`.
+
+Removed automatic fallback to download Kamelet YAML files from GitHub. Instead, kamelets are
+now only loaded from embedded `camel-kamelets` JAR.
+
 === Component deprecation
 
-The component stomp is deprecated. The protocol and the used implementation has not received updates in the last ten years and tests started to fail with Artemis 2.43.
+The `camel-stomp` component is deprecated.

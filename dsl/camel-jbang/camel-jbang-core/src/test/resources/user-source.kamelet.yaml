@@ -45,6 +45,7 @@ spec:
     - "camel:timer"
     - "camel:http"
     - "camel:kamelet"
+    - "camel:sql"
   template:
     from:
       uri: "timer:user"

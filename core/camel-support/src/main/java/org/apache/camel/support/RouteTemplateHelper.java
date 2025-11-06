@@ -102,8 +102,15 @@ public final class RouteTemplateHelper {
                 path += "/";
             }
             String target = path + templateId + ".kamelet.yaml";
-            PluginHelper.getRoutesLoader(camelContext).loadRoutes(
-                    resourceLoader.resolveResource(target));
+            Resource res = resourceLoader.resolveResource(target);
+            try {
+                if (listener != null) {
+                    listener.loadRouteTemplate(res);
+                }
+            } catch (Exception e) {
+                LOG.warn("RouteTemplateLoaderListener error due to {}. This exception is ignored", e.getMessage(), e);
+            }
+            PluginHelper.getRoutesLoader(camelContext).loadRoutes(res);
         }
     }
 }
