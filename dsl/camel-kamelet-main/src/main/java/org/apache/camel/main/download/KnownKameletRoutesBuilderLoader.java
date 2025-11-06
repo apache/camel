@@ -38,6 +38,20 @@ public class KnownKameletRoutesBuilderLoader extends KameletRoutesBuilderLoader 
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        // download kamelet catalog for the correct version
+        if (kameletsVersion == null || kameletsVersion.isBlank()) {
+            kameletsVersion = VersionHelper.extractKameletsVersion();
+        }
+        MavenDependencyDownloader downloader = getCamelContext().hasService(MavenDependencyDownloader.class);
+        if (!downloader.alreadyOnClasspath("org.apache.camel.kamelets", "camel-kamelets", kameletsVersion)) {
+            downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets", kameletsVersion, false);
+        }
+    }
+
+    @Override
     public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
         if (!resource.exists()) {
             String loc = resource.getLocation();
@@ -54,13 +68,7 @@ public class KnownKameletRoutesBuilderLoader extends KameletRoutesBuilderLoader 
     }
 
     private List<String> findKameletNames() {
-        // download kamelet catalog for the correct version
-        if (kameletsVersion == null || kameletsVersion.isBlank()) {
-            kameletsVersion = VersionHelper.extractKameletsVersion();
-        }
-
         try {
-            // dynamic download kamelets-catalog that has the known names
             MavenDependencyDownloader downloader = getCamelContext().hasService(MavenDependencyDownloader.class);
             if (!downloader.alreadyOnClasspath("org.apache.camel.kamelets", "camel-kamelets-catalog", kameletsVersion)) {
                 downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", kameletsVersion);
