@@ -34,14 +34,14 @@ public class GooglePubsubHeaderFilterStrategy extends DefaultHeaderFilterStrateg
     }
 
     protected void ignoreGoogProperties() {
-        String[] filterStartWith = new String[DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length + 2];
+        String[] filterStartWith = new String[DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length + 3];
         System.arraycopy(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH, 0,
                 filterStartWith, 0, DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length);
         filterStartWith[DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length] = "x-goog";
         filterStartWith[DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length + 1] = "X-GOOG";
+        filterStartWith[DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length + 2] = "goog";
         setOutFilterStartsWith(filterStartWith);
         setInFilterStartsWith(filterStartWith);
-        getOutFilter().add("google-cloud-resource-prefix");
         getOutFilter().add("grpc-timeout");
     }
 

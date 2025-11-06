@@ -52,7 +52,7 @@ public class GooglePubsubProducer extends DefaultProducer {
         }
 
         logger = LoggerFactory.getLogger(loggerId);
-        headerFilterStrategy = new GooglePubsubHeaderFilterStrategy(endpoint.isIncludeAllGoogleProperties());
+        headerFilterStrategy = endpoint.getHeaderFilterStrategy();
     }
 
     /**

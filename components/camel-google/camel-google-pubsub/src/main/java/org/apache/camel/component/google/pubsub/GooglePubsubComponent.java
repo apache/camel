@@ -49,7 +49,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -61,7 +61,7 @@ import org.threeten.bp.Duration;
  * Represents the component that manages {@link GooglePubsubEndpoint}.
  */
 @Component("google-pubsub")
-public class GooglePubsubComponent extends DefaultComponent {
+public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
     private static final Logger LOG = LoggerFactory.getLogger(GooglePubsubComponent.class);
 
     @Metadata(label = "common",
@@ -128,6 +128,9 @@ public class GooglePubsubComponent extends DefaultComponent {
         pubsubEndpoint.setDestinationName(parts[1]);
         pubsubEndpoint.setServiceAccountKey(serviceAccountKey);
         pubsubEndpoint.setAuthenticate(authenticate);
+        if (getHeaderFilterStrategy() != null) {
+            pubsubEndpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
 
         setProperties(pubsubEndpoint, parameters);
 

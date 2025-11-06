@@ -73,7 +73,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
         }
 
         localLog = LoggerFactory.getLogger(loggerId);
-        headerFilterStrategy = new GooglePubsubHeaderFilterStrategy(endpoint.isIncludeAllGoogleProperties());
+        headerFilterStrategy = endpoint.getHeaderFilterStrategy();
     }
 
     @Override
