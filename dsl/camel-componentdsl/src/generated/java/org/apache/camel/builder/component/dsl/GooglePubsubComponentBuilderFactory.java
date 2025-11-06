@@ -238,6 +238,24 @@ public interface GooglePubsubComponentBuilderFactory {
             doSetProperty("publisherTerminationTimeout", publisherTerminationTimeout);
             return this;
         }
+    
+        /**
+         * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+         * header to and from Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default GooglePubsubComponentBuilder headerFilterStrategy(org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
     }
 
     class GooglePubsubComponentBuilderImpl
@@ -263,6 +281,7 @@ public interface GooglePubsubComponentBuilderFactory {
             case "publisherCacheTimeout": ((GooglePubsubComponent) component).setPublisherCacheTimeout((int) value); return true;
             case "autowiredEnabled": ((GooglePubsubComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "publisherTerminationTimeout": ((GooglePubsubComponent) component).setPublisherTerminationTimeout((int) value); return true;
+            case "headerFilterStrategy": ((GooglePubsubComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             default: return false;
             }
         }

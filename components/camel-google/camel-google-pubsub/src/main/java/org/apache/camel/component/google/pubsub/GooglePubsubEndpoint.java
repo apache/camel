@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub",
              syntax = "google-pubsub:projectId:destinationName", category = { Category.CLOUD, Category.MESSAGING },
              headersClass = GooglePubsubConstants.class)
-public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointServiceLocation, HeaderFilterStrategyAware {
 
     private Logger log;
 
@@ -98,6 +98,9 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
               description = "Whether to include all Google headers when mapping from Pubsub to Camel Message."
                             + " Setting this to true will include properties such as x-goog etc.")
     private boolean includeAllGoogleProperties;
+    @UriParam(label = "advanced",
+              description = "To use a custom HeaderFilterStrategy to filter headers to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public GooglePubsubEndpoint(String uri, Component component) {
         super(uri, component);
@@ -126,6 +129,10 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
 
         log.trace("Project ID: {}", this.projectId);
         log.trace("Destination Name: {}", this.destinationName);
+
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new GooglePubsubHeaderFilterStrategy(includeAllGoogleProperties);
+        }
     }
 
     @Override
@@ -290,5 +297,15 @@ public class GooglePubsubEndpoint extends DefaultEndpoint implements EndpointSer
             return Map.of("destinationName", getDestinationName());
         }
         return null;
+    }
+
+    @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 }
