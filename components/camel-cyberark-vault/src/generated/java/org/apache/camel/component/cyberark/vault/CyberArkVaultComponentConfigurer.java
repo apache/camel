@@ -44,6 +44,7 @@ public class CyberArkVaultComponentConfigurer extends PropertyConfigurerSupport 
         case "conjurClient": getOrCreateConfiguration(target).setConjurClient(property(camelContext, org.apache.camel.component.cyberark.vault.client.ConjurClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.cyberark.vault.CyberArkVaultOperations.class, value)); return true;
         case "password": getOrCreateConfiguration(target).setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "secretid":
         case "secretId": getOrCreateConfiguration(target).setSecretId(property(camelContext, java.lang.String.class, value)); return true;
@@ -72,6 +73,7 @@ public class CyberArkVaultComponentConfigurer extends PropertyConfigurerSupport 
         case "conjurClient": return org.apache.camel.component.cyberark.vault.client.ConjurClient.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.cyberark.vault.CyberArkVaultOperations.class;
         case "password": return java.lang.String.class;
         case "secretid":
         case "secretId": return java.lang.String.class;
@@ -101,6 +103,7 @@ public class CyberArkVaultComponentConfigurer extends PropertyConfigurerSupport 
         case "conjurClient": return getOrCreateConfiguration(target).getConjurClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "password": return getOrCreateConfiguration(target).getPassword();
         case "secretid":
         case "secretId": return getOrCreateConfiguration(target).getSecretId();
