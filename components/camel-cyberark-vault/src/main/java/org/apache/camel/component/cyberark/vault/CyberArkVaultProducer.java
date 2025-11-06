@@ -38,7 +38,12 @@ public class CyberArkVaultProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String version = exchange.getMessage().getHeader(CyberArkVaultConstants.SECRET_VERSION, String.class);
+        // Determine operation: Header > URI parameter
+        CyberArkVaultOperations operation = exchange.getMessage().getHeader(
+                CyberArkVaultConstants.OPERATION, CyberArkVaultOperations.class);
+        if (operation == null) {
+            operation = getConfiguration().getOperation();
+        }
 
         // Priority: Header > URI parameter
         String secretId = exchange.getMessage().getHeader(CyberArkVaultConstants.SECRET_ID, String.class);
@@ -52,17 +57,37 @@ public class CyberArkVaultProducer extends DefaultProducer {
                                                + CyberArkVaultConstants.SECRET_ID + ")");
         }
 
-        LOG.trace("Retrieving secret from CyberArk Conjur with id: {}", secretId);
-
         ConjurClient client = getEndpoint().getConjurClient();
-        String secretValue = client.retrieveSecret(secretId, version);
-
         Message message = exchange.getMessage();
-        message.setBody(secretValue);
-        message.setHeader(CyberArkVaultConstants.SECRET_ID, secretId);
-        message.setHeader(CyberArkVaultConstants.SECRET_VALUE, secretValue);
-        if (version != null) {
-            message.setHeader(CyberArkVaultConstants.SECRET_VERSION, version);
+
+        switch (operation) {
+            case getSecret:
+                String version = message.getHeader(CyberArkVaultConstants.SECRET_VERSION, String.class);
+                LOG.trace("Retrieving secret from CyberArk Conjur with id: {}", secretId);
+                String secretValue = client.retrieveSecret(secretId, version);
+                message.setBody(secretValue);
+                message.setHeader(CyberArkVaultConstants.SECRET_ID, secretId);
+                message.setHeader(CyberArkVaultConstants.SECRET_VALUE, secretValue);
+                if (version != null) {
+                    message.setHeader(CyberArkVaultConstants.SECRET_VERSION, version);
+                }
+                break;
+            case createSecret:
+                String secretValueToCreate = message.getHeader(CyberArkVaultConstants.SECRET_VALUE, String.class);
+                if (ObjectHelper.isEmpty(secretValueToCreate)) {
+                    secretValueToCreate = message.getBody(String.class);
+                }
+                if (ObjectHelper.isEmpty(secretValueToCreate)) {
+                    throw new IllegalArgumentException(
+                            "Secret value must be specified either as message body or as a message header ("
+                                                       + CyberArkVaultConstants.SECRET_VALUE + ")");
+                }
+                LOG.trace("Creating/updating secret in CyberArk Conjur with id: {}", secretId);
+                client.createSecret(secretId, secretValueToCreate);
+                message.setHeader(CyberArkVaultConstants.SECRET_ID, secretId);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation: " + operation);
         }
     }
 

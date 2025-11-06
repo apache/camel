@@ -659,6 +659,11 @@ public final class DefaultConfigurationConfigurer {
             VaultConfiguration vault = camelContext.getVaultConfiguration();
             vault.setIBMSecretsManagerVaultConfiguration(ibmSecretsManager);
         }
+        CyberArkVaultConfiguration cyberark = getSingleBeanOfType(registry, CyberArkVaultConfiguration.class);
+        if (cyberark != null) {
+            VaultConfiguration vault = camelContext.getVaultConfiguration();
+            vault.setCyberArkVaultConfiguration(cyberark);
+        }
         configureVaultRefresh(camelContext);
 
         // apply custom configurations if any

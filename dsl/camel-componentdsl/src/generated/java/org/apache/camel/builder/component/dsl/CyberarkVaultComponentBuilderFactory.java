@@ -137,6 +137,24 @@ public interface CyberarkVaultComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The operation to perform. It can be getSecret or createSecret.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.cyberark.vault.CyberArkVaultOperations&lt;/code&gt; type.
+         * 
+         * Default: getSecret
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default CyberarkVaultComponentBuilder operation(org.apache.camel.component.cyberark.vault.CyberArkVaultOperations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+    
         /**
          * The secret ID to retrieve from CyberArk Conjur.
          * 
@@ -292,6 +310,7 @@ public interface CyberarkVaultComponentBuilderFactory {
             case "configuration": ((CyberArkVaultComponent) component).setConfiguration((org.apache.camel.component.cyberark.vault.CyberArkVaultConfiguration) value); return true;
             case "conjurClient": getOrCreateConfiguration((CyberArkVaultComponent) component).setConjurClient((org.apache.camel.component.cyberark.vault.client.ConjurClient) value); return true;
             case "lazyStartProducer": ((CyberArkVaultComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "operation": getOrCreateConfiguration((CyberArkVaultComponent) component).setOperation((org.apache.camel.component.cyberark.vault.CyberArkVaultOperations) value); return true;
             case "secretId": getOrCreateConfiguration((CyberArkVaultComponent) component).setSecretId((java.lang.String) value); return true;
             case "url": getOrCreateConfiguration((CyberArkVaultComponent) component).setUrl((java.lang.String) value); return true;
             case "verifySsl": getOrCreateConfiguration((CyberArkVaultComponent) component).setVerifySsl((boolean) value); return true;
