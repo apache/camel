@@ -15,7 +15,7 @@
 *{component-header}*
 
 The OpenSearch component allows you to interface with an
-https://opensearch.org/[OpenSearch] 2.8.x API using the Java API Client library.
+https://opensearch.org/[OpenSearch] 3.x API using the Java API Client library.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
