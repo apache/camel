@@ -74,7 +74,7 @@ The following _Vaults_ are supported by Camel:
 * xref:components::google-secret-manager-component.adoc[Google Secret Manager]
 * xref:components::azure-key-vault-component.adoc[Azure Key Vault]
 * xref:components::hashicorp-vault-component.adoc[Hashicorp Vault]
-* xref:components::cyberark-vault-component.adoc[CyberArk Conjur]
+* xref:next@components::cyberark-vault-component.adoc[CyberArk Conjur]
 
 ==== Using AWS Vault
 
