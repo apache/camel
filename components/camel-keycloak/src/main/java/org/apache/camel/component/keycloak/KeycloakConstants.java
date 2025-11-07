@@ -154,6 +154,26 @@ public final class KeycloakConstants {
     @Metadata(description = "The lifespan in seconds", javaType = "Integer")
     public static final String LIFESPAN = "CamelKeycloakLifespan";
 
+    // Bulk operations constants
+    @Metadata(description = "The list of users for bulk operations",
+              javaType = "java.util.List<org.keycloak.representations.idm.UserRepresentation>")
+    public static final String USERS = "CamelKeycloakUsers";
+
+    @Metadata(description = "The list of user IDs for bulk operations", javaType = "java.util.List<String>")
+    public static final String USER_IDS = "CamelKeycloakUserIds";
+
+    @Metadata(description = "The list of usernames for bulk operations", javaType = "java.util.List<String>")
+    public static final String USERNAMES = "CamelKeycloakUsernames";
+
+    @Metadata(description = "The list of role names for bulk operations", javaType = "java.util.List<String>")
+    public static final String ROLE_NAMES = "CamelKeycloakRoleNames";
+
+    @Metadata(description = "Continue on error during bulk operations", javaType = "Boolean")
+    public static final String CONTINUE_ON_ERROR = "CamelKeycloakContinueOnError";
+
+    @Metadata(description = "Batch size for bulk operations", javaType = "Integer")
+    public static final String BATCH_SIZE = "CamelKeycloakBatchSize";
+
     private KeycloakConstants() {
         // Utility class
     }
