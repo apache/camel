@@ -3040,6 +3040,80 @@ public interface KeycloakEndpointBuilderFactory {
         public String keycloakLifespan() {
             return "CamelKeycloakLifespan";
         }
+        /**
+         * The list of users for bulk operations.
+         * 
+         * The option is a: {@code
+         * java.util.List<org.keycloak.representations.idm.UserRepresentation>}
+         * type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakUsers}.
+         */
+        public String keycloakUsers() {
+            return "CamelKeycloakUsers";
+        }
+        /**
+         * The list of user IDs for bulk operations.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakUserIds}.
+         */
+        public String keycloakUserIds() {
+            return "CamelKeycloakUserIds";
+        }
+        /**
+         * The list of usernames for bulk operations.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakUsernames}.
+         */
+        public String keycloakUsernames() {
+            return "CamelKeycloakUsernames";
+        }
+        /**
+         * The list of role names for bulk operations.
+         * 
+         * The option is a: {@code java.util.List<String>} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakRoleNames}.
+         */
+        public String keycloakRoleNames() {
+            return "CamelKeycloakRoleNames";
+        }
+        /**
+         * Continue on error during bulk operations.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakContinueOnError}.
+         */
+        public String keycloakContinueOnError() {
+            return "CamelKeycloakContinueOnError";
+        }
+        /**
+         * Batch size for bulk operations.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakBatchSize}.
+         */
+        public String keycloakBatchSize() {
+            return "CamelKeycloakBatchSize";
+        }
     }
     static KeycloakEndpointBuilder endpointBuilder(String componentName, String path) {
         class KeycloakEndpointBuilderImpl extends AbstractEndpointBuilder implements KeycloakEndpointBuilder, AdvancedKeycloakEndpointBuilder {

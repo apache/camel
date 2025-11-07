@@ -1396,6 +1396,562 @@ template.sendBodyAndHeaders("keycloak:admin?operation=createResourcePermission&p
 template.sendBodyAndHeaders("keycloak:admin?operation=listResourcePermissions", null, permHeaders);
 ----
 
+=== Bulk Operations
+
+Bulk operations allow you to perform multiple operations in a single request, improving efficiency and reducing network overhead. These operations are particularly useful for provisioning, migrations, and large-scale administrative tasks.
+
+==== Bulk Create Users
+
+Create multiple users in a single operation with detailed results for each user.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Create multiple users at once
+List<UserRepresentation> users = new ArrayList<>();
+
+for (int i = 1; i <= 100; i++) {
+    UserRepresentation user = new UserRepresentation();
+    user.setUsername("user" + i);
+    user.setEmail("user" + i + "@company.com");
+    user.setFirstName("User");
+    user.setLastName("" + i);
+    user.setEnabled(true);
+    users.add(user);
+}
+
+Map<String, Object> headers = new HashMap<>();
+headers.put(KeycloakConstants.REALM_NAME, "my-realm");
+headers.put(KeycloakConstants.CONTINUE_ON_ERROR, true); // Continue even if some users fail
+
+Map<String, Object> result = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=bulkCreateUsers", users, headers, Map.class);
+
+// Result contains summary and details
+System.out.println("Total: " + result.get("total"));
+System.out.println("Success: " + result.get("success"));
+System.out.println("Failed: " + result.get("failed"));
+
+// Detailed results for each user
+List<Map<String, Object>> results = (List<Map<String, Object>>) result.get("results");
+for (Map<String, Object> userResult : results) {
+    System.out.println("User: " + userResult.get("username") + " - " + userResult.get("status"));
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+# Bulk create users route
+- route:
+    from:
+      uri: direct:bulk-create-users
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakContinueOnError
+            constant: true
+        - to:
+            uri: keycloak:admin?operation=bulkCreateUsers
+        - log: "Created ${body[success]} out of ${body[total]} users"
+----
+====
+
+==== Bulk Delete Users
+
+Delete multiple users by user IDs or usernames in a single operation.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Delete by user IDs
+List<String> userIds = List.of("user-id-1", "user-id-2", "user-id-3");
+
+Map<String, Object> headers = new HashMap<>();
+headers.put(KeycloakConstants.REALM_NAME, "my-realm");
+headers.put(KeycloakConstants.USER_IDS, userIds);
+headers.put(KeycloakConstants.CONTINUE_ON_ERROR, true);
+
+Map<String, Object> result = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=bulkDeleteUsers", null, headers, Map.class);
+
+// Or delete by usernames
+List<String> usernames = List.of("user1", "user2", "user3");
+headers.put(KeycloakConstants.USERNAMES, usernames);
+headers.remove(KeycloakConstants.USER_IDS);
+
+result = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=bulkDeleteUsers", null, headers, Map.class);
+
+System.out.println("Deleted " + result.get("success") + " users");
+----
+
+YAML::
++
+[source,yaml]
+----
+# Bulk delete users by usernames
+- route:
+    from:
+      uri: direct:bulk-delete-users
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUsernames
+            simple: "${body}"  # List of usernames
+        - setHeader:
+            name: CamelKeycloakContinueOnError
+            constant: true
+        - to:
+            uri: keycloak:admin?operation=bulkDeleteUsers
+        - log: "Deleted ${body[success]} out of ${body[total]} users"
+----
+====
+
+==== Bulk Assign Roles to User
+
+Assign multiple roles to a single user in one operation.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Assign multiple roles to one user
+List<String> roleNames = List.of("admin", "manager", "developer");
+
+Map<String, Object> headers = new HashMap<>();
+headers.put(KeycloakConstants.REALM_NAME, "my-realm");
+headers.put(KeycloakConstants.USER_ID, "user-id-123");
+headers.put(KeycloakConstants.ROLE_NAMES, roleNames);
+headers.put(KeycloakConstants.CONTINUE_ON_ERROR, true);
+
+Map<String, Object> result = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=bulkAssignRolesToUser", null, headers, Map.class);
+
+System.out.println("Assigned " + result.get("assigned") + " roles to user");
+
+// Detailed results
+List<Map<String, Object>> results = (List<Map<String, Object>>) result.get("results");
+for (Map<String, Object> roleResult : results) {
+    System.out.println("Role: " + roleResult.get("roleName") + " - " + roleResult.get("status"));
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+# Assign multiple roles to a user
+- route:
+    from:
+      uri: direct:assign-roles-to-user
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setHeader:
+            name: CamelKeycloakRoleNames
+            simple: "${body[roles]}"  # List of role names
+        - setHeader:
+            name: CamelKeycloakContinueOnError
+            constant: true
+        - to:
+            uri: keycloak:admin?operation=bulkAssignRolesToUser
+        - log: "Assigned ${body[assigned]} roles to user"
+----
+====
+
+==== Bulk Assign Role to Users
+
+Assign a single role to multiple users in one operation.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Assign one role to multiple users
+List<String> userIds = List.of("user-id-1", "user-id-2", "user-id-3");
+
+Map<String, Object> headers = new HashMap<>();
+headers.put(KeycloakConstants.REALM_NAME, "my-realm");
+headers.put(KeycloakConstants.ROLE_NAME, "developer");
+headers.put(KeycloakConstants.USER_IDS, userIds);
+headers.put(KeycloakConstants.CONTINUE_ON_ERROR, true);
+
+Map<String, Object> result = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=bulkAssignRoleToUsers", null, headers, Map.class);
+
+System.out.println("Assigned role to " + result.get("success") + " users");
+
+// Or use usernames instead of IDs
+List<String> usernames = List.of("user1", "user2", "user3");
+headers.put(KeycloakConstants.USERNAMES, usernames);
+headers.remove(KeycloakConstants.USER_IDS);
+
+result = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=bulkAssignRoleToUsers", null, headers, Map.class);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Assign a role to multiple users
+- route:
+    from:
+      uri: direct:assign-role-to-users
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakRoleName
+            constant: "developer"
+        - setHeader:
+            name: CamelKeycloakUsernames
+            simple: "${body}"  # List of usernames
+        - setHeader:
+            name: CamelKeycloakContinueOnError
+            constant: true
+        - to:
+            uri: keycloak:admin?operation=bulkAssignRoleToUsers
+        - log: "Assigned role to ${body[success]} out of ${body[total]} users"
+----
+====
+
+==== Bulk Update Users
+
+Update multiple users in a single operation.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Update multiple users
+List<UserRepresentation> users = new ArrayList<>();
+
+// Fetch users and update them
+List<UserRepresentation> existingUsers = template.requestBodyAndHeader(
+    "keycloak:admin?operation=listUsers", null,
+    KeycloakConstants.REALM_NAME, "my-realm", List.class);
+
+for (UserRepresentation user : existingUsers) {
+    // Update user properties
+    user.setFirstName("Updated");
+    user.setEnabled(true);
+    users.add(user);
+}
+
+Map<String, Object> headers = new HashMap<>();
+headers.put(KeycloakConstants.REALM_NAME, "my-realm");
+headers.put(KeycloakConstants.USERS, users);
+headers.put(KeycloakConstants.CONTINUE_ON_ERROR, true);
+
+Map<String, Object> result = template.requestBodyAndHeaders(
+    "keycloak:admin?operation=bulkUpdateUsers", null, headers, Map.class);
+
+System.out.println("Updated " + result.get("success") + " users");
+
+// Detailed results
+List<Map<String, Object>> results = (List<Map<String, Object>>) result.get("results");
+for (Map<String, Object> userResult : results) {
+    System.out.println("User: " + userResult.get("username") + " - " + userResult.get("status"));
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+# Bulk update users
+- route:
+    from:
+      uri: direct:bulk-update-users
+      steps:
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakContinueOnError
+            constant: true
+        - to:
+            uri: keycloak:admin?operation=bulkUpdateUsers
+        - log: "Updated ${body[success]} out of ${body[total]} users"
+----
+====
+
+==== Bulk Operations Response Format
+
+All bulk operations return a consistent response format with the following structure:
+
+[source,json]
+----
+{
+  "total": 10,           // Total number of items processed
+  "success": 8,          // Number of successful operations
+  "failed": 2,           // Number of failed operations
+  "results": [           // Detailed results for each item
+    {
+      "username": "user1",
+      "status": "success",
+      "statusCode": 201
+    },
+    {
+      "username": "user2",
+      "status": "failed",
+      "error": "User already exists"
+    }
+  ]
+}
+----
+
+==== Error Handling in Bulk Operations
+
+Bulk operations support the `CamelKeycloakContinueOnError` header to control error handling behavior:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Continue processing even if some operations fail
+headers.put(KeycloakConstants.CONTINUE_ON_ERROR, true);
+
+// Stop on first error (default behavior)
+headers.put(KeycloakConstants.CONTINUE_ON_ERROR, false);
+----
+
+YAML::
++
+[source,yaml]
+----
+# Continue on error
+- setHeader:
+    name: CamelKeycloakContinueOnError
+    constant: true
+
+# Stop on first error
+- setHeader:
+    name: CamelKeycloakContinueOnError
+    constant: false
+----
+====
+
+==== Complete Bulk Operations Example
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+public class BulkUserProvisioningRoute extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        // Provision users from CSV file
+        from("file:data/incoming?noop=true")
+            .routeId("bulk-user-provisioning")
+            .log("Processing user provisioning file: ${header.CamelFileName}")
+
+            // Parse CSV to user objects
+            .unmarshal().csv()
+            .process(exchange -> {
+                List<List<String>> csvData = exchange.getIn().getBody(List.class);
+                List<UserRepresentation> users = new ArrayList<>();
+
+                // Skip header row
+                for (int i = 1; i < csvData.size(); i++) {
+                    List<String> row = csvData.get(i);
+                    UserRepresentation user = new UserRepresentation();
+                    user.setUsername(row.get(0));
+                    user.setEmail(row.get(1));
+                    user.setFirstName(row.get(2));
+                    user.setLastName(row.get(3));
+                    user.setEnabled(true);
+                    users.add(user);
+                }
+
+                exchange.getIn().setBody(users);
+            })
+
+            // Bulk create users
+            .setHeader(KeycloakConstants.REALM_NAME, constant("my-realm"))
+            .setHeader(KeycloakConstants.CONTINUE_ON_ERROR, constant(true))
+            .to("keycloak:admin?operation=bulkCreateUsers")
+
+            // Log results
+            .process(exchange -> {
+                Map<String, Object> result = exchange.getIn().getBody(Map.class);
+                log.info("User provisioning completed: {} succeeded, {} failed out of {}",
+                    result.get("success"), result.get("failed"), result.get("total"));
+            })
+
+            // Assign default role to all successfully created users
+            .filter(simple("${body[success]} > 0"))
+            .process(exchange -> {
+                // Extract user IDs from results
+                Map<String, Object> createResult = exchange.getIn().getBody(Map.class);
+                // Get created users and assign role...
+            });
+
+        // Bulk role assignment from JSON
+        from("rest:post:/users/assign-roles")
+            .routeId("bulk-assign-roles")
+            .log("Bulk assigning roles to users")
+            .unmarshal().json()
+            .setHeader(KeycloakConstants.REALM_NAME, simple("${body[realm]}"))
+            .setHeader(KeycloakConstants.USER_ID, simple("${body[userId]}"))
+            .setBody(simple("${body[roles]}"))
+            .setHeader(KeycloakConstants.CONTINUE_ON_ERROR, constant(true))
+            .to("keycloak:admin?operation=bulkAssignRolesToUser")
+            .marshal().json()
+            .setHeader("Content-Type", constant("application/json"));
+
+        // Cleanup inactive users
+        from("timer:cleanup?period=86400000") // Daily
+            .routeId("cleanup-inactive-users")
+            .log("Starting inactive user cleanup")
+            .setHeader(KeycloakConstants.REALM_NAME, constant("my-realm"))
+            .to("keycloak:admin?operation=listUsers")
+            .process(exchange -> {
+                List<UserRepresentation> allUsers = exchange.getIn().getBody(List.class);
+                List<String> inactiveUserIds = new ArrayList<>();
+
+                // Identify inactive users (custom logic)
+                for (UserRepresentation user : allUsers) {
+                    // Check last login, attributes, etc.
+                    if (isInactive(user)) {
+                        inactiveUserIds.add(user.getId());
+                    }
+                }
+
+                exchange.getIn().setBody(inactiveUserIds);
+            })
+            .filter(simple("${body.size} > 0"))
+            .setHeader(KeycloakConstants.CONTINUE_ON_ERROR, constant(true))
+            .to("keycloak:admin?operation=bulkDeleteUsers")
+            .log("Deleted ${body[success]} inactive users");
+    }
+
+    private boolean isInactive(UserRepresentation user) {
+        // Custom logic to determine if user is inactive
+        return false;
+    }
+}
+----
+
+YAML::
++
+[source,yaml]
+----
+# Bulk user provisioning from CSV
+- route:
+    id: bulk-user-provisioning
+    from:
+      uri: file:data/incoming?noop=true
+      steps:
+        - log: "Processing user provisioning file: ${header.CamelFileName}"
+        - unmarshal:
+            csv: {}
+        - process:
+            ref: csvToUsersProcessor
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - setHeader:
+            name: CamelKeycloakContinueOnError
+            constant: true
+        - to:
+            uri: keycloak:admin?operation=bulkCreateUsers
+        - log: "Provisioning completed: ${body[success]} succeeded, ${body[failed]} failed"
+
+# Bulk role assignment API
+- rest:
+    post:
+      - uri: /users/assign-roles
+        to: direct:bulk-assign-roles
+
+- route:
+    id: bulk-assign-roles
+    from:
+      uri: direct:bulk-assign-roles
+      steps:
+        - unmarshal:
+            json: {}
+        - setHeader:
+            name: CamelKeycloakRealmName
+            simple: "${body[realm]}"
+        - setHeader:
+            name: CamelKeycloakUserId
+            simple: "${body[userId]}"
+        - setBody:
+            simple: "${body[roles]}"
+        - setHeader:
+            name: CamelKeycloakContinueOnError
+            constant: true
+        - to:
+            uri: keycloak:admin?operation=bulkAssignRolesToUser
+        - marshal:
+            json: {}
+
+# Daily cleanup of inactive users
+- route:
+    id: cleanup-inactive-users
+    from:
+      uri: timer:cleanup?period=86400000
+      steps:
+        - log: "Starting inactive user cleanup"
+        - setHeader:
+            name: CamelKeycloakRealmName
+            constant: "my-realm"
+        - to:
+            uri: keycloak:admin?operation=listUsers
+        - process:
+            ref: identifyInactiveUsersProcessor
+        - filter:
+            simple: "${body.size} > 0"
+            steps:
+              - setHeader:
+                  name: CamelKeycloakContinueOnError
+                  constant: true
+              - to:
+                  uri: keycloak:admin?operation=bulkDeleteUsers
+              - log: "Deleted ${body[success]} inactive users"
+----
+====
+
+==== Best Practices for Bulk Operations
+
+1. **Use Continue on Error**: Always set `continueOnError=true` for bulk operations to get complete feedback on all items
+2. **Monitor Results**: Check the results map to identify and handle failures appropriately
+3. **Batch Size**: For very large datasets, consider splitting into smaller batches (e.g., 100-500 users per batch)
+4. **Error Handling**: Implement proper error handling and retry logic for failed items
+5. **Logging**: Log detailed results for audit and troubleshooting purposes
+6. **Testing**: Test bulk operations with small datasets first before running in production
+7. **Performance**: Bulk operations are more efficient than individual operations but still require appropriate timeout settings
+8. **Transactions**: Note that Keycloak operations are not transactional - some items may succeed while others fail
+
 === Complete Producer Example
 
 [tabs]

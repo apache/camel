@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.keycloak.admin.client.Keycloak;
@@ -314,6 +315,21 @@ public class KeycloakProducer extends DefaultProducer {
                 break;
             case regenerateClientSecret:
                 regenerateClientSecret(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case bulkCreateUsers:
+                bulkCreateUsers(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case bulkDeleteUsers:
+                bulkDeleteUsers(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case bulkAssignRolesToUser:
+                bulkAssignRolesToUser(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case bulkAssignRoleToUsers:
+                bulkAssignRoleToUsers(getEndpoint().getKeycloakClient(), exchange);
+                break;
+            case bulkUpdateUsers:
+                bulkUpdateUsers(getEndpoint().getKeycloakClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
@@ -1991,6 +2007,330 @@ public class KeycloakProducer extends DefaultProducer {
         CredentialRepresentation newSecret = keycloakClient.realm(realmName).clients().get(clientUuid).generateNewSecret();
         Message message = getMessageForResponse(exchange);
         message.setBody(newSecret);
+    }
+
+    // Bulk operations
+    private void bulkCreateUsers(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        List<UserRepresentation> users = exchange.getIn().getHeader(KeycloakConstants.USERS, List.class);
+        if (users == null || users.isEmpty()) {
+            // Try to get from body
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof List) {
+                users = CastUtils.cast((List<?>) payload);
+            } else {
+                throw new IllegalArgumentException("Users list must be provided via header or body");
+            }
+        }
+
+        boolean continueOnError
+                = exchange.getIn().getHeader(KeycloakConstants.CONTINUE_ON_ERROR, Boolean.FALSE, Boolean.class);
+        List<Map<String, Object>> results = new ArrayList<>();
+        int successCount = 0;
+        int failureCount = 0;
+
+        for (UserRepresentation user : users) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("username", user.getUsername());
+            try {
+                Response response = keycloakClient.realm(realmName).users().create(user);
+                result.put("status", "success");
+                result.put("statusCode", response.getStatus());
+                successCount++;
+                response.close();
+            } catch (Exception e) {
+                result.put("status", "failed");
+                result.put("error", e.getMessage());
+                failureCount++;
+                if (!continueOnError) {
+                    throw new RuntimeException("Failed to create user: " + user.getUsername(), e);
+                }
+            }
+            results.add(result);
+        }
+
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("total", users.size());
+        summary.put("success", successCount);
+        summary.put("failed", failureCount);
+        summary.put("results", results);
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(summary);
+    }
+
+    private void bulkDeleteUsers(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        List<String> userIds = exchange.getIn().getHeader(KeycloakConstants.USER_IDS, List.class);
+        if (userIds == null || userIds.isEmpty()) {
+            // Try usernames
+            List<String> usernames = exchange.getIn().getHeader(KeycloakConstants.USERNAMES, List.class);
+            if (usernames == null || usernames.isEmpty()) {
+                // Try to get from body
+                Object payload = exchange.getIn().getBody();
+                if (payload instanceof List) {
+                    userIds = CastUtils.cast((List<?>) payload);
+                } else {
+                    throw new IllegalArgumentException("User IDs or usernames must be provided via header or body");
+                }
+            } else {
+                // Convert usernames to user IDs
+                userIds = new ArrayList<>();
+                for (String username : usernames) {
+                    List<UserRepresentation> foundUsers
+                            = keycloakClient.realm(realmName).users().searchByUsername(username, true);
+                    if (!foundUsers.isEmpty()) {
+                        userIds.add(foundUsers.get(0).getId());
+                    }
+                }
+            }
+        }
+
+        boolean continueOnError
+                = exchange.getIn().getHeader(KeycloakConstants.CONTINUE_ON_ERROR, Boolean.FALSE, Boolean.class);
+        List<Map<String, Object>> results = new ArrayList<>();
+        int successCount = 0;
+        int failureCount = 0;
+
+        for (String userId : userIds) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("userId", userId);
+            try {
+                Response response = keycloakClient.realm(realmName).users().delete(userId);
+                result.put("status", "success");
+                result.put("statusCode", response.getStatus());
+                successCount++;
+                response.close();
+            } catch (Exception e) {
+                result.put("status", "failed");
+                result.put("error", e.getMessage());
+                failureCount++;
+                if (!continueOnError) {
+                    throw new RuntimeException("Failed to delete user: " + userId, e);
+                }
+            }
+            results.add(result);
+        }
+
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("total", userIds.size());
+        summary.put("success", successCount);
+        summary.put("failed", failureCount);
+        summary.put("results", results);
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(summary);
+    }
+
+    private void bulkAssignRolesToUser(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String userId = exchange.getIn().getHeader(KeycloakConstants.USER_ID, String.class);
+        if (ObjectHelper.isEmpty(userId)) {
+            throw new IllegalArgumentException(MISSING_USER_ID);
+        }
+
+        List<String> roleNames = exchange.getIn().getHeader(KeycloakConstants.ROLE_NAMES, List.class);
+        if (roleNames == null || roleNames.isEmpty()) {
+            // Try to get from body
+            Object payload = exchange.getIn().getBody();
+            if (payload instanceof List) {
+                roleNames = CastUtils.cast((List<?>) payload);
+            } else {
+                throw new IllegalArgumentException("Role names must be provided via header or body");
+            }
+        }
+
+        boolean continueOnError
+                = exchange.getIn().getHeader(KeycloakConstants.CONTINUE_ON_ERROR, Boolean.FALSE, Boolean.class);
+        List<Map<String, Object>> results = new ArrayList<>();
+        List<RoleRepresentation> rolesToAssign = new ArrayList<>();
+        int successCount = 0;
+        int failureCount = 0;
+
+        // Collect all roles first
+        for (String roleName : roleNames) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("roleName", roleName);
+            try {
+                RoleRepresentation role = keycloakClient.realm(realmName).roles().get(roleName).toRepresentation();
+                rolesToAssign.add(role);
+                result.put("status", "found");
+                successCount++;
+            } catch (Exception e) {
+                result.put("status", "not_found");
+                result.put("error", e.getMessage());
+                failureCount++;
+                if (!continueOnError) {
+                    throw new RuntimeException("Failed to find role: " + roleName, e);
+                }
+            }
+            results.add(result);
+        }
+
+        // Assign all roles at once if any were found
+        if (!rolesToAssign.isEmpty()) {
+            try {
+                keycloakClient.realm(realmName).users().get(userId).roles().realmLevel().add(rolesToAssign);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to assign roles to user: " + userId, e);
+            }
+        }
+
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("total", roleNames.size());
+        summary.put("success", successCount);
+        summary.put("failed", failureCount);
+        summary.put("assigned", rolesToAssign.size());
+        summary.put("results", results);
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(summary);
+    }
+
+    private void bulkAssignRoleToUsers(Keycloak keycloakClient, Exchange exchange) {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        String roleName = exchange.getIn().getHeader(KeycloakConstants.ROLE_NAME, String.class);
+        if (ObjectHelper.isEmpty(roleName)) {
+            throw new IllegalArgumentException(MISSING_ROLE_NAME);
+        }
+
+        // Get the role first
+        RoleRepresentation role;
+        try {
+            role = keycloakClient.realm(realmName).roles().get(roleName).toRepresentation();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to find role: " + roleName, e);
+        }
+
+        List<String> userIds = exchange.getIn().getHeader(KeycloakConstants.USER_IDS, List.class);
+        if (userIds == null || userIds.isEmpty()) {
+            // Try usernames
+            List<String> usernames = exchange.getIn().getHeader(KeycloakConstants.USERNAMES, List.class);
+            if (usernames == null || usernames.isEmpty()) {
+                // Try to get from body
+                Object payload = exchange.getIn().getBody();
+                if (payload instanceof List) {
+                    userIds = CastUtils.cast((List<?>) payload);
+                } else {
+                    throw new IllegalArgumentException("User IDs or usernames must be provided via header or body");
+                }
+            } else {
+                // Convert usernames to user IDs
+                userIds = new ArrayList<>();
+                for (String username : usernames) {
+                    List<UserRepresentation> foundUsers
+                            = keycloakClient.realm(realmName).users().searchByUsername(username, true);
+                    if (!foundUsers.isEmpty()) {
+                        userIds.add(foundUsers.get(0).getId());
+                    }
+                }
+            }
+        }
+
+        boolean continueOnError
+                = exchange.getIn().getHeader(KeycloakConstants.CONTINUE_ON_ERROR, Boolean.FALSE, Boolean.class);
+        List<Map<String, Object>> results = new ArrayList<>();
+        int successCount = 0;
+        int failureCount = 0;
+
+        for (String userId : userIds) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("userId", userId);
+            try {
+                keycloakClient.realm(realmName).users().get(userId).roles().realmLevel().add(List.of(role));
+                result.put("status", "success");
+                successCount++;
+            } catch (Exception e) {
+                result.put("status", "failed");
+                result.put("error", e.getMessage());
+                failureCount++;
+                if (!continueOnError) {
+                    throw new RuntimeException("Failed to assign role to user: " + userId, e);
+                }
+            }
+            results.add(result);
+        }
+
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("total", userIds.size());
+        summary.put("success", successCount);
+        summary.put("failed", failureCount);
+        summary.put("roleName", roleName);
+        summary.put("results", results);
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(summary);
+    }
+
+    private void bulkUpdateUsers(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
+        String realmName = exchange.getIn().getHeader(KeycloakConstants.REALM_NAME, String.class);
+        if (ObjectHelper.isEmpty(realmName)) {
+            throw new IllegalArgumentException(MISSING_REALM_NAME);
+        }
+
+        List<UserRepresentation> users = exchange.getIn().getHeader(KeycloakConstants.USERS, List.class);
+        if (users == null || users.isEmpty()) {
+            // Try to get from body
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof List) {
+                users = CastUtils.cast((List<?>) payload);
+            } else {
+                throw new IllegalArgumentException("Users list must be provided via header or body");
+            }
+        }
+
+        boolean continueOnError
+                = exchange.getIn().getHeader(KeycloakConstants.CONTINUE_ON_ERROR, Boolean.FALSE, Boolean.class);
+        List<Map<String, Object>> results = new ArrayList<>();
+        int successCount = 0;
+        int failureCount = 0;
+
+        for (UserRepresentation user : users) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("userId", user.getId());
+            result.put("username", user.getUsername());
+            try {
+                if (ObjectHelper.isEmpty(user.getId())) {
+                    throw new IllegalArgumentException("User ID is required for update operation");
+                }
+                keycloakClient.realm(realmName).users().get(user.getId()).update(user);
+                result.put("status", "success");
+                successCount++;
+            } catch (Exception e) {
+                result.put("status", "failed");
+                result.put("error", e.getMessage());
+                failureCount++;
+                if (!continueOnError) {
+                    throw new RuntimeException("Failed to update user: " + user.getId(), e);
+                }
+            }
+            results.add(result);
+        }
+
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("total", users.size());
+        summary.put("success", successCount);
+        summary.put("failed", failureCount);
+        summary.put("results", results);
+
+        Message message = getMessageForResponse(exchange);
+        message.setBody(summary);
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

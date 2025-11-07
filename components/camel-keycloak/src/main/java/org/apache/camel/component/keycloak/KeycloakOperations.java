@@ -108,5 +108,11 @@ public enum KeycloakOperations {
     executeActionsEmail,
     // Client Secret Management
     getClientSecret,
-    regenerateClientSecret
+    regenerateClientSecret,
+    // Bulk operations
+    bulkCreateUsers,
+    bulkDeleteUsers,
+    bulkAssignRolesToUser,
+    bulkAssignRoleToUsers,
+    bulkUpdateUsers
 }
