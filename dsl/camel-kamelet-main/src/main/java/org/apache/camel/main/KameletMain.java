@@ -67,6 +67,7 @@ import org.apache.camel.main.download.KameletAutowiredLifecycleStrategy;
 import org.apache.camel.main.download.KameletMainInjector;
 import org.apache.camel.main.download.KameletOptimisedComponentResolver;
 import org.apache.camel.main.download.KnownDependenciesResolver;
+import org.apache.camel.main.download.KnownDependenciesVersionResolver;
 import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.PackageNameSourceLoader;
@@ -769,6 +770,7 @@ public class KameletMain extends MainCommandLineSupport {
         downloader.addDownloadListener(new AutoConfigureDownloadListener());
         downloader.addArtifactDownloadListener(new TypeConverterLoaderDownloadListener());
         downloader.addArtifactDownloadListener(new BasePackageScanDownloadListener(packageScanJars));
+        downloader.setVersionResolver(new KnownDependenciesVersionResolver(downloader));
 
         return downloader;
     }

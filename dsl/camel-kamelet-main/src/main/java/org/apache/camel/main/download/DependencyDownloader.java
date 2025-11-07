@@ -223,4 +223,14 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      */
     RepositoryResolver getRepositoryResolver();
 
+    /**
+     * Gets the {@link VersionResolver}
+     */
+    VersionResolver getVersionResolver();
+
+    /**
+     * Set {@link VersionResolver}
+     */
+    void setVersionResolver(VersionResolver versionResolver);
+
 }

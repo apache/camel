@@ -73,6 +73,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private final Set<ArtifactDownloadListener> artifactDownloadListeners = new LinkedHashSet<>();
     private final Map<String, DownloadRecord> downloadRecords = new HashMap<>();
     private KnownReposResolver knownReposResolver;
+    private VersionResolver versionResolver;
     private boolean download = true;
 
     // all maven-resolver work is delegated to camel-tooling-maven
@@ -130,6 +131,16 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         } else {
             return null;
         }
+    }
+
+    @Override
+    public VersionResolver getVersionResolver() {
+        return versionResolver;
+    }
+
+    @Override
+    public void setVersionResolver(VersionResolver versionResolver) {
+        this.versionResolver = versionResolver;
     }
 
     @Override
@@ -248,6 +259,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             String groupId, String artifactId, String version, boolean transitively,
             boolean hidden, String extraRepos) {
 
+        if (versionResolver != null && version != null) {
+            version = versionResolver.resolve(version);
+        }
+
         if (!hidden) {
             // trigger listener
             for (DownloadListener listener : downloadListeners) {
@@ -276,11 +291,12 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         }
 
         String gav = groupId + ":" + artifactId + ":" + version;
+        String targetVersion = version;
         threadPool.download(LOG, () -> {
             List<String> deps = List.of(gav);
 
             // include Apache snapshot to make it easy to use upcoming releases
-            boolean useApacheSnapshots = "org.apache.camel".equals(groupId) && version.contains("SNAPSHOT");
+            boolean useApacheSnapshots = "org.apache.camel".equals(groupId) && targetVersion.contains("SNAPSHOT");
 
             // include extra repositories (if any) - these will be used in addition
             // to the ones detected from ~/.m2/settings.xml and configured in
@@ -327,7 +343,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             }
             if (!artifacts.isEmpty()) {
                 for (DownloadListener listener : downloadListeners) {
-                    listener.onDownloadedDependency(groupId, artifactId, version);
+                    listener.onDownloadedDependency(groupId, artifactId, targetVersion);
                 }
             }
             if (!extraRepositories.isEmpty()) {
@@ -429,6 +445,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         // if no artifact then regard this as okay
         if (artifactId == null) {
             return true;
+        }
+
+        if (versionResolver != null && version != null) {
+            version = versionResolver.resolve(version);
         }
 
         String target = artifactId;
@@ -564,14 +584,17 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         if (mb != null) {
             bootClasspath = mb.getClassPath().split("[:|;]");
         }
-        ServiceHelper.initService(threadPool);
-        ServiceHelper.initService(mavenDownloader);
+        ServiceHelper.initService(versionResolver, threadPool, mavenDownloader);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(threadPool, mavenDownloader, versionResolver);
     }
 
     @Override
     protected void doStop() {
-        ServiceHelper.stopAndShutdownService(mavenDownloader);
-        ServiceHelper.stopAndShutdownService(threadPool);
+        ServiceHelper.stopAndShutdownServices(versionResolver, mavenDownloader, threadPool);
     }
 
     public List<MavenArtifact> resolveDependenciesViaAether(
