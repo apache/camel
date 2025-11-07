@@ -14,25 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.micrometer.observability;
+package org.apache.camel.opentelemetry2;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import io.opentelemetry.sdk.trace.data.SpanData;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
+import org.apache.camel.opentelemetry2.CamelOpenTelemetryExtension.OtelTrace;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * This test is special as it requires a different setting to inherit the Opentelemetry propagation mechanism.
- */
-public class SpanPropagationTest extends MicrometerObservabilityTracerPropagationTestSupport {
+public class SpanPropagationUpstreamTest extends OpenTelemetryTracerTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        OpenTelemetryTracer tst = new OpenTelemetryTracer();
+        tst.setTracer(otelExtension.getOpenTelemetry().getTracer("traceTest"));
+        tst.setContextPropagators(otelExtension.getOpenTelemetry().getPropagators());
+        CamelContext context = super.createCamelContext();
+        CamelContextAware.trySetCamelContext(tst, context);
+        tst.init(context);
+        return context;
+    }
 
     @Test
     void testPropagateUpstreamTraceRequest() throws IOException {

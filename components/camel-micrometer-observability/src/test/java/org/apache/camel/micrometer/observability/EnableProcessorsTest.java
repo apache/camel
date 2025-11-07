@@ -17,24 +17,25 @@
 package org.apache.camel.micrometer.observability;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-import io.micrometer.tracing.test.simple.SimpleSpan;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.trace.SpanId;
+import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class EnableProcessorsTest extends MicrometerObservabilityTracerTestSupport {
+public class EnableProcessorsTest extends MicrometerObservabilityTracerPropagationTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -45,29 +46,29 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerTestSuppo
     @Test
     void testProcessorsTraceRequest() throws IOException {
         template.sendBody("direct:start", "my-body");
-        Map<String, MicrometerObservabilityTrace> traces = traces();
+        Map<String, OtelTrace> traces = otelExtension.getTraces();
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
     }
 
-    private void checkTrace(MicrometerObservabilityTrace trace) {
-        List<SimpleSpan> spans = trace.getSpans();
+    private void checkTrace(OtelTrace trace) {
+        List<SpanData> spans = trace.getSpans();
         assertEquals(6, spans.size());
 
-        SimpleSpan testProducer = spans.get(0);
-        SimpleSpan direct = spans.get(1);
-        SimpleSpan innerLog = spans.get(2);
-        SimpleSpan innerProcessor = spans.get(3);
-        SimpleSpan log = spans.get(4);
-        SimpleSpan innerToLog = spans.get(5);
+        SpanData testProducer = spans.get(0);
+        SpanData direct = spans.get(1);
+        SpanData innerLog = spans.get(2);
+        SpanData innerProcessor = spans.get(3);
+        SpanData log = spans.get(4);
+        SpanData innerToLog = spans.get(5);
 
         // Validate span completion
-        assertNotEquals(Instant.EPOCH, testProducer.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, direct.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, innerLog.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, innerProcessor.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, log.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, innerToLog.getEndTimestamp());
+        assertTrue(testProducer.hasEnded());
+        assertTrue(direct.hasEnded());
+        assertTrue(innerLog.hasEnded());
+        assertTrue(innerProcessor.hasEnded());
+        assertTrue(log.hasEnded());
+        assertTrue(innerToLog.hasEnded());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
@@ -77,16 +78,16 @@ public class EnableProcessorsTest extends MicrometerObservabilityTracerTestSuppo
         assertEquals(testProducer.getTraceId(), innerToLog.getTraceId());
 
         // Validate op
-        assertEquals(Op.EVENT_RECEIVED.toString(), direct.getTags().get("op"));
-        assertEquals(Op.EVENT_PROCESS.toString(), innerProcessor.getTags().get("op"));
+        assertEquals(Op.EVENT_RECEIVED.toString(), direct.getAttributes().get(AttributeKey.stringKey("op")));
+        assertEquals(Op.EVENT_PROCESS.toString(), innerProcessor.getAttributes().get(AttributeKey.stringKey("op")));
 
         // Validate hierarchy
-        assertTrue(testProducer.getParentId().isEmpty());
-        assertEquals(testProducer.getSpanId(), direct.getParentId());
-        assertEquals(direct.getSpanId(), innerLog.getParentId());
-        assertEquals(direct.getSpanId(), innerProcessor.getParentId());
-        assertEquals(direct.getSpanId(), log.getParentId());
-        assertEquals(log.getSpanId(), innerToLog.getParentId());
+        assertEquals(SpanId.getInvalid(), testProducer.getParentSpanId());
+        assertEquals(testProducer.getSpanId(), direct.getParentSpanId());
+        assertEquals(direct.getSpanId(), innerLog.getParentSpanId());
+        assertEquals(direct.getSpanId(), innerProcessor.getParentSpanId());
+        assertEquals(direct.getSpanId(), log.getParentSpanId());
+        assertEquals(log.getSpanId(), innerToLog.getParentSpanId());
     }
 
     @Override

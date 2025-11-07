@@ -36,10 +36,10 @@ import org.apache.camel.test.junit5.ExchangeTestSupport;
 public class MicrometerObservabilityTracerPropagationTestSupport extends ExchangeTestSupport {
 
     protected CamelOpenTelemetryExtension otelExtension = CamelOpenTelemetryExtension.create();
+    protected MicrometerObservabilityTracer tst = new MicrometerObservabilityTracer();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MicrometerObservabilityTracer tst = new MicrometerObservabilityTracer();
         CamelContext context = super.createCamelContext();
 
         ContextPropagators propagators = otelExtension.getPropagators();

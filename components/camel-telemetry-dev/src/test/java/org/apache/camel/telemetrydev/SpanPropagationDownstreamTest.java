@@ -14,47 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.micrometer.observability;
-
-import java.io.IOException;
-import java.util.Map;
+package org.apache.camel.telemetrydev;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
+import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HeadersTraceTest extends MicrometerObservabilityTracerPropagationTestSupport {
+public class SpanPropagationDownstreamTest extends ExchangeTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        tst.setTraceHeadersInclusion(true);
-        return super.createCamelContext();
+        TelemetryDevTracer tst = new TelemetryDevTracer();
+        tst.setTraceFormat("json");
+        CamelContext context = super.createCamelContext();
+        CamelContextAware.trySetCamelContext(tst, context);
+        tst.init(context);
+        return context;
     }
 
     @Test
-    void testProcessorsTraceRequest() throws InterruptedException, IOException {
+    void testPropagateDownstreamTraceRequest() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody("direct:start", "my-body");
-        Map<String, OtelTrace> traces = otelExtension.getTraces();
-        assertEquals(1, traces.size());
+        template.sendBody("direct:start", "Test");
         mock.assertIsSatisfied();
-        Map<String, Object> headers = mock.getExchanges().get(0).getIn().getHeaders();
-
-        // NOTE: the check on TRACE_ID and SPAN_ID instead of the related constant is on purpose
-        // We want to fail if there is any change in the constant by any chance and report into the
-        // documentation.
-        assertNotNull(headers.get("CAMEL_TRACE_ID"));
-        assertNotNull(headers.get("CAMEL_SPAN_ID"));
-        assertNotEquals("", headers.get("CAMEL_TRACE_ID"));
-        assertNotEquals("", headers.get("CAMEL_SPAN_ID"));
+        mock.getExchanges().forEach(exchange -> {
+            assertTrue(
+                    exchange.getIn().getHeader("traceparent", String.class).matches("^[a-z0-9]+-[a-z0-9]+$"),
+                    "The traceparent header does not match with the expected format <traceid>-<spanid>");
+        });
     }
 
     @Override
@@ -63,6 +57,8 @@ public class HeadersTraceTest extends MicrometerObservabilityTracerPropagationTe
             @Override
             public void configure() {
                 from("direct:start")
+                        .routeId("start")
+                        .log("A message")
                         .to("mock:result");
             }
         };

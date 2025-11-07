@@ -17,14 +17,16 @@
 package org.apache.camel.micrometer.observability;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-import io.micrometer.tracing.test.simple.SimpleSpan;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.trace.SpanId;
+import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /*
  * AsyncTest tests the execution of a new spin off async components.
  */
-public class AsyncTest extends MicrometerObservabilityTracerTestSupport {
+public class AsyncTest extends MicrometerObservabilityTracerPropagationTestSupport {
 
     @Test
     void testRouteMultipleRequests() throws InterruptedException, IOException {
@@ -47,40 +49,39 @@ public class AsyncTest extends MicrometerObservabilityTracerTestSupport {
             context.createProducerTemplate().sendBody("direct:start", "Hello!");
         }
         mock.assertIsSatisfied(1000);
-        Map<String, MicrometerObservabilityTrace> traces = traces();
+        Map<String, OtelTrace> traces = otelExtension.getTraces();
         // Each trace should have a unique trace id. It is enough to assert that
         // the number of elements in the map is the same of the requests to prove
         // all traces have been generated uniquely.
         assertEquals(j, traces.size());
         // Each trace should have the same structure
-        for (MicrometerObservabilityTrace trace : traces.values()) {
+        for (OtelTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
 
     }
 
-    private void checkTrace(MicrometerObservabilityTrace trace, String expectedBody) {
-        List<SimpleSpan> spans = trace.getSpans();
+    private void checkTrace(OtelTrace trace, String expectedBody) {
+        List<SpanData> spans = trace.getSpans();
         assertEquals(8, spans.size());
-        SimpleSpan testProducer = MicrometerObservabilityTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_SENT);
-        SimpleSpan direct = MicrometerObservabilityTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
-        SimpleSpan asyncDirectTo = MicrometerObservabilityTracerTestSupport.getSpan(spans, "direct://async", Op.EVENT_SENT);
-        SimpleSpan asyncDirectFrom
-                = MicrometerObservabilityTracerTestSupport.getSpan(spans, "direct://async", Op.EVENT_RECEIVED);
-        SimpleSpan async = MicrometerObservabilityTracerTestSupport.getSpan(spans, "async://bye:camel", Op.EVENT_SENT);
-        SimpleSpan log = MicrometerObservabilityTracerTestSupport.getSpan(spans, "log://info", Op.EVENT_SENT);
-        SimpleSpan asyncLog = MicrometerObservabilityTracerTestSupport.getSpan(spans, "log://tapped", Op.EVENT_SENT);
-        SimpleSpan asyncMock = MicrometerObservabilityTracerTestSupport.getSpan(spans, "mock://end", Op.EVENT_SENT);
+        SpanData testProducer = getSpan(spans, "direct://start", Op.EVENT_SENT);
+        SpanData direct = getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
+        SpanData asyncDirectTo = getSpan(spans, "direct://async", Op.EVENT_SENT);
+        SpanData asyncDirectFrom = getSpan(spans, "direct://async", Op.EVENT_RECEIVED);
+        SpanData async = getSpan(spans, "async://bye:camel", Op.EVENT_SENT);
+        SpanData log = getSpan(spans, "log://info", Op.EVENT_SENT);
+        SpanData asyncLog = getSpan(spans, "log://tapped", Op.EVENT_SENT);
+        SpanData asyncMock = getSpan(spans, "mock://end", Op.EVENT_SENT);
 
         // Validate span completion
-        assertNotEquals(Instant.EPOCH, testProducer.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, direct.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, asyncDirectTo.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, log.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, asyncDirectFrom.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, async.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, asyncLog.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, asyncMock.getEndTimestamp());
+        assertTrue(testProducer.hasEnded());
+        assertTrue(direct.hasEnded());
+        assertTrue(asyncDirectTo.hasEnded());
+        assertTrue(log.hasEnded());
+        assertTrue(asyncDirectFrom.hasEnded());
+        assertTrue(async.hasEnded());
+        assertTrue(asyncLog.hasEnded());
+        assertTrue(asyncMock.hasEnded());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
@@ -92,40 +93,47 @@ public class AsyncTest extends MicrometerObservabilityTracerTestSupport {
         assertEquals(testProducer.getTraceId(), asyncMock.getTraceId());
 
         // Validate different Exchange ID
-        assertNotEquals(testProducer.getTags().get("exchangeId"), asyncDirectTo.getTags().get("exchangeId"));
-        assertEquals(testProducer.getTags().get("exchangeId"), direct.getTags().get("exchangeId"));
-        assertEquals(testProducer.getTags().get("exchangeId"), log.getTags().get("exchangeId"));
-        assertEquals(asyncDirectTo.getTags().get("exchangeId"), asyncDirectFrom.getTags().get("exchangeId"));
-        assertEquals(asyncDirectTo.getTags().get("exchangeId"), async.getTags().get("exchangeId"));
-        assertEquals(asyncDirectTo.getTags().get("exchangeId"), asyncLog.getTags().get("exchangeId"));
-        assertEquals(asyncDirectTo.getTags().get("exchangeId"), asyncMock.getTags().get("exchangeId"));
+        assertNotEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                direct.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                log.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                asyncDirectFrom.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                async.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                asyncLog.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(asyncDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                asyncMock.getAttributes().get(AttributeKey.stringKey("exchangeId")));
 
         // Validate hierarchy
-        assertTrue(testProducer.getParentId().isEmpty());
-        assertEquals(testProducer.getSpanId(), direct.getParentId());
-        assertEquals(direct.getSpanId(), asyncDirectTo.getParentId());
-        assertEquals(direct.getSpanId(), log.getParentId());
-        assertEquals(asyncDirectTo.getSpanId(), asyncDirectFrom.getParentId());
-        assertEquals(asyncDirectFrom.getSpanId(), async.getParentId());
-        assertEquals(asyncDirectFrom.getSpanId(), asyncLog.getParentId());
-        assertEquals(asyncDirectFrom.getSpanId(), asyncMock.getParentId());
+        assertEquals(SpanId.getInvalid(), testProducer.getParentSpanId());
+        assertEquals(testProducer.getSpanId(), direct.getParentSpanId());
+        assertEquals(direct.getSpanId(), asyncDirectTo.getParentSpanId());
+        assertEquals(direct.getSpanId(), log.getParentSpanId());
+        assertEquals(asyncDirectTo.getSpanId(), asyncDirectFrom.getParentSpanId());
+        assertEquals(asyncDirectFrom.getSpanId(), async.getParentSpanId());
+        assertEquals(asyncDirectFrom.getSpanId(), asyncLog.getParentSpanId());
+        assertEquals(asyncDirectFrom.getSpanId(), asyncMock.getParentSpanId());
 
         // Validate message logging
-        assertEquals("message=A direct message", direct.getEvents().iterator().next().getValue());
-        assertEquals("message=An async message", asyncDirectFrom.getEvents().iterator().next().getValue());
+        assertEquals("message=A direct message", direct.getEvents().get(0).getName());
+        assertEquals("message=An async message", asyncDirectFrom.getEvents().get(0).getName());
         String expectedBodyAsync = "Bye Camel";
         if (expectedBody == null) {
             assertEquals(
                     "message=Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                    log.getEvents().iterator().next().getValue());
+                    log.getEvents().get(0).getName());
         } else {
             assertEquals(
                     "message=Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
-                    log.getEvents().iterator().next().getValue());
+                    log.getEvents().get(0).getName());
         }
         assertEquals(
                 "message=Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBodyAsync + "]",
-                asyncLog.getEvents().iterator().next().getValue());
+                asyncLog.getEvents().get(0).getName());
     }
 
     @Override

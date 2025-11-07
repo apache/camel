@@ -20,45 +20,30 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import io.opentelemetry.api.common.AttributeKey;
-import io.opentelemetry.api.trace.SpanId;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
-import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MicrometerObservabilityTracerTest extends MicrometerObservabilityTracerPropagationTestSupport {
+/**
+ * This test is special as it requires a different setting to inherit the Opentelemetry propagation mechanism.
+ */
+public class SpanPropagationUpstreamTest extends MicrometerObservabilityTracerPropagationTestSupport {
 
     @Test
-    void testRouteSingleRequest() throws IOException {
-        template.request("direct:start", null);
+    void testPropagateUpstreamTraceRequest() throws IOException {
+        template.requestBodyAndHeader("direct:start", "sample body",
+                "traceparent", "00-0af044aea5c127fd5ab5f839de2b8ae2-d362a8a943c2b289-01");
         Map<String, OtelTrace> traces = otelExtension.getTraces();
         assertEquals(1, traces.size());
-        checkTrace(traces.values().iterator().next(), null);
+        checkTrace(traces.values().iterator().next());
     }
 
-    @Test
-    void testRouteMultipleRequests() throws IOException {
-        for (int i = 1; i <= 10; i++) {
-            context.createProducerTemplate().sendBody("direct:start", "Hello!");
-        }
-        Map<String, OtelTrace> traces = otelExtension.getTraces();
-        // Each trace should have a unique trace id. It is enough to assert that
-        // the number of elements in the map is the same of the requests to prove
-        // all traces have been generated uniquely.
-        assertEquals(10, traces.size());
-        // Each trace should have the same structure
-        for (OtelTrace trace : traces.values()) {
-            checkTrace(trace, "Hello!");
-        }
-    }
-
-    private void checkTrace(OtelTrace trace, String expectedBody) {
+    private void checkTrace(OtelTrace trace) {
         List<SpanData> spans = trace.getSpans();
         assertEquals(3, spans.size());
         SpanData testProducer = spans.get(0);
@@ -71,29 +56,14 @@ public class MicrometerObservabilityTracerTest extends MicrometerObservabilityTr
         assertTrue(log.hasEnded());
 
         // Validate same trace
+        assertEquals("0af044aea5c127fd5ab5f839de2b8ae2", testProducer.getTraceId());
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
         assertEquals(direct.getTraceId(), log.getTraceId());
 
         // Validate hierarchy
-        assertEquals(SpanId.getInvalid(), testProducer.getParentSpanContext().getSpanId());
-        assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
-
-        // Validate operations
-        assertEquals(Op.EVENT_SENT.toString(), testProducer.getAttributes().get(AttributeKey.stringKey("op")));
-        assertEquals(Op.EVENT_RECEIVED.toString(), direct.getAttributes().get(AttributeKey.stringKey("op")));
-
-        // Validate message logging
-        assertEquals("message=A message", direct.getEvents().get(0).getName());
-        if (expectedBody == null) {
-            assertEquals(
-                    "message=Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                    log.getEvents().get(0).getName());
-        } else {
-            assertEquals(
-                    "message=Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
-                    log.getEvents().get(0).getName());
-        }
+        assertEquals("d362a8a943c2b289", testProducer.getParentSpanId());
+        assertEquals(testProducer.getSpanId(), direct.getParentSpanId());
+        assertEquals(direct.getSpanId(), log.getParentSpanId());
     }
 
     @Override
