@@ -17,10 +17,7 @@
 
 // check if we already have CXF transport on classpath
 org.apache.camel.main.download.MavenDependencyDownloader downloader = context.hasService(org.apache.camel.main.download.MavenDependencyDownloader.class);
-final var cxfVersion = org.apache.camel.main.download.CamelDependenciesHelper.dependencyVersion(context, "cxf-version");
-if (cxfVersion == null) {
-    return null;
-}
+var cxfVersion = downloader.getVersionResolver().resolve("${cxf-version}");
 boolean jetty = downloader.alreadyOnClasspath("org.apache.cxf", "cxf-rt-transports-http-jetty", cxfVersion);
 boolean undertow = downloader.alreadyOnClasspath("org.apache.cxf", "cxf-rt-transports-http-undertow", cxfVersion);
 if (jetty || undertow){
