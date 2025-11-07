@@ -8,7 +8,6 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
-:group: Security
 :camel-spring-boot-name: cyberark-vault
 
 *Since Camel {since}*
