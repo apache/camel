@@ -118,6 +118,7 @@ import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.apache.cxf.transport.http.HttpDestinationFactory;
 import org.apache.cxf.wsdl.WSDLManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -357,6 +358,22 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
         sfb.setBus(getBus());
         sfb.setStart(false);
+
+        Class c = getCamelContext().getClassResolver().resolveClass("org.apache.cxf.transport.http_undertow.UndertowHTTPServerEngineFactory");
+        Object o = getCamelContext().getInjector().newInstance(c);
+
+        c.getConstructor(Bus.class).newInstance()
+
+        org.apache.camel.support.ObjectHelper.invokeMethodSafe("setBus", o, bus);
+
+
+
+        // add custom http destination factories
+        var factories = getCamelContext().getRegistry().findByType(HttpDestinationFactory.class);
+        for (var factory : factories) {
+            sfb.getBus().setExtension(factory, HttpDestinationFactory.class);
+        }
+
         getNullSafeCxfConfigurer().configure(sfb);
     }
 
