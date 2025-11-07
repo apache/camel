@@ -359,15 +359,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         sfb.setBus(getBus());
         sfb.setStart(false);
 
-        Class c = getCamelContext().getClassResolver().resolveClass("org.apache.cxf.transport.http_undertow.UndertowHTTPServerEngineFactory");
-        Object o = getCamelContext().getInjector().newInstance(c);
-
-        c.getConstructor(Bus.class).newInstance()
-
-        org.apache.camel.support.ObjectHelper.invokeMethodSafe("setBus", o, bus);
-
-
-
         // add custom http destination factories
         var factories = getCamelContext().getRegistry().findByType(HttpDestinationFactory.class);
         for (var factory : factories) {
