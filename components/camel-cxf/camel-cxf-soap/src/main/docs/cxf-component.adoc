@@ -120,6 +120,20 @@ exchange property, `CamelCXFDataFormat`. The exchange key constant is
 defined in
 `org.apache.camel.component.cxf.common.message.CxfConstants.DATA_FORMAT_PROPERTY`.
 
+== HTTP Transport
+
+When using CXF to host a SOAP-WS then CXF needs to integrate with an HTTP server.
+
+When running in JEE application servers then a _Servlet_ transport can be used.
+When running in a Java standalone application then CXF has support for using Jetty or Undertow.
+
+- cxf-rt-transports-http-jetty JAR
+- cxf-rt-transports-http-undertow JAR
+
+Using CXF with Spring Boot or Quarkus comes automatic integrated with the embedded HTTP server.
+
+See more details in the https://cxf.apache.org/docs/http-transport.html[CXF Transport] documentation.
+
 == Usage
 
 === RAW Mode
