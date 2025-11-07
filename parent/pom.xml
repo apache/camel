@@ -486,7 +486,7 @@
         <snakeyaml-version>2.5</snakeyaml-version>
         <snakeyaml-engine-version>2.10</snakeyaml-engine-version>
         <snmp4j-version>3.9.6</snmp4j-version>
-        <solr-version>9.9.0</solr-version>
+        <solr-version>9.10.0</solr-version>
         <solr-zookeeper-version>3.9.4</solr-zookeeper-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
