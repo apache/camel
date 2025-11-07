@@ -244,6 +244,7 @@
         <module>camel-openstack</module>
         <module>camel-opentelemetry</module>
         <module>camel-opentelemetry2</module>
+        <module>camel-opentelemetry-metrics</module>
         <module>camel-paho</module>
         <module>camel-paho-mqtt5</module>
         <module>camel-parquet-avro</module>

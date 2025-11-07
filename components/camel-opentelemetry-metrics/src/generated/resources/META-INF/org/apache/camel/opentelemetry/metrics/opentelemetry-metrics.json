@@ -1,0 +1,52 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "opentelemetry-metrics",
+    "title": "OpenTelemetry Metrics",
+    "description": "Camel metrics based on the Camel Telemetry spec",
+    "deprecated": false,
+    "firstVersion": "4.17.0",
+    "label": "monitoring",
+    "javaType": "org.apache.camel.opentelemetry.metrics.OpenTelemetryComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-opentelemetry-metrics",
+    "version": "4.17.0-SNAPSHOT",
+    "scheme": "opentelemetry-metrics",
+    "extendsScheme": "",
+    "syntax": "opentelemetry-metrics:metricType:metricName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": false
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
+    "meter": { "index": 2, "kind": "property", "displayName": "Meter", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "io.opentelemetry.api.metrics.Meter", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom configured Meter." }
+  },
+  "headers": {
+    "CamelMetricsTimerAction": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "org.apache.camel.opentelemetry2.component.OpenTelemetryTimerAction", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override timer action in URI", "constantName": "org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants#HEADER_TIMER_ACTION" },
+    "CamelMetricsHistogramValue": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override histogram value in URI", "constantName": "org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants#HEADER_HISTOGRAM_VALUE" },
+    "CamelMetricsCounterDecrement": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Double", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override decrement value in URI", "constantName": "org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants#HEADER_COUNTER_DECREMENT" },
+    "CamelMetricsCounterIncrement": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Double", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override increment value in URI", "constantName": "org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants#HEADER_COUNTER_INCREMENT" },
+    "CamelMetricsName": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override name value in URI", "constantName": "org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants#HEADER_METRIC_NAME" },
+    "CamelMetricsDescription": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Override description value in URI", "constantName": "org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants#HEADER_METRIC_DESCRIPTION" },
+    "CamelMetricsAttributes": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "io.opentelemetry.api.common.Attributes", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "To augment meter attributes defined as URI parameters", "constantName": "org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants#HEADER_METRIC_ATTRIBUTES" }
+  },
+  "properties": {
+    "metricType": { "index": 0, "kind": "path", "displayName": "Metric Type", "group": "producer", "label": "", "required": true, "type": "enum", "javaType": "org.apache.camel.opentelemetry.metrics.InstrumentType", "enum": [ "counter", "summary", "timer" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Type of metrics" },
+    "metricName": { "index": 1, "kind": "path", "displayName": "Metric Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of metric" },
+    "action": { "index": 2, "kind": "parameter", "displayName": "Action", "group": "producer", "label": "", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "start", "stop" ], "deprecated": false, "autowired": false, "secret": false, "description": "Action expression when using timer type" },
+    "attributes": { "index": 3, "kind": "parameter", "displayName": "Attributes", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.String>", "prefix": "attributes.", "multiValue": true, "deprecated": false, "autowired": false, "secret": false, "description": "metric attributes. This is a multi-value option with prefix: attributes." },
+    "decrement": { "index": 4, "kind": "parameter", "displayName": "Decrement", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Decrement value expression when using counter type" },
+    "increment": { "index": 5, "kind": "parameter", "displayName": "Increment", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Increment value expression when using counter type" },
+    "metricsDescription": { "index": 6, "kind": "parameter", "displayName": "Metrics Description", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Description of metrics" },
+    "unit": { "index": 7, "kind": "parameter", "displayName": "Unit", "group": "producer", "label": "", "required": false, "type": "enum", "javaType": "java.util.concurrent.TimeUnit", "enum": [ "NANOSECONDS", "MICROSECONDS", "MILLISECONDS", "SECONDS", "MINUTES", "HOURS", "DAYS" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "MILLISECONDS", "description": "The time unit when using the timer type" },
+    "value": { "index": 8, "kind": "parameter", "displayName": "Value", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Value expression when using histogram type" },
+    "lazyStartProducer": { "index": 9, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}
