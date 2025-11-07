@@ -48,7 +48,6 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "systemmessage":
         case "systemMessage": target.getConfiguration().setSystemMessage(property(camelContext, java.lang.String.class, value)); return true;
         case "temperature": target.getConfiguration().setTemperature(property(camelContext, java.lang.Double.class, value)); return true;
-        case "tools": target.getConfiguration().setTools(property(camelContext, java.lang.String.class, value)); return true;
         case "topp":
         case "topP": target.getConfiguration().setTopP(property(camelContext, java.lang.Double.class, value)); return true;
         case "usermessage":
@@ -85,7 +84,6 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "systemmessage":
         case "systemMessage": return java.lang.String.class;
         case "temperature": return java.lang.Double.class;
-        case "tools": return java.lang.String.class;
         case "topp":
         case "topP": return java.lang.Double.class;
         case "usermessage":
@@ -123,7 +121,6 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "systemmessage":
         case "systemMessage": return target.getConfiguration().getSystemMessage();
         case "temperature": return target.getConfiguration().getTemperature();
-        case "tools": return target.getConfiguration().getTools();
         case "topp":
         case "topP": return target.getConfiguration().getTopP();
         case "usermessage":

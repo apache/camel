@@ -63,11 +63,6 @@ public class OpenAIConfiguration implements Cloneable {
               inputLanguage = "json")
     private String jsonSchema;
 
-    @UriParam
-    @Metadata(description = "Tools JSON (array) for function calling; same shape as OpenAI tools", supportFileReference = true,
-              largeInput = true, inputLanguage = "json")
-    private String tools;
-
     @UriParam(defaultValue = "false")
     @Metadata(description = "Enable conversation memory per Exchange")
     private boolean conversationMemory = false;
@@ -163,14 +158,6 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setJsonSchema(String jsonSchema) {
         this.jsonSchema = jsonSchema;
-    }
-
-    public String getTools() {
-        return tools;
-    }
-
-    public void setTools(String tools) {
-        this.tools = tools;
     }
 
     public boolean isConversationMemory() {

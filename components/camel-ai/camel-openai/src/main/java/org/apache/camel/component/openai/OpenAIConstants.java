@@ -32,7 +32,6 @@ public final class OpenAIConstants {
     public static final String STREAMING = "CamelOpenAIStreaming";
     public static final String OUTPUT_CLASS = "CamelOpenAIOutputClass";
     public static final String JSON_SCHEMA = "CamelOpenAIJsonSchema";
-    public static final String TOOLS = "CamelOpenAITools";
 
     // Output Headers
     public static final String RESPONSE_MODEL = "CamelOpenAIResponseModel";

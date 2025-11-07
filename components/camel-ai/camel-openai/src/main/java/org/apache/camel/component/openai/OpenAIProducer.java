@@ -40,7 +40,6 @@ import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import com.openai.models.chat.completions.ChatCompletionDeveloperMessageParam;
 import com.openai.models.chat.completions.ChatCompletionMessageParam;
 import com.openai.models.chat.completions.ChatCompletionSystemMessageParam;
-import com.openai.models.chat.completions.ChatCompletionTool;
 import com.openai.models.chat.completions.ChatCompletionUserMessageParam;
 import com.openai.models.completions.CompletionUsage;
 import org.apache.camel.AsyncCallback;
@@ -65,16 +64,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         OpenAIConfiguration config = getEndpoint().getConfiguration();
-
-        if (ObjectHelper.isNotEmpty(config.getTools())) {
-            String resolved = getEndpoint().getCamelContext().resolvePropertyPlaceholders(config.getTools());
-            String content = resolveResourceContent(resolved);
-            if (content != null) {
-                config.setTools(content);
-            } else {
-                config.setTools(resolved);
-            }
-        }
 
         if (ObjectHelper.isNotEmpty(config.getJsonSchema())) {
             String resolved = getEndpoint().getCamelContext().resolvePropertyPlaceholders(config.getJsonSchema());
@@ -130,7 +119,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         Boolean streaming = resolveParameter(in, OpenAIConstants.STREAMING, config.isStreaming(), Boolean.class);
         String outputClass = resolveParameter(in, OpenAIConstants.OUTPUT_CLASS, config.getOutputClass(), String.class);
         String jsonSchema = resolveParameter(in, OpenAIConstants.JSON_SCHEMA, config.getJsonSchema(), String.class);
-        String toolsJson = resolveParameter(in, OpenAIConstants.TOOLS, config.getTools(), String.class);
 
         List<ChatCompletionMessageParam> messages = buildMessages(exchange, config);
 
@@ -149,11 +137,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         }
         if (maxTokens != null) {
             paramsBuilder.maxTokens(maxTokens.longValue());
-        }
-
-        if (ObjectHelper.isNotEmpty(toolsJson)) {
-            List<ChatCompletionTool> tools = buildFunctionToolsFromJson(toolsJson);
-            paramsBuilder.tools(tools);
         }
 
         // Structured output handling
@@ -452,17 +435,6 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             sb.putAdditionalProperty(e.getKey(), JsonValue.from(e.getValue()));
         }
         return sb.build();
-    }
-
-    private List<ChatCompletionTool> buildFunctionToolsFromJson(String toolsJson) throws Exception {
-        List<ChatCompletionTool> tools = OBJECT_MAPPER.readValue(
-                toolsJson,
-                new com.fasterxml.jackson.core.type.TypeReference<List<ChatCompletionTool>>() {
-                });
-        if (tools == null) {
-            throw new IllegalArgumentException("Tools JSON string parsed to null");
-        }
-        return tools;
     }
 
     private <T> T resolveParameter(Message message, String headerName, T defaultValue, Class<T> type) {

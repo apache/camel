@@ -302,20 +302,6 @@ from("direct:with-history")
     .log("${body}");
 ----
 
-=== Function Calling (Tools)
-
-Pass OpenAI-compatible tools via the `tools` option (inline JSON array or `resource:` URI). When the model returns tool calls, the body is set to the list of tool calls.
-
-.Usage example:
-[source,java]
-----
-from("direct:tools")
-    .setBody(constant("What is the weather in Paris?"))
-    .to("openai:chat-completion?tools=resource:classpath:openai/tools.json")
-    .log("Finish reason: ${header.CamelOpenAIFinishReason}")
-    .log("Body (tool calls or text): ${body}");
-----
-
 == Compatibility
 
 This component works with any OpenAI API-compatible endpoint by setting the `baseUrl` parameter. This includes:
