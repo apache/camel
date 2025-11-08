@@ -1,0 +1,329 @@
+= OpenAI Component
+:doctitle: OpenAI
+:shortname: openai
+:artifactid: camel-openai
+:description: OpenAI endpoint for chat completion.
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The OpenAI component provides integration with OpenAI and OpenAI-compatible APIs for chat completion using the official openai-java SDK.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-openai</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI Format
+
+[source]
+----
+openai:operation[?options]
+----
+
+Currently, only the `chat-completion` operation is supported.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+=== Authentication
+
+Set `baseUrl` to your provider's endpoint (default:`https://api.openai.com/v1`).
+
+API key resolution order:
+
+- Endpoint `apiKey`
+- Component `apiKey`
+- Environment variable `OPENAI_API_KEY`
+- System property `openai.api.key`
+
+[NOTE]
+====
+The API key can be omitted if using OpenAI-compatible providers that don't require authentication (e.g., some local LLM servers).
+====
+
+=== Basic Chat Completion with String Input
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .setBody(constant("What is Apache Camel?"))
+    .to("openai:chat-completion")
+    .log("Response: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:chat
+      steps:
+        - to:
+            uri: openai:chat-completion
+            parameters:
+              userMessage: What is Apache Camel?
+        - log: "Response: ${body}"
+----
+====
+
+=== File-Backed Prompt with Text File
+
+.Usage example:
+[source,java]
+----
+from("file:prompts?noop=true")
+    .to("openai:chat-completion")
+    .log("Response: ${body}");
+----
+
+
+
+=== Image File Input with Vision Model
+
+.Usage example:
+[source,java]
+----
+from("file:images?noop=true")
+    .to("openai:chat-completion?model=gpt-4.1-mini?userMessage=Describe what you see in this image")
+    .log("Response: ${body}");
+----
+
+[NOTE]
+====
+When using image files, the userMessage is required. Supported image formats are detected by MIME type (e.g., `image/png`, `image/jpeg`, `image/gif`, `image/webp`).
+====
+
+=== Streaming Response
+
+When `streaming=true`, the component returns an `Iterator<ChatCompletionChunk>` in the message body. You can consume this iterator using Camel's streaming EIPs or process it directly:
+
+.Usage example:
+[source,yaml]
+----
+- route:
+    id: route-1145
+    from:
+      id: from-1972
+      uri: timer
+      parameters:
+        repeatCount: 1
+        timerName: timer
+      steps:
+        - to:
+            id: to-1301
+            uri: openai:chat-completion
+            parameters:
+              userMessage: In one sentence, what is Apache Camel?
+              streaming: true
+        - split:
+            id: split-3196
+            steps:
+              - marshal:
+                  id: marshal-3773
+                  json:
+                    library: Jackson
+              - log:
+                  id: log-6722
+                  message: ${body}
+            simple:
+              expression: ${body}
+            streaming: true
+----
+
+=== Structured Output with outputClass
+
+.When `outputClass` is set, the model is instructed to produce JSON matching the given class, but the component returns the raw String. Deserialize the body yourself (e.g., with Camel's Jackson) if you need a typed object.
+
+.Usage example:
+[source,java]
+----
+public class Person {
+    public String name;
+    public int age;
+    public String occupation;
+}
+
+from("direct:structured")
+    .setBody(constant("Generate a person profile for a software engineer"))
+    .to("openai:chat-completion?baseUrl=https://api.openai.com/v1&outputClass=com.example.Person")
+    .log("Structured response: ${body}");
+----
+
+=== Structured Output with JSON Schema
+
+The `jsonSchema` option instructs the model to return JSON that conforms to the provided schema. The response will be valid JSON but is not automatically validated against the schema:
+
+.Usage example:
+[source,java]
+----
+from("direct:json-schema")
+    .setBody(constant("Create a product description"))
+    .setHeader("CamelOpenAIJsonSchema", constant("{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"}}}"))
+    .to("openai:chat-completion")
+    .log("JSON response: ${body}");
+----
+
+You can also load the schema from a resource file:
+
+.Usage example:
+[source,java]
+----
+from("direct:json-schema-resource")
+    .setBody(constant("Create a product description"))
+    .to("openai:chat-completion?jsonSchema=resource:classpath:schemas/product.schema.json")
+    .log("JSON response: ${body}");
+----
+
+[NOTE]
+====
+For full schema validation, integrate with the `camel-json-validator` component after receiving the response.
+====
+
+=== Conversation Memory (Per Exchange)
+
+.Usage example:
+[source,java]
+----
+from("direct:conversation")
+    .setBody(constant("My name is Alice"))
+    .to("openai:chat-completion?conversationMemory=true")
+    .log("First response: ${body}")
+    .setBody(constant("What is my name?"))
+    .to("openai:chat-completion?conversationMemory=true")
+    .log("Second response: ${body}"); // Will remember "Alice"
+----
+
+=== Using Third-Party or Local OpenAI-Compatible Endpoint
+
+.Usage example:
+[source,java]
+----
+from("direct:local")
+    .setBody(constant("Hello from local LLM"))
+    .to("openai:chat-completion?baseUrl=http://localhost:1234/v1&model=local-model")
+    .log("${body}");
+----
+
+== Input Handling
+
+The component accepts the following types of input in the message body:
+
+1. *String*: The prompt text is taken directly from the body
+2. *File*: Used for file-based prompts. The component handles two types of files:
+   * *Text files* (MIME type starting with `text/`): The file content is read and used as the prompt. If userMessage endpoint option or `CamelOpenAIUserMessage` is set, it overrides the file content
+   * *Image files* (MIME type starting with `image/`): The file is encoded as a base64 data URL and sent to vision-capable models. The userMessage is **required** when using image files
+
+[NOTE]
+====
+When using `File` input, the component uses `Files.probeContentType()` to detect the file type. Ensure your system has proper MIME type detection configured.
+====
+
+== Output Handling
+
+=== Default Mode
+The full model response is returned as a String in the message body.
+
+=== Streaming Mode
+When `streaming=true`, the message body contains an `Iterator<ChatCompletionChunk>` suitable for Camel streaming EIPs (such as `split()` with `streaming()`). 
+
+IMPORTANT: 
+* Resource cleanup is handled automatically when the Exchange completes (success or failure)
+* Conversation memory is **not** automatically updated for streaming responses (only for non-streaming responses)
+
+=== Structured Outputs
+
+==== Using outputClass
+The model is instructed to return JSON matching the specified class, but the response body remains a String.
+
+==== Using jsonSchema
+The `jsonSchema` option instructs the model to return JSON conforming to the provided schema. The response will be valid JSON but is not automatically validated against the schema. For full schema validation, integrate with the `camel-json-validator` component after receiving the response.
+
+The JSON schema must be a valid JSON object. Invalid schema strings will result in an `IllegalArgumentException`.
+
+== Conversation Memory
+
+When `conversationMemory=true`, the component maintains conversation history in the `CamelOpenAIConversationHistory` exchange property (configurable via `conversationHistoryProperty` option). This history is scoped to a single Exchange and allows multi-turn conversations within a route.
+
+IMPORTANT:
+* Conversation history is automatically updated with each assistant response for **non-streaming** responses only
+* The history is stored as a `List<ChatCompletionMessageParam>` in the Exchange property
+* The history persists across multiple calls to the endpoint within the same Exchange
+* You can manually set the `CamelOpenAIConversationHistory` exchange property to provide custom conversation context
+
+Example of manual conversation history:
+
+.Usage example:
+[source,java]
+----
+List<ChatCompletionMessageParam> history = new ArrayList<>();
+history.add(ChatCompletionMessageParam.ofUser(/* ... */));
+history.add(ChatCompletionMessageParam.ofAssistant(/* ... */));
+
+from("direct:with-history")
+    .setBody(constant("Continue the conversation"))
+    .setProperty("CamelOpenAIConversationHistory", constant(history))
+    .to("openai:chat-completion?conversationMemory=true")
+    .log("${body}");
+----
+
+== Compatibility
+
+This component works with any OpenAI API-compatible endpoint by setting the `baseUrl` parameter. This includes:
+
+- OpenAI official API (`https://api.openai.com/v1`)
+- Azure OpenAI (may require additional configuration)
+- Local LLM servers (e.g., Ollama, LM Studio, LocalAI)
+- Third-party OpenAI-compatible providers
+
+[NOTE]
+====
+When using local or third-party providers, ensure they support the chat completions API endpoint format. Some providers may have different authentication requirements or API variations.
+====
+
+== Error Handling
+
+The component may throw the following exceptions:
+
+* `IllegalArgumentException`: 
+  ** When an invalid operation is specified (only `chat-completion` is supported)
+  ** When message body or user message is missing
+  ** When image file is provided without userMessage
+  ** When unsupported file type is provided (only text and image files are supported)
+  ** When invalid JSON schema string is provided
+* API-specific exceptions from the OpenAI SDK for network errors, authentication failures, rate limiting, etc.
