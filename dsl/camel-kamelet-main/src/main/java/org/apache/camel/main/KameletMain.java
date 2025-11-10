@@ -687,15 +687,14 @@ public class KameletMain extends MainCommandLineSupport {
 
             // reloader
             if (sourceDir != null) {
-                configure().httpServer().withEnabled(true);
-                configure().httpServer().withStaticSourceDir(sourceDir);
-                configure().httpManagementServer().withEnabled(true);
-                configure().httpManagementServer().withUploadSourceDir(sourceDir);
-
                 if (console || health) {
+                    // allow to load static web content from source-dir
+                    configure().httpServer().withStaticSourceDir(sourceDir);
+                    configure().httpManagementServer().withEnabled(true);
                     // allow to upload/download source (source-dir is intended to be dynamic) via http when HTTP console enabled
                     configure().httpManagementServer().withUploadEnabled(true);
                     configure().httpManagementServer().withDownloadEnabled(true);
+                    configure().httpManagementServer().withUploadSourceDir(sourceDir);
                 }
                 RouteOnDemandReloadStrategy reloader = new RouteOnDemandReloadStrategy(sourceDir, true);
                 reloader.setPattern("*");
