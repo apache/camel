@@ -292,6 +292,35 @@ from("direct:in")
     .to("direct:out");
 ----
 
+=== OpenTelemetry Event Notification
+
+==== Camel Route Event Notifier
+
+The Route Event Notifier counts the number of added and running routes, and can be added to the CamelContext as follows:
+
+[source,java]
+----
+camelContext.getManagementStrategy().addEventNotifier(new OpenTelemetryRouteEventNotifier());
+----
+
+Camel specific metrics that are available:
+
+[width="100%",options="header"]
+|=====================================================
+|Default Name |Type |Description
+|camel.routes.added | LongUpDownCounter | Number of routes in total
+|camel.routes.reloaded | LongCounter | Number of routes that have been reloaded
+|camel.routes.running | LongUpDownCounter | Number of routes currently running
+|=====================================================
+
+The following options are supported:
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Default |Description
+| namingStrategy | OpenTelemetryRouteEventNotifierNamingStrategy.DEFAULT | The strategy to use for overriding default metric names.
+|=======================================================================
+
 == OpenTelemetry Configuration
 
 Applications can export collected metrics to various backends using different exporters, including the OpenTelemetry Protocol (OTLP) exporter,

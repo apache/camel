@@ -39,8 +39,19 @@ public class OpenTelemetryConstants {
 
     public static final String HEADER_METRIC_ATTRIBUTES = HEADER_PREFIX + "Attributes";
 
+    // Route-event metrics
+    public static final String DEFAULT_CAMEL_ROUTES_ADDED = "camel.routes.added";
+    public static final String DEFAULT_CAMEL_ROUTES_RUNNING = "camel.routes.running";
+    public static final String DEFAULT_CAMEL_ROUTES_RELOADED = "camel.routes.reloaded";
+
     // OpenTelemetry Attribute keys
     public static final String CAMEL_CONTEXT_ATTRIBUTE = "camelContext";
+    public static final String ROUTE_ID_ATTRIBUTE = "routeId";
+    public static final String EVENT_TYPE_ATTRIBUTE = "eventType";
+    public static final String KIND_ATTRIBUTE = "kind";
+
+    // OpenTelemetry Attribute values
+    public static final String KIND_ROUTE = "CamelRoute";
 
     private OpenTelemetryConstants() {
         // no-op
