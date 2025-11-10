@@ -212,7 +212,7 @@
         <google-cloud-pubsub-version>1.143.0</google-cloud-pubsub-version>
         <google-cloud-pubsublite-version>1.15.18</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.78.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.59.0</google-cloud-storage-version>
+        <google-cloud-storage-version>2.60.0</google-cloud-storage-version>
         <graaljs-version>25.0.1</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
         <greenmail-version>2.1.7</greenmail-version>
