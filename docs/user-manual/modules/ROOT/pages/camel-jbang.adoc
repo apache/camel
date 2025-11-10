@@ -448,6 +448,29 @@ and reloaded. You can also delete files to remove routes.
 NOTE: You cannot use both files and source dir together.
 The following is not allowed: `camel run abc.java --source-dir=mycode`.
 
+==== Loading new routes into existing Camel
+
+*Available as of Camel 4.17*
+
+The `camel cmd load` command can be used to load new route(s) into an existing running Camel JBang application.
+For example during development to inject a new route for experimentation. This can also be used as part
+of testing scenarios using Citrus with the xref:camel-jbang-test.adoc[Camel JBang Test] plugin.
+
+For example to load `bar.java` route into a Camel application:
+
+[source,bash]
+----
+camel cmd load --source=bar.java
+----
+
+You can load any of the DSLs such as Java, XML, or YAML.
+
+NOTE: At the moment, the `load` command is only adding new, so if you load the same a 2nd time, then Camel
+will add this as a new duplicate route. This may be improved in the future to make the `load` command
+able to detect a previous file and do a remote and add operation.
+
+TIP: There is a `--restart` option to tell Camel to restart all routes after the new route is loaded.
+
 ==== Uploading files to source directory via HTTP
 
 When running Camel JBang with `--source-dir`, `--console` and `--dev` (reloading) then you can

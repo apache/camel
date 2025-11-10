@@ -141,6 +141,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("enable-processor", new CommandLine(new CamelProcessorEnableAction(main)))
                         .addSubcommand("disable-processor", new CommandLine(new CamelProcessorDisableAction(main)))
                         .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(main)))
+                        .addSubcommand("load", new CommandLine(new CamelLoadAction(main)))
                         .addSubcommand("reload", new CommandLine(new CamelReloadAction(main)))
                         .addSubcommand("send", new CommandLine(new CamelSendAction(main)))
                         .addSubcommand("receive", new CommandLine(new CamelReceiveAction(main)))
