@@ -278,7 +278,7 @@ Note that `camel.vault.hashicorp.secrets` is not mandatory: if not specified the
 
 Unlike cloud-based secret managers (AWS, GCP, Azure) that provide event-driven notifications, Hashicorp Vault does not have a native event notification system for secret changes. Therefore, this implementation uses a **polling-based approach**:
 
-1. **Metadata Polling**: The refresh task periodically queries the Hashicorp Vault metadata endpoint (`/v1/{engine}/metadata/{secret}`) for each tracked secret.
+1. **Metadata Polling**: The refresh task periodically queries the Hashicorp Vault metadata endpoint (`/v1/<engine>/metadata/<secret>`) for each tracked secret.
 2. **Version Tracking**: It compares the `current_version` field to detect changes.
 3. **Change Detection**: When a version change is detected, it triggers a Camel context reload.
 4. **Efficiency**: Only metadata is queried (not the full secret content), making this approach lightweight.
