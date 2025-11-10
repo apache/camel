@@ -17,53 +17,38 @@
 package org.apache.camel.support;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Strategy for triggering on-demand reloading of Camel routes in a running Camel application. The strategy is triggered
- * on-demand and reload all files from a directory (and subdirectories).
+ * Strategy for triggering on-demand loading of Camel routes in a running Camel application. The strategy is triggered
+ * on-demand and reload all files provided from external source such as camel-jbang
  */
-@ManagedResource(description = "Managed RouteOnDemandReloadStrategy")
-public class RouteOnDemandReloadStrategy extends RouteWatcherReloadStrategy {
+@ManagedResource(description = "Managed LoadOnDemandReloadStrategy")
+public class LoadOnDemandReloadStrategy extends RouteOnDemandReloadStrategy {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RouteOnDemandReloadStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoadOnDemandReloadStrategy.class);
 
-    public RouteOnDemandReloadStrategy() {
-        setScheduler(false);
-    }
-
-    public RouteOnDemandReloadStrategy(String directory) {
-        super(directory);
-        setScheduler(false);
-    }
-
-    public RouteOnDemandReloadStrategy(String directory, boolean recursive) {
-        super(directory, recursive);
+    public LoadOnDemandReloadStrategy() {
+        setRemoveAllRoutes(false);
         setScheduler(false);
     }
 
     /**
-     * Triggers on-demand reloading
+     * Triggers on-demand loading
+     *
+     * @param source  the source calling this
+     * @param files   a list of file names
+     * @param restart whether to force restart all routes after source files are loaded
      */
-    @ManagedOperation(description = "Trigger on-demand reloading")
-    public void onReload() {
-        onReload("JMX Management");
-    }
-
-    /**
-     * Triggers on-demand reloading
-     */
-    @Override
-    public void onReload(Object source) {
+    public void load(Object source, List<String> files, boolean restart) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
             setLastError(null);
@@ -72,12 +57,12 @@ public class RouteOnDemandReloadStrategy extends RouteWatcherReloadStrategy {
             if (acl != null) {
                 Thread.currentThread().setContextClassLoader(acl);
             }
-            doOnReload(source);
+            doOnReload(source, files, restart);
             incSucceededCounter();
         } catch (Exception e) {
             setLastError(e);
             incFailedCounter();
-            LOG.warn("Error reloading routes due to {}. This exception is ignored.", e.getMessage(), e);
+            LOG.warn("Error loading routes due to {}. This exception is ignored.", e.getMessage(), e);
         } finally {
             if (cl != null) {
                 Thread.currentThread().setContextClassLoader(cl);
@@ -85,12 +70,12 @@ public class RouteOnDemandReloadStrategy extends RouteWatcherReloadStrategy {
         }
     }
 
-    protected void doOnReload(Object source) throws Exception {
+    protected void doOnReload(Object source, List<String> files, boolean restart) throws Exception {
         List<Resource> properties = new ArrayList<>();
         List<Resource> groovy = new ArrayList<>();
         List<Resource> routes = new ArrayList<>();
 
-        for (Resource res : findReloadedResources(source)) {
+        for (Resource res : findReloadedResources(files)) {
             String ext = FileUtil.onlyExt(res.getLocation());
             if ("properties".equals(ext)) {
                 properties.add(res);
@@ -114,31 +99,34 @@ public class RouteOnDemandReloadStrategy extends RouteWatcherReloadStrategy {
         for (Resource res : groovy) {
             reloaded |= onGroovyReload(res, false);
         }
-        boolean removeEverything = isRemoveEverything(routes);
-        if (reloaded || !routes.isEmpty()) {
-            // trigger routes to also reload if properties was reloaded
-            onRouteReload(routes, removeEverything);
-        } else {
-            // rare situation where all routes are deleted
-            onRemoveEverything(removeEverything);
+        if (!routes.isEmpty()) {
+            onRouteReload(routes, false);
+        }
+        if (restart || reloaded) {
+            ContextReloadStrategy crs = getCamelContext().hasService(ContextReloadStrategy.class);
+            if (crs != null) {
+                crs.onReload(source);
+            }
         }
     }
 
-    protected boolean isRemoveEverything(List<Resource> routes) {
-        return routes.isEmpty();
+    @Override
+    public void onReload(Object source) {
+        // noop
     }
 
-    protected void onRemoveEverything(boolean removeEverything) {
-        onRouteReload(null, removeEverything);
-    }
-
+    @Override
     protected List<Resource> findReloadedResources(Object source) throws Exception {
         List<Resource> answer = new ArrayList<>();
 
-        File dir = new File(getFolder());
-        for (Path path : ResourceHelper.findInFileSystem(dir.toPath(), getPattern())) {
-            Resource res = ResourceHelper.resolveResource(getCamelContext(), "file:" + path.toString());
-            answer.add(res);
+        if (source instanceof List list) {
+            for (Object l : list) {
+                File f = new File(l.toString());
+                if (f.isFile() && f.exists()) {
+                    Resource res = ResourceHelper.resolveResource(getCamelContext(), "file:" + f.getAbsolutePath());
+                    answer.add(res);
+                }
+            }
         }
 
         return answer;

@@ -40,7 +40,6 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
@@ -111,8 +110,23 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(getFolder(), "folder", this);
+        if (getResourceReload() == null) {
+            // attach listener that triggers the route update
+            setResourceReload((name, resource) -> {
+                if (name.endsWith(".properties")) {
+                    onPropertiesReload(resource, true);
+                } else if (name.endsWith(".groovy")) {
+                    onGroovyReload(resource, true);
+                } else {
+                    onRouteReload(List.of(resource), false);
+                }
+            });
+        }
 
+        // the following is all related to watching files on disk
+        if (folder == null) {
+            return;
+        }
         if (pattern == null || pattern.isBlank()) {
             pattern = DEFAULT_PATTERN;
         } else if ("*".equals(pattern)) {
@@ -143,19 +157,6 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     }
                 }
                 return false;
-            });
-        }
-
-        if (getResourceReload() == null) {
-            // attach listener that triggers the route update
-            setResourceReload((name, resource) -> {
-                if (name.endsWith(".properties")) {
-                    onPropertiesReload(resource, true);
-                } else if (name.endsWith(".groovy")) {
-                    onGroovyReload(resource, true);
-                } else {
-                    onRouteReload(List.of(resource), false);
-                }
             });
         }
 

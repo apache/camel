@@ -72,6 +72,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.ResourceReloadStrategy;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.support.LoadOnDemandReloadStrategy;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
@@ -259,6 +260,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionLoggerTask(root);
             } else if ("gc".equals(action)) {
                 System.gc();
+            } else if ("load".equals(action)) {
+                doActionLoadTask(root);
             } else if ("reload".equals(action)) {
                 doActionReloadTask();
             } else if ("debug".equals(action)) {
@@ -797,6 +800,32 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     Map.of("command", cmd, "breakpoint", bp, "history", history, "position", position));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionLoadTask(JsonObject root) throws Exception {
+        List<String> files = root.getCollection("source");
+        boolean restart = root.getBooleanOrDefault("restart", false);
+        if (files != null) {
+            LoadOnDemandReloadStrategy cr = camelContext.hasService(LoadOnDemandReloadStrategy.class);
+            if (cr == null) {
+                cr = new LoadOnDemandReloadStrategy();
+                cr.setCamelContext(camelContext);
+                camelContext.addService(cr);
+            }
+            cr.load("Camel JBang", files, restart);
+            JsonObject jo = new JsonObject();
+            Exception error = cr.getLastError();
+            if (error != null) {
+                jo.put("status", "failed");
+                jo.put("exception",
+                        MessageHelper.dumpExceptionAsJSonObject(error).getMap("exception"));
+            } else {
+                jo.put("status", "success");
+            }
+            IOHelper.writeText(jo.toJson(), outputFile);
         } else {
             IOHelper.writeText("{}", outputFile);
         }
