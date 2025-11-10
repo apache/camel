@@ -34,7 +34,10 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
         map.put("Namespace", java.lang.String.class);
         map.put("Port", java.lang.String.class);
+        map.put("RefreshEnabled", boolean.class);
+        map.put("RefreshPeriod", long.class);
         map.put("Scheme", java.lang.String.class);
+        map.put("Secrets", java.lang.String.class);
         map.put("SpringCloudConfigConfiguration", org.apache.camel.vault.SpringCloudConfigConfiguration.class);
         map.put("Token", java.lang.String.class);
         ALL_OPTIONS = map;
@@ -64,7 +67,12 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "kubernetesVaultConfiguration": target.setKubernetesVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesVaultConfiguration.class, value)); return true;
         case "namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         case "port": target.setPort(property(camelContext, java.lang.String.class, value)); return true;
+        case "refreshenabled":
+        case "refreshEnabled": target.setRefreshEnabled(property(camelContext, boolean.class, value)); return true;
+        case "refreshperiod":
+        case "refreshPeriod": target.setRefreshPeriod(property(camelContext, long.class, value)); return true;
         case "scheme": target.setScheme(property(camelContext, java.lang.String.class, value)); return true;
+        case "secrets": target.setSecrets(property(camelContext, java.lang.String.class, value)); return true;
         case "springcloudconfigconfiguration":
         case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
@@ -100,7 +108,12 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "kubernetesVaultConfiguration": return org.apache.camel.vault.KubernetesVaultConfiguration.class;
         case "namespace": return java.lang.String.class;
         case "port": return java.lang.String.class;
+        case "refreshenabled":
+        case "refreshEnabled": return boolean.class;
+        case "refreshperiod":
+        case "refreshPeriod": return long.class;
         case "scheme": return java.lang.String.class;
+        case "secrets": return java.lang.String.class;
         case "springcloudconfigconfiguration":
         case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "token": return java.lang.String.class;
@@ -132,7 +145,12 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "kubernetesVaultConfiguration": return target.getKubernetesVaultConfiguration();
         case "namespace": return target.getNamespace();
         case "port": return target.getPort();
+        case "refreshenabled":
+        case "refreshEnabled": return target.isRefreshEnabled();
+        case "refreshperiod":
+        case "refreshPeriod": return target.getRefreshPeriod();
         case "scheme": return target.getScheme();
+        case "secrets": return target.getSecrets();
         case "springcloudconfigconfiguration":
         case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "token": return target.getToken();

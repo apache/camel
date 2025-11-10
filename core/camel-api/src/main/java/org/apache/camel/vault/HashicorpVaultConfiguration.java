@@ -35,6 +35,12 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
     private boolean cloud;
     @Metadata
     private String namespace;
+    @Metadata
+    private boolean refreshEnabled;
+    @Metadata(defaultValue = "60000")
+    private long refreshPeriod = 60000;
+    @Metadata
+    private String secrets;
 
     public String getToken() {
         return token;
@@ -100,5 +106,38 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
      */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    public boolean isRefreshEnabled() {
+        return refreshEnabled;
+    }
+
+    /**
+     * Whether to automatically reload Camel upon secrets being updated in Hashicorp Vault.
+     */
+    public void setRefreshEnabled(boolean refreshEnabled) {
+        this.refreshEnabled = refreshEnabled;
+    }
+
+    public long getRefreshPeriod() {
+        return refreshPeriod;
+    }
+
+    /**
+     * The period (millis) between checking Hashicorp Vault for updated secrets.
+     */
+    public void setRefreshPeriod(long refreshPeriod) {
+        this.refreshPeriod = refreshPeriod;
+    }
+
+    public String getSecrets() {
+        return secrets;
+    }
+
+    /**
+     * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma.
+     */
+    public void setSecrets(String secrets) {
+        this.secrets = secrets;
     }
 }

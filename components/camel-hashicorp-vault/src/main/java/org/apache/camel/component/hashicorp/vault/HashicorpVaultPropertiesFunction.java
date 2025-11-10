@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.hashicorp.vault;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -82,6 +84,7 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
             = "CAMEL_HASHICORP_VAULT_NAMESPACE";
     private CamelContext camelContext;
     private VaultTemplate client;
+    private final Set<String> secrets = new HashSet<>();
 
     private String engine;
     private String namespace;
@@ -207,6 +210,9 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     }
 
     private String getSecretFromSource(String key, String subkey, String defaultValue, String version) {
+        // capture name of secret
+        secrets.add(key);
+
         String returnValue = null;
         try {
             String completePath = "";
@@ -253,5 +259,12 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    /**
+     * Ids of the secrets in use
+     */
+    public Set<String> getSecrets() {
+        return secrets;
     }
 }

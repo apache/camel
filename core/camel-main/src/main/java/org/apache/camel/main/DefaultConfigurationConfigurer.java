@@ -860,6 +860,25 @@ public final class DefaultConfigurationConfigurer {
             }
         }
 
+        if (vc.hashicorp().isRefreshEnabled()) {
+            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
+                    .newInstance("hashicorp-secret-refresh", Runnable.class);
+            if (task.isPresent()) {
+                long period = vc.hashicorp().getRefreshPeriod();
+                Runnable r = task.get();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling: {} (period: {})", r, TimeUtils.printDuration(period, false));
+                }
+                if (camelContext.hasService(ContextReloadStrategy.class) == null) {
+                    // refresh is enabled then we need to automatically enable context-reload as well
+                    ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
+                    camelContext.addService(reloader);
+                }
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(camelContext);
+                scheduler.schedulePeriodTask(r, period);
+            }
+        }
+
         if (vc.springConfig().isRefreshEnabled()) {
             Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
                     .newInstance("spring-config-refresh", Runnable.class);
