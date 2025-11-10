@@ -97,4 +97,28 @@ public class HashicorpVaultConfigurationProperties extends HashicorpVaultConfigu
         return this;
     }
 
+    /**
+     * Whether to automatically reload Camel upon secrets being updated in Hashicorp Vault
+     */
+    public HashicorpVaultConfigurationProperties withRefreshEnabled(boolean refreshEnabled) {
+        setRefreshEnabled(refreshEnabled);
+        return this;
+    }
+
+    /**
+     * The period (millis) between checking Hashicorp Vault for updated secrets
+     */
+    public HashicorpVaultConfigurationProperties withRefreshPeriod(long refreshPeriod) {
+        setRefreshPeriod(refreshPeriod);
+        return this;
+    }
+
+    /**
+     * Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma
+     */
+    public HashicorpVaultConfigurationProperties withSecrets(String secrets) {
+        setSecrets(secrets);
+        return this;
+    }
+
 }

@@ -483,7 +483,7 @@ The camel.vault.kubernetescm supports 2 options, which are listed below.
 
 
 === Camel Hashicorp Vault configurations
-The camel.vault.hashicorp supports 6 options, which are listed below.
+The camel.vault.hashicorp supports 9 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -492,7 +492,10 @@ The camel.vault.hashicorp supports 6 options, which are listed below.
 | *camel.vault.hashicorp.host* | Host to access hashicorp vault |  | String
 | *camel.vault.hashicorp.namespace* | If the Hashicorp Vault instance is deployed on Hashicorp Cloud, this field will determine the namespace |  | String
 | *camel.vault.hashicorp.port* | Port to access hashicorp vault |  | String
+| *camel.vault.hashicorp.refresh{zwsp}Enabled* | Whether to automatically reload Camel upon secrets being updated in Hashicorp Vault. | false | boolean
+| *camel.vault.hashicorp.refresh{zwsp}Period* | The period (millis) between checking Hashicorp Vault for updated secrets. | 60000 | long
 | *camel.vault.hashicorp.scheme* | Scheme to access hashicorp vault |  | String
+| *camel.vault.hashicorp.secrets* | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
 | *camel.vault.hashicorp.token* | Token to access hashicorp vault |  | String
 |===
 

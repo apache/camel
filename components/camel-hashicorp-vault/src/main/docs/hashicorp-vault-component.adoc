@@ -231,6 +231,65 @@ This approach will return the username field of the database secret with version
 
 The only requirement is adding the camel-hashicorp-vault jar to your Camel application.
 
+=== Automatic Camel context reloading on Secret Refresh
+
+Being able to reload Camel context on a Secret Refresh could be done by specifying the usual credentials (the same used for Hashicorp Vault Property Function).
+
+With Environment variables:
+
+[source,bash]
+----
+export CAMEL_HASHICORP_VAULT_TOKEN=token
+export CAMEL_HASHICORP_VAULT_HOST=host
+export CAMEL_HASHICORP_VAULT_PORT=port
+export CAMEL_HASHICORP_VAULT_SCHEME=http/https
+----
+
+or as plain Camel main properties:
+
+[source,properties]
+----
+camel.vault.hashicorp.token = token
+camel.vault.hashicorp.host = host
+camel.vault.hashicorp.port = port
+camel.vault.hashicorp.scheme = scheme
+----
+
+To enable the automatic refresh, you'll need additional properties to set:
+
+[source,properties]
+----
+camel.vault.hashicorp.refreshEnabled=true
+camel.vault.hashicorp.refreshPeriod=60000
+camel.vault.hashicorp.secrets=database,api-keys
+camel.main.context-reload-enabled = true
+----
+
+where `camel.vault.hashicorp.refreshEnabled` will enable the automatic context reload, `camel.vault.hashicorp.refreshPeriod` is the interval of time between two different checks for update events (default 60000ms), and `camel.vault.hashicorp.secrets` is a comma-separated list of secret names (or patterns) to check for updates.
+
+The secret names should use the following format:
+- `mysecret` or `path/to/secret` - tracks a secret in the default `secret` engine
+- `myengine:mysecret` or `myengine:path/to/secret` - tracks a secret in the `myengine` engine (use `:` to separate engine from path)
+- You can use patterns like `database*` to match multiple secrets
+
+Note that `camel.vault.hashicorp.secrets` is not mandatory: if not specified the task responsible for checking updates events will take into account all the properties with a `hashicorp:` prefix.
+
+==== How the Refresh Mechanism Works
+
+Unlike cloud-based secret managers (AWS, GCP, Azure) that provide event-driven notifications, Hashicorp Vault does not have a native event notification system for secret changes. Therefore, this implementation uses a **polling-based approach**:
+
+1. **Metadata Polling**: The refresh task periodically queries the Hashicorp Vault metadata endpoint (`/v1/<engine>/metadata/<secret>`) for each tracked secret.
+2. **Version Tracking**: It compares the `current_version` field to detect changes.
+3. **Change Detection**: When a version change is detected, it triggers a Camel context reload.
+4. **Efficiency**: Only metadata is queried (not the full secret content), making this approach lightweight.
+
+For example, if a secret named `database` is updated in Vault:
+- The metadata endpoint returns `"current_version": 5`
+- On the next check, if `current_version` changes to `6`, a reload is triggered
+- The refresh period (default 60 seconds) determines how quickly changes are detected
+
+This polling approach works with all Hashicorp Vault deployments (on-premise, cloud, enterprise, and open-source) without requiring additional infrastructure.
+
 include::spring-boot:partial$starter.adoc[]
 
 === Using Hashicorp Vault Property Function in Spring Boot for Early resolving properties
