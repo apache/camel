@@ -108,9 +108,6 @@ public final class CommandLineHelper {
 
     /**
      * Get the config file in current directory (local = true) or the default one
-     *
-     * @param  local
-     * @return
      */
     private static Path getUserPropertyFile(boolean local) {
         if (local) {
