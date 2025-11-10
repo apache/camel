@@ -438,7 +438,7 @@
         <picocli-version>4.7.7</picocli-version>
         <pinecone-client-version>3.1.0</pinecone-client-version>
         <plc4x-version>0.13.1</plc4x-version>
-        <plexus-archiver-version>4.10.3</plexus-archiver-version>
+        <plexus-archiver-version>4.10.4</plexus-archiver-version>
         <plexus-build-api-version>1.2.0</plexus-build-api-version>
         <plexus-container-default-version>2.1.1</plexus-container-default-version>
         <plexus-utils-version>4.0.2</plexus-utils-version>
