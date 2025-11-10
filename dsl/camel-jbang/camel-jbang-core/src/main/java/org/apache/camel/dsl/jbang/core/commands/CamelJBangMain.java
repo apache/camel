@@ -170,6 +170,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
                 .addSubcommand("sbom", new CommandLine(new SBOMGenerator(main)))
+                .addSubcommand("dirty", new CommandLine(new Dirty(main)))
                 .addSubcommand("completion", new CommandLine(new Complete(main)))
                 .addSubcommand("config", new CommandLine(new ConfigCommand(main))
                         .addSubcommand("list", new CommandLine(new ConfigList(main)))
