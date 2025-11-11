@@ -99,7 +99,7 @@ public class CatalogDoc extends CamelCommand {
     String filter;
 
     @CommandLine.Option(names = { "--header" },
-                        description = "Whether to display component message headers", defaultValue = "true")
+                        description = "Whether to display component message headers", defaultValue = "false")
     boolean headers;
 
     @CommandLine.Option(names = {
@@ -433,9 +433,15 @@ public class CatalogDoc extends CamelCommand {
         printer().println("");
 
         if (headers && !cm.getEndpointHeaders().isEmpty()) {
-            printer().printf("The %s component supports (total: %s) message headers, which are listed below.%n%n",
-                    cm.getName(), cm.getEndpointHeaders().size());
-            printer().println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, cm.getEndpointHeaders(), Arrays.asList(
+            filtered = filter(filter, cm.getEndpointHeaders());
+            total1 = cm.getEndpointHeaders().size();
+            total2 = filtered.size();
+            if (total1 == total2) {
+                printer().printf("Message headers (total: %s):%n", total1);
+            } else {
+                printer().printf("Message headers (total: %s match-filter: %s):%n", total1, total2);
+            }
+            printer().println(AsciiTable.getTable(AsciiTable.FANCY_ASCII, filtered, Arrays.asList(
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).minWidth(20)
                             .maxWidth(35, OverflowBehaviour.NEWLINE)
                             .with(this::getName),
