@@ -110,7 +110,7 @@ public final class KameletCatalogHelper {
     }
 
     private static String getPropertyDefaultValue(Object prop) throws Exception {
-        Method m = prop.getClass().getMethod("getDefault");
+        Method m = prop.getClass().getMethod("get_default");
         Object dn = ObjectHelper.invokeMethod(m, prop);
         if (dn != null) {
             String t = dn.toString();
@@ -121,7 +121,7 @@ public final class KameletCatalogHelper {
 
     private static List<String> getPropertyEnum(Object prop) throws Exception {
         List<String> answer = new ArrayList<>();
-        Method m = prop.getClass().getMethod("getEnum");
+        Method m = prop.getClass().getMethod("get_enum");
         List<Object> list = (List<Object>) ObjectHelper.invokeMethod(m, prop);
         if (list != null && !list.isEmpty()) {
             for (var en : list) {
