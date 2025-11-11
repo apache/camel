@@ -465,9 +465,8 @@ camel cmd load --source=bar.java
 
 You can load any of the DSLs such as Java, XML, or YAML.
 
-NOTE: At the moment, the `load` command is only adding new, so if you load the same a 2nd time, then Camel
-will add this as a new duplicate route. This may be improved in the future to make the `load` command
-able to detect a previous file and do a remote and add operation.
+IMPORTANT: Assign _ids_ to your routes so the `load` command would detect a previous loaded route (when you update),
+to avoid adding the same route as a duplicate.
 
 TIP: There is a `--restart` option to tell Camel to restart all routes after the new route is loaded.
 
