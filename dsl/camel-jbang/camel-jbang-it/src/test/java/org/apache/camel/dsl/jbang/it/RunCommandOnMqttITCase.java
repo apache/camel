@@ -51,7 +51,7 @@ public class RunCommandOnMqttITCase extends JBangTestSupport {
         final String pid = executeBackground(String.format("run --property=brokerUrl=%s %s/%s",
                 "tcp://" + ipAddr + ":1883",
                 mountPoint(), TestResources.MQQT_CONSUMER.getName()));
-        checkLogContains("Started route1 (kamelet://mqtt5-source)");
+        checkLogContains("Started route1 (kamelet:mqtt5-source)");
         final String payloadFile = "payload.json";
         newFileInDataFolder(payloadFile, "{\"value\": 21}");
         sendCmd(String.format("%s/%s", mountPoint(), payloadFile), pid);
