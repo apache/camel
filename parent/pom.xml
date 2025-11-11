@@ -60,7 +60,7 @@
         <activemq6-version>6.1.7</activemq6-version>
         <activemq-artemis-version>2.42.0</activemq-artemis-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
-        <amazon-kinesis-client-version>2.6.0</amazon-kinesis-client-version>
+        <amazon-kinesis-client-version>3.2.0</amazon-kinesis-client-version>
         <angus-mail-version>2.0.4</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
