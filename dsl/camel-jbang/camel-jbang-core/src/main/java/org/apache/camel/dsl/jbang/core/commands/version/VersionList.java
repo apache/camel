@@ -97,8 +97,9 @@ public class VersionList extends CamelCommand {
                         description = "Sort by (version, date, or days)", defaultValue = "version")
     String sort;
 
-    @CommandLine.Option(names = { "--repo" }, description = "Maven repository for downloading available versions")
-    String repo;
+    @CommandLine.Option(names = { "--repo", "--repos" },
+                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    String repositories;
 
     @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases", defaultValue = "false")
     boolean lts;
@@ -154,7 +155,7 @@ public class VersionList extends CamelCommand {
 
         // only download if fresh, using a custom repo, or special runtime based
         List<String[]> versions = new ArrayList<>();
-        if (fresh || repo != null || runtime != RuntimeType.main) {
+        if (fresh || repositories != null || runtime != RuntimeType.main) {
             downloadReleases(versions);
         }
 
@@ -235,7 +236,7 @@ public class VersionList extends CamelCommand {
 
         try {
             main.setFresh(fresh);
-            main.setRepositories(repo);
+            main.setRepositories(repositories);
             main.start();
 
             // use kamelet-main to download from maven
@@ -253,10 +254,10 @@ public class VersionList extends CamelCommand {
 
             RepositoryResolver rr = downloader.getRepositoryResolver();
             if (rr != null) {
-                repo = rr.resolveRepository(repo);
+                repositories = rr.resolveRepository(repositories);
             }
 
-            var versions = downloader.resolveAvailableVersions(g, a, fromVersion, repo);
+            var versions = downloader.resolveAvailableVersions(g, a, fromVersion, repositories);
             versions = versions.stream().filter(v -> acceptVersion(v[0])).toList();
             answer.addAll(versions);
 
