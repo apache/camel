@@ -25,7 +25,6 @@ import java.util.Map;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
-import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.instrumentation.log4j.appender.v2_17.OpenTelemetryAppender;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
@@ -40,19 +39,12 @@ import io.opentelemetry.sdk.metrics.internal.SdkMeterProviderUtil;
 import io.opentelemetry.sdk.testing.exporter.InMemoryLogRecordExporter;
 import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
-import io.opentelemetry.sdk.trace.ReadWriteSpan;
-import io.opentelemetry.sdk.trace.ReadableSpan;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 /**
  * Adapted from
@@ -68,7 +60,7 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
         InMemorySpanExporter spanExporter = InMemorySpanExporter.create();
         SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
                 //.addSpanProcessor(LeakDetectingSpanProcessor.create())
-                .addSpanProcessor(new LoggingSpanProcessor())
+                //.addSpanProcessor(new LoggingSpanProcessor())
                 .addSpanProcessor(SimpleSpanProcessor.create(spanExporter))
                 .build();
 
@@ -165,35 +157,6 @@ final class CamelOpenTelemetryExtension implements BeforeEachCallback, AfterEach
     public void afterEach(ExtensionContext context) {
         GlobalOpenTelemetry.resetForTest();
         openTelemetry.close();
-    }
-
-    static class LoggingSpanProcessor implements SpanProcessor {
-        private static final Logger LOG = LoggerFactory.getLogger(LoggingSpanProcessor.class);
-        private static final Marker OTEL_MARKER = MarkerFactory.getMarker("OTEL");
-
-        @Override
-        public void onStart(Context context, ReadWriteSpan readWriteSpan) {
-            LOG.info(OTEL_MARKER, "Span started: name - '{}', kind - '{}', id - '{}-{}", readWriteSpan.getName(),
-                    readWriteSpan.getKind(),
-                    readWriteSpan.getSpanContext().getTraceId(), readWriteSpan.getSpanContext().getSpanId());
-        }
-
-        @Override
-        public boolean isStartRequired() {
-            return true;
-        }
-
-        @Override
-        public void onEnd(ReadableSpan readableSpan) {
-            LOG.info(OTEL_MARKER, "Span ended: name - '{}', kind - '{}', id - '{}-{}", readableSpan.getName(),
-                    readableSpan.getKind(),
-                    readableSpan.getSpanContext().getTraceId(), readableSpan.getSpanContext().getSpanId());
-        }
-
-        @Override
-        public boolean isEndRequired() {
-            return true;
-        }
     }
 
     Map<String, OtelTrace> getTraces() {

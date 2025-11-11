@@ -9,7 +9,7 @@ approvers:
   - "@zbendhiba"
   - "@davsclaus"
 creation-date: 2025-01-08
-last-updated: 2025-03-21
+last-updated: 2025-11-07
 status: implemented
 see-also: []
 replaces: []
@@ -92,13 +92,29 @@ Beside the span lifecycle we will need to consider a few more aspects:
 
 The **span decoration** is a Camel specific way of decorating the different components we handle with specific traces information. As an example, when you're using Kafka component, you will get automatically in the trace useful configuration as the offset or the partition. We already have this mechanism in place and we should make sure to have a clear documentation stating about this particular feature.
 
-The **Context propagation** is a way to correlate distributed traces between each other. It works reading a `traceparent` header on the Exchange and using it to correlate to a chain of distributed requests. It's important to notice that the specific propagation mechanism belong to the implementation, so we will need to provide in the component the required level of abstraction.
+The **Context propagation** is a way to correlate distributed traces between each other. It works reading a `traceparent` header on the Exchange and using it to correlate to a chain of distributed requests. It's important to notice that the specific propagation mechanism belong to the implementation, so we will need to provide in the component the required level of abstraction (see Context Propagation chapter).
 
 === Tracing storage
 
 The Exchange stack storage already exists and it may suffice to this proposal goals. Again, we need to remove the implementation specific details from the abstraction and make sure that we don't slip any implementation detail in the future by design. Some concern we may have would be about the correct handling of opening and closure of spans which may be different according the each implementation specific. However, if the lifecycle we have in place takes care of consistency, this should not be a problem at all: each implementation should be in charge to do the needful when each lifecycle method is called. The Exchange stack storage can be used to store a span wrapper and maintain a state for it: this is something already available.
 
 In order to clarify this aspect, let's take `camel-opentelemetry` as an example. When we call the *activation* method, then, we must make sure that the span passed is correctly activated, calling therefore the `span.makeCurrent()` method. The generated scope has therefore to be kept in the same span wrapper in order to be later closed when the *closure* method is called via `scope.close()`. As each span wrapper is stored in the Exchange, then we can use this approach to maintain the state of each wrapper regardless how its specific implementation works.
+
+=== Context propagation
+
+Each telemetry implementations may provide a different way of managing context propagation. However, from Camel perspective, this is managed consistently across the different implementations by the consumption of upstream headers and the generation of downstream headers accordingly.
+
+```
+┌───────────────────────┐     ┌───────────────────────┐     ┌───────────────────────┐
+│   Upstream Component  │ ──> │        Camel          │ ──> │   Third-Party System  │
+│ (sends traceparent)   │     │ consumes & injects    │     │ (receives traceparent)│
+└───────────────────────┘     └───────────────────────┘     └───────────────────────┘
+            traceparent ───────────────────────────────────────────────────────────▶
+```
+
+For this reason, each telemetry implementations will need to **extract the expected header** before generating a new trace. This is typically happening during the Trace/Span creation (ie, method `create()`) if no parent span still exists. In a similar fashion, the telemetry component must implements an `inject()` method in order to pass to any downstream system the origin of the trace. This mechanism will also serve to make different Camel systems properly exchange the traces among them.
+
+It's important therefore that any upstream component (java libraries, agents, ...) implements properly the given context propagation technology specification. The de-facto standard is the https://www.w3.org/TR/trace-context/[W3C Trace Context specification] which is the one used in Opentelemetry based telemetry components. Camel Opentelemetry telemetry components must be compliant to the standard.
 
 === Tracing simple implementation (mock)
 
@@ -133,3 +149,7 @@ Developed concrete Micrometer Observability component implementing the `camel-te
 === Inclusion of generated traces headers (2025-10-21)
 
 A new feature is available to add `TRACE_ID` and `SPAN_ID` Exchange headers. This is very useful in conjunction with MDC header usage. From now on we have a consistent setting of generated telemetry traces consumable from MDC mechanism.
+
+=== Design clarification about the adoption of W3C trace context (2025-11-07)
+
+Added a chapter to clarify the adoption and compliancy of W3C trace context of Camel for trace context propagation.

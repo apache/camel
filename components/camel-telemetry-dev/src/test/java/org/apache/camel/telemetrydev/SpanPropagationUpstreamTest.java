@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SpanPropagationTest extends TelemetryDevTracerTestSupport {
+public class SpanPropagationUpstreamTest extends TelemetryDevTracerTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

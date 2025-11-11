@@ -131,23 +131,13 @@ public class MicrometerObservabilityTracer extends org.apache.camel.telemetry.Tr
             if (parent != null) {
                 MicrometerObservabilitySpanAdapter microObsParentSpan = (MicrometerObservabilitySpanAdapter) parent;
                 span = tracer.nextSpan(microObsParentSpan.getSpan());
-            } else if (extractor.get("traceparent") != null || extractor.get("X-B3-TraceId") != null) {
-                /*
-                 * This part is a bit tricky. We need to verify if the extractor
-                 * (ie, the Camel Exchange) holds a propagated parent.
-                 * As the micrometer-observability is technology agnostic, we need to check against
-                 * the available implementations (Opentelemetry and Zipkin at the moment of writing this comment).
-                 * TODO: we could do this configurable if it is required.
-                 */
+            } else {
                 Builder builder = propagator.extract(extractor, (carrier, key) -> {
                     return extractor.get(key) == null ? null : (String) extractor.get(key);
                 });
 
                 span = builder.start();
-            } else {
-                span = tracer.nextSpan();
             }
-
             span.name(spanName);
 
             return new MicrometerObservabilitySpanAdapter(span);

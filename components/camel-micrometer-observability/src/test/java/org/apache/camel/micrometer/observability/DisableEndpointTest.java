@@ -17,23 +17,24 @@
 package org.apache.camel.micrometer.observability;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-import io.micrometer.tracing.test.simple.SimpleSpan;
+import io.opentelemetry.api.trace.SpanId;
+import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DisableEndpointTest extends MicrometerObservabilityTracerTestSupport {
+public class DisableEndpointTest extends MicrometerObservabilityTracerPropagationTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -45,7 +46,7 @@ public class DisableEndpointTest extends MicrometerObservabilityTracerTestSuppor
     @Test
     void testProcessorsTraceRequest() throws IOException {
         template.sendBody("direct:start", "my-body");
-        Map<String, MicrometerObservabilityTrace> traces = traces();
+        Map<String, OtelTrace> traces = otelExtension.getTraces();
         assertEquals(1, traces.size());
         checkTrace(traces.values().iterator().next());
     }
@@ -62,22 +63,22 @@ public class DisableEndpointTest extends MicrometerObservabilityTracerTestSuppor
         Assertions.assertEquals("testValue", myVar);
     }
 
-    private void checkTrace(MicrometerObservabilityTrace trace) {
-        List<SimpleSpan> spans = trace.getSpans();
+    private void checkTrace(OtelTrace trace) {
+        List<SpanData> spans = trace.getSpans();
         assertEquals(2, spans.size());
-        SimpleSpan testProducer = spans.get(0);
-        SimpleSpan direct = spans.get(1);
+        SpanData testProducer = spans.get(0);
+        SpanData direct = spans.get(1);
 
         // Validate span completion
-        assertNotEquals(Instant.EPOCH, testProducer.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, direct.getEndTimestamp());
+        assertTrue(testProducer.hasEnded());
+        assertTrue(direct.hasEnded());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
 
         // Validate hierarchy
-        assertEquals("", testProducer.getParentId());
-        assertEquals(testProducer.getSpanId(), direct.getParentId());
+        assertEquals(SpanId.getInvalid(), testProducer.getParentSpanId());
+        assertEquals(testProducer.getSpanId(), direct.getParentSpanId());
     }
 
     @Override

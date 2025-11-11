@@ -90,9 +90,9 @@ public class MockTracer extends Tracer {
 
         @Override
         public void inject(Span span, SpanContextPropagationInjector injector, boolean includeTracing) {
-            injector.put("traceparent", span.toString());
+            MockSpanAdapter msa = (MockSpanAdapter) span;
+            injector.put("traceparent", msa.getTag("traceid") + "-" + msa.getTag("spanid"));
             if (includeTracing) {
-                MockSpanAdapter msa = (MockSpanAdapter) span;
                 injector.put(Tracer.TRACE_HEADER, msa.getTag("traceid"));
                 injector.put(Tracer.SPAN_HEADER, msa.getTag("spanid"));
             }

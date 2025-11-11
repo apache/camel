@@ -17,22 +17,23 @@
 package org.apache.camel.micrometer.observability;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
-import io.micrometer.tracing.test.simple.SimpleSpan;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.trace.SpanId;
+import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.micrometer.observability.CamelOpenTelemetryExtension.OtelTrace;
 import org.apache.camel.telemetry.Op;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AsyncDirectTest extends MicrometerObservabilityTracerTestSupport {
+public class AsyncDirectTest extends MicrometerObservabilityTracerPropagationTestSupport {
 
     @Test
     void testRouteMultipleRequests() throws InterruptedException, IOException {
@@ -44,37 +45,37 @@ public class AsyncDirectTest extends MicrometerObservabilityTracerTestSupport {
             context.createProducerTemplate().sendBody("direct:start", "Hello!");
         }
         mock.assertIsSatisfied(1000);
-        Map<String, MicrometerObservabilityTrace> traces = traces();
+        Map<String, OtelTrace> traces = otelExtension.getTraces();
         // Each trace should have a unique trace id. It is enough to assert that
         // the number of elements in the map is the same of the requests to prove
         // all traces have been generated uniquely.
         assertEquals(j, traces.size());
         // Each trace should have the same structure
-        for (MicrometerObservabilityTrace trace : traces.values()) {
+        for (OtelTrace trace : traces.values()) {
             checkTrace(trace, "Hello!");
         }
 
     }
 
-    private void checkTrace(MicrometerObservabilityTrace trace, String expectedBody) {
-        List<SimpleSpan> spans = trace.getSpans();
+    private void checkTrace(OtelTrace trace, String expectedBody) {
+        List<SpanData> spans = trace.getSpans();
         assertEquals(7, spans.size());
-        SimpleSpan testProducer = MicrometerObservabilityTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_SENT);
-        SimpleSpan direct = MicrometerObservabilityTracerTestSupport.getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
-        SimpleSpan newDirectTo = MicrometerObservabilityTracerTestSupport.getSpan(spans, "direct://new", Op.EVENT_SENT);
-        SimpleSpan log = MicrometerObservabilityTracerTestSupport.getSpan(spans, "log://info", Op.EVENT_SENT);
-        SimpleSpan newDirectFrom = MicrometerObservabilityTracerTestSupport.getSpan(spans, "direct://new", Op.EVENT_RECEIVED);
-        SimpleSpan newLog = MicrometerObservabilityTracerTestSupport.getSpan(spans, "log://new", Op.EVENT_SENT);
-        SimpleSpan newMock = MicrometerObservabilityTracerTestSupport.getSpan(spans, "mock://end", Op.EVENT_SENT);
+        SpanData testProducer = getSpan(spans, "direct://start", Op.EVENT_SENT);
+        SpanData direct = getSpan(spans, "direct://start", Op.EVENT_RECEIVED);
+        SpanData newDirectTo = getSpan(spans, "direct://new", Op.EVENT_SENT);
+        SpanData log = getSpan(spans, "log://info", Op.EVENT_SENT);
+        SpanData newDirectFrom = getSpan(spans, "direct://new", Op.EVENT_RECEIVED);
+        SpanData newLog = getSpan(spans, "log://new", Op.EVENT_SENT);
+        SpanData newMock = getSpan(spans, "mock://end", Op.EVENT_SENT);
 
         // Validate span completion
-        assertNotEquals(Instant.EPOCH, testProducer.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, direct.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, newDirectTo.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, log.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, newDirectFrom.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, newLog.getEndTimestamp());
-        assertNotEquals(Instant.EPOCH, newMock.getEndTimestamp());
+        assertTrue(testProducer.hasEnded());
+        assertTrue(direct.hasEnded());
+        assertTrue(newDirectTo.hasEnded());
+        assertTrue(log.hasEnded());
+        assertTrue(newDirectFrom.hasEnded());
+        assertTrue(newLog.hasEnded());
+        assertTrue(newMock.hasEnded());
 
         // Validate same trace
         assertEquals(testProducer.getTraceId(), direct.getTraceId());
@@ -87,40 +88,46 @@ public class AsyncDirectTest extends MicrometerObservabilityTracerTestSupport {
         // Validate same Exchange ID
         // As it's a "direct" component, we expect the logic to happen within the same
         // Exchange boundary
-        assertEquals(testProducer.getTags().get("exchangeId"), direct.getTags().get("exchangeId"));
-        assertEquals(testProducer.getTags().get("exchangeId"), newDirectTo.getTags().get("exchangeId"));
-        assertEquals(testProducer.getTags().get("exchangeId"), newDirectFrom.getTags().get("exchangeId"));
-        assertEquals(testProducer.getTags().get("exchangeId"), log.getTags().get("exchangeId"));
-        assertEquals(testProducer.getTags().get("exchangeId"), newLog.getTags().get("exchangeId"));
-        assertEquals(testProducer.getTags().get("exchangeId"), newMock.getTags().get("exchangeId"));
+        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                direct.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                newDirectTo.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                newDirectFrom.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                log.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                newLog.getAttributes().get(AttributeKey.stringKey("exchangeId")));
+        assertEquals(testProducer.getAttributes().get(AttributeKey.stringKey("exchangeId")),
+                newMock.getAttributes().get(AttributeKey.stringKey("exchangeId")));
 
         // // Validate hierarchy
-        assertTrue(testProducer.getParentId().isEmpty());
-        assertEquals(testProducer.getSpanId(), direct.getParentId());
-        assertEquals(direct.getSpanId(), newDirectTo.getParentId());
-        assertEquals(direct.getSpanId(), log.getParentId());
-        assertEquals(newDirectTo.getSpanId(), newDirectFrom.getParentId());
-        assertEquals(newDirectFrom.getSpanId(), newLog.getParentId());
-        assertEquals(newDirectFrom.getSpanId(), newMock.getParentId());
+        assertEquals(SpanId.getInvalid(), testProducer.getParentSpanId());
+        assertEquals(testProducer.getSpanId(), direct.getParentSpanId());
+        assertEquals(direct.getSpanId(), newDirectTo.getParentSpanId());
+        assertEquals(direct.getSpanId(), log.getParentSpanId());
+        assertEquals(newDirectTo.getSpanId(), newDirectFrom.getParentSpanId());
+        assertEquals(newDirectFrom.getSpanId(), newLog.getParentSpanId());
+        assertEquals(newDirectFrom.getSpanId(), newMock.getParentSpanId());
 
         // Validate message logging
-        assertEquals("message=A direct message", direct.getEvents().iterator().next().getValue());
-        assertEquals("message=A new message", newDirectFrom.getEvents().iterator().next().getValue());
+        assertEquals("message=A direct message", direct.getEvents().get(0).getName());
+        assertEquals("message=A new message", newDirectFrom.getEvents().get(0).getName());
 
         if (expectedBody == null) {
             assertEquals(
                     "message=Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                    log.getEvents().iterator().next().getValue());
+                    log.getEvents().get(0).getName());
             assertEquals(
                     "message=Exchange[ExchangePattern: InOut, BodyType: null, Body: [Body is null]]",
-                    newLog.getEvents().iterator().next().getValue());
+                    newLog.getEvents().get(0).getName());
         } else {
             assertEquals(
                     "message=Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
-                    log.getEvents().iterator().next().getValue());
+                    log.getEvents().get(0).getName());
             assertEquals(
                     "message=Exchange[ExchangePattern: InOnly, BodyType: String, Body: " + expectedBody + "]",
-                    newLog.getEvents().iterator().next().getValue());
+                    newLog.getEvents().get(0).getName());
         }
     }
 

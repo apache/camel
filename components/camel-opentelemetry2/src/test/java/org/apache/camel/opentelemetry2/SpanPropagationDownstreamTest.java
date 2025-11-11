@@ -16,22 +16,16 @@
  */
 package org.apache.camel.opentelemetry2;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import io.opentelemetry.sdk.trace.data.SpanData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.opentelemetry2.CamelOpenTelemetryExtension.OtelTrace;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpanPropagationTest extends OpenTelemetryTracerTestSupport {
+public class SpanPropagationDownstreamTest extends OpenTelemetryTracerTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -45,35 +39,17 @@ public class SpanPropagationTest extends OpenTelemetryTracerTestSupport {
     }
 
     @Test
-    void testPropagateUpstreamTraceRequest() throws IOException {
-        template.requestBodyAndHeader("direct:start", "sample body",
-                "traceparent", "00-0af044aea5c127fd5ab5f839de2b8ae2-d362a8a943c2b289-01");
-        Map<String, OtelTrace> traces = otelExtension.getTraces();
-        assertEquals(1, traces.size());
-        checkTrace(traces.values().iterator().next());
-    }
-
-    private void checkTrace(OtelTrace trace) {
-        List<SpanData> spans = trace.getSpans();
-        assertEquals(3, spans.size());
-        SpanData testProducer = spans.get(0);
-        SpanData direct = spans.get(1);
-        SpanData log = spans.get(2);
-
-        // Validate span completion
-        assertTrue(testProducer.hasEnded());
-        assertTrue(direct.hasEnded());
-        assertTrue(log.hasEnded());
-
-        // Validate same trace
-        assertEquals("0af044aea5c127fd5ab5f839de2b8ae2", testProducer.getSpanContext().getTraceId());
-        assertEquals(testProducer.getSpanContext().getTraceId(), direct.getSpanContext().getTraceId());
-        assertEquals(direct.getSpanContext().getTraceId(), log.getSpanContext().getTraceId());
-
-        // Validate hierarchy
-        assertEquals("d362a8a943c2b289", testProducer.getParentSpanContext().getSpanId());
-        assertEquals(testProducer.getSpanContext().getSpanId(), direct.getParentSpanContext().getSpanId());
-        assertEquals(direct.getSpanContext().getSpanId(), log.getParentSpanContext().getSpanId());
+    void testPropagateDownstreamTraceRequest() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        template.sendBody("direct:start", "Test");
+        mock.assertIsSatisfied();
+        mock.getExchanges().forEach(exchange -> {
+            assertTrue(
+                    exchange.getIn().getHeader("traceparent", String.class)
+                            .matches("^([0-9a-f]{2})-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$"),
+                    "The traceparent header does not match with the expected format <version>-<traceid>-<spanid>-<flags>");
+        });
     }
 
     @Override
@@ -84,7 +60,7 @@ public class SpanPropagationTest extends OpenTelemetryTracerTestSupport {
                 from("direct:start")
                         .routeId("start")
                         .log("A message")
-                        .to("log:info");
+                        .to("mock:result");
             }
         };
     }
