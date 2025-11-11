@@ -187,7 +187,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private IndexView getIndex() throws MojoExecutionException {
-        Pattern cpePattern = Pattern.compile(".*/camel-[^/]+.jar");
+        Pattern cpePattern = Pattern.compile(".*[/\\\\]camel-[^/]+.jar");
         try {
             List<IndexView> indices = new ArrayList<>();
             indices.add(PackagePluginUtils.readJandexIndex(project));
