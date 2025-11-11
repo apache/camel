@@ -93,7 +93,7 @@ public class RunCommandITCase extends JBangTestSupport {
     @Test
     public void runRouteFromInputParameterTest() {
         executeBackground("run --code='from(\"kamelet:timer-source?message=howdy\").to(\"log:timer\")'");
-        checkLogContains("Started route1 (kamelet://timer-source)");
+        checkLogContains("Started route1 (kamelet:timer-source)");
         checkLogContains("Body: howdy");
     }
 
