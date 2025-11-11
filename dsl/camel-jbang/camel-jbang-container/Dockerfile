@@ -20,7 +20,7 @@ FROM eclipse-temurin:21-jdk
 # Set Versions, JBang Path and commit ID of the specific version of dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java
 ENV JBANG_VERSION=0.132.1 \
     CAMEL_VERSION=4.16.0 \
-    CAMEL_JBANG_COMMIT=ff2828529a40c8d4ab39d405beb0885aa1413a7d \
+    CAMEL_JBANG_COMMIT=ef3dc3fab7c8ca87f307e85358b3f738468f369b \
     JBANG_PATH=/usr/local/bin
 
 # Download JBang, create camel exec, set JBang version, trust camel sources and download camel DEPS by running camel
