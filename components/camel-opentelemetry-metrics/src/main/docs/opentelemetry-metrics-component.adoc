@@ -61,7 +61,7 @@ OpenTelemetry meter configuration involves setting up a `MeterProvider` that is 
 These `Meters` are then used to create instruments like counters, gauges or histograms.
 
 ==== How it works
-OpenTelemetry metrics are collected by instrumented application that record measurements using instruments like counters and gauges.
+OpenTelemetry metrics are collected by instrumented applications that record measurements using instruments like counters and gauges.
 These measurements are then processed by an OpenTelemetry SDK, which aggregates and batches them before exporting them,
 either directly or through the OpenTelemetry Collector. See https://opentelemetry.io/docs/languages/java/sdk/#sdkmeterprovider[SdkMeterProvider documentation]
 for details on how to configure this.
@@ -294,9 +294,14 @@ from("direct:in")
 
 === OpenTelemetry Event Notification
 
+There are event notifiers available for OpenTelemetry to capture Camel route and exchange events.
+The xref:#OpenTelemetryComponent-route-event-notifier[Route Event Notifier] counts the number of added and running routes,
+while the xref:#OpenTelemetryComponent-exchange-event-notifier[Exchange Event Notifier] times exchanges from their creation to their completion.
+
+[[OpenTelemetryComponent-route-event-notifier]]
 ==== Camel Route Event Notifier
 
-The Route Event Notifier counts the number of added and running routes, and can be added to the CamelContext as follows:
+A Route event notifier can be added to the CamelContext as follows:
 
 [source,java]
 ----
@@ -319,6 +324,41 @@ The following options are supported:
 |=======================================================================
 |Name |Default |Description
 | namingStrategy | OpenTelemetryRouteEventNotifierNamingStrategy.DEFAULT | The strategy to use for overriding default metric names.
+|=======================================================================
+
+[[OpenTelemetryComponent-exchange-event-notifier]]
+==== Camel Exchange Event Notifier
+
+An Exchange event notifier can be added to the CamelContext as follows:
+
+[source,java]
+----
+camelContext.getManagementStrategy().addEventNotifier(new OpenTelemetryExchangeEventNotifier());
+----
+
+Camel specific metrics that are available via the `OpenTelemetryExchangeEventNotifier`:
+
+[width="100%",options="header"]
+|=====================================================
+|Default Name |Type |Unit |Description
+|camel.exchange.sent | LongHistogram | TimeUnit.MILLISECONDS | Time taken to send a message to the endpoint
+|camel.exchange.elapsed | LongHistogram | TimeUnit.MILLISECONDS | Time taken to complete exchange
+|camel.exchanges.last.time | ObservableLongGauge | TimeUnit.MILLISECONDS | Last exchange processed time since the Unix epoch
+|camel.exchanges.inflight | ObservableLongGauge | Long | Number of in flight messages per route
+|=====================================================
+
+The following options are supported:
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Default |Description
+| ignoreExchanges | false | A predicate allowing certain exchanges to be ignored from metrics capture.
+| namingStrategy | OpenTelemetryExchangeEventNotifierNamingStrategy.DEFAULT | The strategy to use for overriding default metric names.
+| durationUnit | TimeUnit.MILLISECONDS | The time unit to use for exchange 'sent' and 'elapsed' metrics.
+| lastExchangeUnit | TimeUnit.MILLISECONDS | The time unit to use for 'last time' metric.
+| baseEndpointURI | true | Whether to use static or dynamic values for Endpoint Name attributes in captured metrics.
+By default, static values are used. When using dynamic attributes a dynamic to (toD) can compute many different endpoint URIs
+leading to high cardinality in metrics.
 |=======================================================================
 
 == OpenTelemetry Configuration

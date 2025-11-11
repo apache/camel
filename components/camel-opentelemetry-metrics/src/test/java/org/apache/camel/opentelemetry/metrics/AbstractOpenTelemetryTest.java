@@ -49,9 +49,9 @@ public class AbstractOpenTelemetryTest extends CamelTestSupport {
         return pointDataList.get(0);
     }
 
-    protected LongPointData getSingleLongPointData(String meterName, String routeId) {
-        List<PointData> pdList = getAllPointDataForRouteId(meterName, routeId);
-        assertEquals(1, pdList.size(), "Should have one metric for routeId " + routeId + " and meterName " + meterName);
+    protected LongPointData getSingleLongPointData(String metricName, String routeId) {
+        List<PointData> pdList = getAllPointDataForRouteId(metricName, routeId);
+        assertEquals(1, pdList.size(), "Should have one metric for routeId " + routeId + " and metricName " + metricName);
         PointData pd = pdList.get(0);
         assertInstanceOf(LongPointData.class, pd);
         return (LongPointData) pd;
