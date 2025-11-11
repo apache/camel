@@ -127,7 +127,7 @@ See details in the RabbitMQ documentation.
 [width="100%",cols="10%,10%,70%,10%",options="header",]
 |=====================================================================
 |Option |Type |Description|Default
-| autoDelete | boolean | True if the server should delete the exchange when it is no longer in use (if all bindings are deleted). | false
+| autoDelete | boolean | True if the server should delete the queue when it is no longer in use (queue that has had at least one consumer is deleted when last consumer unsubscribes). | false
 | durable | boolean | A durable queue will survive a server restart. | false
 | exclusive | boolean | Whether the queue is exclusive | false
 | x-dead-letter-exchange | String | The name of the dead letter exchange. If none configured, then the component configured value is used. |
