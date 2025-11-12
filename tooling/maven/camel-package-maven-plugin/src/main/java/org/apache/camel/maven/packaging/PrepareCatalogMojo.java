@@ -945,6 +945,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-salesforce":
                 case "camel-servicenow":
                 case "camel-spring-parent":
+                case "camel-spring-ai":
                 case "camel-test":
                 case "camel-vertx":
                     return false;

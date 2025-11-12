@@ -97,7 +97,11 @@ public final class MojoHelper {
                         dir.resolve("camel-spring-main"), dir.resolve("camel-spring-rabbitmq"),
                         dir.resolve("camel-spring-redis"), dir.resolve("camel-spring-security"),
                         dir.resolve("camel-spring-ws"), dir.resolve("camel-spring-xml"),
-                        dir.resolve("camel-undertow-spring-security"));
+                        dir.resolve("camel-undertow-spring-security"),
+                        dir.resolve("camel-spring-ai").resolve("camel-spring-ai-chat"),
+                        dir.resolve("camel-spring-ai").resolve("camel-spring-ai-embeddings"),
+                        dir.resolve("camel-spring-ai").resolve("camel-spring-ai-tools"),
+                        dir.resolve("camel-spring-ai").resolve("camel-spring-ai-vector-store"));
             case "camel-test":
                 return Arrays.asList(dir.resolve("camel-test-junit5"),
                         dir.resolve("camel-test-spring-junit5"),

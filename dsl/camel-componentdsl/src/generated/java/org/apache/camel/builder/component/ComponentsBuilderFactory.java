@@ -4300,6 +4300,58 @@ public interface ComponentsBuilderFactory {
         return SplunkHecComponentBuilderFactory.splunkHec();
     }
     /**
+     * Spring AI Chat (camel-spring-ai-chat)
+     * Perform chat operations using Spring AI.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-chat
+     * 
+     * @return the dsl builder
+     */
+    static SpringAiChatComponentBuilderFactory.SpringAiChatComponentBuilder springAiChat() {
+        return SpringAiChatComponentBuilderFactory.springAiChat();
+    }
+    /**
+     * Spring AI Embeddings (camel-spring-ai-embeddings)
+     * Spring AI Embeddings
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-embeddings
+     * 
+     * @return the dsl builder
+     */
+    static SpringAiEmbeddingsComponentBuilderFactory.SpringAiEmbeddingsComponentBuilder springAiEmbeddings() {
+        return SpringAiEmbeddingsComponentBuilderFactory.springAiEmbeddings();
+    }
+    /**
+     * Spring AI Tools (camel-spring-ai-tools)
+     * Spring AI Tools and Function Calling Features
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-tools
+     * 
+     * @return the dsl builder
+     */
+    static SpringAiToolsComponentBuilderFactory.SpringAiToolsComponentBuilder springAiTools() {
+        return SpringAiToolsComponentBuilderFactory.springAiTools();
+    }
+    /**
+     * Spring AI Vector Store (camel-spring-ai-vector-store)
+     * Spring AI Vector Store
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-vector-store
+     * 
+     * @return the dsl builder
+     */
+    static SpringAiVectorStoreComponentBuilderFactory.SpringAiVectorStoreComponentBuilder springAiVectorStore() {
+        return SpringAiVectorStoreComponentBuilderFactory.springAiVectorStore();
+    }
+    /**
      * Spring Batch (camel-spring-batch)
      * Send messages to Spring Batch for further processing.
      * 

@@ -161,7 +161,7 @@
                                 </goals>
                                 <phase>generate-resources</phase>
                                 <configuration>
-                                    <arguments>gulp</arguments>
+                                    <arguments>gulp --verbose --loglevel verbose</arguments>
                                     <skip>${skipOnUnsupported}</skip>
                                 </configuration>
                             </execution>

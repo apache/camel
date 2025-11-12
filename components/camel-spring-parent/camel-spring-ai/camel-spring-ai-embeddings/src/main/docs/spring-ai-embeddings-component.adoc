@@ -1,0 +1,103 @@
+= Spring AI Embeddings Component
+:doctitle: Spring AI Embeddings
+:shortname: spring-ai-embeddings
+:artifactid: camel-spring-ai-embeddings
+:description: Spring AI Embeddings
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: spring-ai-embeddings
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Spring AI Embeddings component provides support for computing embeddings using https://docs.spring.io/spring-ai/reference/api/embeddings.html[Spring AI embedding models].
+
+Embeddings are numerical vector representations of text that capture semantic relationships between inputs. They are useful for:
+
+* Semantic similarity search
+* Text clustering and classification
+* Retrieval-Augmented Generation (RAG)
+* Recommendation systems
+
+[NOTE]
+====
+This is a low-level component for direct embedding computation. For most use cases, you can use the `camel-spring-ai-chat` component with appropriate configuration for RAG scenarios, or the `camel-spring-ai-vector-store` component which can handle embeddings automatically without requiring this component directly.
+====
+
+== URI format
+
+----
+spring-ai-embeddings:embeddingId[?options]
+----
+
+Where *embeddingId* can be any string to uniquely identify the endpoint
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+The component accepts two types of input:
+
+* **Single text**: A String containing the text to embed
+* **Batch processing**: A List<String> containing multiple texts to embed at once
+
+The embedding vectors are returned in the message body, with additional metadata available in headers.
+
+=== Single Text Example
+
+[source,java]
+----
+from("direct:start")
+    .to("spring-ai-embeddings:myEmbedding")
+    .log("Embedding vector: ${body}");
+----
+
+When processing a single String, the component returns:
+
+* **Message Body**: The embedding vector as `float[]`
+* **Headers**:
+** `CamelSpringAiEmbedding` - The Embedding object
+** `CamelSpringAiEmbeddingIndex` - The index (0 for single embeddings)
+** `CamelSpringAiEmbeddingInputText` - The original input text
+** `CamelSpringAiEmbeddingMetadata` - Response metadata
+
+=== Batch Processing Example
+
+[source,java]
+----
+from("direct:batch")
+    .setBody(constant(List.of("text 1", "text 2", "text 3")))
+    .to("spring-ai-embeddings:myEmbedding")
+    .log("Number of embeddings: ${body.size()}");
+----
+
+When processing a List<String>, the component returns:
+
+* **Message Body**: List of embedding vectors as `List<float[]>`
+* **Headers**:
+** `CamelSpringAiEmbeddings` - List of Embedding objects
+** `CamelSpringAiEmbeddingInputTexts` - The original input texts as List<String>
+** `CamelSpringAiEmbeddingMetadata` - Response metadata
+
+// include::spring-boot:partial$starter.adoc[]

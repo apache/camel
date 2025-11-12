@@ -14386,6 +14386,166 @@ public class StaticEndpointBuilders {
         return SplunkHECEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Spring AI Chat (camel-spring-ai-chat)
+     * Perform chat operations using Spring AI.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-chat
+     * 
+     * Syntax: <code>spring-ai-chat:chatId</code>
+     * 
+     * Path parameter: chatId
+     * The ID of the chat endpoint
+     * 
+     * @param path chatId
+     * @return the dsl builder
+     */
+    public static SpringAiChatEndpointBuilderFactory.SpringAiChatEndpointBuilder springAiChat(String path) {
+        return springAiChat("spring-ai-chat", path);
+    }
+    /**
+     * Spring AI Chat (camel-spring-ai-chat)
+     * Perform chat operations using Spring AI.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-chat
+     * 
+     * Syntax: <code>spring-ai-chat:chatId</code>
+     * 
+     * Path parameter: chatId
+     * The ID of the chat endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path chatId
+     * @return the dsl builder
+     */
+    public static SpringAiChatEndpointBuilderFactory.SpringAiChatEndpointBuilder springAiChat(String componentName, String path) {
+        return SpringAiChatEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Spring AI Embeddings (camel-spring-ai-embeddings)
+     * Spring AI Embeddings
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-embeddings
+     * 
+     * Syntax: <code>spring-ai-embeddings:embeddingId</code>
+     * 
+     * Path parameter: embeddingId (required)
+     * The id
+     * 
+     * @param path embeddingId
+     * @return the dsl builder
+     */
+    public static SpringAiEmbeddingsEndpointBuilderFactory.SpringAiEmbeddingsEndpointBuilder springAiEmbeddings(String path) {
+        return springAiEmbeddings("spring-ai-embeddings", path);
+    }
+    /**
+     * Spring AI Embeddings (camel-spring-ai-embeddings)
+     * Spring AI Embeddings
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-embeddings
+     * 
+     * Syntax: <code>spring-ai-embeddings:embeddingId</code>
+     * 
+     * Path parameter: embeddingId (required)
+     * The id
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path embeddingId
+     * @return the dsl builder
+     */
+    public static SpringAiEmbeddingsEndpointBuilderFactory.SpringAiEmbeddingsEndpointBuilder springAiEmbeddings(String componentName, String path) {
+        return SpringAiEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Spring AI Tools (camel-spring-ai-tools)
+     * Spring AI Tools and Function Calling Features
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-tools
+     * 
+     * Syntax: <code>spring-ai-tools:toolId</code>
+     * 
+     * Path parameter: toolId (required)
+     * The tool id
+     * 
+     * @param path toolId
+     * @return the dsl builder
+     */
+    public static SpringAiToolsEndpointBuilderFactory.SpringAiToolsEndpointBuilder springAiTools(String path) {
+        return springAiTools("spring-ai-tools", path);
+    }
+    /**
+     * Spring AI Tools (camel-spring-ai-tools)
+     * Spring AI Tools and Function Calling Features
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-tools
+     * 
+     * Syntax: <code>spring-ai-tools:toolId</code>
+     * 
+     * Path parameter: toolId (required)
+     * The tool id
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path toolId
+     * @return the dsl builder
+     */
+    public static SpringAiToolsEndpointBuilderFactory.SpringAiToolsEndpointBuilder springAiTools(String componentName, String path) {
+        return SpringAiToolsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Spring AI Vector Store (camel-spring-ai-vector-store)
+     * Spring AI Vector Store
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-vector-store
+     * 
+     * Syntax: <code>spring-ai-vector-store:storeId</code>
+     * 
+     * Path parameter: storeId (required)
+     * The id
+     * 
+     * @param path storeId
+     * @return the dsl builder
+     */
+    public static SpringAiVectorStoreEndpointBuilderFactory.SpringAiVectorStoreEndpointBuilder springAiVectorStore(String path) {
+        return springAiVectorStore("spring-ai-vector-store", path);
+    }
+    /**
+     * Spring AI Vector Store (camel-spring-ai-vector-store)
+     * Spring AI Vector Store
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-spring-ai-vector-store
+     * 
+     * Syntax: <code>spring-ai-vector-store:storeId</code>
+     * 
+     * Path parameter: storeId (required)
+     * The id
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path storeId
+     * @return the dsl builder
+     */
+    public static SpringAiVectorStoreEndpointBuilderFactory.SpringAiVectorStoreEndpointBuilder springAiVectorStore(String componentName, String path) {
+        return SpringAiVectorStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Spring Batch (camel-spring-batch)
      * Send messages to Spring Batch for further processing.
      * 

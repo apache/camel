@@ -1,0 +1,200 @@
+= Spring AI Vector Store Component
+:doctitle: Spring AI Vector Store
+:shortname: spring-ai-vector-store
+:artifactid: camel-spring-ai-vector-store
+:description: Spring AI Vector Store
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: spring-ai-vector-store
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Spring AI Vector Store component provides support for storing and retrieving documents in vector databases using https://docs.spring.io/spring-ai/reference/api/vectordbs.html[Spring AI] vector store capabilities.
+
+Vector stores enable:
+
+* Storage of documents with embeddings
+* Similarity search based on vector distance
+* Metadata-based filtering
+* Document management (add, delete)
+
+== URI format
+
+----
+spring-ai-vector-store:storeId[?options]
+----
+
+Where *storeId* can be any string to uniquely identify the endpoint
+
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Operations
+
+The component supports three main operations:
+
+=== ADD Operation
+
+Stores documents in the vector store. Can accept:
+
+* String text (embeddings will be generated automatically)
+* Document objects
+* List of Documents
+* Output from the spring-ai-embeddings component (semi-automatic integration, this depends on the underlying Spring AI Vectore Store implementation)
+
+After documents are added, the component sets the `CamelSpringAiVectorStoreDocumentIds` header containing a list of the IDs of the added documents. This allows you to reference or track the stored documents in subsequent processing steps.
+
+NOTE: *Best Practice:* Use the ADD operation directly with the vector store component when working with text. The component will automatically handle embedding generation internally if the vector store is configured with an embedding model. This is the recommended approach as it simplifies your routes and reduces the number of steps.
+
+=== DELETE Operation
+
+Removes documents from the vector store by their IDs.
+
+=== SIMILARITY_SEARCH Operation
+
+Searches for documents similar to a query text.
+
+The component returns matching documents in the message body and sets the following headers:
+
+* `CamelSpringAiVectorStoreSimilarDocuments` - List of Document objects found
+* `CamelSpringAiVectorStoreDocumentIds` - List of IDs of the found documents
+
+== Usage Examples
+
+=== Add Documents from Text (Recommended)
+
+This is the *recommended best practice* for adding documents. The vector store component handles embedding generation internally:
+
+[source,java]
+----
+from("direct:store")
+    .to("spring-ai-vector-store:myStore?operation=ADD&vectorStore=#vectorStore");
+----
+
+When you send plain text to this route, the component automatically:
+1. Generates embeddings using the embedding model configured in the vector store
+2. Creates a Document object
+3. Stores it in the vector store
+
+This single-step approach is simpler and more efficient than manually chaining the embeddings component.
+
+=== Add from Embeddings Component (Alternative)
+
+If you need explicit control over the embedding process or want to manipulate embeddings before storing, you can chain the components:
+
+[source,java]
+----
+from("direct:embedAndStore")
+    .to("spring-ai-embeddings:test?embeddingModel=#embeddingModel")
+    .to("spring-ai-vector-store:test?vectorStore=#vectorStore");
+----
+
+NOTE: This approach is only necessary when you need to access or modify the embeddings between generation and storage. For most use cases, the direct ADD operation (shown above) is preferred.
+
+=== Similarity Search
+
+[source,java]
+----
+from("direct:search")
+    .setBody(constant("What is AI?"))
+    .to("spring-ai-vector-store:myStore?operation=SIMILARITY_SEARCH&topK=5&similarityThreshold=0.7")
+    .log("Found ${header.CamelSpringAiVectorStoreSimilarDocuments.size()} similar documents")
+    .log("Document IDs: ${header.CamelSpringAiVectorStoreDocumentIds}");
+----
+
+=== Delete Documents
+
+Delete documents by specifying their IDs:
+
+[source,java]
+----
+from("direct:delete")
+    .setHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, constant(Arrays.asList("doc1", "doc2")))
+    .to("spring-ai-vector-store:myStore?operation=DELETE");
+----
+
+You can also chain operations to search for documents and then delete them using the returned IDs:
+
+[source,java]
+----
+from("direct:searchAndDelete")
+    .setBody(constant("outdated content"))
+    .to("spring-ai-vector-store:myStore?operation=SIMILARITY_SEARCH&topK=10")
+    .log("Found ${header.CamelSpringAiVectorStoreDocumentIds.size()} documents to delete")
+    // The DOCUMENT_IDS header from SIMILARITY_SEARCH is automatically used by DELETE
+    .setHeader(SpringAiVectorStoreHeaders.OPERATION, constant(SpringAiVectorStoreOperation.DELETE))
+    .to("spring-ai-vector-store:myStore");
+----
+
+=== Dynamic Operation
+
+[source,java]
+----
+from("direct:dynamic")
+    .setHeader(SpringAiVectorStoreHeaders.OPERATION, constant(SpringAiVectorStoreOperation.ADD))
+    .to("spring-ai-vector-store:myStore");
+----
+
+== Configuration
+
+=== Configuring the Vector Store
+
+To use the ADD operation with automatic embedding generation (recommended), configure your vector store with an embedding model:
+
+[source,java]
+----
+// Create a Qdrant Client
+QdrantClient qdrantClient
+                = new QdrantClient(QdrantGrpcClient.newBuilder(QDRANT.getGrpcHost(), QDRANT.getGrpcPort(), false).build());
+
+// Create an embedding model
+EmbeddingModel embeddingModel = new OllamaEmbeddingModel(ollamaApi, options);
+
+// Create a vector store with the embedding model
+// Example with Qdrant
+VectorStore vectorStore = QdrantVectorStore.builder(qdrantClient, embeddingModel)
+    .collectionName("my_collection")
+    .initializeSchema(true)
+    .build();
+
+// Or with Simple Vector Store
+VectorStore vectorStore = new SimpleVectorStore(embeddingModel);
+
+// Register in Camel context
+context.getRegistry().bind("vectorStore", vectorStore);
+
+// Use in route - the component will use the configured embedding model
+from("direct:start")
+    .to("spring-ai-vector-store:test?vectorStore=#vectorStore&operation=ADD");
+----
+
+IMPORTANT: Make sure your vector store is configured with an embedding model to enable automatic embedding generation when using the ADD operation with text input.
+
+=== Search Parameters
+
+* `topK` - Maximum number of results (default: 5)
+* `similarityThreshold` - Minimum similarity score 0-1 (default: 0.0)
+* `filterExpression` - Metadata-based filter expression
+
+// include::spring-boot:partial$starter.adoc[]
