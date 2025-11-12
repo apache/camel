@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.springrabbit.SpringRabbitMQConstants;
@@ -239,6 +240,35 @@ public class RabbitMQProducerIT extends RabbitMQITSupport {
         Assertions.assertEquals("0fe9c142-f9c1-426f-9237-f5a4c988a8ae", messageProperties.getMessageId());
         Assertions.assertEquals(1, messageProperties.getPriority());
         Assertions.assertEquals(0, messageProperties.getHeaders().size());
+    }
+
+    @Test
+    public void testProducerWithBreadcrumb() throws Exception {
+        ConnectionFactory cf = context.getRegistry().lookupByNameAndType("myCF", ConnectionFactory.class);
+
+        Queue q = new Queue("myqueue");
+        TopicExchange t = new TopicExchange("foo");
+
+        AmqpAdmin admin = new RabbitAdmin(cf);
+        admin.declareQueue(q);
+        admin.declareExchange(t);
+        admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
+
+        template.sendBodyAndHeaders("direct:start", "<price>123</price>",
+                Map.of(SpringRabbitMQConstants.DELIVERY_MODE, MessageDeliveryMode.PERSISTENT,
+                        SpringRabbitMQConstants.TYPE, "price", Exchange.BREADCRUMB_ID, "mycrumb123"));
+
+        AmqpTemplate template = new RabbitTemplate(cf);
+        Message out = template.receive("myqueue");
+
+        final MessageProperties messageProperties = out.getMessageProperties();
+        Assertions.assertNotNull(messageProperties, "The message properties should not be null");
+        String encoding = messageProperties.getContentEncoding();
+        Assertions.assertEquals(Charset.defaultCharset().name(), encoding);
+        Assertions.assertEquals("<price>123</price>", new String(out.getBody(), encoding));
+        Assertions.assertEquals(MessageDeliveryMode.PERSISTENT, messageProperties.getReceivedDeliveryMode());
+        Assertions.assertEquals("price", messageProperties.getType());
+        Assertions.assertEquals("mycrumb123", messageProperties.getHeader(Exchange.BREADCRUMB_ID));
     }
 
     @Override

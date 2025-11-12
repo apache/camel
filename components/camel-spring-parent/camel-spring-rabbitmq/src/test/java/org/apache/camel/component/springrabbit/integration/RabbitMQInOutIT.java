@@ -18,10 +18,12 @@ package org.apache.camel.component.springrabbit.integration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class RabbitMQInOutIT extends RabbitMQITSupport {
@@ -31,7 +33,15 @@ public class RabbitMQInOutIT extends RabbitMQITSupport {
         getMockEndpoint("mock:input").expectedBodiesReceived("World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.requestBody("direct:start", "World");
+        Exchange out = template.request("direct:start", e -> e.getMessage().setBody("World"));
+        Assertions.assertNotNull(out);
+        Assertions.assertFalse(out.isFailed());
+        Assertions.assertEquals("Hello World", out.getMessage().getBody());
+        Assertions.assertNotNull(out.getMessage().getHeader(Exchange.BREADCRUMB_ID));
+
+        Object crumb = out.getMessage().getHeader(Exchange.BREADCRUMB_ID);
+        Object crumb2 = context.getVariable("global:mycrmb");
+        Assertions.assertEquals(crumb, crumb2);
 
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
     }
@@ -41,7 +51,10 @@ public class RabbitMQInOutIT extends RabbitMQITSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setUseBreadcrumb(true);
+
                 from("direct:start")
+                        .setVariable("global:mycrmb", header(Exchange.BREADCRUMB_ID))
                         .to("log:request")
                         .to(ExchangePattern.InOut, "spring-rabbitmq:cheese?routingKey=foo.bar")
                         .to("log:response")
