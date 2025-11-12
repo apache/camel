@@ -24,6 +24,15 @@ public class OllamaProperties {
 
     public static final String ENDPOINT = "ollama.endpoint";
 
+    /**
+     * URL for connecting to a local Ollama instance running on the host. Default: http://localhost:11434
+     * <p>
+     * This property is used when auto-detecting local Ollama availability. If a local Ollama instance is found at this
+     * URL, it will be used instead of starting a Docker container.
+     * </p>
+     */
+    public static final String OLLAMA_HOST_URL = "ollama.host.url";
+
     public static final String CPU_COUNT = "ollama.container.cpu.count";
     public static final String MEMORY_LIMIT = "ollama.container.memory.limit";
     public static final String ENABLE_GPU = "ollama.container.enable.gpu";
