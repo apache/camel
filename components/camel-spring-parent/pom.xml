@@ -35,6 +35,7 @@
 
     <modules>
         <module>camel-spring</module>
+        <module>camel-spring-ai</module>
         <module>camel-spring-batch</module>
         <module>camel-spring-jdbc</module>
         <module>camel-spring-ldap</module>

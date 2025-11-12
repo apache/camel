@@ -1,0 +1,607 @@
+= Spring AI Chat Component
+:doctitle: Spring AI Chat
+:shortname: spring-ai-chat
+:artifactid: camel-spring-ai-chat
+:description: Perform chat operations using Spring AI.
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: spring-ai-chat
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Spring AI Chat component allows you to integrate with any Large Language Model (LLM)
+supported by https://docs.spring.io/spring-ai/reference/[Spring AI].
+
+Maven users will need to add the following dependency to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring-ai-chat</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+== URI format
+
+----
+spring-ai-chat:chatId[?options]
+----
+
+Where *chatId* can be any string to uniquely identify the endpoint.
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+=== Configuring the ChatModel
+
+The component requires a Spring AI `ChatModel` to be configured. The component automatically creates a `ChatClient` internally and handles all the advanced features for you, including:
+
+- **ChatMemory**: Automatic conversation history management via MessageChatMemoryAdvisor or VectorStoreChatMemoryAdvisor
+- **VectorStore RAG**: Automatic context retrieval from vector databases via QuestionAnswerAdvisor
+- **SafeGuard**: Content filtering based on sensitive words
+- **Custom Advisors**: Any additional advisors you configure
+- **System Messages**: Default system prompts
+
+Simply provide a `ChatModel` bean in your configuration, and the component will take care of the rest.
+
+=== Chat Operations
+
+The component supports three types of chat operations:
+
+1. **CHAT_SINGLE_MESSAGE**: Send a simple text message to the LLM
+2. **CHAT_SINGLE_MESSAGE_WITH_PROMPT**: Use templates with variable substitution
+3. **CHAT_MULTIPLE_MESSAGES**: Support conversation history with multiple messages
+
+==== Simple Chat (Single Message)
+
+[source,java]
+----
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel");
+
+// Usage:
+String response = template.requestBody("direct:chat", "What is the capital of Italy?", String.class);
+----
+
+==== Chat with Prompt Templates
+
+Use the `CHAT_SINGLE_MESSAGE_WITH_PROMPT` operation to leverage Spring AI's template engine:
+
+[source,java]
+----
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel&chatOperation=CHAT_SINGLE_MESSAGE_WITH_PROMPT");
+
+// Usage:
+String promptTemplate = "Create a recipe for {{dish}} using {{ingredients}}";
+Map<String, Object> variables = Map.of(
+    "dish", "pasta carbonara",
+    "ingredients", "eggs, cheek lard, parmesan, black pepper"
+);
+
+String response = template.requestBodyAndHeader(
+    "direct:chat",
+    variables,
+    SpringAiChatConstants.PROMPT_TEMPLATE,
+    promptTemplate,
+    String.class
+);
+----
+
+==== Conversation History (Multiple Messages)
+
+Maintain conversation context by sending multiple messages:
+
+[source,java]
+----
+import org.springframework.ai.chat.messages.*;
+
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel&chatOperation=CHAT_MULTIPLE_MESSAGES");
+
+// Usage:
+List<Message> conversation = new ArrayList<>();
+conversation.add(new SystemMessage("You are a helpful cooking assistant."));
+conversation.add(new UserMessage("What's a good pasta recipe?"));
+conversation.add(new AssistantMessage("I recommend pasta carbonara..."));
+conversation.add(new UserMessage("Can I make it vegetarian?"));
+
+String response = template.requestBody("direct:chat", conversation, String.class);
+----
+
+=== Retrieval Augmented Generation (RAG)
+
+RAG allows you to augment prompts with relevant context from your data sources, enabling the LLM to answer questions based on your specific information.
+
+==== Automatic RAG with VectorStore
+
+Configure a VectorStore for automatic context retrieval:
+
+[source,java]
+----
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.SimpleVectorStore;
+
+// Create and populate vector store
+VectorStore vectorStore = new SimpleVectorStore();
+// ... add documents to vector store ...
+
+context.getRegistry().bind("vectorStore", vectorStore);
+
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel&vectorStore=#vectorStore&topK=5");
+----
+
+The component will automatically:
+
+1. Take the user's question
+2. Query the VectorStore for the most similar documents (top 5 by default)
+3. Augment the prompt with the retrieved context
+4. Send the enriched prompt to the LLM
+
+==== RAG with Content Enricher Pattern
+
+Use the `SpringAiRagAggregatorStrategy` with Camel's Content Enricher EIP:
+
+[source,java]
+----
+import org.apache.camel.component.springai.chat.rag.SpringAiRagAggregatorStrategy;
+
+SpringAiRagAggregatorStrategy aggregatorStrategy = new SpringAiRagAggregatorStrategy();
+
+from("direct:chat")
+    .enrich("direct:retrieve-context", aggregatorStrategy)
+    .to("spring-ai-chat:test?chatModel=#chatModel");
+
+from("direct:retrieve-context")
+    .setBody(simple("Retrieved context based on question ${body}"));
+----
+
+==== RAG with Headers
+
+Directly provide augmented data via the `AUGMENTED_DATA` header:
+
+[source,java]
+----
+import org.springframework.ai.document.Document;
+import static org.apache.camel.component.springai.chat.SpringAiChatConstants.AUGMENTED_DATA;
+
+List<Document> context = List.of(
+    new Document("The Eiffel Tower is located in Paris, France."),
+    new Document("It was built in 1889 for the World's Fair.")
+);
+
+String response = template.requestBodyAndHeader(
+    "direct:chat",
+    "Where is the Eiffel Tower located?",
+    AUGMENTED_DATA,
+    context,
+    String.class
+);
+----
+
+=== Controlling Response Parameters
+
+==== Via Endpoint Configuration
+
+[source,java]
+----
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel&temperature=0.8&maxTokens=500");
+----
+
+=== Adding System Messages
+
+System messages provide instructions or context to the LLM. You can configure them via endpoint parameters for default behavior:
+
+[source,java]
+----
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel&systemMessage=You are a professional chef specializing in Italian cuisine.");
+
+// Usage:
+String response = template.requestBody("direct:chat",
+    "What should I cook tonight?", String.class);
+----
+
+=== Response Headers and Metadata
+
+The component automatically tracks token usage and response metadata, providing them via headers. You can access these headers in your Camel routes:
+
+[source,java]
+----
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel")
+    .log("Token usage - Input: ${header.CamelSpringAiInputTokenCount}")
+    .log("Token usage - Output: ${header.CamelSpringAiOutputTokenCount}")
+    .log("Token usage - Total: ${header.CamelSpringAiTotalTokenCount}")
+    .log("Finish reason: ${header.CamelSpringAiChatFinishReason}")
+    .log("Model used: ${header.CamelSpringAiChatModelName}");
+
+// Usage:
+template.requestBody("direct:chat", "Explain quantum computing", String.class);
+----
+
+The following headers are set after each chat operation:
+
+**Token Usage Headers:**
+
+* `CamelSpringAiInputTokenCount` - Number of tokens in the prompt
+* `CamelSpringAiOutputTokenCount` - Number of tokens in the response
+* `CamelSpringAiTotalTokenCount` - Total tokens used (input + output)
+
+**Response Metadata Headers:**
+
+* `CamelSpringAiChatFinishReason` - Why the generation stopped (e.g., "STOP", "LENGTH", "TOOL_CALLS")
+* `CamelSpringAiChatModelName` - The name of the AI model used for the response
+* `CamelSpringAiChatResponseId` - Unique identifier for the response
+* `CamelSpringAiChatResponseMetadata` - Full metadata Map containing all available fields
+
+NOTE: Not all AI models provide all metadata fields. The availability of specific metadata depends on the underlying model and provider. Most models provide at least finish reason and token counts.
+
+=== Message Metadata
+
+The component supports attaching metadata to both user and system messages. This is useful for tracking message identifiers, conversation context, priority levels, or other application-specific data.
+
+==== User Message Metadata
+
+You can attach metadata to user messages via headers or endpoint configuration:
+
+[source,java]
+----
+// Using URL parameters - nested property syntax
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel"
+        + "&userMetadata.messageId=msg-123"
+        + "&userMetadata.userId=user-456"
+        + "&userMetadata.priority=high");
+----
+
+==== System Message Metadata
+
+Similarly, you can attach metadata to system messages:
+
+[source,java]
+----
+// Using URL parameters - nested property syntax
+from("direct:chat")
+    .to("spring-ai-chat:test?chatModel=#chatModel"
+        + "&systemMetadata.version=1.0"
+        + "&systemMetadata.model=gpt-4"
+        + "&systemMetadata.promptVersion=2024-01");
+----
+
+=== Conversation Memory
+
+The component provides automatic conversation memory management via Spring AI's ChatClient and ChatMemory. Two memory strategies are supported:
+
+* **MessageChatMemoryAdvisor** - Traditional message-based memory using ChatMemory implementations
+* **VectorStoreChatMemoryAdvisor** - Vector-based semantic memory using VectorStore for long-term retrieval
+
+IMPORTANT: Do not configure both `chatMemory` and `chatMemoryVectorStore` on the same endpoint. If both are provided, `chatMemory` (MessageChatMemoryAdvisor) will take precedence.
+
+==== Message-based Memory (ChatMemory)
+
+Configure a `ChatMemory` on the endpoint for automatic conversation tracking using traditional message window approach. This strategy keeps a configurable number of recent messages in memory.
+
+[source,java]
+----
+// Create chat memory with message window
+ChatMemory chatMemory = MessageWindowChatMemory.builder()
+    .chatMemoryRepository(new InMemoryChatMemoryRepository())
+    .maxMessages(10)  // Keep last 10 messages
+    .build();
+
+context.getRegistry().bind("chatMemory", chatMemory);
+
+// Configure endpoint with memory
+from("direct:chat")
+    .to("spring-ai-chat:memory?chatModel=#chatModel&chatMemory=#chatMemory");
+
+// Conversation ID for isolation
+template.requestBodyAndHeader("direct:chat", "My name is Alice",
+    SpringAiChatConstants.CONVERSATION_ID, "user-123", String.class);
+
+template.requestBodyAndHeader("direct:chat", "What's my name?",
+    SpringAiChatConstants.CONVERSATION_ID, "user-123", String.class); // Will remember: "Alice"
+----
+
+==== Vector-based Semantic Memory (ChatMemoryVectorStore)
+
+For long-term memory with semantic retrieval capabilities, configure a `VectorStore` for chat memory. This strategy uses vector embeddings to enable semantic search over conversation history, making it ideal for retrieving contextually relevant information rather than just recent messages.
+
+[source,java]
+----
+OllamaApi ollamaApi = OllamaApi.builder()
+                .baseUrl(OLLAMA.baseUrl())
+                .build();
+
+EmbeddingModel embeddingModel = OllamaEmbeddingModel.builder()
+        .ollamaApi(ollamaApi)
+        .defaultOptions(OllamaEmbeddingOptions.builder()
+                .model("embeddinggemma:300m")
+                .build())
+        .build();
+
+// Create vector store for chat memory
+chatMemoryVectorStore = SimpleVectorStore.builder(embeddingModel)
+        .build();
+
+// Create vector store for chat memory
+VectorStore chatMemoryVectorStore = SimpleVectorStore.builder(embeddingModel)
+    .build();
+
+context.getRegistry().bind("chatMemoryVectorStore", chatMemoryVectorStore);
+
+// Configure endpoint with vector memory
+from("direct:vector-memory")
+    .to("spring-ai-chat:vmem?chatModel=#chatModel&chatMemoryVectorStore=#chatMemoryVectorStore");
+
+// Memory is managed automatically with semantic search
+template.requestBodyAndHeader("direct:vector-memory",
+    "My favorite programming language is Java",
+    SpringAiChatConstants.CONVERSATION_ID, "user-123", String.class);
+
+template.requestBodyAndHeader("direct:vector-memory",
+    "What programming language did I mention?",
+    SpringAiChatConstants.CONVERSATION_ID, "user-123", String.class); // Will use semantic search to retrieve: "Java"
+----
+
+NOTE: The component automatically configures conversation isolation using metadata filters, ensuring each conversation ID maintains separate memory context. However, conversation isolation via metadata filtering requires a VectorStore implementation that supports filter expressions.
+
+=== Function Calling / Tool Integration
+
+The component integrates with the xref:spring-ai-tools-component.adoc[Spring AI Tools Component] to enable LLMs to call Camel routes as functions/tools. This extends the LLM's capabilities with custom logic, external APIs, database queries, and more.
+
+When you configure the `tags` parameter, the chat component discovers all matching tools from `spring-ai-tools` routes, registers them with Spring AI's ChatClient, and allows the LLM to call them during conversation.
+
+[source,java]
+----
+// Define tools
+from("spring-ai-tools:weather?tags=weather&description=Get current weather for a location")
+    .setBody(constant("Sunny"));
+
+from("spring-ai-tools:calculator?tags=math&description=Evaluate mathematical expressions")
+    .setBody(constant("42"));
+
+from("spring-ai-tools:stock?tags=finance&description=Get current stock price")
+    .setBody(constant("42"));
+
+// Chat endpoints with different tool combinations
+from("direct:weatherChat")
+    .to("spring-ai-chat:chat?tags=weather&chatClient=#chatClient");
+
+from("direct:mathChat")
+    .to("spring-ai-chat:chat?tags=math&chatClient=#chatClient");
+
+from("direct:multiToolChat")
+    .to("spring-ai-chat:chat?tags=weather,math,finance&chatClient=#chatClient");
+----
+
+**How it works:**
+
+1. LLM analyzes the question and decides which tools to call
+2. LLM generates function call requests with parameters
+3. Component executes Camel routes with parameters as headers
+4. Tool results are sent back to the LLM
+5. LLM processes results and generates final response
+6. Multiple tool calls can happen in sequence if needed
+
+**Tool Definition Parameters:**
+
+* `tags`: Comma-separated tags for organizing tools (required)
+* `description`: What the tool does - shown to the LLM (required for consumer)
+* `name`: Tool name (auto-generated from description if not provided)
+* `inputType`: Java class for input validation (optional)
+
+**Best Practices:**
+
+1. **Clear Descriptions**: Provide detailed tool descriptions so the LLM knows when to use them
+2. **Appropriate Tags**: Organize tools with meaningful tags
+3. **Error Handling**: Implement proper error handling in tool routes
+4. **Parameter Validation**: Validate input parameters in tool processors
+5. **Response Format**: Return clear, concise text responses from tools
+
+=== Multimodal Support (Images, Audio, and Documents)
+
+The component supports multimodal input for models that support vision, audio, and document capabilities.
+
+The component seamlessly integrates with Camel file components (file, ftp, sftp, smb) through `WrappedFile` support, enabling direct routing from file sources to AI chat. Media can also be sent as byte arrays or as lists of files with appropriate headers.
+
+[source,java]
+----
+// Direct file-to-AI pipeline (MIME type auto-detected)
+from("file:input-images?noop=true")
+    .setHeader(SpringAiChatConstants.USER_MESSAGE, constant("What's in this image?"))
+    .to("spring-ai-chat:vision?chatModel=#chatModel");
+
+// With default user message configured
+from("direct:vision")
+    .to("spring-ai-chat:vision?chatModel=#chatModel&userMessage=Describe this image in detail");
+
+// Byte array input with headers
+byte[] imageData = Files.readAllBytes(Paths.get("photo.jpg"));
+template.requestBodyAndHeaders("direct:vision", imageData,
+    Map.of(USER_MESSAGE, "What objects do you see?", MEDIA_TYPE, "image/jpeg"),
+    String.class);
+
+// Multiple files via aggregation (as List<WrappedFile>)
+from("file:comparison-images?noop=true")
+    .aggregate(constant(true), new GroupedBodyAggregationStrategy())
+    .completionSize(2)
+    .setHeader(USER_MESSAGE, constant("Compare these images"))
+    .to("spring-ai-chat:comparator?chatModel=#chatModel");
+
+// UserMessage with Media for maximum control
+Media media = new Media(MimeTypeUtils.IMAGE_PNG, imageData);
+UserMessage message = new UserMessage("Analyze this scan", media);
+template.requestBody("direct:scan-analyzer", message, String.class);
+----
+
+**Supported Input Types:**
+
+* `String` - Simple text message
+* `byte[]` - Single media file (image, audio, etc.)
+* `WrappedFile` - Single file from file components
+* `List<WrappedFile>` - Multiple files for comparison or analysis
+* `UserMessage` - Spring AI UserMessage with text and/or media
+* `Message` - Any Spring AI Message type
+* `List<Message>` - Full conversation history (CHAT_MULTIPLE_MESSAGES operation)
+
+**MIME Type Detection Priority:**
+
+1. `CamelSpringAiChatMediaType` header (highest priority)
+2. `CamelFileContentType` header from file components
+3. Auto-detection from file extension
+4. Default to `image/png` if not recognized
+
+**Supported File Formats (Auto-Detection):**
+
+* **Images**: PNG, JPEG, GIF, WebP, BMP, TIFF, SVG
+* **Videos**: MP4, WebM, MOV, MKV, FLV, MPEG, WMV, 3GP
+* **Audio**: WAV, MP3, OGG, M4A, FLAC
+* **Documents**: PDF, CSV, DOC, DOCX, XLS, XLSX, HTML, TXT, Markdown
+
+**File Size Validation:**
+
+To prevent out-of-memory errors with large media files, the component validates file sizes before loading them into memory. The default maximum file size is 1MB, configurable via:
+
+[source,java]
+----
+// Configure via endpoint parameter (in bytes)
+from("file:uploads")
+    .to("spring-ai-chat:vision?chatModel=#chatModel&maxFileSize=5242880"); // 5MB
+
+// Override via header for dynamic control
+from("direct:upload")
+    .setHeader(SpringAiChatConstants.MAX_FILE_SIZE, constant(10485760L)) // 10MB
+    .to("spring-ai-chat:vision?chatModel=#chatModel");
+
+// Disable size checking (not recommended)
+from("file:trusted")
+    .to("spring-ai-chat:vision?chatModel=#chatModel&maxFileSize=0");
+----
+
+Files exceeding the configured limit will be rejected with an `IllegalArgumentException`.
+
+=== SafeGuard - Content Filtering
+
+The component provides content filtering capabilities through Spring AI's SafeGuard advisor. SafeGuard monitors LLM responses for sensitive words and blocks responses containing restricted content, returning a customizable failure message instead.
+
+This feature is useful for:
+* Preventing disclosure of sensitive information (passwords, secrets, API keys)
+* Enforcing content policies in customer-facing applications
+* Compliance with data protection requirements
+* Filtering inappropriate or restricted topics
+
+[source,java]
+----
+// Configure safeguard with sensitive words
+from("direct:safeguard")
+    .to("spring-ai-chat:test?chatModel=#chatModel"
+        + "&safeguardSensitiveWords=password,secret,confidential,api-key"
+        + "&safeguardFailureResponse=I cannot provide information containing sensitive words");
+----
+
+**Configuration Options:**
+
+* `safeguardSensitiveWords`: Comma-separated list of words to block in responses
+* `safeguardFailureResponse`: Message returned when sensitive content is detected
+* Headers: `CamelSpringAiChatSafeguardSensitiveWords`, `CamelSpringAiChatSafeguardFailureResponse`
+
+NOTE: SafeGuard checks the LLM's response content. If any configured sensitive word is found in the response, the entire response is replaced with the failure message. The check is case-insensitive.
+
+=== Structured Output Conversion
+
+The component supports structured output conversion, allowing you to convert LLM responses into typed Java objects, Maps, or Lists. This feature is based on https://docs.spring.io/spring-ai/reference/api/structured-output-converter.html[Spring AI's Structured Output Converter].
+
+Three output formats are supported: **BEAN** (Java records/POJOs), **MAP** (key-value structures), and **LIST** (arrays). Each can be configured via converter bean, endpoint parameters, or headers.
+
+[source,java]
+----
+// Bean output - convert to typed Java objects
+@JsonPropertyOrder({ "actor", "movies" })
+public record ActorFilms(String actor, List<String> movies) {}
+
+from("direct:bean")
+    .to("spring-ai-chat:test?chatModel=#chatModel&outputFormat=BEAN&outputClass="
+        + ActorFilms.class.getName());
+
+// Map output - convert to key-value structure
+from("direct:map")
+    .to("spring-ai-chat:test?chatModel=#chatModel&outputFormat=MAP");
+
+// List output - convert to array
+from("direct:list")
+    .to("spring-ai-chat:test?chatModel=#chatModel&outputFormat=LIST");
+
+// Dynamic conversion via headers
+template.requestBodyAndHeader("direct:chat", "List programming languages",
+    SpringAiChatConstants.OUTPUT_FORMAT, "LIST", List.class);
+----
+
+**Best Practices:**
+
+1. Use `@JsonPropertyOrder` for consistent property ordering
+2. Keep structures simple for better LLM accuracy
+3. Validate output (LLMs may occasionally produce unexpected formats)
+4. Use lower temperatures (0.1-0.3) for consistent structured output
+
+==== Advanced: Using ChatClient Directly
+
+For maximum control, you can provide a pre-configured `ChatClient` instead of a `ChatModel`:
+
+[source,java]
+----
+ChatClient chatClient = ChatClient.builder(chatModel)
+    .defaultAdvisors(new MessageChatMemoryAdvisor(chatMemory))
+    .defaultSystem("You are a helpful assistant")
+    .build();
+
+from("direct:chat")
+    .to("spring-ai-chat:client?chatClient=#chatClient");
+----
+
+NOTE: Most users should use `ChatModel` and let the component handle `ChatClient` creation automatically. Only use this approach if you have specific requirements that cannot be met with standard configuration options.
+
+=== Request/Response Logging
+
+The component automatically adds Spring AI's `SimpleLoggerAdvisor` to log requests and responses for debugging. Enable it by setting the logger `org.springframework.ai.chat.client.advisor` to DEBUG level:
+
+[source,properties]
+----
+logging.level.org.springframework.ai.chat.client.advisor=DEBUG
+----
+
+== See Also
+
+* https://docs.spring.io/spring-ai/reference/[Spring AI Documentation]
+* https://docs.spring.io/spring-ai/reference/api/tools.html[Spring AI Function Calling]
+* xref:spring-ai-tools-component.adoc[Spring AI Tools Component]
+* xref:spring-ai-embeddings-component.adoc[Spring AI Embeddings Component]
+* xref:spring-ai-vector-store-component.adoc[Spring AI VectorStore Component]
+
+// include::spring-boot:partial$starter.adoc[]
