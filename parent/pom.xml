@@ -247,7 +247,7 @@
         <huaweicloud-sdk-version>3.1.173</huaweicloud-sdk-version>
         <ibm-cos-sdk-version>2.14.1</ibm-cos-sdk-version>
         <ibm-secrets-manager-version>2.0.22</ibm-secrets-manager-version>
-        <ibm-watson-sdk-version>16.0.0</ibm-watson-sdk-version>
+        <ibm-watson-sdk-version>16.1.0</ibm-watson-sdk-version>
         <ical4j-version>4.2.0</ical4j-version>
         <icu4j-version>78.1</icu4j-version>
         <ignite-version>2.17.0</ignite-version>
