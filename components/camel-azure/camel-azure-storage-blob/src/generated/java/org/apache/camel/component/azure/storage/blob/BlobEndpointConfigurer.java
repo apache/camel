@@ -25,6 +25,12 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "azureclientid":
+        case "azureClientId": target.getConfiguration().setAzureClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "azureclientsecret":
+        case "azureClientSecret": target.getConfiguration().setAzureClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "azuretenantid":
+        case "azureTenantId": target.getConfiguration().setAzureTenantId(property(camelContext, java.lang.String.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -133,6 +139,12 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
+        case "azureclientid":
+        case "azureClientId": return java.lang.String.class;
+        case "azureclientsecret":
+        case "azureClientSecret": return java.lang.String.class;
+        case "azuretenantid":
+        case "azureTenantId": return java.lang.String.class;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return int.class;
         case "backoffidlethreshold":
@@ -237,6 +249,12 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
+        case "azureclientid":
+        case "azureClientId": return target.getConfiguration().getAzureClientId();
+        case "azureclientsecret":
+        case "azureClientSecret": return target.getConfiguration().getAzureClientSecret();
+        case "azuretenantid":
+        case "azureTenantId": return target.getConfiguration().getAzureTenantId();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":

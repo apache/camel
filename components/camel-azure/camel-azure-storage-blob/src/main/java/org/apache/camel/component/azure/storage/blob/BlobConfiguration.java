@@ -107,6 +107,12 @@ public class BlobConfiguration implements Cloneable {
     private boolean leaseBlob;
     @UriParam(label = "common", defaultValue = "60")
     private Integer leaseDurationInSeconds = 60;
+    @UriParam(label = "security", secret = true)
+    private String azureClientId;
+    @UriParam(label = "security", secret = true)
+    private String azureClientSecret;
+    @UriParam(label = "security")
+    private String azureTenantId;
 
     /**
      * Azure account name to be used for authentication with azure blob services
@@ -501,6 +507,39 @@ public class BlobConfiguration implements Cloneable {
      */
     public void setLeaseDurationInSeconds(Integer leaseDurationInSeconds) {
         this.leaseDurationInSeconds = leaseDurationInSeconds;
+    }
+
+    /**
+     * Azure Client ID for authentication with Azure Identity
+     */
+    public String getAzureClientId() {
+        return azureClientId;
+    }
+
+    public void setAzureClientId(String azureClientId) {
+        this.azureClientId = azureClientId;
+    }
+
+    /**
+     * Azure Client Secret for authentication with Azure Identity
+     */
+    public String getAzureClientSecret() {
+        return azureClientSecret;
+    }
+
+    public void setAzureClientSecret(String azureClientSecret) {
+        this.azureClientSecret = azureClientSecret;
+    }
+
+    /**
+     * Azure Tenant ID for authentication with Azure Identity
+     */
+    public String getAzureTenantId() {
+        return azureTenantId;
+    }
+
+    public void setAzureTenantId(String azureTenantId) {
+        this.azureTenantId = azureTenantId;
     }
 
     // *************************************************

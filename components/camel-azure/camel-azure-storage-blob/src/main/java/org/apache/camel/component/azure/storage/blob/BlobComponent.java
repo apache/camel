@@ -104,7 +104,25 @@ public class BlobComponent extends HealthCheckComponent {
                 throw new IllegalArgumentException("When using shared account key, access key must be provided.");
             } else if (AZURE_SAS.equals(configuration.getCredentialType()) && configuration.getSasToken() == null) {
                 throw new IllegalArgumentException("When using Azure SAS, SAS Token must be provided.");
+            } else if (AZURE_IDENTITY.equals(configuration.getCredentialType())) {
+                validateAzureIdentityCredentials(configuration);
             }
+        }
+    }
+
+    private void validateAzureIdentityCredentials(final BlobConfiguration configuration) {
+        boolean hasClientId = configuration.getAzureClientId() != null && !configuration.getAzureClientId().trim().isEmpty();
+        boolean hasClientSecret
+                = configuration.getAzureClientSecret() != null && !configuration.getAzureClientSecret().trim().isEmpty();
+        boolean hasTenantId = configuration.getAzureTenantId() != null && !configuration.getAzureTenantId().trim().isEmpty();
+
+        // If any client credentials are provided, all three must be provided
+        if ((hasClientId || hasClientSecret || hasTenantId) &&
+                !(hasClientId && hasClientSecret && hasTenantId)) {
+            throw new IllegalArgumentException(
+                    "When using AZURE_IDENTITY with client credentials, all three parameters are required: " +
+                                               "azureClientId, azureClientSecret, and azureTenantId. " +
+                                               "Alternatively, omit all three to use environment variables or other credential sources.");
         }
     }
 }
