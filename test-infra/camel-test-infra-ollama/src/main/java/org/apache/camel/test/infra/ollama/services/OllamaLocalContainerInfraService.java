@@ -88,24 +88,6 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
                     }
                 }
 
-                // Configure CPU and memory limits
-                //                String cpuCountStr = LocalPropertyResolver.getProperty(
-                //                        OllamaLocalContainerInfraService.class, OllamaProperties.CPU_COUNT);
-                //                String memoryLimitStr = LocalPropertyResolver.getProperty(
-                //                        OllamaLocalContainerInfraService.class, OllamaProperties.MEMORY_LIMIT);
-                //
-                //                if (cpuCountStr != null) {
-                //                    long cpuCount = Long.parseLong(cpuCountStr);
-                //                    withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withNanoCPUs(cpuCount * 1_000_000_000L));
-                //                    LOG.info("Setting CPU count to {}", cpuCount);
-                //                }
-                //
-                //                if (memoryLimitStr != null) {
-                //                    long memoryLimit = Long.parseLong(memoryLimitStr);
-                //                    withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withMemory(memoryLimit));
-                //                    LOG.info("Setting memory limit to {} bytes ({} GB)", memoryLimit, memoryLimit / 1_073_741_824.0);
-                //                }
-
                 // Conditionally enable GPU support based on configuration
                 String enableGpu = LocalPropertyResolver.getProperty(
                         OllamaLocalContainerInfraService.class, OllamaProperties.ENABLE_GPU);
