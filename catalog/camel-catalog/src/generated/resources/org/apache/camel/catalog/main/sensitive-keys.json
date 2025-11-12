@@ -15,6 +15,8 @@
   "authkey",
   "authorizationtoken",
   "authtoken",
+  "azureclientid",
+  "azureclientsecret",
   "blobaccesskey",
   "blobstoragesharedkeycredential",
   "certresourcepassword",

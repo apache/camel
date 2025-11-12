@@ -1076,6 +1076,48 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Azure Client ID for authentication with Azure Identity.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param azureClientId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder azureClientId(String azureClientId) {
+            doSetProperty("azureClientId", azureClientId);
+            return this;
+        }
+        /**
+         * Azure Client Secret for authentication with Azure Identity.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param azureClientSecret the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder azureClientSecret(String azureClientSecret) {
+            doSetProperty("azureClientSecret", azureClientSecret);
+            return this;
+        }
+        /**
+         * Azure Tenant ID for authentication with Azure Identity.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param azureTenantId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder azureTenantId(String azureTenantId) {
+            doSetProperty("azureTenantId", azureTenantId);
+            return this;
+        }
+        /**
          * Source Blob Access Key: for copyblob operation, sadly, we need to
          * have an accessKey for the source blob we want to copy Passing an
          * accessKey as header, it's unsafe so we could set as key.
@@ -2204,6 +2246,48 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Azure Client ID for authentication with Azure Identity.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param azureClientId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder azureClientId(String azureClientId) {
+            doSetProperty("azureClientId", azureClientId);
+            return this;
+        }
+        /**
+         * Azure Client Secret for authentication with Azure Identity.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param azureClientSecret the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder azureClientSecret(String azureClientSecret) {
+            doSetProperty("azureClientSecret", azureClientSecret);
+            return this;
+        }
+        /**
+         * Azure Tenant ID for authentication with Azure Identity.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param azureTenantId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder azureTenantId(String azureTenantId) {
+            doSetProperty("azureTenantId", azureTenantId);
+            return this;
+        }
+        /**
          * Source Blob Access Key: for copyblob operation, sadly, we need to
          * have an accessKey for the source blob we want to copy Passing an
          * accessKey as header, it's unsafe so we could set as key.
@@ -2829,6 +2913,48 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
+            return this;
+        }
+        /**
+         * Azure Client ID for authentication with Azure Identity.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param azureClientId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder azureClientId(String azureClientId) {
+            doSetProperty("azureClientId", azureClientId);
+            return this;
+        }
+        /**
+         * Azure Client Secret for authentication with Azure Identity.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param azureClientSecret the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder azureClientSecret(String azureClientSecret) {
+            doSetProperty("azureClientSecret", azureClientSecret);
+            return this;
+        }
+        /**
+         * Azure Tenant ID for authentication with Azure Identity.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param azureTenantId the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointBuilder azureTenantId(String azureTenantId) {
+            doSetProperty("azureTenantId", azureTenantId);
             return this;
         }
         /**

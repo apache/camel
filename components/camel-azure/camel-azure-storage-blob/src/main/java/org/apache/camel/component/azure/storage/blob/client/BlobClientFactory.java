@@ -17,6 +17,8 @@
 package org.apache.camel.component.azure.storage.blob.client;
 
 import com.azure.core.credential.AzureSasCredential;
+import com.azure.identity.ClientSecretCredential;
+import com.azure.identity.ClientSecretCredentialBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
@@ -45,6 +47,14 @@ public final class BlobClientFactory {
             blobServiceClientBuilder.credential(getSharedKeyCredential(configuration));
         } else if (AZURE_SAS.equals(configuration.getCredentialType())) {
             blobServiceClientBuilder.credential(getAzureSasCredential(configuration));
+        } else if (AZURE_IDENTITY.equals(configuration.getCredentialType())) {
+            if (hasClientSecretCredentials(configuration)) {
+                // Use provided client credentials
+                blobServiceClientBuilder.credential(getClientSecretCredential(configuration));
+            } else {
+                // Fall back to DefaultAzureCredential (environment variables)
+                blobServiceClientBuilder.credential(new DefaultAzureCredentialBuilder().build());
+            }
         } else {
             blobServiceClientBuilder.credential(new DefaultAzureCredentialBuilder().build());
         }
@@ -67,5 +77,19 @@ public final class BlobClientFactory {
 
     private static AzureSasCredential getAzureSasCredential(final BlobConfiguration configuration) {
         return new AzureSasCredential(configuration.getSasToken());
+    }
+
+    private static boolean hasClientSecretCredentials(final BlobConfiguration configuration) {
+        return !isEmpty(configuration.getAzureClientId()) &&
+                !isEmpty(configuration.getAzureClientSecret()) &&
+                !isEmpty(configuration.getAzureTenantId());
+    }
+
+    private static ClientSecretCredential getClientSecretCredential(final BlobConfiguration configuration) {
+        return new ClientSecretCredentialBuilder()
+                .clientId(configuration.getAzureClientId())
+                .clientSecret(configuration.getAzureClientSecret())
+                .tenantId(configuration.getAzureTenantId())
+                .build();
     }
 }

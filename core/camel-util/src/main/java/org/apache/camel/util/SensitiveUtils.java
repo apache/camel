@@ -44,6 +44,8 @@ public final class SensitiveUtils {
                     "authkey",
                     "authorizationtoken",
                     "authtoken",
+                    "azureclientid",
+                    "azureclientsecret",
                     "blobaccesskey",
                     "blobstoragesharedkeycredential",
                     "certresourcepassword",
@@ -131,6 +133,8 @@ public final class SensitiveUtils {
                                                     + "|\\Qauthkey\\E"
                                                     + "|\\Qauthorizationtoken\\E"
                                                     + "|\\Qauthtoken\\E"
+                                                    + "|\\Qazureclientid\\E"
+                                                    + "|\\Qazureclientsecret\\E"
                                                     + "|\\Qblobaccesskey\\E"
                                                     + "|\\Qblobstoragesharedkeycredential\\E"
                                                     + "|\\Qcertresourcepassword\\E"

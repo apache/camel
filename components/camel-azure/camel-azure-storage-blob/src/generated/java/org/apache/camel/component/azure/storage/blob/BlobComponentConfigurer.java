@@ -34,6 +34,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "azureclientid":
+        case "azureClientId": getOrCreateConfiguration(target).setAzureClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "azureclientsecret":
+        case "azureClientSecret": getOrCreateConfiguration(target).setAzureClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "azuretenantid":
+        case "azureTenantId": getOrCreateConfiguration(target).setAzureTenantId(property(camelContext, java.lang.String.class, value)); return true;
         case "blobname":
         case "blobName": getOrCreateConfiguration(target).setBlobName(property(camelContext, java.lang.String.class, value)); return true;
         case "bloboffset":
@@ -114,6 +120,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "azureclientid":
+        case "azureClientId": return java.lang.String.class;
+        case "azureclientsecret":
+        case "azureClientSecret": return java.lang.String.class;
+        case "azuretenantid":
+        case "azureTenantId": return java.lang.String.class;
         case "blobname":
         case "blobName": return java.lang.String.class;
         case "bloboffset":
@@ -190,6 +202,12 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "azureclientid":
+        case "azureClientId": return getOrCreateConfiguration(target).getAzureClientId();
+        case "azureclientsecret":
+        case "azureClientSecret": return getOrCreateConfiguration(target).getAzureClientSecret();
+        case "azuretenantid":
+        case "azureTenantId": return getOrCreateConfiguration(target).getAzureTenantId();
         case "blobname":
         case "blobName": return getOrCreateConfiguration(target).getBlobName();
         case "bloboffset":

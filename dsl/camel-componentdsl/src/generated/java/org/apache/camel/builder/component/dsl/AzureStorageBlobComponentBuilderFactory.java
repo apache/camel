@@ -710,6 +710,51 @@ public interface AzureStorageBlobComponentBuilderFactory {
         }
     
         /**
+         * Azure Client ID for authentication with Azure Identity.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param azureClientId the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder azureClientId(java.lang.String azureClientId) {
+            doSetProperty("azureClientId", azureClientId);
+            return this;
+        }
+    
+        /**
+         * Azure Client Secret for authentication with Azure Identity.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param azureClientSecret the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder azureClientSecret(java.lang.String azureClientSecret) {
+            doSetProperty("azureClientSecret", azureClientSecret);
+            return this;
+        }
+    
+        /**
+         * Azure Tenant ID for authentication with Azure Identity.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param azureTenantId the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder azureTenantId(java.lang.String azureTenantId) {
+            doSetProperty("azureTenantId", azureTenantId);
+            return this;
+        }
+    
+        /**
          * Source Blob Access Key: for copyblob operation, sadly, we need to
          * have an accessKey for the source blob we want to copy Passing an
          * accessKey as header, it's unsafe so we could set as key.
@@ -782,6 +827,9 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "healthCheckConsumerEnabled": ((BlobComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((BlobComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((BlobComponent) component).setAccessKey((java.lang.String) value); return true;
+            case "azureClientId": getOrCreateConfiguration((BlobComponent) component).setAzureClientId((java.lang.String) value); return true;
+            case "azureClientSecret": getOrCreateConfiguration((BlobComponent) component).setAzureClientSecret((java.lang.String) value); return true;
+            case "azureTenantId": getOrCreateConfiguration((BlobComponent) component).setAzureTenantId((java.lang.String) value); return true;
             case "sourceBlobAccessKey": getOrCreateConfiguration((BlobComponent) component).setSourceBlobAccessKey((java.lang.String) value); return true;
             default: return false;
             }
