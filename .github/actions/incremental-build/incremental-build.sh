@@ -151,14 +151,16 @@ function main() {
         for w in $pl; do
           echo "$w"
         done
-        $mavenBinary -l $log $MVND_OPTS test -pl "$pl"
+        # This need to install, other commands like test are not enough, otherwise test-infra will fail due to jandex maven plugin
+        $mavenBinary -l $log $MVND_OPTS install -pl "$pl"
         ret=$?
       else
         echo "Testing the affected projects and the projects that depend on them:"
         for w in $pl; do
           echo "$w"
         done
-        $mavenBinary -l $log $MVND_OPTS test -pl "$pl" -amd
+        # This need to install, other commands like test are not enough, otherwise test-infra will fail due to jandex maven plugin
+        $mavenBinary -l $log $MVND_OPTS install -pl "$pl" -amd
         ret=$?
       fi
     fi
