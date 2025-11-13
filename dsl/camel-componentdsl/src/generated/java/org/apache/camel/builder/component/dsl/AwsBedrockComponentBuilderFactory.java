@@ -66,6 +66,56 @@ public interface AwsBedrockComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * The identifier (ID or ARN) for the guardrail to apply to the model
+         * invocation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param guardrailIdentifier the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockComponentBuilder guardrailIdentifier(java.lang.String guardrailIdentifier) {
+            doSetProperty("guardrailIdentifier", guardrailIdentifier);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to return trace information from the guardrail.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param guardrailTrace the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockComponentBuilder guardrailTrace(boolean guardrailTrace) {
+            doSetProperty("guardrailTrace", guardrailTrace);
+            return this;
+        }
+    
+        
+        /**
+         * The version of the guardrail to use. Defaults to DRAFT.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: DRAFT
+         * Group: producer
+         * 
+         * @param guardrailVersion the value to set
+         * @return the dsl builder
+         */
+        default AwsBedrockComponentBuilder guardrailVersion(java.lang.String guardrailVersion) {
+            doSetProperty("guardrailVersion", guardrailVersion);
+            return this;
+        }
+    
         
         /**
          * Whether to include streaming metadata in the response headers
@@ -528,6 +578,9 @@ public interface AwsBedrockComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "configuration": ((BedrockComponent) component).setConfiguration((org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration) value); return true;
+            case "guardrailIdentifier": getOrCreateConfiguration((BedrockComponent) component).setGuardrailIdentifier((java.lang.String) value); return true;
+            case "guardrailTrace": getOrCreateConfiguration((BedrockComponent) component).setGuardrailTrace((boolean) value); return true;
+            case "guardrailVersion": getOrCreateConfiguration((BedrockComponent) component).setGuardrailVersion((java.lang.String) value); return true;
             case "includeStreamingMetadata": getOrCreateConfiguration((BedrockComponent) component).setIncludeStreamingMetadata((boolean) value); return true;
             case "lazyStartProducer": ((BedrockComponent) component).setLazyStartProducer((boolean) value); return true;
             case "modelId": getOrCreateConfiguration((BedrockComponent) component).setModelId((java.lang.String) value); return true;

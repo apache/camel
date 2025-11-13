@@ -53,4 +53,18 @@ public interface BedrockConstants {
     String CONVERSE_USAGE = "CamelAwsBedrockConverseUsage";
     @Metadata(description = "The output message from Converse API response", javaType = "Message")
     String CONVERSE_OUTPUT_MESSAGE = "CamelAwsBedrockConverseOutputMessage";
+    @Metadata(description = "The guardrail configuration to apply to the request", javaType = "GuardrailConfiguration")
+    String GUARDRAIL_CONFIG = "CamelAwsBedrockGuardrailConfig";
+    @Metadata(description = "The content blocks for ApplyGuardrail operation", javaType = "List<GuardrailContentBlock>")
+    String GUARDRAIL_CONTENT = "CamelAwsBedrockGuardrailContent";
+    @Metadata(description = "The source type for ApplyGuardrail operation (INPUT or OUTPUT)", javaType = "String")
+    String GUARDRAIL_SOURCE = "CamelAwsBedrockGuardrailSource";
+    @Metadata(description = "The guardrail assessment output from the response", javaType = "GuardrailAssessment")
+    String GUARDRAIL_OUTPUT = "CamelAwsBedrockGuardrailOutput";
+    @Metadata(description = "The trace information from guardrail evaluation", javaType = "GuardrailTrace")
+    String GUARDRAIL_TRACE = "CamelAwsBedrockGuardrailTrace";
+    @Metadata(description = "The guardrail assessments from ApplyGuardrail response", javaType = "List<GuardrailAssessment>")
+    String GUARDRAIL_ASSESSMENTS = "CamelAwsBedrockGuardrailAssessments";
+    @Metadata(description = "The guardrail usage metrics from ApplyGuardrail response", javaType = "GuardrailUsage")
+    String GUARDRAIL_USAGE = "CamelAwsBedrockGuardrailUsage";
 }

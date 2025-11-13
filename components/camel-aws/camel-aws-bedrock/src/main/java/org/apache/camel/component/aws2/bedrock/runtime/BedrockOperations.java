@@ -32,5 +32,7 @@ public enum BedrockOperations {
 
     converse,
 
-    converseStream
+    converseStream,
+
+    applyGuardrail
 }
