@@ -37,25 +37,36 @@ public class InfrastructureITCase extends JBangTestSupport {
     @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                               disabledReason = "Requires too much resources")
     @Test
-    public void runServiceTest() {
-        execInContainer(String.format("nohup camel infra run %s&", SERVICE));
+    public void runStopServiceTest() {
+        String msg = execute("infra run --background " + SERVICE);
+        String PID = getPID(msg);
+        Assertions.assertThat(msg).contains(String.format("Running %s in background", SERVICE));
         Awaitility.await()
                 .atMost(Duration.ofSeconds(30))
                 .pollInterval(Duration.ofSeconds(1))
-                .untilAsserted(() -> Assertions.assertThat(execute("infra ps")).containsPattern(SERVICE));
-        Assertions.assertThat(execute("infra stop " + SERVICE))
-                .contains("Shutting down external services");
+                .untilAsserted(() -> Assertions.assertThat(execute("infra ps"))
+                        .contains(PID));
+        checkCommandOutputs("infra stop " + SERVICE, "Shutting down external services (PID: " + PID);
+        checkCommandDoesNotOutput("infra ps", PID);
     }
 
     @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                               disabledReason = "Requires too much resources")
     @Test
     public void runServiceWithImplementationTest() {
-        execInContainer(String.format("nohup camel infra run %s %s&", IMPL_SERVICE, IMPLEMENTATION));
+        String msg = execute(String.format("infra run --background %s %s", IMPL_SERVICE, IMPLEMENTATION));
+        String PID = getPID(msg);
+        Assertions.assertThat(msg).contains(String.format("Running %s in background", IMPL_SERVICE));
         Awaitility.await()
                 .atMost(Duration.ofSeconds(30))
                 .pollInterval(Duration.ofSeconds(1))
                 .untilAsserted(() -> Assertions.assertThat(execute("infra ps"))
-                        .containsPattern(IMPL_SERVICE + "\\s+" + IMPLEMENTATION));
+                        .containsPattern(PID + "\\s+" + IMPL_SERVICE + "\\s+" + IMPLEMENTATION));
+        checkCommandOutputs("infra stop " + IMPL_SERVICE, "Shutting down external services (PID: " + PID);
+        checkCommandDoesNotOutput("infra ps", PID);
+    }
+
+    private String getPID(String message) {
+        return message.split(":")[1].replaceAll("[^0-9]", "");
     }
 }
