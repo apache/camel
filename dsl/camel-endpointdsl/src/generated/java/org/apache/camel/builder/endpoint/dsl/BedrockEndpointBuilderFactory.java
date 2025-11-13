@@ -45,6 +45,66 @@ public interface BedrockEndpointBuilderFactory {
         }
 
         /**
+         * The identifier (ID or ARN) for the guardrail to apply to the model
+         * invocation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param guardrailIdentifier the value to set
+         * @return the dsl builder
+         */
+        default BedrockEndpointBuilder guardrailIdentifier(String guardrailIdentifier) {
+            doSetProperty("guardrailIdentifier", guardrailIdentifier);
+            return this;
+        }
+        /**
+         * Whether to return trace information from the guardrail.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param guardrailTrace the value to set
+         * @return the dsl builder
+         */
+        default BedrockEndpointBuilder guardrailTrace(boolean guardrailTrace) {
+            doSetProperty("guardrailTrace", guardrailTrace);
+            return this;
+        }
+        /**
+         * Whether to return trace information from the guardrail.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param guardrailTrace the value to set
+         * @return the dsl builder
+         */
+        default BedrockEndpointBuilder guardrailTrace(String guardrailTrace) {
+            doSetProperty("guardrailTrace", guardrailTrace);
+            return this;
+        }
+        /**
+         * The version of the guardrail to use. Defaults to DRAFT.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: DRAFT
+         * Group: producer
+         * 
+         * @param guardrailVersion the value to set
+         * @return the dsl builder
+         */
+        default BedrockEndpointBuilder guardrailVersion(String guardrailVersion) {
+            doSetProperty("guardrailVersion", guardrailVersion);
+            return this;
+        }
+        /**
          * Whether to include streaming metadata in the response headers
          * (completion reason, token count, chunk count).
          * 
@@ -871,6 +931,91 @@ public interface BedrockEndpointBuilderFactory {
          */
         public String awsBedrockConverseOutputMessage() {
             return "CamelAwsBedrockConverseOutputMessage";
+        }
+        /**
+         * The guardrail configuration to apply to the request.
+         * 
+         * The option is a: {@code GuardrailConfiguration} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockGuardrailConfig}.
+         */
+        public String awsBedrockGuardrailConfig() {
+            return "CamelAwsBedrockGuardrailConfig";
+        }
+        /**
+         * The content blocks for ApplyGuardrail operation.
+         * 
+         * The option is a: {@code List<GuardrailContentBlock>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockGuardrailContent}.
+         */
+        public String awsBedrockGuardrailContent() {
+            return "CamelAwsBedrockGuardrailContent";
+        }
+        /**
+         * The source type for ApplyGuardrail operation (INPUT or OUTPUT).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockGuardrailSource}.
+         */
+        public String awsBedrockGuardrailSource() {
+            return "CamelAwsBedrockGuardrailSource";
+        }
+        /**
+         * The guardrail assessment output from the response.
+         * 
+         * The option is a: {@code GuardrailAssessment} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockGuardrailOutput}.
+         */
+        public String awsBedrockGuardrailOutput() {
+            return "CamelAwsBedrockGuardrailOutput";
+        }
+        /**
+         * The trace information from guardrail evaluation.
+         * 
+         * The option is a: {@code GuardrailTrace} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockGuardrailTrace}.
+         */
+        public String awsBedrockGuardrailTrace() {
+            return "CamelAwsBedrockGuardrailTrace";
+        }
+        /**
+         * The guardrail assessments from ApplyGuardrail response.
+         * 
+         * The option is a: {@code List<GuardrailAssessment>} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsBedrockGuardrailAssessments}.
+         */
+        public String awsBedrockGuardrailAssessments() {
+            return "CamelAwsBedrockGuardrailAssessments";
+        }
+        /**
+         * The guardrail usage metrics from ApplyGuardrail response.
+         * 
+         * The option is a: {@code GuardrailUsage} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsBedrockGuardrailUsage}.
+         */
+        public String awsBedrockGuardrailUsage() {
+            return "CamelAwsBedrockGuardrailUsage";
         }
     }
     static BedrockEndpointBuilder endpointBuilder(String componentName, String path) {

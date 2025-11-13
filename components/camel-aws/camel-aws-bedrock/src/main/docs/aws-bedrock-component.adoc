@@ -693,6 +693,7 @@ Camel-AWS Bedrock component provides the following operation on the producer sid
 - invokeEmbeddingsModelStreaming
 - converse
 - converseStream
+- applyGuardrail
 
 === Streaming Support
 
@@ -790,6 +791,90 @@ The Converse API supports all modern foundation models on Bedrock:
 - Cohere Command R models
 
 NOTE: Legacy models (Claude 2.x, Claude Instant) are not supported by the Converse API. Use the `invokeTextModel` operation for those models.
+
+=== Guardrails Support
+
+AWS Bedrock Guardrails enable you to implement safeguards for your generative AI applications based on your use cases and responsible AI policies. Guardrails can filter harmful content, block sensitive topics, remove personally identifiable information (PII), and enhance content safety and privacy in generative AI applications.
+
+The Camel AWS Bedrock component provides comprehensive support for guardrails through:
+
+- *Converse API Integration*: Apply guardrails to conversational interactions
+- *Streaming Support*: Use guardrails with real-time streaming responses
+- *Standalone Validation*: Check content against guardrails without invoking a model
+- *Flexible Configuration*: Configure guardrails at endpoint level or per-message
+
+==== Guardrails Configuration Options
+
+*Endpoint-level Configuration* (applies to all requests):
+
+- `guardrailIdentifier`: The ID or ARN of the guardrail to apply
+- `guardrailVersion`: The version of the guardrail (default: "DRAFT")
+- `guardrailTrace`: Whether to return trace information (default: false)
+
+*Message-level Configuration* (per-message override via headers):
+
+- `CamelAwsBedrockGuardrailConfig`: GuardrailConfiguration object for converse operations
+- `CamelAwsBedrockGuardrailContent`: Content blocks for applyGuardrail operation
+- `CamelAwsBedrockGuardrailSource`: Source type - "INPUT" or "OUTPUT" for applyGuardrail
+
+==== Guardrails Operations
+
+*converse with Guardrails*: Apply guardrails to conversational model invocations
+
+[source]
+--------------------------------------------------------------------------------
+aws-bedrock://label?operation=converse&modelId=anthropic.claude-3-sonnet-20240229-v1:0
+    &guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT&guardrailTrace=true
+--------------------------------------------------------------------------------
+
+*converseStream with Guardrails*: Apply guardrails to streaming conversations
+
+[source]
+--------------------------------------------------------------------------------
+aws-bedrock://label?operation=converseStream&modelId=anthropic.claude-3-sonnet-20240229-v1:0
+    &guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT
+--------------------------------------------------------------------------------
+
+*applyGuardrail*: Standalone operation to validate content against a guardrail without invoking a model
+
+[source]
+--------------------------------------------------------------------------------
+aws-bedrock://label?operation=applyGuardrail&guardrailIdentifier=abc123xyz
+    &guardrailVersion=DRAFT
+--------------------------------------------------------------------------------
+
+==== Guardrails Response Headers
+
+When using guardrails, the following headers may be set in the response:
+
+- `CamelAwsBedrockGuardrailTrace`: Trace information from guardrail evaluation (when trace is enabled)
+- `CamelAwsBedrockGuardrailOutput`: Output content blocks from applyGuardrail
+- `CamelAwsBedrockGuardrailAssessments`: Detailed assessments from applyGuardrail
+- `CamelAwsBedrockGuardrailUsage`: Token usage for guardrail evaluation
+
+==== Creating a Guardrail in AWS
+
+Before using guardrails, you need to create and configure one in the AWS Bedrock console:
+
+1. Navigate to AWS Bedrock Console → Guardrails
+2. Click "Create guardrail"
+3. Configure filters:
+   - *Content filters*: Block harmful content (hate, violence, sexual, etc.)
+   - *Denied topics*: Block specific topics you define
+   - *Word filters*: Block or mask custom words/phrases
+   - *PII filters*: Detect and redact personally identifiable information
+4. Save and note your Guardrail ID (e.g., `abc123xyz`)
+
+==== Supported Models for Guardrails
+
+Guardrails work with all models that support the Converse API:
+
+- Anthropic Claude 3 family (Haiku, Sonnet, Opus)
+- Anthropic Claude 3.5 family (Sonnet v2, Haiku)
+- Amazon Nova family (Micro, Lite, Pro)
+- Meta Llama 3.x models
+- Mistral AI models
+- Cohere Command R models
 
 == Examples
 
@@ -1177,6 +1262,234 @@ and you can then send to the direct endpoint something like
 
         String followUpResponse = result2.getMessage().getBody(String.class);
         System.out.println("Follow-up response: " + followUpResponse);
+--------------------------------------------------------------------------------
+
+=== Guardrails Examples
+
+- Converse with Guardrails (Endpoint Configuration): Apply guardrails configured at the endpoint level.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:converse_with_guardrails")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=converse&modelId=" + BedrockModels.ANTROPHIC_CLAUDE_V3.model
+        + "&guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT&guardrailTrace=true")
+    .to("log:response");
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:converse_with_guardrails", exchange -> {
+            // Create a conversation message
+            List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
+            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+                            .fromText("Tell me about Paris"))
+                    .build());
+
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, messages);
+
+            // Optional: Add inference configuration
+            software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration inferenceConfig
+                    = software.amazon.awssdk.services.bedrockruntime.model.InferenceConfiguration.builder()
+                            .maxTokens(200)
+                            .temperature(0.7f)
+                            .build();
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_INFERENCE_CONFIG, inferenceConfig);
+        });
+
+        // Get the response
+        String response = result.getMessage().getBody(String.class);
+
+        // Check if guardrail trace is available
+        software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace trace
+                = result.getMessage().getHeader(BedrockConstants.GUARDRAIL_TRACE,
+                        software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace.class);
+
+        if (trace != null) {
+            System.out.println("Guardrail evaluation: " + trace);
+        }
+--------------------------------------------------------------------------------
+
+- Converse with Guardrails (Header Configuration): Apply guardrails configured per-message via headers.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:converse_dynamic_guardrails")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=converse&modelId=" + BedrockModels.ANTROPHIC_CLAUDE_V3.model)
+    .to("log:response");
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:converse_dynamic_guardrails", exchange -> {
+            // Create a conversation message
+            List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
+            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+                            .fromText("What is the capital of France?"))
+                    .build());
+
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, messages);
+
+            // Configure guardrail via header (can be dynamic per message)
+            software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration guardrailConfig
+                    = software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration.builder()
+                            .guardrailIdentifier("abc123xyz")  // Can be determined at runtime
+                            .guardrailVersion("DRAFT")
+                            .trace(software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace.ENABLED)
+                            .build();
+            exchange.getMessage().setHeader(BedrockConstants.GUARDRAIL_CONFIG, guardrailConfig);
+        });
+
+        String response = result.getMessage().getBody(String.class);
+        System.out.println("Protected response: " + response);
+--------------------------------------------------------------------------------
+
+- Converse Stream with Guardrails: Apply guardrails to streaming conversations.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:stream_with_guardrails")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=converseStream&modelId=" + BedrockModels.ANTROPHIC_CLAUDE_V3.model
+        + "&guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT")
+    .to("log:response");
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:stream_with_guardrails", exchange -> {
+            List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages = new ArrayList<>();
+            messages.add(software.amazon.awssdk.services.bedrockruntime.model.Message.builder()
+                    .role(software.amazon.awssdk.services.bedrockruntime.model.ConversationRole.USER)
+                    .content(software.amazon.awssdk.services.bedrockruntime.model.ContentBlock
+                            .fromText("Tell me a story about space exploration"))
+                    .build());
+
+            exchange.getMessage().setHeader(BedrockConstants.CONVERSE_MESSAGES, messages);
+            exchange.getMessage().setHeader(BedrockConstants.STREAM_OUTPUT_MODE, "complete");
+        });
+
+        String streamedResponse = result.getMessage().getBody(String.class);
+        System.out.println("Guardrail-protected stream response: " + streamedResponse);
+--------------------------------------------------------------------------------
+
+- Apply Guardrail: Validate content against a guardrail without invoking a model.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:validate_content")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=applyGuardrail&guardrailIdentifier=abc123xyz&guardrailVersion=DRAFT")
+    .to("log:validation_result");
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:validate_content", exchange -> {
+            // Create content blocks to check
+            List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock> content
+                    = new ArrayList<>();
+            content.add(software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock.builder()
+                    .text(software.amazon.awssdk.services.bedrockruntime.model.GuardrailTextBlock.builder()
+                            .text("This is the content I want to validate before sending to the model.")
+                            .build())
+                    .build());
+
+            exchange.getMessage().setHeader(BedrockConstants.GUARDRAIL_CONTENT, content);
+            exchange.getMessage().setHeader(BedrockConstants.GUARDRAIL_SOURCE, "INPUT");
+        });
+
+        // Get the action result (GUARDRAIL_INTERVENED or NONE)
+        String action = result.getMessage().getBody(String.class);
+
+        if ("GUARDRAIL_INTERVENED".equals(action)) {
+            System.out.println("Content was blocked by guardrail!");
+
+            // Get the assessments to see why it was blocked
+            List<?> assessments = result.getMessage().getHeader(BedrockConstants.GUARDRAIL_ASSESSMENTS, List.class);
+            System.out.println("Reasons: " + assessments);
+
+            // Get the filtered output
+            List<?> outputs = result.getMessage().getHeader(BedrockConstants.GUARDRAIL_OUTPUT, List.class);
+            System.out.println("Filtered content: " + outputs);
+        } else {
+            System.out.println("Content passed guardrail validation");
+        }
+--------------------------------------------------------------------------------
+
+- Apply Guardrail with POJO Request: Use the SDK request object directly for maximum control.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:validate_pojo")
+    .to("aws-bedrock://test?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=applyGuardrail&pojoRequest=true")
+    .to("log:validation_result");
+--------------------------------------------------------------------------------
+
+and you can then send to the direct endpoint something like
+
+[source,java]
+--------------------------------------------------------------------------------
+        final Exchange result = template.send("direct:validate_pojo", exchange -> {
+            // Create content blocks
+            List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock> content
+                    = new ArrayList<>();
+            content.add(software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock.builder()
+                    .text(software.amazon.awssdk.services.bedrockruntime.model.GuardrailTextBlock.builder()
+                            .text("User-generated content to validate")
+                            .build())
+                    .build());
+
+            // Build the complete request object
+            software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest request
+                    = software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest.builder()
+                            .guardrailIdentifier("abc123xyz")
+                            .guardrailVersion("DRAFT")
+                            .source(software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentSource.INPUT)
+                            .content(content)
+                            .build();
+
+            exchange.getMessage().setBody(request);
+        });
+
+        String action = result.getMessage().getBody(String.class);
+        System.out.println("Validation result: " + action);
+--------------------------------------------------------------------------------
+
+- Content Moderation Pipeline: Combine guardrails with model invocation in a pipeline.
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:moderated_conversation")
+    // First, validate input with guardrail
+    .to("aws-bedrock://validate?useDefaultCredentialsProvider=true&region=us-east-1"
+        + "&operation=applyGuardrail&guardrailIdentifier=abc123xyz")
+    .choice()
+        .when(simple("${body} == 'GUARDRAIL_INTERVENED'"))
+            .log("Input blocked by guardrail")
+            .setBody(constant("Sorry, I cannot process this request."))
+        .otherwise()
+            // Input passed, proceed with model invocation
+            .to("aws-bedrock://converse?useDefaultCredentialsProvider=true&region=us-east-1"
+                + "&operation=converse&modelId=" + BedrockModels.ANTROPHIC_CLAUDE_V3.model
+                + "&guardrailIdentifier=abc123xyz")
+            .log("Model response: ${body}")
+    .end()
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 == Dependencies

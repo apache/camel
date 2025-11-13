@@ -86,6 +86,9 @@ public class BedrockProducer extends DefaultProducer {
             case converseStream:
                 converseStream(exchange);
                 break;
+            case applyGuardrail:
+                applyGuardrail(getEndpoint().getBedrockRuntimeClient(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -578,6 +581,23 @@ public class BedrockProducer extends DefaultProducer {
                 builder.additionalModelRequestFields(additionalFields);
             }
 
+            // Optional: Guardrail configuration
+            software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration guardrailConfig
+                    = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG,
+                            software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration.class);
+            if (guardrailConfig != null) {
+                builder.guardrailConfig(guardrailConfig);
+            } else if (ObjectHelper.isNotEmpty(getConfiguration().getGuardrailIdentifier())) {
+                // Build from endpoint configuration
+                builder.guardrailConfig(software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration.builder()
+                        .guardrailIdentifier(getConfiguration().getGuardrailIdentifier())
+                        .guardrailVersion(getConfiguration().getGuardrailVersion())
+                        .trace(getConfiguration().isGuardrailTrace()
+                                ? software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace.ENABLED
+                                : software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace.DISABLED)
+                        .build());
+            }
+
             request = builder.build();
         }
 
@@ -607,6 +627,9 @@ public class BedrockProducer extends DefaultProducer {
             }
             if (response.usage() != null) {
                 message.setHeader(BedrockConstants.CONVERSE_USAGE, response.usage());
+            }
+            if (response.trace() != null && response.trace().guardrail() != null) {
+                message.setHeader(BedrockConstants.GUARDRAIL_TRACE, response.trace().guardrail());
             }
 
         } catch (AwsServiceException ase) {
@@ -672,6 +695,24 @@ public class BedrockProducer extends DefaultProducer {
                             software.amazon.awssdk.core.document.Document.class);
             if (additionalFields != null) {
                 builder.additionalModelRequestFields(additionalFields);
+            }
+
+            // Optional: Guardrail configuration (use GuardrailStreamConfiguration for streaming)
+            software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamConfiguration guardrailConfig
+                    = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG,
+                            software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamConfiguration.class);
+            if (guardrailConfig != null) {
+                builder.guardrailConfig(guardrailConfig);
+            } else if (ObjectHelper.isNotEmpty(getConfiguration().getGuardrailIdentifier())) {
+                // Build from endpoint configuration
+                builder.guardrailConfig(software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamConfiguration
+                        .builder()
+                        .guardrailIdentifier(getConfiguration().getGuardrailIdentifier())
+                        .guardrailVersion(getConfiguration().getGuardrailVersion())
+                        .streamProcessingMode(getConfiguration().isGuardrailTrace()
+                                ? software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamProcessingMode.ASYNC
+                                : software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamProcessingMode.SYNC)
+                        .build());
             }
 
             request = builder.build();
@@ -742,7 +783,88 @@ public class BedrockProducer extends DefaultProducer {
         if (metadata.getUsage() != null) {
             message.setHeader(BedrockConstants.CONVERSE_USAGE, metadata.getUsage());
         }
+        if (metadata.getGuardrailTrace() != null) {
+            message.setHeader(BedrockConstants.GUARDRAIL_TRACE, metadata.getGuardrailTrace());
+        }
         message.setHeader(BedrockConstants.STREAMING_CHUNK_COUNT, metadata.getChunkCount());
+    }
+
+    private void applyGuardrail(BedrockRuntimeClient bedrockRuntimeClient, Exchange exchange) throws InvalidPayloadException {
+        software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest request;
+
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getMessage().getMandatoryBody();
+            if (payload instanceof software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest) {
+                request = (software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest) payload;
+            } else {
+                throw new IllegalArgumentException(
+                        "ApplyGuardrail operation requires ApplyGuardrailRequest in POJO mode");
+            }
+        } else {
+            // Build request from headers and configuration
+            software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest.Builder builder
+                    = software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest.builder();
+
+            // Guardrail identifier from header or configuration
+            String guardrailIdentifier = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG, String.class);
+            if (ObjectHelper.isEmpty(guardrailIdentifier)) {
+                guardrailIdentifier = getConfiguration().getGuardrailIdentifier();
+            }
+            if (ObjectHelper.isEmpty(guardrailIdentifier)) {
+                throw new IllegalArgumentException(
+                        "ApplyGuardrail operation requires guardrailIdentifier in configuration or header");
+            }
+            builder.guardrailIdentifier(guardrailIdentifier);
+
+            // Guardrail version from configuration
+            builder.guardrailVersion(getConfiguration().getGuardrailVersion());
+
+            // Source (INPUT or OUTPUT)
+            String source = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_SOURCE, String.class);
+            if (ObjectHelper.isEmpty(source)) {
+                source = "INPUT"; // Default to INPUT
+            }
+            builder.source(software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentSource.fromValue(source));
+
+            // Content blocks from header
+            @SuppressWarnings("unchecked")
+            List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock> content
+                    = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONTENT, List.class);
+            if (content != null && !content.isEmpty()) {
+                builder.content(content);
+            } else {
+                throw new IllegalArgumentException(
+                        "ApplyGuardrail operation requires content in header " + BedrockConstants.GUARDRAIL_CONTENT);
+            }
+
+            request = builder.build();
+        }
+
+        try {
+            software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailResponse response
+                    = bedrockRuntimeClient.applyGuardrail(request);
+
+            org.apache.camel.Message message = getMessageForResponse(exchange);
+
+            // Set action as body
+            message.setBody(response.action().toString());
+
+            // Set output content and assessments as headers
+            if (response.hasOutputs()) {
+                message.setHeader(BedrockConstants.GUARDRAIL_OUTPUT, response.outputs());
+            }
+            if (response.hasAssessments()) {
+                // Store assessments as a header for detailed analysis
+                message.setHeader(BedrockConstants.GUARDRAIL_ASSESSMENTS, response.assessments());
+            }
+            if (response.usage() != null) {
+                message.setHeader(BedrockConstants.GUARDRAIL_USAGE, response.usage());
+            }
+
+        } catch (AwsServiceException ase) {
+            LOG.trace("ApplyGuardrail command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

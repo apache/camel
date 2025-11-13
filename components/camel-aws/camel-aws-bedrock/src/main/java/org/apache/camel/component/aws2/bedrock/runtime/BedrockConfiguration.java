@@ -76,6 +76,12 @@ public class BedrockConfiguration implements Cloneable {
     private String streamOutputMode = "complete";
     @UriParam(defaultValue = "true")
     private boolean includeStreamingMetadata = true;
+    @UriParam
+    private String guardrailIdentifier;
+    @UriParam(defaultValue = "DRAFT")
+    private String guardrailVersion = "DRAFT";
+    @UriParam(defaultValue = "false")
+    private boolean guardrailTrace;
 
     public BedrockRuntimeClient getBedrockRuntimeClient() {
         return bedrockRuntimeClient;
@@ -312,6 +318,39 @@ public class BedrockConfiguration implements Cloneable {
      */
     public void setIncludeStreamingMetadata(boolean includeStreamingMetadata) {
         this.includeStreamingMetadata = includeStreamingMetadata;
+    }
+
+    public String getGuardrailIdentifier() {
+        return guardrailIdentifier;
+    }
+
+    /**
+     * The identifier (ID or ARN) for the guardrail to apply to the model invocation
+     */
+    public void setGuardrailIdentifier(String guardrailIdentifier) {
+        this.guardrailIdentifier = guardrailIdentifier;
+    }
+
+    public String getGuardrailVersion() {
+        return guardrailVersion;
+    }
+
+    /**
+     * The version of the guardrail to use. Defaults to DRAFT.
+     */
+    public void setGuardrailVersion(String guardrailVersion) {
+        this.guardrailVersion = guardrailVersion;
+    }
+
+    public boolean isGuardrailTrace() {
+        return guardrailTrace;
+    }
+
+    /**
+     * Whether to return trace information from the guardrail
+     */
+    public void setGuardrailTrace(boolean guardrailTrace) {
+        this.guardrailTrace = guardrailTrace;
     }
 
     // *************************************************

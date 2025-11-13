@@ -39,6 +39,12 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "bedrockruntimeclient":
         case "bedrockRuntimeClient": getOrCreateConfiguration(target).setBedrockRuntimeClient(property(camelContext, software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration.class, value)); return true;
+        case "guardrailidentifier":
+        case "guardrailIdentifier": getOrCreateConfiguration(target).setGuardrailIdentifier(property(camelContext, java.lang.String.class, value)); return true;
+        case "guardrailtrace":
+        case "guardrailTrace": getOrCreateConfiguration(target).setGuardrailTrace(property(camelContext, boolean.class, value)); return true;
+        case "guardrailversion":
+        case "guardrailVersion": getOrCreateConfiguration(target).setGuardrailVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
@@ -100,6 +106,12 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "bedrockruntimeclient":
         case "bedrockRuntimeClient": return software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient.class;
         case "configuration": return org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration.class;
+        case "guardrailidentifier":
+        case "guardrailIdentifier": return java.lang.String.class;
+        case "guardrailtrace":
+        case "guardrailTrace": return boolean.class;
+        case "guardrailversion":
+        case "guardrailVersion": return java.lang.String.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
@@ -157,6 +169,12 @@ public class BedrockComponentConfigurer extends PropertyConfigurerSupport implem
         case "bedrockruntimeclient":
         case "bedrockRuntimeClient": return getOrCreateConfiguration(target).getBedrockRuntimeClient();
         case "configuration": return target.getConfiguration();
+        case "guardrailidentifier":
+        case "guardrailIdentifier": return getOrCreateConfiguration(target).getGuardrailIdentifier();
+        case "guardrailtrace":
+        case "guardrailTrace": return getOrCreateConfiguration(target).isGuardrailTrace();
+        case "guardrailversion":
+        case "guardrailVersion": return getOrCreateConfiguration(target).getGuardrailVersion();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":

@@ -128,6 +128,7 @@ public final class ConverseStreamHandler {
         private String stopReason;
         private TokenUsage usage;
         private int chunkCount;
+        private software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace guardrailTrace;
 
         public String getFullText() {
             return fullText;
@@ -167,6 +168,14 @@ public final class ConverseStreamHandler {
 
         public void setChunkCount(int chunkCount) {
             this.chunkCount = chunkCount;
+        }
+
+        public software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace getGuardrailTrace() {
+            return guardrailTrace;
+        }
+
+        public void setGuardrailTrace(software.amazon.awssdk.services.bedrockruntime.model.GuardrailTrace guardrailTrace) {
+            this.guardrailTrace = guardrailTrace;
         }
     }
 }
