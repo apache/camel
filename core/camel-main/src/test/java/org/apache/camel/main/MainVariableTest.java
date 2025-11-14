@@ -20,6 +20,8 @@ import java.io.FileInputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,10 +30,20 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MainVariableTest {
 
+    Main main;
+
+    @BeforeEach
+    public void before() {
+        main = new Main();
+    }
+
+    @AfterEach
+    public void after() {
+        main.stop();
+    }
+
     @Test
     public void testMainVariableParameters() {
-        Main main = new Main();
-
         main.addInitialProperty("camel.variable.global.greeting", "Random number");
         // global is default
         main.addInitialProperty("camel.variable.random", "999");
@@ -45,14 +57,10 @@ public class MainVariableTest {
         assertEquals("Random number", context.getVariable("greeting"));
         assertEquals(999, context.getVariable("random"));
         assertEquals(Boolean.TRUE, context.getVariable("gold"));
-
-        main.stop();
     }
 
     @Test
     public void testMainVariableResource() throws Exception {
-        Main main = new Main();
-
         main.addInitialProperty("camel.variable.random", "resource:classpath:random.json");
 
         main.start();
@@ -62,14 +70,10 @@ public class MainVariableTest {
 
         String text = IOHelper.loadText(new FileInputStream("src/test/resources/random.json"));
         assertEquals(text, context.getVariable("random"));
-
-        main.stop();
     }
 
     @Test
     public void testMainVariableContext() {
-        Main main = new Main();
-
         main.start();
 
         CamelContext context = main.getCamelContext();
@@ -81,14 +85,10 @@ public class MainVariableTest {
 
         assertEquals("Random number", context.getVariable("greeting"));
         assertEquals(999, context.getVariable("random"));
-
-        main.stop();
     }
 
     @Test
     public void testMainVariableBean() {
-        Main main = new Main();
-
         MyAddress adr = new MyAddress(90210, "somestreet 123");
 
         main.addInitialProperty("camel.variable.global.greeting", "Random number");
@@ -113,8 +113,6 @@ public class MainVariableTest {
         assertEquals(999, context.getVariable("random"));
         assertEquals(1.23f, context.getVariable("myFloat"));
         assertSame(adr, context.getVariable("adr"));
-
-        main.stop();
     }
 
 }
