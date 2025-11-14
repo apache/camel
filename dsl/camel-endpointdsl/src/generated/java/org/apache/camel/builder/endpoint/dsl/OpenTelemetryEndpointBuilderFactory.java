@@ -324,7 +324,7 @@ public interface OpenTelemetryEndpointBuilderFactory {
          * Override timer action in URI.
          * 
          * The option is a: {@code
-         * org.apache.camel.opentelemetry2.component.OpenTelemetryTimerAction}
+         * org.apache.camel.opentelemetry.metrics.OpenTelemetryTimerAction}
          * type.
          * 
          * Group: producer
