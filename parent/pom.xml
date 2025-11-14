@@ -209,7 +209,7 @@
         <google-cloud-core-version>2.62.1</google-cloud-core-version>
         <google-cloud-functions-version>2.72.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.0.2</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.143.0</google-cloud-pubsub-version>
+        <google-cloud-pubsub-version>1.143.1</google-cloud-pubsub-version>
         <google-cloud-pubsublite-version>1.15.18</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.78.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.60.0</google-cloud-storage-version>
