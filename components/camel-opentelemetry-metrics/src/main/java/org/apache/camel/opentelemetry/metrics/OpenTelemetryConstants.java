@@ -22,7 +22,7 @@ public class OpenTelemetryConstants {
 
     public static final String HEADER_PREFIX = "CamelMetrics";
     @Metadata(description = "Override timer action in URI",
-              javaType = "org.apache.camel.opentelemetry2.component.OpenTelemetryTimerAction")
+              javaType = "org.apache.camel.opentelemetry.metrics.OpenTelemetryTimerAction")
     public static final String HEADER_TIMER_ACTION = HEADER_PREFIX + "TimerAction";
     @Metadata(description = "Override histogram value in URI", javaType = "long")
     public static final String HEADER_HISTOGRAM_VALUE = HEADER_PREFIX + "HistogramValue";
@@ -38,6 +38,16 @@ public class OpenTelemetryConstants {
               javaType = "io.opentelemetry.api.common.Attributes")
 
     public static final String HEADER_METRIC_ATTRIBUTES = HEADER_PREFIX + "Attributes";
+
+    // Route-policy metrics
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME = "camel.exchanges.failed";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME = "camel.exchanges.succeeded";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME = "camel.exchanges.total";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME
+            = "camel.exchanges.failures.handled";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME
+            = "camel.exchanges.external.redeliveries";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME = "camel.route.policy";
 
     // Exchange-event metrics
     public static final String DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT = "camel.exchanges.inflight";
