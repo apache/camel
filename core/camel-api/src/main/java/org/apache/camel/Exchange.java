@@ -800,7 +800,7 @@ public interface Exchange extends VariableAware {
     /**
      * Gets the timestamp in millis when this exchange was created.
      *
-     * @see Message#getMessageTimestamp()
+     * @see Clock#getCreated()
      */
     @Deprecated(since = "4.4.0")
     long getCreated();
