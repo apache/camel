@@ -62,10 +62,14 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
     boolean registerKamelets;
     boolean registerTemplates = true;
 
+    // options
     private OpenTelemetryRoutePolicyNamingStrategy namingStrategy = OpenTelemetryRoutePolicyNamingStrategy.DEFAULT;
     private OpenTelemetryRoutePolicyConfiguration configuration = new OpenTelemetryRoutePolicyConfiguration();
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+
+    // metrics
     private final Map<Route, MetricsStatistics> statisticsMap = new HashMap<>();
+    private RouteMetric contextStatistic;
 
     public OpenTelemetryRoutePolicy(OpenTelemetryRoutePolicyFactory factory) {
         this.factory = factory;
@@ -129,6 +133,10 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
             registerKamelets = ms.getManagementAgent().getRegisterRoutesCreateByKamelet();
             registerTemplates = ms.getManagementAgent().getRegisterRoutesCreateByTemplate();
         }
+
+        if (factory != null && configuration.isContextEnabled() && contextStatistic == null) {
+            contextStatistic = factory.createOrGetContextMetric(this);
+        }
     }
 
     @Override
@@ -162,12 +170,18 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
 
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {
+        if (contextStatistic != null) {
+            contextStatistic.onExchangeBegin(exchange);
+        }
         Optional.ofNullable(statisticsMap.get(route))
                 .ifPresent(statistics -> statistics.onExchangeBegin(exchange));
     }
 
     @Override
     public void onExchangeDone(Route route, Exchange exchange) {
+        if (contextStatistic != null) {
+            contextStatistic.onExchangeDone(exchange);
+        }
         Optional.ofNullable(statisticsMap.get(route))
                 .ifPresent(statistics -> statistics.onExchangeDone(exchange));
     }

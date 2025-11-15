@@ -39,6 +39,7 @@ public class OpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryRoutePoli
     @Override
     public OpenTelemetryRoutePolicyFactory createOpenTelemetryRoutePolicyFactory() {
         OpenTelemetryRoutePolicyFactory factory = new OpenTelemetryRoutePolicyFactory();
+        factory.getPolicyConfiguration().setContextEnabled(false);
         factory.getPolicyConfiguration().setExcludePattern(null);
         factory.getPolicyConfiguration().setAdditionalCounters(false);
         return factory;

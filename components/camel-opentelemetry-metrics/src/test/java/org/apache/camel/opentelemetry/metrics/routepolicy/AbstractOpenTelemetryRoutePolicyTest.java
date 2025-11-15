@@ -23,6 +23,7 @@ public abstract class AbstractOpenTelemetryRoutePolicyTest extends AbstractOpenT
 
     protected OpenTelemetryRoutePolicyFactory createOpenTelemetryRoutePolicyFactory() {
         OpenTelemetryRoutePolicyFactory factory = new OpenTelemetryRoutePolicyFactory();
+        factory.getPolicyConfiguration().setContextEnabled(false);
         factory.getPolicyConfiguration().setExcludePattern(null);
         return factory;
     }
