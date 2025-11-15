@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -708,6 +709,10 @@ public class DoclingProducer extends DefaultProducer {
             return tempFile.toString();
         } else if (body instanceof File) {
             File file = (File) body;
+            validateFileSize(file.getAbsolutePath());
+            return file.getAbsolutePath();
+        } else if (body instanceof WrappedFile<?> wf) {
+            File file = (File) wf.getFile();
             validateFileSize(file.getAbsolutePath());
             return file.getAbsolutePath();
         }
