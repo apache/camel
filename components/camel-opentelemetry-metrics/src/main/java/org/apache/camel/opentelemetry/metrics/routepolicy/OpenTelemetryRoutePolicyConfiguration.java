@@ -21,6 +21,7 @@ package org.apache.camel.opentelemetry.metrics.routepolicy;
  */
 public class OpenTelemetryRoutePolicyConfiguration {
 
+    private boolean contextEnabled = true;
     private boolean routeEnabled = true;
     private String excludePattern;
     private boolean additionalCounters = true;
@@ -29,6 +30,17 @@ public class OpenTelemetryRoutePolicyConfiguration {
     private boolean exchangesTotal = true;
     private boolean externalRedeliveries = true;
     private boolean failuresHandled = true;
+
+    public boolean isContextEnabled() {
+        return contextEnabled;
+    }
+
+    /**
+     * Enable context level metric collection.
+     */
+    public void setContextEnabled(boolean contextEnabled) {
+        this.contextEnabled = contextEnabled;
+    }
 
     public boolean isRouteEnabled() {
         return routeEnabled;

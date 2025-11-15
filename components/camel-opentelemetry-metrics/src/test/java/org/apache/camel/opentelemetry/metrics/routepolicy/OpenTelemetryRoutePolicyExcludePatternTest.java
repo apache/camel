@@ -33,6 +33,7 @@ public class OpenTelemetryRoutePolicyExcludePatternTest extends AbstractOpenTele
     @Override
     public OpenTelemetryRoutePolicyFactory createOpenTelemetryRoutePolicyFactory() {
         OpenTelemetryRoutePolicyFactory factory = new OpenTelemetryRoutePolicyFactory();
+        factory.getPolicyConfiguration().setContextEnabled(false);
         factory.getPolicyConfiguration().setRouteEnabled(true);
         factory.getPolicyConfiguration().setExcludePattern("bar");
         return factory;

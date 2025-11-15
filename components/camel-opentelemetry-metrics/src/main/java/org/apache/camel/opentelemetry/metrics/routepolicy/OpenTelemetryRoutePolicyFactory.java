@@ -83,6 +83,16 @@ public class OpenTelemetryRoutePolicyFactory extends ServiceSupport
         this.timeUnit = timeUnit;
     }
 
+    public synchronized RouteMetric createOrGetContextMetric(OpenTelemetryRoutePolicy policy) {
+        if (contextMetric == null) {
+            contextMetric = new OpenTelemetryContextMetricsStatistics(
+                    meter, camelContext, policy.getNamingStrategy(), policy.getConfiguration(),
+                    policy.isRegisterKamelets(), policy.isRegisterTemplates(),
+                    policy.getTimeUnit());
+        }
+        return contextMetric;
+    }
+
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode routeDefinition) {
         OpenTelemetryRoutePolicy routePolicy = new OpenTelemetryRoutePolicy(this);
