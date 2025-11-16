@@ -40,6 +40,7 @@ public class OpenTelemetryRoutePolicyFactory extends ServiceSupport
     private OpenTelemetryRoutePolicyNamingStrategy namingStrategy = OpenTelemetryRoutePolicyNamingStrategy.DEFAULT;
     private OpenTelemetryRoutePolicyConfiguration policyConfiguration = new OpenTelemetryRoutePolicyConfiguration();
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+    private TimeUnit longTaskTimeUnit = TimeUnit.MILLISECONDS;
 
     @Override
     public CamelContext getCamelContext() {
@@ -83,12 +84,20 @@ public class OpenTelemetryRoutePolicyFactory extends ServiceSupport
         this.timeUnit = timeUnit;
     }
 
+    public TimeUnit getLongTaskTimeUnit() {
+        return longTaskTimeUnit;
+    }
+
+    public void setLongTaskTimeUnit(TimeUnit longTaskTimeUnit) {
+        this.longTaskTimeUnit = longTaskTimeUnit;
+    }
+
     public synchronized RouteMetric createOrGetContextMetric(OpenTelemetryRoutePolicy policy) {
         if (contextMetric == null) {
             contextMetric = new OpenTelemetryContextMetricsStatistics(
                     meter, camelContext, policy.getNamingStrategy(), policy.getConfiguration(),
                     policy.isRegisterKamelets(), policy.isRegisterTemplates(),
-                    policy.getTimeUnit());
+                    policy.getTimeUnit(), policy.getLongTaskTimeUnit());
         }
         return contextMetric;
     }
@@ -99,6 +108,7 @@ public class OpenTelemetryRoutePolicyFactory extends ServiceSupport
         routePolicy.setNamingStrategy(getNamingStrategy());
         routePolicy.setConfiguration(getPolicyConfiguration());
         routePolicy.setTimeUnit(getTimeUnit());
+        routePolicy.setLongTaskTimeUnit(getLongTaskTimeUnit());
         routePolicy.setMeter(meter);
         return routePolicy;
     }

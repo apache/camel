@@ -32,8 +32,8 @@ final class OpenTelemetryContextMetricsStatistics extends OpenTelemetryRoutePoli
                                           OpenTelemetryRoutePolicyNamingStrategy namingStrategy,
                                           OpenTelemetryRoutePolicyConfiguration configuration,
                                           boolean registerKamelets, boolean registerTemplates,
-                                          TimeUnit timeUnit) {
-        super(meter, camelContext, null, namingStrategy, configuration, timeUnit);
+                                          TimeUnit timeUnit, TimeUnit longTaskTimeUnit) {
+        super(meter, camelContext, null, namingStrategy, configuration, timeUnit, longTaskTimeUnit);
         this.registerKamelets = registerKamelets;
         this.registerTemplates = registerTemplates;
     }
