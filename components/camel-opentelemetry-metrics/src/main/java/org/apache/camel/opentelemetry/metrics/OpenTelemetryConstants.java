@@ -48,6 +48,8 @@ public class OpenTelemetryConstants {
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME
             = "camel.exchanges.external.redeliveries";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME = "camel.route.policy";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE = "camel.route.policy.tasks.active";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION = "camel.route.policy.tasks.duration";
 
     // Exchange-event metrics
     public static final String DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT = "camel.exchanges.inflight";

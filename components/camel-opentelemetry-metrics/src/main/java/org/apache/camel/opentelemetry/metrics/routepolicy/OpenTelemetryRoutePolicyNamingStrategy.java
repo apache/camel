@@ -24,6 +24,8 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFA
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION;
 
 /**
  * Provides a strategy to provide metric names for OpenTelemetry route policy metrics.
@@ -68,6 +70,16 @@ public interface OpenTelemetryRoutePolicyNamingStrategy {
         public String getExternalRedeliveriesName(Route route) {
             return formatName(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME);
         }
+
+        @Override
+        public String getLongTasksActiveName(Route route) {
+            return formatName(DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE);
+        }
+
+        @Override
+        public String getLongTasksDurationName(Route route) {
+            return formatName(DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION);
+        }
     };
 
     String getName(Route route);
@@ -83,4 +95,8 @@ public interface OpenTelemetryRoutePolicyNamingStrategy {
     String getFailuresHandledName(Route route);
 
     String getExternalRedeliveriesName(Route route);
+
+    String getLongTasksActiveName(Route route);
+
+    String getLongTasksDurationName(Route route);
 }

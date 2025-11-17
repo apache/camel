@@ -340,11 +340,11 @@ Camel specific metrics that are available via the `OpenTelemetryExchangeEventNot
 
 [width="100%",options="header"]
 |=====================================================
-|Default Name |Type |Unit |Description
-|camel.exchange.sent | LongHistogram | TimeUnit.MILLISECONDS | Time taken to send a message to the endpoint
-|camel.exchange.elapsed | LongHistogram | TimeUnit.MILLISECONDS | Time taken to complete exchange
-|camel.exchanges.last.time | ObservableLongGauge | TimeUnit.MILLISECONDS | Last exchange processed time since the Unix epoch
-|camel.exchanges.inflight | ObservableLongGauge | Long | Number of in flight messages per route
+|Default Name |Type |Description
+|camel.exchange.sent | LongHistogram | Time taken to send a message to the endpoint; Default time unit is milliseconds
+|camel.exchange.elapsed | LongHistogram | Time taken to complete exchange; Default time unit is milliseconds
+|camel.exchanges.last.time | ObservableLongGauge | Last exchange processed time since the Unix epoch; ; Default time unit is milliseconds
+|camel.exchanges.inflight | ObservableLongGauge | Number of in flight messages per route
 |=====================================================
 
 The following options are supported:
@@ -359,6 +359,47 @@ The following options are supported:
 | baseEndpointURI | true | Whether to use static or dynamic values for Endpoint Name attributes in captured metrics.
 By default, static values are used. When using dynamic attributes a dynamic to (toD) can compute many different endpoint URIs
 leading to high cardinality in metrics.
+|=======================================================================
+
+=== OpenTelemetry Route Policy
+
+Route policy metrics can be enabled by adding the `OpenTelemetryRoutePolicyFactory` to the `CamelContext`:
+
+[source,java]
+----
+context.addRoutePolicyFactory(new OpenTelemetryRoutePolicyFactory());
+----
+
+[NOTE]
+====
+You can define a dedicated `OpenTelemetryRoutePolicy` per route you want to instrument
+in case you only want to instrument a few selected routes.
+====
+
+Camel specific metrics that are available via the `OpenTelemetryRoutePolicy`:
+[width="100%",options="header"]
+[width="100%",options="header"]
+|=====================================================
+|Default Name |Type |Description
+| camel.route.policy | LongHistogram | Time taken to complete processing of exchanges for a route
+| camel.exchanges.succeeded | LongCounter | Number of successfully completed exchanges
+| camel.exchanges.failed | LongCounter | Number of failed exchanges
+| camel.exchanges.total | LongCounter | Total number of exchanges processed
+| camel.exchanges.external.redeliveries | LongCounter | Number of externally initiated redeliveries
+| camel.exchanges.failures.handled | LongCounter | Number of failures handled
+| camel.route.policy.tasks.active | ObservableLongUpDownCounter | Number of tasks currently active
+| camel.route.policy.tasks.duration | ObservableLongUpDownCounter | Total duration of all active tasks
+|=====================================================
+
+The following options are supported:
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Default |Description
+| namingStrategy | OpenTelemetryRoutePolicyNamingStrategy.DEFAULT | The strategy to use for overriding default metric names.
+| policyConfiguration | - | Enables individual metrics to be enabled or disabled.
+| timeUnit | TimeUnit.MILLISECONDS | The time unit for measuring the route policy timer.
+| longTaskTimeUnit | TimeUnit.MILLISECONDS | The time unit for the 'long task' timer that measures total duration of all active tasks.
 |=======================================================================
 
 == OpenTelemetry Configuration

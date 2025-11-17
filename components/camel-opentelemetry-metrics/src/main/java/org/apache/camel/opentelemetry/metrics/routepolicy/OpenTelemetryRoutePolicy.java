@@ -62,12 +62,11 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
     boolean registerKamelets;
     boolean registerTemplates = true;
 
-    // options
     private OpenTelemetryRoutePolicyNamingStrategy namingStrategy = OpenTelemetryRoutePolicyNamingStrategy.DEFAULT;
     private OpenTelemetryRoutePolicyConfiguration configuration = new OpenTelemetryRoutePolicyConfiguration();
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+    private TimeUnit longTaskTimeUnit = TimeUnit.MILLISECONDS;
 
-    // metrics
     private final Map<Route, MetricsStatistics> statisticsMap = new HashMap<>();
     private RouteMetric contextStatistic;
 
@@ -105,6 +104,14 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
 
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
+    }
+
+    public TimeUnit getLongTaskTimeUnit() {
+        return longTaskTimeUnit;
+    }
+
+    public void setLongTaskTimeUnit(TimeUnit longTaskTimeUnit) {
+        this.longTaskTimeUnit = longTaskTimeUnit;
     }
 
     boolean isRegisterKamelets() {
@@ -159,7 +166,7 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
                         return null;
                     }
                     return new MetricsStatistics(
-                            meter, it.getCamelContext(), it, getNamingStrategy(), configuration, timeUnit);
+                            meter, it.getCamelContext(), it, getNamingStrategy(), configuration, timeUnit, longTaskTimeUnit);
                 });
     }
 
@@ -194,6 +201,7 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
         private final OpenTelemetryRoutePolicyNamingStrategy namingStrategy;
         private final OpenTelemetryRoutePolicyConfiguration configuration;
         private final TimeUnit timeUnit;
+        private final TimeUnit longTaskTimeUnit;
 
         // OpenTelemetry objects
         private final Meter meter;
@@ -206,11 +214,12 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
         private LongCounter exchangesTotal;
         private LongCounter externalRedeliveries;
         private LongCounter failuresHandled;
+        private OpenTelemetryLongTaskTimer longTaskTimer;
 
         MetricsStatistics(Meter meter, CamelContext camelContext, Route route,
                           OpenTelemetryRoutePolicyNamingStrategy namingStrategy,
                           OpenTelemetryRoutePolicyConfiguration configuration,
-                          TimeUnit timeUnit) {
+                          TimeUnit timeUnit, TimeUnit longTaskTimeUnit) {
 
             this.configuration = ObjectHelper.notNull(configuration, "OpenTelemetryRoutePolicyConfiguration", this);
             this.namingStrategy = ObjectHelper.notNull(namingStrategy, "OpenTelemetryRoutePolicyNamingStrategy", this);
@@ -218,6 +227,7 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
             this.camelContext = camelContext;
             this.route = route;
             this.timeUnit = timeUnit;
+            this.longTaskTimeUnit = longTaskTimeUnit;
             this.attributes = Attributes.of(
                     AttributeKey.stringKey(CAMEL_CONTEXT_ATTRIBUTE),
                     route != null ? route.getCamelContext().getName() : camelContext.getName(),
@@ -259,12 +269,19 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
                         = createCounter(namingStrategy.getFailuresHandledName(route),
                                 "Number of failures handled");
             }
+            if (configuration.isLongTask()) {
+                longTaskTimer = new OpenTelemetryLongTaskTimer(
+                        route, meter, attributes, configuration, namingStrategy, longTaskTimeUnit);
+            }
         }
 
         @Override
         public void onExchangeBegin(Exchange exchange) {
             String propertyName = propertyName(exchange);
             exchange.setProperty(propertyName, new TaskTimer());
+            if (longTaskTimer != null) {
+                exchange.setProperty(propertyName + "_long_task", longTaskTimer.start());
+            }
         }
 
         @Override
@@ -285,7 +302,9 @@ public class OpenTelemetryRoutePolicy extends RoutePolicySupport implements NonM
 
         @Override
         public void remove() {
-            // no-op
+            if (longTaskTimer != null) {
+                longTaskTimer.remove();
+            }
         }
 
         private void updateAdditionalCounters(Exchange exchange) {

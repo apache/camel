@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TaskTimer {
     private long startTime;
+    private volatile boolean stopped;
 
     public TaskTimer() {
         startTime = System.nanoTime();
@@ -30,13 +31,13 @@ public class TaskTimer {
     }
 
     public long duration(TimeUnit unit) {
-        if (startTime > 0) {
-            return unit.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+        if (stopped) {
+            return -1;
         }
-        return 0;
+        return unit.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
     }
 
     public void stop() {
-        startTime = 0;
+        stopped = true;
     }
 }

@@ -30,6 +30,7 @@ public class OpenTelemetryRoutePolicyConfiguration {
     private boolean exchangesTotal = true;
     private boolean externalRedeliveries = true;
     private boolean failuresHandled = true;
+    private boolean longTask;
 
     public boolean isContextEnabled() {
         return contextEnabled;
@@ -129,5 +130,17 @@ public class OpenTelemetryRoutePolicyConfiguration {
      */
     public void setFailuresHandled(boolean failuresHandled) {
         this.failuresHandled = failuresHandled;
+    }
+
+    public boolean isLongTask() {
+        return longTask;
+    }
+
+    /**
+     * Enable 'long task timer' metrics that track the number of active tasks and total duration of all tasks in
+     * progress.
+     */
+    public void setLongTask(boolean longTask) {
+        this.longTask = longTask;
     }
 }
