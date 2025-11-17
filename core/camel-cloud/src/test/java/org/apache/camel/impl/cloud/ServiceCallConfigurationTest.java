@@ -39,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+// The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+@SuppressWarnings("deprecation")
 public class ServiceCallConfigurationTest {
 
     // ****************************************
@@ -86,6 +88,7 @@ public class ServiceCallConfigurationTest {
         mock.assertIsSatisfied();
 
         context.stop();
+        context.close();
     }
 
     @Test
@@ -127,6 +130,7 @@ public class ServiceCallConfigurationTest {
         assertEquals(sf, loadBalancer.getServiceFilter());
 
         context.stop();
+        context.close();
     }
 
     @Test
@@ -169,6 +173,7 @@ public class ServiceCallConfigurationTest {
         assertEquals(sf, loadBalancer.getServiceFilter());
 
         context.stop();
+        context.close();
     }
 
     @Test
@@ -211,6 +216,7 @@ public class ServiceCallConfigurationTest {
         assertEquals(sf, loadBalancer.getServiceFilter());
 
         context.stop();
+        context.close();
     }
 
     // ****************************************
@@ -316,6 +322,7 @@ public class ServiceCallConfigurationTest {
         }
 
         context.stop();
+        context.close();
     }
 
     // **********************************************
@@ -439,6 +446,7 @@ public class ServiceCallConfigurationTest {
         }
 
         context.stop();
+        context.close();
     }
 
     // **********************************************

@@ -30,6 +30,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+// The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+@SuppressWarnings("deprecation")
 public class ServiceRegistryTest extends ContextTestSupport {
 
     // *********************
