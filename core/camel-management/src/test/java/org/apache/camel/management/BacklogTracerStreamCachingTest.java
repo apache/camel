@@ -95,7 +95,7 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
                 context.setUseBreadcrumb(false);
                 context.setBacklogTracingStandby(true);
 
-                from("direct:start").streamCaching()
+                from("direct:start").streamCache("true")
                         .process(exchange -> {
                             ByteArrayInputStream is = new ByteArrayInputStream("Bye World".getBytes());
                             exchange.getIn().setBody(is);

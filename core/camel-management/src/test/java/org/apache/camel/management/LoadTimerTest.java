@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -42,7 +43,7 @@ public class LoadTimerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testTimer() {
+    public void testTimer() throws IOException {
         TimerListenerManager myTimer = new TimerListenerManager();
         myTimer.setCamelContext(context);
         myTimer.start();
@@ -61,6 +62,7 @@ public class LoadTimerTest extends ContextTestSupport {
         }
 
         myTimer.stop();
+        myTimer.close();
     }
 
     private static class TestLoadAware implements TimerListener {

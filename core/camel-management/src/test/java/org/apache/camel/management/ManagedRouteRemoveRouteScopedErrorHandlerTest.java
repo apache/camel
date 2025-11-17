@@ -64,7 +64,7 @@ public class ManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagementTes
         assertFalse(registered, "Route mbean should have been unregistered");
 
         // and no more routes
-        Set set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(0, set.size());
     }
 

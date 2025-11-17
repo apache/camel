@@ -235,6 +235,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getContextObjectName();
 
+        @SuppressWarnings("unchecked")
         Set<String> names = (Set<String>) mbeanServer.invoke(on, "languageNames", null, null);
         Assertions.assertEquals(2, names.size());
         Assertions.assertTrue(names.contains("constant"));
@@ -246,6 +247,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getContextObjectName();
 
+        @SuppressWarnings("unchecked")
         Set<String> names = (Set<String>) mbeanServer.invoke(on, "componentNames", null, null);
         Assertions.assertEquals(3, names.size());
         Assertions.assertTrue(names.contains("direct"));
@@ -262,6 +264,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getContextObjectName();
 
+        @SuppressWarnings("unchecked")
         Set<String> names = (Set<String>) mbeanServer.invoke(on, "dataFormatNames", null, null);
         Assertions.assertEquals(1, names.size());
         Assertions.assertTrue(names.contains("reverse"));
@@ -276,15 +279,17 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getContextObjectName();
 
+        @SuppressWarnings("unchecked")
         Set<String> names = (Set<String>) mbeanServer.invoke(on, "routeIds", null, null);
         Assertions.assertEquals(3, names.size());
         Assertions.assertTrue(names.contains("aaa"));
         Assertions.assertTrue(names.contains("bbb"));
         Assertions.assertTrue(names.contains("ccc"));
 
-        names = (Set<String>) mbeanServer.invoke(on, "routeGroups", null, null);
-        Assertions.assertEquals(1, names.size());
-        Assertions.assertTrue(names.contains("cheese"));
+        @SuppressWarnings("unchecked")
+        Set<String> namesGroups = (Set<String>) mbeanServer.invoke(on, "routeGroups", null, null);
+        Assertions.assertEquals(1, namesGroups.size());
+        Assertions.assertTrue(namesGroups.contains("cheese"));
     }
 
     @Override
