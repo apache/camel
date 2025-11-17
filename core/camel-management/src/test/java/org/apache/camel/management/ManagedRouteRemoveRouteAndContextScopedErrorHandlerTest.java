@@ -65,7 +65,7 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
         assertFalse(registered, "Route mbean should have been unregistered");
 
         // and only the other route
-        Set set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());
     }
 
@@ -99,7 +99,7 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
         assertFalse(registered, "Route mbean should have been unregistered");
 
         // and only the other route
-        Set set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());
     }
 

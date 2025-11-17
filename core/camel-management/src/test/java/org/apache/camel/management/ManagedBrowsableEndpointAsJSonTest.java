@@ -17,13 +17,11 @@
 package org.apache.camel.management;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
@@ -167,10 +165,7 @@ public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<Exchange> exchanges = getMockEndpoint("mock:result").getReceivedExchanges();
-
         MBeanServer mbeanServer = getMBeanServer();
-
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
         String out = (String) mbeanServer.invoke(name, "browseRangeMessagesAsJSon", new Object[] { 0, 1, false },

@@ -75,6 +75,7 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(on, "details", null, null);
         assertEquals(1, data.size());
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         Collection<String> ids = (Collection) mbeanServer.invoke(on, "getHealthChecksIDs", null, null);
         assertEquals(1, ids.size());
 
@@ -103,6 +104,7 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         Boolean up = (Boolean) mbeanServer.getAttribute(on, "Healthy");
         assertFalse(up);
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         Collection<String> ids = (Collection) mbeanServer.invoke(on, "getHealthChecksIDs", null, null);
         assertEquals(2, ids.size());
 

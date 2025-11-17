@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import java.io.IOException;
+
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectInstance;
@@ -30,7 +32,10 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -46,63 +51,48 @@ import static org.mockito.Mockito.when;
 public class DefaultManagementAgentMockTest {
 
     @Test
-    public void testObjectNameModification() throws JMException {
+    public void testObjectNameModification() throws JMException, IOException {
         MBeanServer mbeanServer = mock(MBeanServer.class);
         ObjectInstance instance = mock(ObjectInstance.class);
 
-        ManagementAgent agent = new DefaultManagementAgent();
-        agent.setMBeanServer(mbeanServer);
+        try (ManagementAgent agent = new DefaultManagementAgent()) {
+            agent.setMBeanServer(mbeanServer);
 
-        Object object = "object";
-        ObjectName sourceObjectName = new ObjectName("domain", "key", "value");
-        ObjectName registeredObjectName = new ObjectName("domain", "key", "otherValue");
+            Object object = "object";
+            ObjectName sourceObjectName = new ObjectName("domain", "key", "value");
+            ObjectName registeredObjectName = new ObjectName("domain", "key", "otherValue");
 
-        // Register MBean and return different ObjectName
-        when(mbeanServer.isRegistered(sourceObjectName)).thenReturn(false);
-        when(mbeanServer.registerMBean(object, sourceObjectName)).thenReturn(instance);
-        when(instance.getObjectName()).thenReturn(registeredObjectName);
-        when(mbeanServer.isRegistered(registeredObjectName)).thenReturn(true);
+            // Register MBean and return different ObjectName
+            when(mbeanServer.isRegistered(sourceObjectName)).thenReturn(false);
+            when(mbeanServer.registerMBean(object, sourceObjectName)).thenReturn(instance);
+            when(instance.getObjectName()).thenReturn(registeredObjectName);
+            when(mbeanServer.isRegistered(registeredObjectName)).thenReturn(true);
 
-        agent.register(object, sourceObjectName);
+            agent.register(object, sourceObjectName);
 
-        assertTrue(agent.isRegistered(sourceObjectName));
-        reset(mbeanServer, instance);
+            assertTrue(agent.isRegistered(sourceObjectName));
+            reset(mbeanServer, instance);
 
-        // ... and unregister it again
-        when(mbeanServer.isRegistered(registeredObjectName)).thenReturn(true);
-        mbeanServer.unregisterMBean(registeredObjectName);
-        when(mbeanServer.isRegistered(sourceObjectName)).thenReturn(false);
+            // ... and unregister it again
+            when(mbeanServer.isRegistered(registeredObjectName)).thenReturn(true);
+            mbeanServer.unregisterMBean(registeredObjectName);
+            when(mbeanServer.isRegistered(sourceObjectName)).thenReturn(false);
 
-        agent.unregister(sourceObjectName);
+            agent.unregister(sourceObjectName);
 
-        assertFalse(agent.isRegistered(sourceObjectName));
-    }
-
-    @Test
-    public void testShouldUseHostIPAddressWhenFlagIsTrue() {
-        System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, "true");
-        try {
-            CamelContext ctx = new DefaultCamelContext();
-
-            ManagementAgent agent = new DefaultManagementAgent(ctx);
-            agent.start();
-
-            assertTrue(agent.getUseHostIPAddress());
-        } finally {
-            System.clearProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS);
+            assertFalse(agent.isRegistered(sourceObjectName));
         }
     }
 
-    @Test
-    public void shouldUseHostNameWhenFlagIsFalse() {
-        System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, "false");
-        try {
-            CamelContext ctx = new DefaultCamelContext();
-
-            ManagementAgent agent = new DefaultManagementAgent(ctx);
+    @ParameterizedTest
+    @ValueSource(strings = { "true", "false" })
+    public void testShouldUseHostIPAddress(String flag) throws IOException {
+        System.setProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS, flag);
+        CamelContext ctx = new DefaultCamelContext();
+        try (ManagementAgent agent = new DefaultManagementAgent(ctx)) {
             agent.start();
 
-            assertFalse(agent.getUseHostIPAddress());
+            assertEquals(Boolean.parseBoolean(flag), agent.getUseHostIPAddress());
         } finally {
             System.clearProperty(JmxSystemPropertyKeys.USE_HOST_IP_ADDRESS);
         }
