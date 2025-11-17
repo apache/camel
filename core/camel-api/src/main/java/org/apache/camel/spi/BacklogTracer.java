@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -185,9 +186,24 @@ public interface BacklogTracer {
     void resetTraceCounter();
 
     /**
+     * Get all tracing data (without removing)
+     */
+    Collection<BacklogTracerEventMessage> getAllTracedMessages();
+
+    /**
+     * Get latest completed exchange message history (without removing)
+     */
+    Collection<BacklogTracerEventMessage> getLatestMessageHistory();
+
+    /**
      * Dumps all tracing data
      */
     List<BacklogTracerEventMessage> dumpAllTracedMessages();
+
+    /**
+     * Dumps latest completed exchange message history
+     */
+    List<BacklogTracerEventMessage> dumpLatestMessageHistory();
 
     /**
      * Dumps tracing data for the given route id / node id
@@ -205,6 +221,11 @@ public interface BacklogTracer {
     String dumpTracedMessagesAsXml(String nodeId);
 
     /**
+     * Dumps latest completed exchange message history as XML
+     */
+    String dumpLatestMessageHistoryAsXml();
+
+    /**
      * Dumps all tracing data as JSon
      */
     String dumpAllTracedMessagesAsJSon();
@@ -213,6 +234,11 @@ public interface BacklogTracer {
      * Dumps tracing data for the given route id / node id as JSon
      */
     String dumpTracedMessagesAsJSon(String nodeId);
+
+    /**
+     * Dumps latest completed exchange message history as JSon
+     */
+    String dumpLatestMessageHistoryAsJSon();
 
     /**
      * Clears the backlog of traced messages.

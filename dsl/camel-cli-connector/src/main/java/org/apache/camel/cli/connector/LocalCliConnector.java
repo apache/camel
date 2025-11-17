@@ -117,6 +117,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File outputFile;
     private File traceFile;
     private long traceFilePos;   // keep track of trace offset
+    private File messageHistoryFile;
     private File debugFile;
     private File receiveFile;
     private long receiveFilePos; // keep track of receive offset
@@ -188,6 +189,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             actionFile = createLockFile(lockFile.getName() + "-action.json");
             outputFile = createLockFile(lockFile.getName() + "-output.json");
             traceFile = createLockFile(lockFile.getName() + "-trace.json");
+            messageHistoryFile = createLockFile(lockFile.getName() + "-history.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
             executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
@@ -1286,6 +1288,21 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     debugFile, e.getMessage(), e);
         }
         try {
+            DevConsole dc13b = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                    .resolveById("message-history");
+            if (dc13b != null) {
+                JsonObject json = (JsonObject) dc13b.call(DevConsole.MediaType.JSON);
+                // store replays in a special file
+                LOG.trace("Updating message-history file: {}", messageHistoryFile);
+                String data = json.toJson() + System.lineSeparator();
+                IOHelper.writeText(data, messageHistoryFile);
+            }
+        } catch (Exception e) {
+            // ignore
+            LOG.trace("Error updating message-history file: {} due to: {}. This exception is ignored.",
+                    messageHistoryFile, e.getMessage(), e);
+        }
+        try {
             DevConsole dc14 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                     .resolveById("receive");
             if (dc14 != null) {
@@ -1443,6 +1460,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (traceFile != null) {
             FileUtil.deleteFile(traceFile);
+        }
+        if (messageHistoryFile != null) {
+            FileUtil.deleteFile(messageHistoryFile);
         }
         if (debugFile != null) {
             FileUtil.deleteFile(debugFile);
