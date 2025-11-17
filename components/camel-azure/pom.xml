@@ -46,6 +46,7 @@
 
     <modules>
         <module>camel-azure-eventhubs</module>
+        <module>camel-azure-eventgrid</module>
         <module>camel-azure-storage-blob</module>
         <module>camel-azure-storage-datalake</module>
         <module>camel-azure-storage-queue</module>
