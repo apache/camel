@@ -253,7 +253,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["globals", "npm:13.20.0"],\
             ["ignore", "npm:5.2.0"],\
             ["import-fresh", "npm:3.3.0"],\
-            ["js-yaml", "npm:4.1.0"],\
+            ["js-yaml", "npm:4.1.1"],\
             ["minimatch", "npm:3.1.2"],\
             ["strip-json-comments", "npm:3.1.1"]\
           ],\
@@ -269,7 +269,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["globals", "npm:13.20.0"],\
             ["ignore", "npm:5.2.0"],\
             ["import-fresh", "npm:3.3.0"],\
-            ["js-yaml", "npm:4.1.0"],\
+            ["js-yaml", "npm:4.1.1"],\
             ["minimatch", "npm:3.1.2"],\
             ["strip-json-comments", "npm:3.1.1"]\
           ],\
@@ -285,7 +285,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["globals", "npm:14.0.0"],\
             ["ignore", "npm:5.2.0"],\
             ["import-fresh", "npm:3.3.0"],\
-            ["js-yaml", "npm:4.1.0"],\
+            ["js-yaml", "npm:4.1.1"],\
             ["minimatch", "npm:3.1.2"],\
             ["strip-json-comments", "npm:3.1.1"]\
           ],\
@@ -2334,7 +2334,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["imurmurhash", "npm:0.1.4"],\
             ["is-glob", "npm:4.0.3"],\
             ["is-path-inside", "npm:3.0.3"],\
-            ["js-yaml", "npm:4.1.0"],\
+            ["js-yaml", "npm:4.1.1"],\
             ["json-stable-stringify-without-jsonify", "npm:1.0.1"],\
             ["levn", "npm:0.4.1"],\
             ["lodash.merge", "npm:4.6.2"],\
@@ -2380,7 +2380,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["imurmurhash", "npm:0.1.4"],\
             ["is-glob", "npm:4.0.3"],\
             ["is-path-inside", "npm:3.0.3"],\
-            ["js-yaml", "npm:4.1.0"],\
+            ["js-yaml", "npm:4.1.1"],\
             ["json-stable-stringify-without-jsonify", "npm:1.0.1"],\
             ["levn", "npm:0.4.1"],\
             ["lodash.merge", "npm:4.6.2"],\
@@ -4658,10 +4658,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["js-yaml", [\
-        ["npm:4.1.0", {\
-          "packageLocation": "./.yarn/cache/js-yaml-npm-4.1.0-3606f32312-c7830dfd45.zip/node_modules/js-yaml/",\
+        ["npm:4.1.1", {\
+          "packageLocation": "./.yarn/cache/js-yaml-npm-4.1.1-86ec786790-ea2339c693.zip/node_modules/js-yaml/",\
           "packageDependencies": [\
-            ["js-yaml", "npm:4.1.0"],\
+            ["js-yaml", "npm:4.1.1"],\
             ["argparse", "npm:2.0.1"]\
           ],\
           "linkType": "HARD"\
