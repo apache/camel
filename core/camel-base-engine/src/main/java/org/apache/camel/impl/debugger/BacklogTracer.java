@@ -17,6 +17,8 @@
 package org.apache.camel.impl.debugger;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
@@ -43,7 +45,7 @@ import org.apache.camel.util.json.Jsoner;
  * This tracer allows to store message tracers per node in the Camel routes. The tracers is stored in a backlog queue
  * (FIFO based) which allows to pull the traced messages on demand.
  */
-public final class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.BacklogTracer {
+public class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.BacklogTracer {
 
     // limit the tracer to a thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 1000;
@@ -56,6 +58,9 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     // how many of the last messages to keep in the backlog at total
     private int backlogSize = 100;
+    // use tracer to capture additional information for capturing latest completed exchange message-history
+    private final Queue<BacklogTracerEventMessage> provisionalHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
+    private final Queue<BacklogTracerEventMessage> completeHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     private boolean removeOnDump = true;
     private int bodyMaxChars = 32 * 1024;
     private boolean bodyIncludeStreams;
@@ -71,7 +76,7 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     private String traceFilter;
     private Predicate predicate;
 
-    private BacklogTracer(CamelContext camelContext) {
+    BacklogTracer(CamelContext camelContext) {
         this.camelContext = camelContext;
         this.simple = camelContext.resolveLanguage("simple");
     }
@@ -94,7 +99,10 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
      * @return            <tt>true</tt> to trace, <tt>false</tt> to skip tracing
      */
     public boolean shouldTrace(NamedNode definition, Exchange exchange) {
-        if (!enabled) {
+        // special in standby mode we allow using tracer to capture latest tracing data for
+        // enriched message history
+        boolean history = (enabled || standby) && camelContext.isMessageHistory();
+        if (!history && !enabled) {
             return false;
         }
 
@@ -131,6 +139,29 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     }
 
     public void traceEvent(DefaultBacklogTracerEventMessage event) {
+        // special in standby mode we allow using tracer to capture latest tracing data for
+        // enriched message history
+        boolean history = (enabled || standby) && camelContext.isMessageHistory();
+        if (!history && !enabled) {
+            return;
+        }
+
+        // handle capturing events for last full completed exchange (aka replay)
+        if (camelContext.isMessageHistory()) {
+            String tid = null;
+            var head = provisionalHistoryQueue.peek();
+            if (head != null) {
+                tid = head.getExchangeId();
+            }
+            if (tid == null || tid.equals(event.getExchangeId())) {
+                provisionalHistoryQueue.add(event);
+                if (event.isLast()) {
+                    completeHistoryQueue.clear();
+                    completeHistoryQueue.addAll(provisionalHistoryQueue);
+                    provisionalHistoryQueue.clear();
+                }
+            }
+        }
         if (!enabled) {
             return;
         }
@@ -340,6 +371,15 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
         traceCounter.set(0);
     }
 
+    @Override
+    public Collection<BacklogTracerEventMessage> getAllTracedMessages() {
+        return Collections.unmodifiableCollection(queue);
+    }
+
+    public Collection<BacklogTracerEventMessage> getLatestMessageHistory() {
+        return Collections.unmodifiableCollection(completeHistoryQueue);
+    }
+
     public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeId) {
         List<BacklogTracerEventMessage> answer = new ArrayList<>();
         if (nodeId != null) {
@@ -350,7 +390,7 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
             }
         }
 
-        if (removeOnDump) {
+        if (isRemoveOnDump()) {
             queue.removeAll(answer);
         }
 
@@ -360,13 +400,31 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     @Override
     public String dumpTracedMessagesAsXml(String nodeId) {
         List<BacklogTracerEventMessage> events = dumpTracedMessages(nodeId);
+        return wrapAroundRootTag(events);
+    }
 
+    @Override
+    public String dumpLatestMessageHistoryAsXml() {
+        List<BacklogTracerEventMessage> events = dumpLatestMessageHistory();
         return wrapAroundRootTag(events);
     }
 
     @Override
     public String dumpTracedMessagesAsJSon(String nodeId) {
         List<BacklogTracerEventMessage> events = dumpTracedMessages(nodeId);
+
+        JsonObject root = new JsonObject();
+        JsonArray arr = new JsonArray();
+        root.put("traces", arr);
+        for (BacklogTracerEventMessage event : events) {
+            arr.add(event.asJSon());
+        }
+        return Jsoner.prettyPrint(root.toJson());
+    }
+
+    @Override
+    public String dumpLatestMessageHistoryAsJSon() {
+        List<BacklogTracerEventMessage> events = dumpLatestMessageHistory();
 
         JsonObject root = new JsonObject();
         JsonArray arr = new JsonArray();
@@ -387,9 +445,17 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     }
 
     @Override
+    public List<BacklogTracerEventMessage> dumpLatestMessageHistory() {
+        List<BacklogTracerEventMessage> answer = new ArrayList<>(completeHistoryQueue);
+        if (isRemoveOnDump()) {
+            completeHistoryQueue.clear();
+        }
+        return answer;
+    }
+
+    @Override
     public String dumpAllTracedMessagesAsXml() {
         List<BacklogTracerEventMessage> events = dumpAllTracedMessages();
-
         return wrapAroundRootTag(events);
     }
 
@@ -419,6 +485,8 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     @Override
     public void clear() {
         queue.clear();
+        completeHistoryQueue.clear();
+        provisionalHistoryQueue.clear();
     }
 
     public long incrementTraceCounter() {
@@ -427,7 +495,7 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
 
     @Override
     protected void doStop() throws Exception {
-        queue.clear();
+        clear();
     }
 
 }

@@ -120,11 +120,20 @@ public interface ManagedBacklogTracerMBean {
     @ManagedOperation(description = "Dumps all the traced messages")
     List<BacklogTracerEventMessage> dumpAllTracedMessages();
 
+    @ManagedOperation(description = "Dumps latest completed exchange message history")
+    List<BacklogTracerEventMessage> dumpLatestMessageHistory();
+
     @ManagedOperation(description = "Dumps all the traced messages in XML format")
     String dumpAllTracedMessagesAsXml();
 
     @ManagedOperation(description = "Dumps all the traced messages in JSon format")
     String dumpAllTracedMessagesAsJSon();
+
+    @ManagedOperation(description = "Dumps latest completed exchange message history in XML format")
+    String dumpLatestMessageHistoryAsXml();
+
+    @ManagedOperation(description = "Dumps latest completed exchange message history in JSon format")
+    String dumpLatestMessageHistoryAsJSon();
 
     @ManagedOperation(description = "Clears the backlog")
     void clear();

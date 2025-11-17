@@ -202,6 +202,11 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     }
 
     @Override
+    public List<BacklogTracerEventMessage> dumpLatestMessageHistory() {
+        return backlogTracer.dumpLatestMessageHistory();
+    }
+
+    @Override
     public String dumpTracedMessagesAsXml(String nodeOrRouteId) {
         return backlogTracer.dumpTracedMessagesAsXml(nodeOrRouteId);
     }
@@ -219,6 +224,16 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     @Override
     public String dumpAllTracedMessagesAsJSon() {
         return backlogTracer.dumpAllTracedMessagesAsJSon();
+    }
+
+    @Override
+    public String dumpLatestMessageHistoryAsXml() {
+        return backlogTracer.dumpLatestMessageHistoryAsXml();
+    }
+
+    @Override
+    public String dumpLatestMessageHistoryAsJSon() {
+        return backlogTracer.dumpLatestMessageHistoryAsJSon();
     }
 
     @Override

@@ -58,6 +58,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -884,7 +885,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 (nId, message) -> new DefaultBacklogTracerEventMessage(
                         camelContext,
                         false, false, message.getUid(), message.getTimestamp(), message.getLocation(), message.getRouteId(),
-                        message.getToNode(),
+                        message.getToNode(), message.getToNodeShortName(), message.getToNodeLabel(),
                         message.getExchangeId(),
                         false, false,
                         dumpAsJSonObject(suspendedExchange.getExchange())));
@@ -921,6 +922,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             // store a copy of the message so we can see that from the debugger
             long timestamp = System.currentTimeMillis();
             String toNode = definition.getId();
+            String toNodeShortName = definition.getShortName();
+            // avoid label is too large
+            String toNodeLabel = StringHelper.limitLength(definition.getLabel(), 50);
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
             long uid = debugCounter.incrementAndGet();
@@ -930,7 +934,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            first, false, uid, timestamp, source, routeId, toNode, exchangeId, false, false, data);
+                            first, false, uid, timestamp, source, routeId, toNode, toNodeShortName, toNodeLabel, exchangeId,
+                            false, false, data);
             suspendedBreakpointMessages.put(nodeId, msg);
 
             // suspend at this breakpoint
@@ -1003,6 +1008,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             // store a copy of the message so we can see that from the debugger
             long timestamp = System.currentTimeMillis();
             String toNode = definition.getId();
+            String toNodeShortName = definition.getShortName();
+            // avoid label is too large
+            String toNodeLabel = StringHelper.limitLength(definition.getLabel(), 50);
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
             long uid = debugCounter.incrementAndGet();
@@ -1011,7 +1019,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            false, false, uid, timestamp, source, routeId, toNode, exchangeId, false, false, data);
+                            false, false, uid, timestamp, source, routeId, toNode, toNodeShortName, toNodeLabel, exchangeId,
+                            false, false, data);
             suspendedBreakpointMessages.put(toNode, msg);
 
             // suspend at this breakpoint
@@ -1114,7 +1123,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            false, true, uid, timestamp, source, routeId, toNode, exchangeId, false, false, data);
+                            false, true, uid, timestamp, source, routeId, toNode, null, null, exchangeId, false, false, data);
             // we want to capture if there was an exception
             if (cause != null) {
                 msg.setException(cause);

@@ -45,6 +45,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String location;
     private final String routeId;
     private final String toNode;
+    private final String toNodeShortName;
+    private final String toNodeLabel;
     private final String exchangeId;
     private final String threadName;
     private String endpointUri;
@@ -65,8 +67,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private boolean done;
 
     public DefaultBacklogTracerEventMessage(CamelContext camelContext, boolean first, boolean last, long uid, long timestamp,
-                                            String location, String routeId, String toNode, String exchangeId,
-                                            boolean rest, boolean template, JsonObject data) {
+                                            String location, String routeId, String toNode, String toNodeShortName,
+                                            String toNodeLabel,
+                                            String exchangeId, boolean rest, boolean template, JsonObject data) {
         this.camelContext = camelContext;
         this.watch = new StopWatch();
         this.first = first;
@@ -76,6 +79,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.location = location;
         this.routeId = routeId;
         this.toNode = toNode;
+        this.toNodeShortName = toNodeShortName;
+        this.toNodeLabel = toNodeLabel;
         this.exchangeId = exchangeId;
         this.rest = rest;
         this.template = template;
@@ -134,6 +139,16 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public String getToNode() {
         return toNode;
+    }
+
+    @Override
+    public String getToNodeShortName() {
+        return toNodeShortName;
+    }
+
+    @Override
+    public String getToNodeLabel() {
+        return toNodeLabel;
     }
 
     @Override
@@ -502,6 +517,12 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         }
         if (toNode != null) {
             jo.put("nodeId", toNode);
+        }
+        if (toNodeShortName != null) {
+            jo.put("nodeShortName", toNodeShortName);
+        }
+        if (toNodeLabel != null) {
+            jo.put("nodeLabel", toNodeLabel);
         }
         if (exchangeId != null) {
             jo.put("exchangeId", exchangeId);
