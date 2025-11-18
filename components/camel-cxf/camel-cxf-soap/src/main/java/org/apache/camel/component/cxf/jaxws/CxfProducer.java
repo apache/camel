@@ -101,7 +101,8 @@ public class CxfProducer extends DefaultAsyncProducer {
     public boolean process(Exchange camelExchange, AsyncCallback callback) {
         LOG.trace("Process exchange: {} in an async way.", camelExchange);
 
-        try {
+        // Get a Contexts instance using try-with-resources to ensure that contexts are released when no longer needed
+        try (var ignored = client.getContexts()) {
             // create CXF exchange
             ExchangeImpl cxfExchange = new ExchangeImpl();
             // set the Bus on the exchange in case the CXF interceptor need to access it from exchange
@@ -152,7 +153,8 @@ public class CxfProducer extends DefaultAsyncProducer {
         invocationContext.put(CxfConstants.RESPONSE_CONTEXT, responseContext);
         invocationContext.put(CxfConstants.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
 
-        try {
+        // Get a Contexts instance using try-with-resources to ensure that contexts are released when no longer needed
+        try (var ignored = client.getContexts()) {
             // send the CXF request
             client.invoke(boi, getParams(endpoint, camelExchange),
                     invocationContext, cxfExchange);
