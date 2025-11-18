@@ -30,6 +30,23 @@ Note: It requires access to the internet, in case of using a proxy, please ensur
 If Camel JBang is not working with your current configuration,
 please look to https://www.jbang.dev/documentation/jbang/latest/configuration.html#proxy-configuration[Proxy configuration in JBang documentation].
 
+=== Installing a specific Camel JBang version
+
+By default, Camel JBang installs the latest release, which may not be the desired version.
+
+To use a specific version then you need to provide these when installing from jbang such as 4.14.1:
+
+[source,bash]
+----
+jbang app install --force --fresh -Dcamel.jbang.version=4.14.1 -Dcamel-kamelets.version=4.14.1 camel@apache/camel
+----
+
+TIP: You can use `--force` and `--fresh` to tell JBang to force installing the version and refresh downloading,
+so no previous downloaded cache etc. may cause a problem.
+
+IMPORTANT: From Camel 4.17 onwards then Kamelets are optional, and only downloaded on demand. You define the version
+of kamelets via `--kamelets-version` parameter to `camel run` or can pre-configure the version via `camel config set kamelets-version=4.17.0`.
+
 == Container Image
 
 There is also a container image available in https://hub.docker.com/r/apache/camel-jbang/[Dockerhub]
