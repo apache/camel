@@ -127,17 +127,7 @@ If you are an Apache Camel committer, then you may also clone the https://gitbox
 
 To build the project, you need http://maven.apache.org/download.html[Apache Maven].
 
-- To build Camel 3, you need Java 11 and Apache Maven version 3.6.x or newer.
-- To build Camel 4, you need Java 17 Apache Maven version 3.9.x or newer.
-
-=== Building Camel 3
-
-The following command will do a fast build.
-
-[source,bash]
-----
-mvn clean install -Pfastinstall
-----
+- To build Camel 4, you need Java 17 Apache Maven version 3.9.6 or higher.
 
 === Building Camel 4
 
@@ -160,7 +150,7 @@ On Camel 4, Virtual Threads can only be enabled by compiling with JDK 21 or grea
 
 You can find more details about building Camel on the xref:contributing:building.adoc[Building Camel] page.
 
-**Tips**: if you aren’t able to build a component after adding some new URI parameters due to `Empty doc for option: [OPTION], parent options: <null>` please make sure that you either added properly javadoc for get/set method or description in `@UriPath` annotation.
+**Tips**: if you aren't able to build a component after adding some new URI parameters due to `Empty doc for option: [OPTION], parent options: <null>` please make sure that you either added properly javadoc for get/set method or description in `@UriPath` annotation.
 
 == Testing the changes
 

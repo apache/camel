@@ -173,7 +173,8 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>3.9.0</version>
+                                    <!-- required maven >= 3.9.6 -->
+                                    <version>[3.9.6,)</version>
                                 </requireMavenVersion>
                                 <externalRules>
                                     <location>${maven.multiModuleProjectDirectory}/tooling/enforcer-rules/src/main/resources/camel-banned-dependencies.xml</location>
