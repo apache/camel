@@ -343,7 +343,7 @@ Exchange exchange = template.send("direct://proxy", new Processor() {
         // set a customer header
         inMessage.setHeader("key", "value");
         // set up the accepted content type
-        inMessage.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+        inMessage.setHeader(CxfConstants.ACCEPT_CONTENT_TYPE, "application/json");
         // set the parameters, if you just have one parameter,
         // camel will put this object into an Object[] itself
         inMessage.setBody("123");

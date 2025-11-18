@@ -481,22 +481,10 @@ public class XmlConverter {
 
         XMLReader xmlReader = null;
         try {
-            // use the SAXPaserFactory which is set from exchange
-            if (exchange != null) {
-                SAXParserFactory sfactory = exchange.getProperty(Exchange.SAXPARSER_FACTORY, SAXParserFactory.class);
-                if (sfactory != null) {
-                    if (!sfactory.isNamespaceAware()) {
-                        sfactory.setNamespaceAware(true);
-                    }
-                    xmlReader = sfactory.newSAXParser().getXMLReader();
-                }
+            if (xmlReaderPool == null) {
+                xmlReaderPool = new XMLReaderPool(createSAXParserFactory());
             }
-            if (xmlReader == null) {
-                if (xmlReaderPool == null) {
-                    xmlReaderPool = new XMLReaderPool(createSAXParserFactory());
-                }
-                xmlReader = xmlReaderPool.createXMLReader();
-            }
+            xmlReader = xmlReaderPool.createXMLReader();
         } catch (Exception ex) {
             LOG.warn("Cannot create the SAXParser XMLReader, due to {}", ex.getMessage(), ex);
         }

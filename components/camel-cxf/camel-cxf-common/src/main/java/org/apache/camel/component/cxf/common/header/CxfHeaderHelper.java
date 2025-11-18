@@ -50,7 +50,6 @@ public final class CxfHeaderHelper {
         defineMapping(Exchange.CONTENT_TYPE, Message.CONTENT_TYPE);
         defineMapping(Exchange.HTTP_CHARACTER_ENCODING, Message.ENCODING);
         defineMapping(Exchange.HTTP_QUERY, Message.QUERY_STRING);
-        defineMapping(Exchange.ACCEPT_CONTENT_TYPE, Message.ACCEPT_CONTENT_TYPE);
         defineMapping(Exchange.HTTP_RESPONSE_CODE, Message.RESPONSE_CODE);
     }
 

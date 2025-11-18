@@ -95,10 +95,6 @@ public class FtpPollEnrichBridgeErrorHandlerIT extends BaseServerTestSupport {
                 oldExchange.getIn().setBody(null);
                 oldExchange.setOut(null);
             }
-            // in case of exception we are bridged then we want to perform
-            // redeliveries etc.
-            // so we need to turn of exhausted redelivery
-            oldExchange.removeProperties(Exchange.REDELIVERY_EXHAUSTED);
             return oldExchange;
         }
     }

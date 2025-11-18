@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.soap;
 public final class SoapConstants {
 
     public static String SOAP_METHOD_NAME = "CamelSoapMethodName";
+    public static String SOAP_ACTION = "CamelSoapAction";
 
     private SoapConstants() {
     }
