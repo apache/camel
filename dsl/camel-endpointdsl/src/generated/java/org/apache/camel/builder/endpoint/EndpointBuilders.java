@@ -369,6 +369,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.WasmEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.WatsonDiscoveryEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.WatsonLanguageEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.WatsonTextToSpeechEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.WeatherEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.WeaviateVectorDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Web3jEndpointBuilderFactory,

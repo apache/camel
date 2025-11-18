@@ -2198,6 +2198,19 @@ public interface ComponentsBuilderFactory {
         return IbmWatsonLanguageComponentBuilderFactory.ibmWatsonLanguage();
     }
     /**
+     * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
+     * Convert text to natural-sounding speech using IBM Watson Text to Speech
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-text-to-speech
+     * 
+     * @return the dsl builder
+     */
+    static IbmWatsonTextToSpeechComponentBuilderFactory.IbmWatsonTextToSpeechComponentBuilder ibmWatsonTextToSpeech() {
+        return IbmWatsonTextToSpeechComponentBuilderFactory.ibmWatsonTextToSpeech();
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
