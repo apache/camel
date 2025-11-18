@@ -1,0 +1,369 @@
+= IBM Watson Text to Speech Component
+:doctitle: IBM Watson Text to Speech
+:shortname: ibm-watson-text-to-speech
+:artifactid: camel-ibm-watson-text-to-speech
+:description: Convert text to natural-sounding speech using IBM Watson Text to Speech
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: IBM
+:camel-spring-boot-name: ibm-watson-text-to-speech
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The IBM Watson Text to Speech component allows you to convert written text into natural-sounding speech using
+https://cloud.ibm.com/catalog/services/text-to-speech[IBM Watson Text to Speech service].
+
+Prerequisites
+
+You must have a valid IBM Cloud account and an instance of the Watson Text to Speech service.
+More information is available at https://cloud.ibm.com/catalog/services/text-to-speech[IBM Watson Text to Speech].
+
+== URI Format
+
+------------------------------
+ibm-watson-text-to-speech:label[?options]
+------------------------------
+
+You can append query options to the URI in the following format:
+
+`?option=value&option2=value&...`
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+Required Watson Text to Speech component options
+
+You must provide the `apiKey` to access IBM Watson Text to Speech.
+Optionally, you can specify a custom `serviceUrl` if you're using a dedicated or private instance.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+=== Watson Text to Speech Producer operations
+
+The IBM Watson Text to Speech component provides the following operations:
+
+- synthesize - Convert text to speech audio
+- listVoices - Get available voices for synthesis
+- getVoice - Get information about a specific voice
+- listCustomModels - List custom voice models
+- getCustomModel - Get information about a custom voice model
+- getPronunciation - Get pronunciation for a specific word
+
+If you don't specify an operation explicitly, you must set it via the `operation` parameter.
+
+== Examples
+
+=== Synthesize Text to Speech
+
+Convert text to speech using the default voice:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(WatsonTextToSpeechConstants.TEXT, constant("Hello, welcome to IBM Watson Text to Speech!"))
+  .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=synthesize")
+  .to("file:/var/audio?fileName=output.wav");
+--------------------------------------------------------------------------------
+
+This will synthesize the text and produce an audio WAV file.
+
+=== Synthesize with Custom Voice
+
+Convert text to speech using a specific voice:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .setBody(constant("Bonjour, bienvenue sur IBM Watson!"))
+  .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=synthesize&voice=fr-FR_NicolasV3Voice&accept=audio/mp3")
+  .to("file:/var/audio?fileName=output.mp3");
+--------------------------------------------------------------------------------
+
+This will synthesize French text using the Nicolas voice and produce an MP3 file.
+
+=== Available Voices
+
+Some commonly used voices include:
+
+- English (US): en-US_AllisonV3Voice, en-US_MichaelV3Voice, en-US_LisaV3Voice
+- English (UK): en-GB_KateV3Voice, en-GB_CharlotteV3Voice
+- Spanish (ES): es-ES_EnriqueV3Voice, es-ES_LauraV3Voice
+- French (FR): fr-FR_NicolasV3Voice, fr-FR_ReneeV3Voice
+- German (DE): de-DE_BirgitV3Voice, de-DE_DieterV3Voice
+- Italian (IT): it-IT_FrancescaV3Voice
+- Japanese (JP): ja-JP_EmiV3Voice
+- Portuguese (BR): pt-BR_IsabelaV3Voice
+
+=== List Available Voices
+
+Get a list of all available voices:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listVoices")
+  .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=listVoices")
+  .process(exchange -> {
+      List<Voice> voices = exchange.getMessage().getBody(List.class);
+      voices.forEach(voice -> {
+          System.out.println("Voice: " + voice.getName() +
+                           " - Language: " + voice.getLanguage() +
+                           " - Description: " + voice.getDescription());
+      });
+  });
+--------------------------------------------------------------------------------
+
+=== Get Voice Information
+
+Get detailed information about a specific voice:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getVoice")
+  .setHeader(WatsonTextToSpeechConstants.VOICE_NAME, constant("en-US_AllisonV3Voice"))
+  .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=getVoice")
+  .process(exchange -> {
+      Voice voice = exchange.getMessage().getBody(Voice.class);
+      System.out.println("Voice details: " + voice);
+  });
+--------------------------------------------------------------------------------
+
+=== Audio Format Options
+
+The component supports various audio formats via the `accept` parameter:
+
+- audio/wav (default) - WAV format, uncompressed
+- audio/mp3 - MP3 format, compressed
+- audio/ogg - Ogg Vorbis format
+- audio/flac - FLAC format, lossless compression
+- audio/webm - WebM format
+
+Example with MP3 output:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:mp3")
+  .setBody(constant("This will be an MP3 file"))
+  .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=synthesize&accept=audio/mp3")
+  .to("file:/var/audio?fileName=speech.mp3");
+--------------------------------------------------------------------------------
+
+=== Using Custom Voice Models
+
+If you have created a custom voice model, you can use it for synthesis:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:customVoice")
+  .setBody(constant("Text to synthesize with custom voice"))
+  .setHeader(WatsonTextToSpeechConstants.CUSTOMIZATION_ID, constant("your-customization-guid"))
+  .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=synthesize")
+  .to("file:/var/audio");
+--------------------------------------------------------------------------------
+
+=== List Custom Models
+
+List all your custom voice models:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listCustomModels")
+  .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=listCustomModels")
+  .process(exchange -> {
+      List<CustomModel> models = exchange.getMessage().getBody(List.class);
+      models.forEach(model -> {
+          System.out.println("Model: " + model.getCustomizationId() +
+                           " - Name: " + model.getName() +
+                           " - Language: " + model.getLanguage());
+      });
+  });
+--------------------------------------------------------------------------------
+
+=== Get Pronunciation
+
+Get the pronunciation for a specific word:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:pronunciation")
+  .setHeader(WatsonTextToSpeechConstants.WORD, constant("synthesize"))
+  .setHeader(WatsonTextToSpeechConstants.FORMAT, constant("ipa"))
+  .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&operation=getPronunciation")
+  .process(exchange -> {
+      Pronunciation pronunciation = exchange.getMessage().getBody(Pronunciation.class);
+      System.out.println("IPA Pronunciation: " + pronunciation.getPronunciation());
+  });
+--------------------------------------------------------------------------------
+
+=== Watson Text to Speech Authentication
+
+IBM Watson Text to Speech uses IBM Cloud IAM (Identity and Access Management) for authentication.
+You need to provide your IBM Cloud API key.
+
+You can create API keys in the IBM Cloud console:
+1. Go to https://cloud.ibm.com/iam/apikeys
+2. Click "Create an IBM Cloud API key"
+3. Copy the API key and use it in your Camel routes
+
+For more information about authentication, see the
+https://cloud.ibm.com/docs/text-to-speech?topic=text-to-speech-getting-started[IBM Watson TTS documentation].
+
+=== Watson Text to Speech Endpoints
+
+If you have a dedicated or regional instance, you can specify a custom service URL:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .setBody(constant("Hello World"))
+  .to("ibm-watson-text-to-speech:myTTS?apiKey=RAW(yourApiKey)&serviceUrl=https://api.eu-gb.text-to-speech.watson.cloud.ibm.com&operation=synthesize")
+  .to("file:/var/audio");
+--------------------------------------------------------------------------------
+
+Common regional endpoints:
+- Dallas: https://api.us-south.text-to-speech.watson.cloud.ibm.com
+- Washington DC: https://api.us-east.text-to-speech.watson.cloud.ibm.com
+- Frankfurt: https://api.eu-de.text-to-speech.watson.cloud.ibm.com
+- London: https://api.eu-gb.text-to-speech.watson.cloud.ibm.com
+- Tokyo: https://api.jp-tok.text-to-speech.watson.cloud.ibm.com
+- Sydney: https://api.au-syd.text-to-speech.watson.cloud.ibm.com
+
+== Integration Tests
+
+This component includes comprehensive integration tests that validate the functionality against the actual IBM Watson Text to Speech service. These tests are disabled by default to prevent accidental API calls during regular builds.
+
+=== Prerequisites for Running Integration Tests
+
+1. **IBM Cloud Account**: You need a valid IBM Cloud account
+2. **Watson Text to Speech Service**: Create a Watson Text to Speech service instance in IBM Cloud
+3. **API Credentials**: Obtain your API key and service URL from the IBM Cloud console
+
+To get your credentials:
+
+1. Log in to https://cloud.ibm.com/[IBM Cloud Console]
+2. Navigate to your Text to Speech service instance
+3. Go to "Manage" → "Credentials"
+4. Copy your **API Key** and **Service URL**
+
+=== Running Integration Tests
+
+Integration tests are executed with the `verify` goal and require system properties:
+
+[source,bash]
+--------------------------------------------------------------------------------
+mvn verify \
+  -Dcamel.ibm.watson.tts.apiKey=YOUR_API_KEY \
+  -Dcamel.ibm.watson.tts.serviceUrl=YOUR_SERVICE_URL
+--------------------------------------------------------------------------------
+
+Alternatively, using environment variables:
+
+[source,bash]
+--------------------------------------------------------------------------------
+export CAMEL_IBM_WATSON_TTS_API_KEY=YOUR_API_KEY
+export CAMEL_IBM_WATSON_TTS_SERVICE_URL=YOUR_SERVICE_URL
+
+mvn verify \
+  -Dcamel.ibm.watson.tts.apiKey=${CAMEL_IBM_WATSON_TTS_API_KEY} \
+  -Dcamel.ibm.watson.tts.serviceUrl=${CAMEL_IBM_WATSON_TTS_SERVICE_URL}
+--------------------------------------------------------------------------------
+
+=== Integration Test Coverage
+
+The integration tests cover all major operations:
+
+**Synthesis Operations:**
+
+- Basic text-to-speech with default voice
+- Text-to-speech with custom voices (Allison, Michael, Kate)
+- Multiple audio formats (WAV, MP3)
+- Multiple languages (English, Spanish, French, German)
+- Longer text passages
+
+**Voice Operations:**
+
+- Listing all available voices
+- Getting detailed information about specific voices
+
+**Pronunciation Operations:**
+
+- Getting IPA pronunciation for words
+
+**File Output Operations:**
+
+- Saving synthesized speech to MP3 files
+- Saving synthesized speech to WAV files
+- Creating audio files with different voices
+- Creating multilingual audio files
+
+=== Generated Audio Files
+
+When integration tests run successfully, audio files are created in `target/audio-output/`:
+
+- `test-output.mp3` - Sample MP3 file
+- `test-output.wav` - Sample WAV file
+- `michael.mp3`, `allison.mp3`, `kate.mp3` - Different voice samples
+- `english.mp3`, `spanish.mp3`, `french.mp3`, `german.mp3` - Multilingual samples
+
+These files can be played with any media player to verify audio quality and compare different voices and languages.
+
+=== Important Notes
+
+- Integration tests make **real API calls** to IBM Watson and may incur charges
+- Tests are automatically skipped during regular `mvn test` execution
+- Audio files in `target/` are cleaned with `mvn clean`
+- File format validation checks MP3 ID3 tags and WAV RIFF headers
+- All tests include proper resource cleanup
+
+=== Example Output
+
+[source]
+--------------------------------------------------------------------------------
+[INFO] Running org.apache.camel.component.ibm.watson.tts.integration.WatsonTextToSpeechIT
+Created output directory: target/audio-output
+Successfully synthesized text with default voice. Bytes read: 44032
+Found 28 voices
+  Voice: en-US_MichaelV3Voice - Language: en-US - Gender: male
+  Voice: en-US_AllisonV3Voice - Language: en-US - Gender: female
+Successfully saved MP3 file: target/audio-output/test-output.mp3 (size: 51234 bytes)
+Successfully created audio files in 4 different languages
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
+--------------------------------------------------------------------------------
+
+== Dependencies
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ibm-watson-text-to-speech</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------
+
+where `x.x.x` is the version number of Camel.
+
+include::spring-boot:partial$starter.adoc[]
