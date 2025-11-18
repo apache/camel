@@ -925,19 +925,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["brace-expansion", [\
-        ["npm:1.1.12", {\
-          "packageLocation": "./.yarn/cache/brace-expansion-npm-1.1.12-329e9ad7a1-12cb6d6310.zip/node_modules/brace-expansion/",\
+        ["npm:2.0.2", {\
+          "packageLocation": "./.yarn/cache/brace-expansion-npm-2.0.2-bc7f134bbc-01dff195e3.zip/node_modules/brace-expansion/",\
           "packageDependencies": [\
-            ["brace-expansion", "npm:1.1.12"],\
-            ["balanced-match", "npm:1.0.2"],\
-            ["concat-map", "npm:0.0.1"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:2.0.1", {\
-          "packageLocation": "./.yarn/cache/brace-expansion-npm-2.0.1-17aa2616f9-a61e7cd2e8.zip/node_modules/brace-expansion/",\
-          "packageDependencies": [\
-            ["brace-expansion", "npm:2.0.1"],\
+            ["brace-expansion", "npm:2.0.2"],\
             ["balanced-match", "npm:1.0.2"]\
           ],\
           "linkType": "HARD"\
@@ -1155,15 +1146,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/color-support-npm-1.1.3-3be5c53455-9b73568176.zip/node_modules/color-support/",\
           "packageDependencies": [\
             ["color-support", "npm:1.1.3"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["concat-map", [\
-        ["npm:0.0.1", {\
-          "packageLocation": "./.yarn/cache/concat-map-npm-0.0.1-85a921b7ee-902a9f5d89.zip/node_modules/concat-map/",\
-          "packageDependencies": [\
-            ["concat-map", "npm:0.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -4075,7 +4057,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/minimatch-npm-3.1.2-9405269906-c154e56640.zip/node_modules/minimatch/",\
           "packageDependencies": [\
             ["minimatch", "npm:3.1.2"],\
-            ["brace-expansion", "npm:1.1.12"]\
+            ["brace-expansion", "npm:2.0.2"]\
           ],\
           "linkType": "HARD"\
         }],\
@@ -4083,7 +4065,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/minimatch-npm-5.1.0-34f6240621-15ce53d31a.zip/node_modules/minimatch/",\
           "packageDependencies": [\
             ["minimatch", "npm:5.1.0"],\
-            ["brace-expansion", "npm:2.0.1"]\
+            ["brace-expansion", "npm:2.0.2"]\
           ],\
           "linkType": "HARD"\
         }]\
