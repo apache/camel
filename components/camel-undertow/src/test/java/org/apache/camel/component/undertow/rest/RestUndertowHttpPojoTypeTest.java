@@ -69,7 +69,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
     public void testUndertowPojoTypeGetUsers() throws Exception {
         Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users", exchange -> {
             exchange.getIn().setHeader(Exchange.HTTP_METHOD, "GET");
-            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
         });
 
         assertNotNull(outExchange);
@@ -87,7 +87,6 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
     public void testUndertowPojoTypePutUser() {
         Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/1", exchange -> {
             exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
             UserPojo user = new UserPojo();
@@ -109,7 +108,6 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
         Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/1", exchange -> {
             exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
             CountryPojo country = new CountryPojo();
@@ -144,7 +142,6 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
         Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users", exchange -> {
             exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
             String body = mapper.writeValueAsString(users);
@@ -170,7 +167,6 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
         Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users", exchange -> {
             exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
             UserPojo user = new UserPojo();
@@ -205,7 +201,6 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
         Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/list", exchange -> {
             exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
             String body = mapper.writeValueAsString(users);
@@ -231,7 +226,6 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
         Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/list", exchange -> {
             exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-            exchange.getIn().setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
 
             UserPojo user = new UserPojo();
@@ -282,7 +276,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
                             user2.setId(2);
                             user2.setName("Claus");
 
-                            exchange.getOut().setBody(new UserPojo[] { user1, user2 });
+                            exchange.getMessage().setBody(new UserPojo[] { user1, user2 });
                         });
 
                 from("direct:list")

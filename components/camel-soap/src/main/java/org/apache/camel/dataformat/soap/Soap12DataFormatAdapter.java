@@ -185,7 +185,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
         Object payloadEl = anyElement.get(0);
         Object payload = JAXBIntrospector.getValue(payloadEl);
         if (payload instanceof Fault) {
-            String soapAction = exchange.getProperty(Exchange.SOAP_ACTION, String.class);
+            String soapAction = exchange.getProperty(SoapConstants.SOAP_ACTION, String.class);
             Exception exception = createExceptionFromFault(soapAction, (Fault) payload);
             exchange.setException(exception);
             return null;

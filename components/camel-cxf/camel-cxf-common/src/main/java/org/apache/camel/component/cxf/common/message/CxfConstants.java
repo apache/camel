@@ -44,6 +44,8 @@ public final class CxfConstants {
     public static final String PORT_LOCALNAME = "endpointLocalName";
     public static final String PORT_NAMESPACE = "endpointNamespace";
     public static final String PROTOCOL_NAME_RES = "res";
+    // This is here to smooth the transition from old Camel exchange header
+    public static final String ACCEPT_CONTENT_TYPE = Message.ACCEPT_CONTENT_TYPE;
 
     @Metadata(description = "The name of the operation.", javaType = "String")
     public static final String OPERATION_NAME = "operationName";

@@ -176,7 +176,7 @@ public class SoapDataFormat extends JaxbDataFormat {
         // Store soap action for an eventual later marshal step.
         // This is necessary as the soap action in the message may get lost on the way
         if (soapAction != null) {
-            exchange.setProperty(Exchange.SOAP_ACTION, soapAction);
+            exchange.setProperty(SoapConstants.SOAP_ACTION, soapAction);
         }
 
         Object unmarshalledObject = super.unmarshal(exchange, body);
@@ -188,7 +188,7 @@ public class SoapDataFormat extends JaxbDataFormat {
 
     private String getSoapActionFromExchange(Exchange exchange) {
         Message inMessage = exchange.getIn();
-        String soapAction = inMessage.getHeader(Exchange.SOAP_ACTION, String.class);
+        String soapAction = inMessage.getHeader(SoapConstants.SOAP_ACTION, String.class);
         if (soapAction == null) {
             soapAction = inMessage.getHeader("SOAPAction", String.class);
             if (soapAction != null && soapAction.startsWith("\"")) {
@@ -196,7 +196,7 @@ public class SoapDataFormat extends JaxbDataFormat {
             }
         }
         if (soapAction == null) {
-            soapAction = exchange.getProperty(Exchange.SOAP_ACTION, String.class);
+            soapAction = exchange.getProperty(SoapConstants.SOAP_ACTION, String.class);
         }
         return soapAction;
     }

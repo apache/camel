@@ -13,8 +13,7 @@ public class ExchangeConstantProvider {
 
     private static final Map<String, String> MAP;
     static {
-        Map<String, String> map = new HashMap<>(164);
-        map.put("ACCEPT_CONTENT_TYPE", "CamelAcceptContentType");
+        Map<String, String> map = new HashMap<>(149);
         map.put("AGGREGATED_COLLECTION_GUARD", "CamelAggregatedCollectionGuard");
         map.put("AGGREGATED_COMPLETED_BY", "CamelAggregatedCompletedBy");
         map.put("AGGREGATED_CORRELATION_KEY", "CamelAggregatedCorrelationKey");
@@ -43,7 +42,6 @@ public class ExchangeConstantProvider {
         map.put("CONTENT_TYPE", "Content-Type");
         map.put("COOKIE_HANDLER", "CamelCookieHandler");
         map.put("CORRELATION_ID", "CamelCorrelationId");
-        map.put("CREATED_TIMESTAMP", "CamelCreatedTimestamp");
         map.put("DATASET_INDEX", "CamelDataSetIndex");
         map.put("DEBUGGER_SELF_TIME", "CamelDebuggerSelfTime");
         map.put("DEFAULT_CHARSET_PROPERTY", "org.apache.camel.default.charset");
@@ -53,11 +51,9 @@ public class ExchangeConstantProvider {
         map.put("DUPLICATE_MESSAGE", "CamelDuplicateMessage");
         map.put("ERRORHANDLER_BRIDGE", "CamelErrorHandlerBridge");
         map.put("ERRORHANDLER_CIRCUIT_DETECTED", "CamelErrorHandlerCircuitDetected");
-        map.put("ERRORHANDLER_HANDLED", "CamelErrorHandlerHandled");
         map.put("EVALUATE_EXPRESSION_RESULT", "CamelEvaluateExpressionResult");
         map.put("EXCEPTION_CAUGHT", "CamelExceptionCaught");
         map.put("EXCEPTION_HANDLED", "CamelExceptionHandled");
-        map.put("EXTERNAL_REDELIVERED", "CamelExternalRedelivered");
         map.put("FAILURE_ENDPOINT", "CamelFailureEndpoint");
         map.put("FAILURE_HANDLED", "CamelFailureHandled");
         map.put("FAILURE_ROUTE_ID", "CamelFailureRouteId");
@@ -78,7 +74,6 @@ public class ExchangeConstantProvider {
         map.put("FILE_NAME_PRODUCED", "CamelFileNameProduced");
         map.put("FILE_PARENT", "CamelFileParent");
         map.put("FILE_PATH", "CamelFilePath");
-        map.put("FILTER_MATCHED", "CamelFilterMatched");
         map.put("FILTER_NON_XML_CHARS", "CamelFilterNonXmlChars");
         map.put("GROUPED_EXCHANGE", "CamelGroupedExchange");
         map.put("HTTP_BASE_URI", "CamelHttpBaseUri");
@@ -103,7 +98,6 @@ public class ExchangeConstantProvider {
         map.put("INTERCEPTED_NODE_ID", "CamelInterceptedNodeId");
         map.put("INTERCEPTED_ROUTE_ENDPOINT_URI", "CamelInterceptedParentEndpointUri");
         map.put("INTERCEPTED_ROUTE_ID", "CamelInterceptedRouteId");
-        map.put("INTERRUPTED", "CamelInterrupted");
         map.put("JPA_ENTITY_MANAGER", "CamelEntityManager");
         map.put("LANGUAGE_SCRIPT", "CamelLanguageScript");
         map.put("LOG_DEBUG_BODY_MAX_CHARS", "CamelLogDebugBodyMaxChars");
@@ -123,7 +117,6 @@ public class ExchangeConstantProvider {
         map.put("MESSAGE_TIMESTAMP", "CamelMessageTimestamp");
         map.put("MULTICAST_COMPLETE", "CamelMulticastComplete");
         map.put("MULTICAST_INDEX", "CamelMulticastIndex");
-        map.put("NOTIFY_EVENT", "CamelNotifyEvent");
         map.put("OFFSET", "CamelOffset");
         map.put("ON_COMPLETION", "CamelOnCompletion");
         map.put("ON_COMPLETION_ROUTE_IDS", "CamelOnCompletionRouteIds");
@@ -136,23 +129,17 @@ public class ExchangeConstantProvider {
         map.put("REDELIVERED", "CamelRedelivered");
         map.put("REDELIVERY_COUNTER", "CamelRedeliveryCounter");
         map.put("REDELIVERY_DELAY", "CamelRedeliveryDelay");
-        map.put("REDELIVERY_EXHAUSTED", "CamelRedeliveryExhausted");
         map.put("REDELIVERY_MAX_COUNTER", "CamelRedeliveryMaxCounter");
         map.put("REST_HTTP_QUERY", "CamelRestHttpQuery");
         map.put("REST_HTTP_URI", "CamelRestHttpUri");
         map.put("REST_OPENAPI", "CamelRestOpenAPI");
-        map.put("ROLLBACK_ONLY", "CamelRollbackOnly");
-        map.put("ROLLBACK_ONLY_LAST", "CamelRollbackOnlyLast");
-        map.put("ROUTE_STOP", "CamelRouteStop");
         map.put("SAGA_LONG_RUNNING_ACTION", "Long-Running-Action");
-        map.put("SAXPARSER_FACTORY", "CamelSAXParserFactory");
         map.put("SCHEDULER_POLLED_MESSAGES", "CamelSchedulerPolledMessages");
         map.put("SKIP_GZIP_ENCODING", "CamelSkipGzipEncoding");
         map.put("SKIP_OVER", "CamelSkipOver");
         map.put("SKIP_WWW_FORM_URLENCODED", "CamelSkipWwwFormUrlEncoding");
         map.put("SLIP_ENDPOINT", "CamelSlipEndpoint");
         map.put("SLIP_PRODUCER", "CamelSlipProducer");
-        map.put("SOAP_ACTION", "CamelSoapAction");
         map.put("SPLIT_COMPLETE", "CamelSplitComplete");
         map.put("SPLIT_INDEX", "CamelSplitIndex");
         map.put("SPLIT_SIZE", "CamelSplitSize");
@@ -168,8 +155,6 @@ public class ExchangeConstantProvider {
         map.put("TRACE_EVENT_EXCHANGE", "CamelTraceEventExchange");
         map.put("TRACE_EVENT_NODE_ID", "CamelTraceEventNodeId");
         map.put("TRACE_EVENT_TIMESTAMP", "CamelTraceEventTimestamp");
-        map.put("TRACING_HEADER_FORMAT", "CamelTracingHeaderFormat");
-        map.put("TRACING_OUTPUT_FORMAT", "CamelTracingOutputFormat");
         map.put("TRANSACTION_CONTEXT_DATA", "CamelTransactionContextData");
         map.put("TRANSFER_ENCODING", "Transfer-Encoding");
         map.put("TRY_ROUTE_BLOCK", "TryRouteBlock");
