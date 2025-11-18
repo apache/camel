@@ -135,7 +135,7 @@
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <couchbase-client-version>3.10.0</couchbase-client-version>
         <curator-version>5.9.0</curator-version>
-        <cxf-version>4.1.3</cxf-version>
+        <cxf-version>4.1.4</cxf-version>
         <cxf-codegen-plugin-version>4.1.3</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.1.1</cxf-xjc-plugin-version>
