@@ -105,6 +105,7 @@ import org.apache.camel.support.startup.EnvStartupCondition;
 import org.apache.camel.support.startup.FileStartupCondition;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.OrderedProperties;
@@ -144,9 +145,7 @@ public abstract class BaseMainSupport extends BaseService {
     protected final OrderedLocationProperties wildcardProperties = new OrderedLocationProperties();
     protected RoutesCollector routesCollector = new DefaultRoutesCollector();
     protected String propertyPlaceholderLocations;
-    protected String defaultPropertyPlaceholderLocation
-            = MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION + ","
-              + MainConstants.DEFAULT_OBSERVABILITY_SERVICES_PROPERTY_LOCATION;
+    protected String defaultPropertyPlaceholderLocation = MainConstants.DEFAULT_PROPERTY_PLACEHOLDER_LOCATION;
     protected Properties initialProperties;
     protected Properties overrideProperties;
     protected boolean standalone = true;
@@ -442,6 +441,17 @@ public abstract class BaseMainSupport extends BaseService {
             }
         }
 
+        // load optional observability configuration from inside JAR
+        final Properties osp = tryLoadObservabilityProperties(camelContext, "observability-services.properties");
+        if (!osp.isEmpty()) {
+            // only add observability properties if not already defined as initial
+            osp.forEach((k, v) -> {
+                if (!initialProperties.containsKey(k)) {
+                    initialProperties.setProperty(k.toString(), v.toString());
+                }
+            });
+        }
+
         final Properties ip = tryLoadProperties(initialProperties, MainConstants.INITIAL_PROPERTIES_LOCATION, camelContext);
         if (ip != null) {
             pc.setInitialProperties(ip);
@@ -477,6 +487,20 @@ public abstract class BaseMainSupport extends BaseService {
         return ip;
     }
 
+    private static Properties tryLoadObservabilityProperties(CamelContext camelContext, String location) {
+        Properties p = new Properties();
+        InputStream is = null;
+        try {
+            is = ResourceHelper.resolveResourceAsInputStream(camelContext, location);
+            p.load(is);
+        } catch (Exception e) {
+            // ignore
+        } finally {
+            IOHelper.close(is);
+        }
+        return p;
+    }
+
     private static Properties tryLoadCloudProperties(
             Properties overridProperties, String cloudPropertiesLocations) {
         final OrderedLocationProperties cp = new OrderedLocationProperties();
@@ -485,7 +509,7 @@ public abstract class BaseMainSupport extends BaseService {
             for (String loc : locations) {
                 Path confPath = Paths.get(loc);
                 if (Files.exists(confPath) && Files.isDirectory(confPath)) {
-                    Files.walkFileTree(confPath, new SimpleFileVisitor<Path>() {
+                    Files.walkFileTree(confPath, new SimpleFileVisitor<>() {
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                             if (!Files.isDirectory(file)) {
