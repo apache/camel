@@ -7129,6 +7129,46 @@ public class StaticEndpointBuilders {
         return WatsonLanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
+     * Convert text to natural-sounding speech using IBM Watson Text to Speech
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-text-to-speech
+     * 
+     * Syntax: <code>ibm-watson-text-to-speech:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonTextToSpeechEndpointBuilderFactory.WatsonTextToSpeechEndpointBuilder ibmWatsonTextToSpeech(String path) {
+        return ibmWatsonTextToSpeech("ibm-watson-text-to-speech", path);
+    }
+    /**
+     * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
+     * Convert text to natural-sounding speech using IBM Watson Text to Speech
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-text-to-speech
+     * 
+     * Syntax: <code>ibm-watson-text-to-speech:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonTextToSpeechEndpointBuilderFactory.WatsonTextToSpeechEndpointBuilder ibmWatsonTextToSpeech(String componentName, String path) {
+        return WatsonTextToSpeechEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
