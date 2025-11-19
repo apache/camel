@@ -123,7 +123,8 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
         @Override
         public void run() {
             PulsarMessageListener listener = new PulsarMessageListener(endpoint, PulsarConsumer.this);
-            while (true) {
+            boolean running = true;
+            while (running && isRunAllowed()) {
                 try {
                     Message<byte[]> msg = consumer.receive();
                     listener.received(consumer, msg);
@@ -131,9 +132,12 @@ public class PulsarConsumer extends DefaultConsumer implements Suspendable {
                     if (e.getCause() instanceof InterruptedException) {
                         // this means that our executor is shutting down
                         LOGGER.info("Received shutdown signal, exiting");
-                        break;
+                        // This condition is the only one that will stop the thread running
+                        // by exiting the loop. We make it explicit instead of breaking the loop.
+                        running = false;
+                    } else {
+                        endpoint.getExceptionHandler().handleException(e);
                     }
-                    endpoint.getExceptionHandler().handleException(e);
                 } catch (Exception e) {
                     endpoint.getExceptionHandler().handleException(e);
                 }

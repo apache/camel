@@ -72,7 +72,6 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
     private boolean reloadEnabled = true;
     private String secrets;
     private IBMSecretsManagerPropertiesFunction propertiesFunction;
-    private volatile Instant lastTime;
     private volatile Instant lastCheckTime;
     private volatile Instant lastReloadTime;
     private final Map<String, Instant> updates = new HashMap<>();
@@ -176,7 +175,7 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
         boolean triggerReloading = false;
         ObjectMapper mapper = new ObjectMapper();
 
-        while (!isStopping() && !isStopped()) {
+        while (isRunAllowed()) {
             ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(pollTimeout));
 
             for (ConsumerRecord<String, String> record : records) {
@@ -204,7 +203,8 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
                                             triggerReloading = true;
                                         }
                                         if (triggerReloading) {
-                                            ContextReloadStrategy reload = camelContext.hasService(ContextReloadStrategy.class);
+                                            ContextReloadStrategy reload
+                                                    = camelContext.hasService(ContextReloadStrategy.class);
                                             if (reload != null) {
                                                 // trigger reload
                                                 lastReloadTime = Instant.now();
@@ -219,7 +219,6 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
                         }
                     }
                 }
-
             }
         }
 
