@@ -480,11 +480,13 @@ public class RoutesConfigurer extends ServiceSupport implements NonManagedServic
 
         step = recorder.beginStep(RoutesConfigurer.class, "parseModeline", "Routes Configurer");
         if (camelContext.isModeline()) {
-            // parse modelines for all resources
+            // parse modelines for all resources (if camel-dsl-modeline JAR is on classpath)
             ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
-            for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
-                for (Resource resource : entry.getValue()) {
-                    factory.parseModeline(resource);
+            if (factory != null) {
+                for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
+                    for (Resource resource : entry.getValue()) {
+                        factory.parseModeline(resource);
+                    }
                 }
             }
         }

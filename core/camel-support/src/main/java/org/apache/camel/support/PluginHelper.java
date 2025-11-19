@@ -253,7 +253,7 @@ public final class PluginHelper {
     }
 
     /**
-     * Gets the {@link ModelineFactory}.
+     * Gets the {@link ModelineFactory} if present.
      */
     public static ModelineFactory getModelineFactory(CamelContext camelContext) {
         return getModelineFactory(camelContext.getCamelContextExtension());

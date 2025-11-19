@@ -132,11 +132,13 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
 
         // first we need to parse for modeline to gather all the configurations
         if (camelContext.isModeline()) {
+            // parse modelines for all resources (if camel-dsl-modeline JAR is on classpath)
             ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
-            for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
-                // parse modelines for all resources
-                for (Resource resource : entry.getValue()) {
-                    factory.parseModeline(resource);
+            if (factory != null) {
+                for (Map.Entry<RoutesBuilderLoader, List<Resource>> entry : groups.entrySet()) {
+                    for (Resource resource : entry.getValue()) {
+                        factory.parseModeline(resource);
+                    }
                 }
             }
         }

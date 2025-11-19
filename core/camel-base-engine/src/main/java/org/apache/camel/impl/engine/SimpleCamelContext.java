@@ -273,12 +273,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 ModelineFactory.FACTORY,
                 ModelineFactory.class);
 
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find ModelineFactory on classpath. Add camel-dsl-modeline to classpath.");
-        }
+        // camel-dsl-modeline is optional
+        return result.orElse(null);
     }
 
     @Override
