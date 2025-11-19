@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -650,10 +651,6 @@ public class DoclingProducer extends DefaultProducer {
                                            + ". Expected List<String>, List<File>, String[], File[], or directory path");
     }
 
-    private String convertUsingDoclingServe(String inputPath, String outputFormat) throws Exception {
-        return convertUsingDoclingServe(inputPath, outputFormat, null);
-    }
-
     private String convertUsingDoclingServe(String inputPath, String outputFormat, Exchange exchange) throws Exception {
         // Check for header override
         boolean useAsync = configuration.isUseAsyncMode();
@@ -902,10 +899,9 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     private void deleteDirectory(Path directory) {
-        try {
-            if (Files.exists(directory)) {
-                Files.walk(directory)
-                        .sorted((a, b) -> b.compareTo(a)) // Delete files before directories
+        if (Files.exists(directory)) {
+            try (Stream<Path> paths = Files.walk(directory)) {
+                paths.sorted((a, b) -> b.compareTo(a)) // Delete files before directories
                         .forEach(path -> {
                             try {
                                 Files.delete(path);
@@ -913,9 +909,9 @@ public class DoclingProducer extends DefaultProducer {
                                 LOG.warn("Failed to delete temporary file: {}", path, e);
                             }
                         });
+            } catch (IOException e) {
+                LOG.warn("Failed to clean up temporary directory: {}", directory, e);
             }
-        } catch (IOException e) {
-            LOG.warn("Failed to clean up temporary directory: {}", directory, e);
         }
     }
 
