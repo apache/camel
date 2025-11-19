@@ -34,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+@SuppressWarnings("deprecation")
 public class ServiceCallConfigurationTest {
     @Test
     public void testServiceDiscoveryConfiguration() {
@@ -106,6 +108,7 @@ public class ServiceCallConfigurationTest {
 
         SpringCamelContext camelContext = appContext.getBean(SpringCamelContext.class);
         assertNotNull(camelContext, "No Camel Context in file: " + classpathConfigFile);
+        appContext.close();
 
         return camelContext;
     }

@@ -25,6 +25,8 @@ import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.support.processor.DelegateProcessor;
 import org.springframework.beans.factory.BeanNameAware;
 
+// The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+@SuppressWarnings("deprecation")
 public class DummyErrorHandlerBuilder extends LegacyErrorHandlerBuilderSupport implements BeanNameAware {
 
     public static final String PROPERTY_NAME = "DummyErrorHandler";

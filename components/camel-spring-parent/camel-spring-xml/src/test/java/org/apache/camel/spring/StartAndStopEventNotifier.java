@@ -19,7 +19,6 @@ package org.apache.camel.spring;
 import java.nio.file.Path;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.Type;
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Event notifier which is executed just after Camel has been started, and before Camel is being stopped.
  */
-public class StartAndStopEventNotifier extends EventNotifierSupport implements CamelContextAware {
+public class StartAndStopEventNotifier extends EventNotifierSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(StartAndStopEventNotifier.class);
 

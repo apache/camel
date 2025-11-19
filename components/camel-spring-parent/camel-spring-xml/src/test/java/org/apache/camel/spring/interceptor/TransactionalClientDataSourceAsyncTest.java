@@ -68,6 +68,8 @@ public class TransactionalClientDataSourceAsyncTest extends TransactionalClientD
 
                 // configure to use transaction error handler and pass on the required as it will fetch
                 // the transaction manager from it that it needs
+                // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+                @SuppressWarnings("deprecation")
                 LegacyTransactionErrorHandlerBuilder teh = new LegacyTransactionErrorHandlerBuilder();
                 teh.setSpringTransactionPolicy(required);
                 errorHandler(teh);

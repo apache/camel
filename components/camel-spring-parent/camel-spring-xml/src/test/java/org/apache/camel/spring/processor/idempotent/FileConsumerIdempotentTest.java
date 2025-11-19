@@ -40,7 +40,6 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/idempotent/fileConsumerIdempotentTest.xml");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @BeforeEach
     public void setUp() throws Exception {

@@ -20,8 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spring.example.DummyBean;
 import org.apache.camel.support.CamelContextHelper;
 import org.junit.jupiter.api.Test;
@@ -80,8 +78,6 @@ public class EndpointReferenceTest extends SpringTestSupport {
     @Test
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
         CamelContext context = applicationContext.getBean("camel2", CamelContext.class);
-        RouteDefinition route = new RouteDefinition("temporary");
-        String routeId = route.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         try {
             CamelContextHelper.resolveEndpoint(context, null, "endpoint1");
             fail("Should have thrown exception");

@@ -16,11 +16,11 @@
  */
 package org.apache.camel.spring.converter;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -35,23 +35,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ResourceConverterTest extends TestSupport {
 
     @Test
-    public void testResourceConverterRegistry() {
+    public void testResourceConverterRegistry() throws Exception {
         assertNotNull(getResourceTypeConverter());
     }
 
     @Test
-    public void testNonNullConversion() throws IOException {
+    public void testNonNullConversion() throws TypeConversionException, Exception {
         Resource resource = new ClassPathResource("testresource.txt", ResourceConverterTest.class);
         assertTrue(resource.exists());
-        InputStream inputStream = getResourceTypeConverter().convertTo(InputStream.class, resource);
-        byte[] resourceBytes = IOConverter.toBytes(resource.getInputStream());
-        byte[] inputStreamBytes = IOConverter.toBytes(inputStream);
-        assertArrayEquals(resourceBytes, inputStreamBytes);
+        try (InputStream inputStream = getResourceTypeConverter().convertTo(InputStream.class, resource)) {
+            byte[] resourceBytes = IOConverter.toBytes(resource.getInputStream());
+            byte[] inputStreamBytes = IOConverter.toBytes(inputStream);
+
+            assertArrayEquals(resourceBytes, inputStreamBytes);
+        }
+        ;
     }
 
-    private TypeConverter getResourceTypeConverter() {
+    private TypeConverter getResourceTypeConverter() throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
         TypeConverter typeConverter = camelContext.getTypeConverterRegistry().lookup(InputStream.class, Resource.class);
+        camelContext.close();
+
         return typeConverter;
     }
 

@@ -44,6 +44,8 @@ public class TransactionalClientDataSourceHandledTest extends TransactionalClien
     }
 
     @Override
+    // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+    @SuppressWarnings("deprecation")
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

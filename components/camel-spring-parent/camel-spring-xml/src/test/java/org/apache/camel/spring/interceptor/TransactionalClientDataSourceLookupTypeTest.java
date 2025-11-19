@@ -26,6 +26,8 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
 public class TransactionalClientDataSourceLookupTypeTest extends TransactionalClientDataSourceTest {
 
     @Override
+    // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+    @SuppressWarnings("deprecation")
     protected RouteBuilder createRouteBuilder() throws Exception {
         // START SNIPPET: e1
         // Notice that we use the SpringRouteBuilder that has a few more features than

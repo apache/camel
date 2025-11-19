@@ -19,6 +19,8 @@ package org.apache.camel.spring.interceptor.route;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 
+// The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+@SuppressWarnings("deprecation")
 public class DataSourceSpringRouteBuilder extends SpringRouteBuilder {
 
     @Override

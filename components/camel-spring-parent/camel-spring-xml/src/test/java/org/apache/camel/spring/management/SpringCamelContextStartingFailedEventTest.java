@@ -25,6 +25,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
@@ -37,9 +38,8 @@ public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        try {
-            new ClassPathXmlApplicationContext(
-                    "org/apache/camel/spring/management/SpringCamelContextStartingFailedEventTest.xml");
+        try (ClassPathXmlApplicationContext x = new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/SpringCamelContextStartingFailedEventTest.xml")) {
             fail("Should thrown an exception");
         } catch (Exception e) {
             FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
@@ -53,6 +53,7 @@ public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport
 
     @Test
     public void testReady() {
-        // noop
+        // No op test: we test that the context is setup properly.
+        assertTrue(true);
     }
 }

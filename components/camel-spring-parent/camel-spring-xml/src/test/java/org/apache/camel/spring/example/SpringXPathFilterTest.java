@@ -29,6 +29,8 @@ public class SpringXPathFilterTest extends XPathFilterTest {
     }
 
     @Override
+    // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+    @SuppressWarnings("deprecation")
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(
                 new ClassPathXmlApplicationContext("org/apache/camel/spring/example/xpathFilter.xml"), true);
