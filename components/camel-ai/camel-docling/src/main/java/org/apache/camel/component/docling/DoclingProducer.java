@@ -682,6 +682,10 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         Object body = exchange.getIn().getBody();
+        if (body instanceof WrappedFile<?> wf) {
+            // unwrap camel-file/camel-ftp and other file based components
+            body = wf.getBody();
+        }
         if (body instanceof String) {
             String content = (String) body;
             // Check if it's a URL (http:// or https://) or a file path
@@ -709,10 +713,6 @@ public class DoclingProducer extends DefaultProducer {
             return tempFile.toString();
         } else if (body instanceof File) {
             File file = (File) body;
-            validateFileSize(file.getAbsolutePath());
-            return file.getAbsolutePath();
-        } else if (body instanceof WrappedFile<?> wf) {
-            File file = (File) wf.getFile();
             validateFileSize(file.getAbsolutePath());
             return file.getAbsolutePath();
         }
