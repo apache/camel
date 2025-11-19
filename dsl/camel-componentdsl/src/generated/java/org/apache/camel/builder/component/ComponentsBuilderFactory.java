@@ -2198,6 +2198,19 @@ public interface ComponentsBuilderFactory {
         return IbmWatsonLanguageComponentBuilderFactory.ibmWatsonLanguage();
     }
     /**
+     * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
+     * Convert speech audio to text using IBM Watson Speech to Text
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-speech-to-text
+     * 
+     * @return the dsl builder
+     */
+    static IbmWatsonSpeechToTextComponentBuilderFactory.IbmWatsonSpeechToTextComponentBuilder ibmWatsonSpeechToText() {
+        return IbmWatsonSpeechToTextComponentBuilderFactory.ibmWatsonSpeechToText();
+    }
+    /**
      * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
      * Convert text to natural-sounding speech using IBM Watson Text to Speech
      * 

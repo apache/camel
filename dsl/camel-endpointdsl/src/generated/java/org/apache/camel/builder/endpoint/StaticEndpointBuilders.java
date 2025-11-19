@@ -7129,6 +7129,46 @@ public class StaticEndpointBuilders {
         return WatsonLanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
+     * Convert speech audio to text using IBM Watson Speech to Text
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-speech-to-text
+     * 
+     * Syntax: <code>ibm-watson-speech-to-text:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonSpeechToTextEndpointBuilderFactory.WatsonSpeechToTextEndpointBuilder ibmWatsonSpeechToText(String path) {
+        return ibmWatsonSpeechToText("ibm-watson-speech-to-text", path);
+    }
+    /**
+     * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
+     * Convert speech audio to text using IBM Watson Speech to Text
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-ibm-watson-speech-to-text
+     * 
+     * Syntax: <code>ibm-watson-speech-to-text:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonSpeechToTextEndpointBuilderFactory.WatsonSpeechToTextEndpointBuilder ibmWatsonSpeechToText(String componentName, String path) {
+        return WatsonSpeechToTextEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
      * Convert text to natural-sounding speech using IBM Watson Text to Speech
      * 
