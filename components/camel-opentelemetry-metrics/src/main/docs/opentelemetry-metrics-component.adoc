@@ -378,7 +378,6 @@ in case you only want to instrument a few selected routes.
 
 Camel specific metrics that are available via the `OpenTelemetryRoutePolicy`:
 [width="100%",options="header"]
-[width="100%",options="header"]
 |=====================================================
 |Default Name |Type |Description
 | camel.route.policy | LongHistogram | Time taken to complete processing of exchanges for a route
@@ -400,6 +399,36 @@ The following options are supported:
 | policyConfiguration | - | Enables individual metrics to be enabled or disabled.
 | timeUnit | TimeUnit.MILLISECONDS | The time unit for measuring the route policy timer.
 | longTaskTimeUnit | TimeUnit.MILLISECONDS | The time unit for the 'long task' timer that measures total duration of all active tasks.
+|=======================================================================
+
+=== OpenTelemetry Message History Factory
+
+`OpenTelemetryMessageHistoryFactory` allows the capture of Message History performance statistics while routing messages.
+It works by using an OpenTelemetry Timer to record the time taken to process each node in all routes.
+
+The `OpenTelemetryMessageHistoryFactory` can be added to the `CamelContext`:
+
+[source,java]
+----
+context.setMessageHistoryFactory(new OpenTelemetryMessageHistoryFactory());
+----
+
+`OpenTelemetryMessageHistory` provides the following Camel specific metric:
+
+[width="100%",options="header"]
+|=====================================================
+|Default Name |Type |Description
+|camel.message.history | LongHistogram | Time taken for a node to process the message
+|=====================================================
+
+The following options are supported on the `OpenTelemetryMessageHistoryFactory`:
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Default |Description
+|namingStrategy | OpenTelemetryHistoryNamingStrategy.DEFAULT | The strategy to use for overriding the default metric name.
+|nodePattern | | A pattern to filter which nodes to capture metrics for. By default, all nodes are included
+|durationUnit | TimeUnit.MILLISECONDS | The time unit for recording the processing time.
 |=======================================================================
 
 == OpenTelemetry Configuration
