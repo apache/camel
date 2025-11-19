@@ -1269,6 +1269,26 @@ camelContext.addComponent("aws2-s3", s3Component);
 
 Now your component will be used for all the operations implemented in camel routes.
 
+=== Note about using this component for storing and retrieving objects from/to Dell ECS (Elastic Cloud Solutions)
+
+For storing and retrieving objects from/to Dell ECS, both of the `forcePathStyle` and `overrideEndpoint` options need to be set to `true` and using the `uriEndpointOverride` you need to provide your own ECS endpoint. 
+
+[source,java]
+--------------------------------------------------------------------------------
+String awsBucketAccessKey = "your_access_key";
+String awsBucketSecretKey = "your_secret_key";
+
+S3Client s3Client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(awsBucketAccessKey, awsBucketSecretKey)))
+                .region(Region.US_EAST_1).build();
+
+AWS2S3Configuration configuration = new AWS2S3Configuration();
+configuration.setForcePathStyle(true);
+configuration.setOverrideEndpoint(true);
+configuration.setUriEndpointOverride("http://ecs1.emc.com:9020");
+--------------------------------------------------------------------------------
+
+For more details see https://www.dell.com/support/manuals/en-us/ecs-appliance-/ecs_pub_data_access_guide_3_3_to_3_6/using-the-java-amazon-sdk?guid=guid-149be134-6938-4cd7-9503-cf3ca9d23261&lang=en-us[their documentation].
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
