@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,11 +96,9 @@ public class JavaJoorClassLoader extends ClassLoader {
             // create work-dir if needed
             String dir = FileUtil.onlyPath(fname);
             new File(dir).mkdirs();
-            try {
-                FileOutputStream fos = new FileOutputStream(target);
+            try (FileOutputStream fos = new FileOutputStream(target)) {
                 LOG.debug("Writing compiled class: {} as bytecode to file: {}", name, target);
                 fos.write(byteCode);
-                IOHelper.close(fos);
             } catch (Exception e) {
                 LOG.warn("Error writing compiled class: {} as bytecode to file: {} due to {}. This exception is ignored.",
                         name, target, e.getMessage());
