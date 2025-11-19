@@ -182,6 +182,7 @@
 *** xref:ibm-secrets-manager-component.adoc[IBM Secrets Manager]
 *** xref:ibm-watson-discovery-component.adoc[IBM Watson Discovery]
 *** xref:ibm-watson-language-component.adoc[IBM Watson Language]
+*** xref:ibm-watson-speech-to-text-component.adoc[IBM Watson Speech to Text]
 *** xref:ibm-watson-text-to-speech-component.adoc[IBM Watson Text to Speech]
 ** xref:iec60870-client-component.adoc[IEC 60870 Client]
 ** xref:iec60870-server-component.adoc[IEC 60870 Server]

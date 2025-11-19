@@ -74,6 +74,24 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <systemPropertyVariables>
+                        <camel.ibm.watson.tts.apiKey>${camel.ibm.watson.tts.apiKey}</camel.ibm.watson.tts.apiKey>
+                        <camel.ibm.watson.tts.serviceUrl>${camel.ibm.watson.tts.serviceUrl}</camel.ibm.watson.tts.serviceUrl>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

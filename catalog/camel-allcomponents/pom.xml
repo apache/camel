@@ -928,6 +928,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ibm-watson-speech-to-text</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-ibm-watson-text-to-speech</artifactId>
             <version>${project.version}</version>
         </dependency>

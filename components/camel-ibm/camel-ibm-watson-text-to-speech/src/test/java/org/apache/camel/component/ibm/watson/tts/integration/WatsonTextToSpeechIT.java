@@ -51,9 +51,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * -Dcamel.ibm.watson.tts.serviceUrl=YOUR_SERVICE_URL
  */
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.tts.apiKey", matches = ".*",
+        @EnabledIfSystemProperty(named = "camel.ibm.watson.tts.apiKey", matches = ".+",
                                  disabledReason = "IBM Watson TTS API Key not provided"),
-        @EnabledIfSystemProperty(named = "camel.ibm.watson.tts.serviceUrl", matches = ".*",
+        @EnabledIfSystemProperty(named = "camel.ibm.watson.tts.serviceUrl", matches = ".+",
                                  disabledReason = "IBM Watson TTS Service URL not provided")
 })
 public class WatsonTextToSpeechIT extends WatsonTextToSpeechTestSupport {
