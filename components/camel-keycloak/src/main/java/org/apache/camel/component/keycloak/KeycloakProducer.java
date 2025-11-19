@@ -2036,8 +2036,7 @@ public class KeycloakProducer extends DefaultProducer {
         for (UserRepresentation user : users) {
             Map<String, Object> result = new HashMap<>();
             result.put("username", user.getUsername());
-            try {
-                Response response = keycloakClient.realm(realmName).users().create(user);
+            try (Response response = keycloakClient.realm(realmName).users().create(user)) {
                 result.put("status", "success");
                 result.put("statusCode", response.getStatus());
                 successCount++;
