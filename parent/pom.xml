@@ -500,7 +500,7 @@
         <spring-version>6.2.12</spring-version>
         <spring-rabbitmq-version>3.2.8</spring-rabbitmq-version>
         <spring-security-version>6.5.6</spring-security-version>
-        <spring-ws-version>4.1.2</spring-ws-version>
+        <spring-ws-version>5.0.0</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okhttp5-version>5.3.1</squareup-okhttp5-version>
