@@ -1,0 +1,493 @@
+= IBM Watson Speech to Text Component
+:doctitle: IBM Watson Speech to Text
+:shortname: ibm-watson-speech-to-text
+:artifactid: camel-ibm-watson-speech-to-text
+:description: Convert speech audio to text using IBM Watson Speech to Text
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: IBM
+:camel-spring-boot-name: ibm-watson-speech-to-text
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The IBM Watson Speech to Text component allows you to convert speech audio into written text using
+https://cloud.ibm.com/catalog/services/speech-to-text[IBM Watson Speech to Text service].
+
+Prerequisites
+
+You must have a valid IBM Cloud account and an instance of the Watson Speech to Text service.
+More information is available at https://cloud.ibm.com/catalog/services/speech-to-text[IBM Watson Speech to Text].
+
+== URI Format
+
+------------------------------
+ibm-watson-speech-to-text:label[?options]
+------------------------------
+
+You can append query options to the URI in the following format:
+
+`?option=value&option2=value&...`
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+Required Watson Speech to Text component options
+
+You must provide the `apiKey` to access IBM Watson Speech to Text.
+Optionally, you can specify a custom `serviceUrl` if you're using a dedicated or private instance.
+
+// component headers: START
+include::partial$component-endpoint-headers.adoc[]
+// component headers: END
+
+== Usage
+
+=== Watson Speech to Text Producer operations
+
+The IBM Watson Speech to Text component provides the following operations:
+
+- recognize - Transcribe audio to text
+- listModels - Get available language models
+- getModel - Get information about a specific model
+- listCustomModels - List custom language models
+- getCustomModel - Get information about a custom language model
+
+If you don't specify an operation explicitly, you must set it via the `operation` parameter.
+
+== Examples
+
+=== Recognize Audio to Text
+
+Transcribe a WAV audio file to text:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("file:/var/audio?noop=true")
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=recognize&contentType=audio/wav")
+  .process(exchange -> {
+      String transcript = exchange.getMessage().getHeader(WatsonSpeechToTextConstants.TRANSCRIPT, String.class);
+      System.out.println("Transcription: " + transcript);
+  });
+--------------------------------------------------------------------------------
+
+This will transcribe the audio file and extract the text.
+
+=== Recognize with Timestamps
+
+Transcribe audio and get word-level timestamps:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(WatsonSpeechToTextConstants.AUDIO_FILE, constant(new File("/path/to/audio.wav")))
+  .setHeader(WatsonSpeechToTextConstants.TIMESTAMPS, constant(true))
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=recognize")
+  .process(exchange -> {
+      SpeechRecognitionResults results = exchange.getMessage().getBody(SpeechRecognitionResults.class);
+      results.getResults().forEach(result -> {
+          result.getAlternatives().forEach(alt -> {
+              alt.getTimestamps().forEach(timestamp -> {
+                  System.out.println("Word: " + timestamp.getWord() +
+                                   " - Start: " + timestamp.getStartTime() +
+                                   " - End: " + timestamp.getEndTime());
+              });
+          });
+      });
+  });
+--------------------------------------------------------------------------------
+
+=== Recognize with Word Confidence
+
+Get confidence scores for each transcribed word:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .setBody(constant(audioInputStream))
+  .setHeader(WatsonSpeechToTextConstants.WORD_CONFIDENCE, constant(true))
+  .setHeader(WatsonSpeechToTextConstants.CONTENT_TYPE, constant("audio/mp3"))
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=recognize")
+  .process(exchange -> {
+      SpeechRecognitionResults results = exchange.getMessage().getBody(SpeechRecognitionResults.class);
+      results.getResults().forEach(result -> {
+          result.getAlternatives().forEach(alt -> {
+              alt.getWordConfidence().forEach(wc -> {
+                  System.out.println("Word: " + wc.getWord() +
+                                   " - Confidence: " + wc.getConfidence());
+              });
+          });
+      });
+  });
+--------------------------------------------------------------------------------
+
+=== Available Language Models
+
+Some commonly used models include:
+
+**English Models:**
+- en-US_BroadbandModel - US English for high-quality audio (16 kHz)
+- en-US_NarrowbandModel - US English for telephony audio (8 kHz)
+- en-GB_BroadbandModel - UK English broadband
+- en-GB_NarrowbandModel - UK English narrowband
+
+**Spanish Models:**
+- es-ES_BroadbandModel - Castilian Spanish
+- es-ES_NarrowbandModel - Castilian Spanish narrowband
+- es-MX_BroadbandModel - Mexican Spanish
+- es-LA_BroadbandModel - Latin American Spanish
+
+**French Models:**
+- fr-FR_BroadbandModel - French broadband
+- fr-FR_NarrowbandModel - French narrowband
+- fr-CA_BroadbandModel - Canadian French
+
+**German Models:**
+- de-DE_BroadbandModel - German broadband
+- de-DE_NarrowbandModel - German narrowband
+
+**Other Languages:**
+- ja-JP_BroadbandModel - Japanese
+- ko-KR_BroadbandModel - Korean
+- pt-BR_BroadbandModel - Brazilian Portuguese
+- zh-CN_BroadbandModel - Mandarin Chinese
+- it-IT_BroadbandModel - Italian
+- ar-MS_BroadbandModel - Modern Standard Arabic
+
+=== List Available Models
+
+Get a list of all available language models:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listModels")
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=listModels")
+  .process(exchange -> {
+      List<SpeechModel> models = exchange.getMessage().getBody(List.class);
+      models.forEach(model -> {
+          System.out.println("Model: " + model.getName() +
+                           " - Language: " + model.getLanguage() +
+                           " - Description: " + model.getDescription());
+      });
+  });
+--------------------------------------------------------------------------------
+
+=== Get Model Information
+
+Get detailed information about a specific model:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getModel")
+  .setHeader(WatsonSpeechToTextConstants.MODEL_NAME, constant("en-US_BroadbandModel"))
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=getModel")
+  .process(exchange -> {
+      SpeechModel model = exchange.getMessage().getBody(SpeechModel.class);
+      System.out.println("Model details: " + model);
+  });
+--------------------------------------------------------------------------------
+
+=== Audio Format Options
+
+The component supports various audio formats via the `contentType` parameter:
+
+- audio/wav - WAV format (default), PCM 16-bit
+- audio/mp3 - MP3 format
+- audio/flac - FLAC format, lossless compression
+- audio/ogg - Ogg Vorbis format with Opus codec
+- audio/webm - WebM format
+
+Example with MP3 input:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("file:/var/audio?include=.*\\.mp3")
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=recognize&contentType=audio/mp3")
+  .log("Transcript: ${header.CamelIBMWatsonSTTTranscript}");
+--------------------------------------------------------------------------------
+
+=== Recognize Different Languages
+
+Transcribe audio in different languages by specifying the appropriate model:
+
+[source,java]
+--------------------------------------------------------------------------------
+// Transcribe Spanish audio
+from("direct:spanish")
+  .setBody(constant(spanishAudioFile))
+  .setHeader(WatsonSpeechToTextConstants.MODEL, constant("es-ES_BroadbandModel"))
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=recognize")
+  .log("Spanish transcript: ${header.CamelIBMWatsonSTTTranscript}");
+
+// Transcribe French audio
+from("direct:french")
+  .setBody(constant(frenchAudioFile))
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=recognize&model=fr-FR_BroadbandModel")
+  .log("French transcript: ${header.CamelIBMWatsonSTTTranscript}");
+--------------------------------------------------------------------------------
+
+=== Speaker Identification
+
+Identify different speakers in multi-speaker audio:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:speakers")
+  .setHeader(WatsonSpeechToTextConstants.SPEAKER_LABELS, constant(true))
+  .setHeader(WatsonSpeechToTextConstants.TIMESTAMPS, constant(true))
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=recognize")
+  .process(exchange -> {
+      SpeechRecognitionResults results = exchange.getMessage().getBody(SpeechRecognitionResults.class);
+      results.getSpeakerLabels().forEach(label -> {
+          System.out.println("Speaker " + label.getSpeaker() +
+                           " from " + label.getFrom() +
+                           " to " + label.getTo() +
+                           ": " + label.getFinal());
+      });
+  });
+--------------------------------------------------------------------------------
+
+=== Using Custom Language Models
+
+If you have created a custom language model, you can use it for recognition:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:customModel")
+  .setHeader(WatsonSpeechToTextConstants.MODEL, constant("your-custom-model-guid"))
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=recognize")
+  .log("Custom model transcript: ${header.CamelIBMWatsonSTTTranscript}");
+--------------------------------------------------------------------------------
+
+=== List Custom Models
+
+List all your custom language models:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listCustomModels")
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=listCustomModels")
+  .process(exchange -> {
+      List<LanguageModel> models = exchange.getMessage().getBody(List.class);
+      models.forEach(model -> {
+          System.out.println("Custom Model: " + model.getCustomizationId() +
+                           " - Name: " + model.getName() +
+                           " - Language: " + model.getLanguage() +
+                           " - Status: " + model.getStatus());
+      });
+  });
+--------------------------------------------------------------------------------
+
+=== Get Custom Model Details
+
+Get detailed information about a custom model:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getCustomModel")
+  .setHeader(WatsonSpeechToTextConstants.MODEL_NAME, constant("your-custom-model-guid"))
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&operation=getCustomModel")
+  .process(exchange -> {
+      LanguageModel model = exchange.getMessage().getBody(LanguageModel.class);
+      System.out.println("Custom model: " + model.getName() +
+                       " - Status: " + model.getStatus() +
+                       " - Progress: " + model.getProgress() + "%");
+  });
+--------------------------------------------------------------------------------
+
+=== Watson Speech to Text Authentication
+
+IBM Watson Speech to Text uses IBM Cloud IAM (Identity and Access Management) for authentication.
+You need to provide your IBM Cloud API key.
+
+You can create API keys in the IBM Cloud console:
+1. Go to https://cloud.ibm.com/iam/apikeys
+2. Click "Create an IBM Cloud API key"
+3. Copy the API key and use it in your Camel routes
+
+For more information about authentication, see the
+https://cloud.ibm.com/docs/speech-to-text?topic=speech-to-text-getting-started[IBM Watson STT documentation].
+
+=== Watson Speech to Text Endpoints
+
+If you have a dedicated or regional instance, you can specify a custom service URL:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+  .setBody(constant(audioFile))
+  .to("ibm-watson-speech-to-text:mySTT?apiKey=RAW(yourApiKey)&serviceUrl=https://api.eu-gb.speech-to-text.watson.cloud.ibm.com&operation=recognize")
+  .log("Transcript: ${header.CamelIBMWatsonSTTTranscript}");
+--------------------------------------------------------------------------------
+
+Common regional endpoints:
+- Dallas: https://api.us-south.speech-to-text.watson.cloud.ibm.com
+- Washington DC: https://api.us-east.speech-to-text.watson.cloud.ibm.com
+- Frankfurt: https://api.eu-de.speech-to-text.watson.cloud.ibm.com
+- London: https://api.eu-gb.speech-to-text.watson.cloud.ibm.com
+- Tokyo: https://api.jp-tok.speech-to-text.watson.cloud.ibm.com
+- Sydney: https://api.au-syd.speech-to-text.watson.cloud.ibm.com
+
+== Integration Tests
+
+This component includes comprehensive integration tests that validate the functionality against the actual IBM Watson Speech to Text service. These tests are disabled by default to prevent accidental API calls during regular builds.
+
+=== Prerequisites for Running Integration Tests
+
+1. **IBM Cloud Account**: You need a valid IBM Cloud account
+2. **Watson Speech to Text Service**: Create a Watson Speech to Text service instance in IBM Cloud
+3. **API Credentials**: Obtain your API key and service URL from the IBM Cloud console
+
+To get your credentials:
+
+1. Log in to https://cloud.ibm.com/[IBM Cloud Console]
+2. Navigate to your Speech to Text service instance
+3. Go to "Manage" → "Credentials"
+4. Copy your **API Key** and **Service URL**
+
+=== Running Integration Tests
+
+Integration tests are executed with the `verify` goal and require system properties:
+
+[source,bash]
+--------------------------------------------------------------------------------
+mvn verify \
+  -Dcamel.ibm.watson.stt.apiKey=YOUR_API_KEY \
+  -Dcamel.ibm.watson.stt.serviceUrl=YOUR_SERVICE_URL
+--------------------------------------------------------------------------------
+
+Alternatively, using environment variables:
+
+[source,bash]
+--------------------------------------------------------------------------------
+export CAMEL_IBM_WATSON_STT_API_KEY=YOUR_API_KEY
+export CAMEL_IBM_WATSON_STT_SERVICE_URL=YOUR_SERVICE_URL
+
+mvn verify \
+  -Dcamel.ibm.watson.stt.apiKey=${CAMEL_IBM_WATSON_STT_API_KEY} \
+  -Dcamel.ibm.watson.stt.serviceUrl=${CAMEL_IBM_WATSON_STT_SERVICE_URL}
+--------------------------------------------------------------------------------
+
+=== Integration Test Coverage
+
+The integration tests cover all major operations:
+
+**Recognition Operations:**
+
+- Basic audio-to-text transcription with default model
+- Transcription with word timestamps
+- Transcription with word confidence scores
+- Different audio formats (WAV, MP3, FLAC)
+- Multiple languages (English, Spanish, French, German)
+
+**Model Operations:**
+
+- Listing all available language models
+- Getting detailed information about specific models
+
+**Audio File Operations:**
+
+- Reading audio files from disk
+- Processing different audio formats
+- Validating transcription accuracy
+
+**Custom Model Operations:**
+
+- Listing custom language models (if available)
+- Getting custom model details (if available)
+
+**File Output Operations:**
+
+- Saving transcription results to text files
+- Saving detailed results with timestamps to text files
+- Saving results with word confidence scores to text files
+- Processing multiple audio files and saving transcripts
+
+=== Generated Audio Test Files
+
+Integration tests automatically generate sample audio files in `target/audio-input/`:
+
+- `test-audio.wav` - Sample WAV file for testing
+- `test-audio-timestamps.wav` - Sample WAV for timestamp testing
+- `test-audio-confidence.wav` - Sample WAV for confidence score testing
+
+These files are simple synthesized audio with known text for validation purposes.
+
+=== Generated Transcription Output Files
+
+When integration tests run successfully, transcription files are created in `target/transcription-output/`:
+
+- `transcript-basic.txt` - Basic transcription output
+- `transcript-with-timestamps.txt` - Transcription with word-level timestamps
+- `transcript-detailed.txt` - Detailed results with timestamps and word confidence scores
+- `transcript-file1.txt`, `transcript-file2.txt`, `transcript-file3.txt` - Multiple file processing results
+
+These files can be reviewed to verify transcription accuracy and examine the detailed recognition results including timestamps and confidence scores.
+
+=== Important Notes
+
+- Integration tests make **real API calls** to IBM Watson and may incur charges
+- Tests are automatically skipped during regular `mvn test` execution
+- Audio files in `target/` are cleaned with `mvn clean`
+- Tests verify transcription accuracy by comparing against known text
+- All tests include proper resource cleanup
+
+=== Example Output
+
+[source]
+--------------------------------------------------------------------------------
+[INFO] Running org.apache.camel.component.ibm.watson.stt.integration.WatsonSpeechToTextIT
+Created input directory: target/audio-input
+Created output directory: target/transcription-output
+Generated test audio file: target/audio-input/test-audio.wav
+Successfully transcribed audio. Transcript: "Hello this is a test of IBM Watson Speech to Text"
+Confidence: 0.98
+Found 25 language models
+  Model: en-US_BroadbandModel - Language: en-US - Rate: 16000
+  Model: en-GB_BroadbandModel - Language: en-GB - Rate: 16000
+Retrieved model details: en-US_BroadbandModel - Description: US English broadband model
+Successfully transcribed with timestamps (5 words with timing information)
+Successfully transcribed with word confidence (5 words with confidence scores)
+Successfully saved transcript to file: target/transcription-output/transcript-basic.txt (size: 156 bytes)
+Successfully saved transcript with timestamps to: target/transcription-output/transcript-with-timestamps.txt (size: 452 bytes)
+Successfully saved detailed transcript to: target/transcription-output/transcript-detailed.txt (size: 678 bytes)
+Created transcript file: transcript-file1.txt (size: 156 bytes)
+Created transcript file: transcript-file2.txt (size: 156 bytes)
+Created transcript file: transcript-file3.txt (size: 156 bytes)
+Successfully transcribed and saved 3 audio files
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
+--------------------------------------------------------------------------------
+
+== Dependencies
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ibm-watson-speech-to-text</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+---------------------------------------
+
+where `x.x.x` is the version number of Camel.
+
+include::spring-boot:partial$starter.adoc[]

@@ -1,0 +1,1 @@
+../../../../../components/camel-ibm/camel-ibm-watson-speech-to-text/src/main/docs/ibm-watson-speech-to-text-component.adoc

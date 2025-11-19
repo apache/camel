@@ -26,11 +26,11 @@
         <version>4.17.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-ibm-watson-text-to-speech</artifactId>
+    <artifactId>camel-ibm-watson-speech-to-text</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: IBM :: Watson Text to Speech</name>
-    <description>Convert text to natural-sounding speech using IBM Watson Text to Speech</description>
+    <name>Camel :: IBM :: Watson Speech to Text</name>
+    <description>Transcribe audio to text using IBM Watson Speech to Text</description>
 
     <dependencies>
         <dependency>
@@ -42,10 +42,10 @@
             <artifactId>camel-health</artifactId>
         </dependency>
 
-        <!-- IBM Watson Text to Speech SDK -->
+        <!-- IBM Watson Speech to Text SDK -->
         <dependency>
             <groupId>com.ibm.watson</groupId>
-            <artifactId>text-to-speech</artifactId>
+            <artifactId>speech-to-text</artifactId>
             <version>${ibm-watson-sdk-version}</version>
         </dependency>
 
@@ -59,6 +59,12 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>${awaitility-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- IBM Watson Text to Speech for generating real speech test audio -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ibm-watson-text-to-speech</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -87,6 +93,9 @@
                 </executions>
                 <configuration>
                     <systemPropertyVariables>
+                        <camel.ibm.watson.stt.apiKey>${camel.ibm.watson.stt.apiKey}</camel.ibm.watson.stt.apiKey>
+                        <camel.ibm.watson.stt.serviceUrl>${camel.ibm.watson.stt.serviceUrl}</camel.ibm.watson.stt.serviceUrl>
+                        <!-- Optional: TTS credentials for generating real speech audio in tests -->
                         <camel.ibm.watson.tts.apiKey>${camel.ibm.watson.tts.apiKey}</camel.ibm.watson.tts.apiKey>
                         <camel.ibm.watson.tts.serviceUrl>${camel.ibm.watson.tts.serviceUrl}</camel.ibm.watson.tts.serviceUrl>
                     </systemPropertyVariables>
