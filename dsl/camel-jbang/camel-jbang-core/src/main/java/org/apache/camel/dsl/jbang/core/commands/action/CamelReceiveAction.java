@@ -56,6 +56,8 @@ import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 
+import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.valueAsStringPretty;
+
 @CommandLine.Command(name = "receive",
                      description = "Receive and dump messages from remote endpoints", sortOptions = false,
                      showDefaultValues = true)
@@ -171,6 +173,9 @@ public class CamelReceiveAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--pretty" },
                         description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
+
+    @CommandLine.Option(names = { "--output" }, description = "Output format (text or json)")
+    private String output;
 
     String findAnsi;
     private int nameMaxWidth;
@@ -416,7 +421,9 @@ public class CamelReceiveAction extends ActionBaseCommand {
             do {
                 if (pids.isEmpty()) {
                     if (waitMessage) {
-                        printer().println("Waiting for messages ...");
+                        if (!"json".equals(output)) {
+                            printer().println("Waiting for messages ...");
+                        }
                         waitMessage = false;
                     }
                     Thread.sleep(500);
@@ -434,7 +441,9 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         init = false;
                     } else if (lines == 0) {
                         if (init) {
-                            printer().println("Waiting for messages ...");
+                            if (!"json".equals(output)) {
+                                printer().println("Waiting for messages ...");
+                            }
                             init = false;
                         }
                         Thread.sleep(100);
@@ -568,6 +577,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
             if (arr != null) {
                 for (Object o : arr) {
                     Row row = new Row(pid);
+                    row.original = root;
                     row.pid = pid.pid;
                     row.name = pid.name;
                     JsonObject jo = (JsonObject) o;
@@ -697,6 +707,18 @@ public class CamelReceiveAction extends ActionBaseCommand {
     }
 
     protected void printDump(String name, int pids, Row row, Date limit) {
+        if ("json".equalsIgnoreCase(output)) {
+            String dump = row.original.toJson();
+            if (pretty) {
+                dump = valueAsStringPretty(dump, loggingColor);
+            }
+            printer().println(dump);
+            if (!compact) {
+                printer().println();
+            }
+            return;
+        }
+
         if (!prefixShown) {
             // compute whether to show prefix or not
             if ("false".equals(prefix) || "auto".equals(prefix) && pids <= 1) {
@@ -795,6 +817,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
     }
 
     private static class Row {
+        JsonObject original;
         Pid parent;
         String pid;
         String name;
