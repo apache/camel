@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,6 +62,8 @@ import org.apache.camel.component.salesforce.api.dto.SObject;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.joining;
 
@@ -73,6 +76,8 @@ public final class JsonUtils {
     public static final String DEFAULT_ID_PREFIX = "urn:jsonschema:org:apache:camel:component:salesforce:dto";
 
     private static final String API_DTO_ID = "org:urn:jsonschema:org:apache:camel:component:salesforce:api:dto";
+
+    private static final Logger LOG = LoggerFactory.getLogger(JsonUtils.class);
 
     private JsonUtils() {
 
@@ -95,19 +100,21 @@ public final class JsonUtils {
         ObjectMapper mapper = createSchemaObjectMapper();
         JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
 
-        DefaultPackageScanClassResolver packageScanClassResolver = new DefaultPackageScanClassResolver();
-
         Set<Class<?>> schemaClasses = new HashSet<>();
+        try (DefaultPackageScanClassResolver packageScanClassResolver = new DefaultPackageScanClassResolver()) {
 
-        // get non-abstract extensions of AbstractDTOBase
-        schemaClasses.addAll(packageScanClassResolver.findByFilter(
-                type -> !Modifier.isAbstract(type.getModifiers()) && AbstractDTOBase.class.isAssignableFrom(type),
-                "org.apache.camel.component.salesforce.api.dto"));
+            // get non-abstract extensions of AbstractDTOBase
+            schemaClasses.addAll(packageScanClassResolver.findByFilter(
+                    type -> !Modifier.isAbstract(type.getModifiers()) && AbstractDTOBase.class.isAssignableFrom(type),
+                    "org.apache.camel.component.salesforce.api.dto"));
 
-        // get non-abstract extensions of AbstractDTOBase
-        schemaClasses.addAll(packageScanClassResolver.findByFilter(
-                type -> !Modifier.isAbstract(type.getModifiers()) && AbstractDTOBase.class.isAssignableFrom(type),
-                "org.apache.camel.component.salesforce.api.dto"));
+            // get non-abstract extensions of AbstractDTOBase
+            schemaClasses.addAll(packageScanClassResolver.findByFilter(
+                    type -> !Modifier.isAbstract(type.getModifiers()) && AbstractDTOBase.class.isAssignableFrom(type),
+                    "org.apache.camel.component.salesforce.api.dto"));
+        } catch (IOException ie) {
+            LOG.warn("Some exception happened while parsing the schema", ie);
+        }
 
         Set<JsonSchema> allSchemas = new HashSet<>();
         for (Class<?> aClass : schemaClasses) {
