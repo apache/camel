@@ -42,7 +42,6 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
                 "org/apache/camel/spring/processor/idempotent/FileConsumerIdempotentLoadStoreTest.xml");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     @BeforeEach
     public void setUp() throws Exception {

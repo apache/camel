@@ -24,14 +24,15 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringFromRestDuplicateTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        try {
-            new ClassPathXmlApplicationContext("org/apache/camel/component/rest/SpringFromRestDuplicateTest.xml");
+        try (ClassPathXmlApplicationContext x
+                = new ClassPathXmlApplicationContext("org/apache/camel/component/rest/SpringFromRestDuplicateTest.xml")) {
             fail("Should throw exception");
         } catch (RuntimeCamelException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
@@ -49,6 +50,7 @@ public class SpringFromRestDuplicateTest extends SpringTestSupport {
 
     @Test
     public void testDuplicate() throws Exception {
-        // noop
+        // noop: required to test the context creation
+        assertTrue(true);
     }
 }

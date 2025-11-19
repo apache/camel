@@ -16,43 +16,44 @@
  */
 package org.apache.camel.spring;
 
+import java.io.IOException;
+
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CircularComponentCreationTest {
     @Test
     public void testSimple() {
-        try {
-            doTest("org/apache/camel/spring/CircularComponentCreationSimpleTest.xml");
-
-            fail("Exception should have been thrown");
-        } catch (Exception e) {
-            assertTrue(e instanceof FailedToCreateRouteException);
-        }
+        assertThrows(FailedToCreateRouteException.class,
+                () -> doTest("org/apache/camel/spring/CircularComponentCreationSimpleTest.xml"));
     }
 
     @Test
     public void testComplex() {
-        doTest("org/apache/camel/spring/CircularComponentCreationComplexTest.xml");
+        assertDoesNotThrow(() -> doTest("org/apache/camel/spring/CircularComponentCreationComplexTest.xml"));
     }
 
     // *******************************
     // Test implementation
     // *******************************
 
-    private void doTest(String path) {
+    private void doTest(String path) throws IOException {
         AbstractXmlApplicationContext applicationContext = null;
+        SpringCamelContext ctx = null;
         try {
             applicationContext = new ClassPathXmlApplicationContext(path);
-            new SpringCamelContext(applicationContext);
+            ctx = new SpringCamelContext(applicationContext);
         } finally {
             IOHelper.close(applicationContext);
+            if (ctx != null) {
+                ctx.close();
+            }
         }
     }
 }

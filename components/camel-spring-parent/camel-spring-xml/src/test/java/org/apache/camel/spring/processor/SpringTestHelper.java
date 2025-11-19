@@ -62,6 +62,8 @@ public final class SpringTestHelper {
                 applicationContext.stop();
             }
         });
+        // The API is deprecated, we can remove warnings safely as the tests will disappear when removing this component.
+        @SuppressWarnings("deprecation")
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, false);
         for (Map.Entry<String, Object> entry : beans.entrySet()) {
             context.getCamelContextExtension().getRegistry().bind(entry.getKey(), entry.getValue());

@@ -57,7 +57,7 @@ public class SpelTest extends LanguageTestSupport {
     @Test
     public void testResponseCreatesOutMessage() throws Exception {
         assertExpression("#{response.body}", null);
-        assertTrue(exchange.hasOut());
+        assertTrue(exchange.getMessage() != null);
     }
 
     @Override

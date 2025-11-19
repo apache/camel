@@ -33,7 +33,10 @@ public class HealthCheckRegistryTest {
 
     @Test
     public void testHealthCheckRoutes() throws Exception {
-        CamelContext context = createContext("org/apache/camel/spring/health/HealthCheckRegistryTest.xml");
+        ClassPathXmlApplicationContext appContext
+                = new ClassPathXmlApplicationContext("org/apache/camel/spring/health/HealthCheckRegistryTest.xml");
+        CamelContext context = appContext.getBean(CamelContext.class);
+        assertNotNull(context, "No Camel Context in file: org/apache/camel/spring/health/HealthCheckRegistryTest.xml");
 
         HealthCheckRegistry hc = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         assertNotNull(hc);
@@ -64,14 +67,9 @@ public class HealthCheckRegistryTest {
                 assertFalse(response.getError().isPresent());
             }
         }
+
+        context.close();
+        appContext.close();
     }
 
-    protected CamelContext createContext(String classpathConfigFile) {
-        ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(classpathConfigFile);
-
-        CamelContext camelContext = appContext.getBean(CamelContext.class);
-        assertNotNull(camelContext, "No Camel Context in file: " + classpathConfigFile);
-
-        return camelContext;
-    }
 }
