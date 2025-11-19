@@ -187,58 +187,57 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
             setAccessToken(post);
 
-            MultiPartRequestContent multipartContent = new MultiPartRequestContent();
+            try (MultiPartRequestContent multipartContent = new MultiPartRequestContent()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(sObject);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(sObject);
+                if (jsonNode.isObject()) {
+                    ObjectNode objectNode = (ObjectNode) jsonNode;
+                    ObjectNode cleanJson = objectNode.deepCopy();
 
-            if (jsonNode.isObject()) {
-                ObjectNode objectNode = (ObjectNode) jsonNode;
-                ObjectNode cleanJson = objectNode.deepCopy();
+                    Map<String, InputStream> binaryFields = getBinaryFieldMap(sObjectDto);
 
-                Map<String, InputStream> binaryFields = getBinaryFieldMap(sObjectDto);
+                    if (!binaryFields.isEmpty()) {
 
-                if (!binaryFields.isEmpty()) {
+                        // Remove binary field names from JSON first
+                        for (String fieldName : binaryFields.keySet()) {
+                            cleanJson.remove(fieldName);
+                        }
 
-                    // Remove binary field names from JSON first
-                    for (String fieldName : binaryFields.keySet()) {
-                        cleanJson.remove(fieldName);
+                        // non-binary json data must be the first part of the multipart request
+                        String cleanJsonString = objectMapper.writeValueAsString(cleanJson);
+                        multipartContent.addPart(new MultiPart.ContentSourcePart(
+                                "entity", null,
+                                HttpFields.build().add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8),
+                                new InputStreamRequestContent(
+                                        new ByteArrayInputStream(cleanJsonString.getBytes(StandardCharsets.UTF_8)))));
+
+                        // Then add binary fields as subsequent parts
+                        for (Map.Entry<String, InputStream> entry : binaryFields.entrySet()) {
+                            String fieldName = entry.getKey();
+                            InputStream binaryData = entry.getValue();
+
+                            multipartContent.addPart(new MultiPart.ContentSourcePart(
+                                    fieldName, "temp-file-name.doc",
+                                    HttpFields.build().add(HttpHeader.CONTENT_TYPE, "application/octet-stream"),
+                                    new InputStreamRequestContent(binaryData)));
+                        }
+                    } else {
+                        // No multipart data found - this shouldn't happen as processor should handle this case
+                        callback.onResponse(null, Collections.emptyMap(),
+                                new SalesforceException("createSObjectMultipart called but no binary fields found", null));
+                        return;
                     }
-
-                    // non-binary json data must be the first part of the multipart request
-                    String cleanJsonString = objectMapper.writeValueAsString(cleanJson);
+                } else {
+                    // If not a JSON object, send as-is
                     multipartContent.addPart(new MultiPart.ContentSourcePart(
                             "entity", null,
                             HttpFields.build().add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8),
-                            new InputStreamRequestContent(
-                                    new ByteArrayInputStream(cleanJsonString.getBytes(StandardCharsets.UTF_8)))));
-
-                    // Then add binary fields as subsequent parts
-                    for (Map.Entry<String, InputStream> entry : binaryFields.entrySet()) {
-                        String fieldName = entry.getKey();
-                        InputStream binaryData = entry.getValue();
-
-                        multipartContent.addPart(new MultiPart.ContentSourcePart(
-                                fieldName, "temp-file-name.doc",
-                                HttpFields.build().add(HttpHeader.CONTENT_TYPE, "application/octet-stream"),
-                                new InputStreamRequestContent(binaryData)));
-                    }
-                } else {
-                    // No multipart data found - this shouldn't happen as processor should handle this case
-                    callback.onResponse(null, Collections.emptyMap(),
-                            new SalesforceException("createSObjectMultipart called but no binary fields found", null));
-                    return;
+                            new InputStreamRequestContent(sObject)));
                 }
-            } else {
-                // If not a JSON object, send as-is
-                multipartContent.addPart(new MultiPart.ContentSourcePart(
-                        "entity", null,
-                        HttpFields.build().add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8),
-                        new InputStreamRequestContent(sObject)));
-            }
 
-            multipartContent.close();
-            post.body(multipartContent);
+                post.body(multipartContent);
+            }
 
             doHttpRequest(post, new DelegatingClientCallback(callback));
         } catch (Exception e) {
@@ -298,61 +297,59 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             Map<String, List<String>> headers, ResponseCallback callback) {
         try {
             final Request patch = getRequest("PATCH", sobjectsUrl(sObjectName + "/" + id), headers);
-
             setAccessToken(patch);
 
-            MultiPartRequestContent multipartContent = new MultiPartRequestContent();
+            try (MultiPartRequestContent multipartContent = new MultiPartRequestContent()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(sObject);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(sObject);
+                if (jsonNode.isObject()) {
+                    ObjectNode objectNode = (ObjectNode) jsonNode;
+                    ObjectNode cleanJson = objectNode.deepCopy();
 
-            if (jsonNode.isObject()) {
-                ObjectNode objectNode = (ObjectNode) jsonNode;
-                ObjectNode cleanJson = objectNode.deepCopy();
+                    Map<String, InputStream> binaryFields = getBinaryFieldMap(sObjectDto);
 
-                Map<String, InputStream> binaryFields = getBinaryFieldMap(sObjectDto);
+                    if (!binaryFields.isEmpty()) {
 
-                if (!binaryFields.isEmpty()) {
+                        // Remove binary field names from JSON first
+                        for (String fieldName : binaryFields.keySet()) {
+                            cleanJson.remove(fieldName);
+                        }
 
-                    // Remove binary field names from JSON first
-                    for (String fieldName : binaryFields.keySet()) {
-                        cleanJson.remove(fieldName);
+                        // non-binary json data must be the first part of the multipart request
+                        String cleanJsonString = objectMapper.writeValueAsString(cleanJson);
+                        multipartContent.addPart(new MultiPart.ContentSourcePart(
+                                "entity", null,
+                                HttpFields.build().add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8),
+                                new InputStreamRequestContent(
+                                        new ByteArrayInputStream(cleanJsonString.getBytes(StandardCharsets.UTF_8)))));
+
+                        // Then add binary fields as subsequent parts
+                        for (Map.Entry<String, InputStream> entry : binaryFields.entrySet()) {
+                            String fieldName = entry.getKey();
+                            InputStream binaryData = entry.getValue();
+
+                            multipartContent.addPart(new MultiPart.ContentSourcePart(
+                                    fieldName, "temp-file-name.doc",
+                                    HttpFields.build().add(HttpHeader.CONTENT_TYPE, "application/octet-stream"),
+                                    new InputStreamRequestContent(binaryData)));
+                        }
+                    } else {
+                        // No multipart data found - this shouldn't happen as processor should handle this case
+                        callback.onResponse(null, Collections.emptyMap(),
+                                new SalesforceException("updateSObjectMultipart called but no binary fields found", null));
+                        return;
                     }
-
-                    // non-binary json data must be the first part of the multipart request
-                    String cleanJsonString = objectMapper.writeValueAsString(cleanJson);
+                } else {
+                    // If not a JSON object, send as-is
                     multipartContent.addPart(new MultiPart.ContentSourcePart(
                             "entity", null,
                             HttpFields.build().add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8),
-                            new InputStreamRequestContent(
-                                    new ByteArrayInputStream(cleanJsonString.getBytes(StandardCharsets.UTF_8)))));
-
-                    // Then add binary fields as subsequent parts
-                    for (Map.Entry<String, InputStream> entry : binaryFields.entrySet()) {
-                        String fieldName = entry.getKey();
-                        InputStream binaryData = entry.getValue();
-
-                        multipartContent.addPart(new MultiPart.ContentSourcePart(
-                                fieldName, "temp-file-name.doc",
-                                HttpFields.build().add(HttpHeader.CONTENT_TYPE, "application/octet-stream"),
-                                new InputStreamRequestContent(binaryData)));
-                    }
-                } else {
-                    // No multipart data found - this shouldn't happen as processor should handle this case
-                    callback.onResponse(null, Collections.emptyMap(),
-                            new SalesforceException("updateSObjectMultipart called but no binary fields found", null));
-                    return;
+                            new InputStreamRequestContent(sObject)));
                 }
-            } else {
-                // If not a JSON object, send as-is
-                multipartContent.addPart(new MultiPart.ContentSourcePart(
-                        "entity", null,
-                        HttpFields.build().add(HttpHeader.CONTENT_TYPE, APPLICATION_JSON_UTF8),
-                        new InputStreamRequestContent(sObject)));
-            }
 
-            multipartContent.close();
-            patch.body(multipartContent);
+                patch.body(multipartContent);
+            }
 
             doHttpRequest(patch, new DelegatingClientCallback(callback));
         } catch (Exception e) {

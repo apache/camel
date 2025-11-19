@@ -79,7 +79,7 @@ public class MultiSelectPicklistDeserializer extends StdDeserializer<Object> imp
 
             return resultArray;
         } catch (Exception e) {
-            throw new JsonParseException(jp, "Exception reading multi-select pick list value", jp.getCurrentLocation());
+            throw new JsonParseException(jp, "Exception reading multi-select pick list value", jp.currentLocation());
         }
     }
 

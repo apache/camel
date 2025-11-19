@@ -239,11 +239,10 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
     private Class<?> detectResponseClass(Exchange exchange, InputStream responseEntity) throws IOException {
         Class<?> responseClass;
-        try {
-            final JsonParser parser = new JsonFactory().createParser(responseEntity);
+        try (final JsonParser parser = new JsonFactory().createParser(responseEntity)) {
             String type = null;
             while (parser.nextToken() != JsonToken.END_OBJECT) {
-                String propName = parser.getCurrentName();
+                String propName = parser.currentName();
                 if ("type".equals(propName)) {
                     parser.nextToken();
                     type = parser.getText();
