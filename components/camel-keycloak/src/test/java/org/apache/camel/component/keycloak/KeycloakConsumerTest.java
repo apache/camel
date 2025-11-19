@@ -27,7 +27,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.RealmsResource;
 import org.keycloak.representations.idm.AdminEventRepresentation;
 import org.keycloak.representations.idm.EventRepresentation;
 import org.mockito.Mockito;
@@ -41,7 +40,6 @@ public class KeycloakConsumerTest extends CamelTestSupport {
     @BindToRegistry("keycloakClient")
     private Keycloak keycloakClient = Mockito.mock(Keycloak.class);
 
-    private RealmsResource realmsResource = Mockito.mock(RealmsResource.class);
     private RealmResource realmResource = Mockito.mock(RealmResource.class);
 
     @Override

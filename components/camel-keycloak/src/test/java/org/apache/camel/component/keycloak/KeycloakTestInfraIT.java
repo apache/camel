@@ -75,7 +75,6 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     private static String testClientUuid;
     private static String testResourceId;
     private static String testPolicyId;
-    private static String testCredentialId;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -686,11 +685,6 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         @SuppressWarnings("unchecked")
         List<CredentialRepresentation> credentials = result.getIn().getBody(List.class);
         assertNotNull(credentials);
-
-        // Store first credential ID for later deletion test
-        if (!credentials.isEmpty()) {
-            testCredentialId = credentials.get(0).getId();
-        }
 
         log.info("Retrieved {} credentials for user {}", credentials.size(), testUserId);
     }

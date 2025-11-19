@@ -55,7 +55,6 @@ public class KeycloakConsumerIT extends CamelTestSupport {
     // Test data - use unique names to avoid conflicts
     private static final String TEST_REALM_NAME = "consumer-test-realm-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String TEST_USER_NAME = "consumer-test-user-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_ROLE_NAME = "consumer-test-role-" + UUID.randomUUID().toString().substring(0, 8);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
