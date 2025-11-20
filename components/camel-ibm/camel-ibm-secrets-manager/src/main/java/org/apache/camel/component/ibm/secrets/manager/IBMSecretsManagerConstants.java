@@ -41,6 +41,16 @@ public final class IBMSecretsManagerConstants {
               javaType = "String")
     public static final String SECRET_ID = HEADER_PREFIX + "SecretId";
 
+    // headers set by the producer only
+    @Metadata(label = "producer", description = "Set the secret payload for update operation.",
+              javaType = "String")
+    public static final String SECRET_PAYLOAD = HEADER_PREFIX + "SecretPayload";
+
+    // headers set by the producer only
+    @Metadata(label = "producer", description = "Set the secret data (Map) for KV secret update operation.",
+              javaType = "java.util.Map")
+    public static final String SECRET_DATA = HEADER_PREFIX + "SecretData";
+
     private IBMSecretsManagerConstants() {
     }
 }

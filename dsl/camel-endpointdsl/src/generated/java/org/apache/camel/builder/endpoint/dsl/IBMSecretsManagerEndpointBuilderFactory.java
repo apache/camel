@@ -278,6 +278,31 @@ public interface IBMSecretsManagerEndpointBuilderFactory {
         public String ibmSecretsManagerSecretId() {
             return "CamelIbmSecretsManagerSecretId";
         }
+        /**
+         * Set the secret payload for update operation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * IbmSecretsManagerSecretPayload}.
+         */
+        public String ibmSecretsManagerSecretPayload() {
+            return "CamelIbmSecretsManagerSecretPayload";
+        }
+        /**
+         * Set the secret data (Map) for KV secret update operation.
+         * 
+         * The option is a: {@code java.util.Map} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code IbmSecretsManagerSecretData}.
+         */
+        public String ibmSecretsManagerSecretData() {
+            return "CamelIbmSecretsManagerSecretData";
+        }
     }
     static IBMSecretsManagerEndpointBuilder endpointBuilder(String componentName, String path) {
         class IBMSecretsManagerEndpointBuilderImpl extends AbstractEndpointBuilder implements IBMSecretsManagerEndpointBuilder, AdvancedIBMSecretsManagerEndpointBuilder {
