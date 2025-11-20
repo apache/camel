@@ -36,7 +36,8 @@ public final class FileConstants {
                             + " `null` then Camel will auto-generate a filename based on the message"
                             + " unique ID. (consumer) Name of the consumed file as a relative file path with offset from the"
                             + " starting directory configured on the endpoint.",
-              javaType = "String")
+              javaType = "String",
+              important = true)
     public static final String FILE_NAME = Exchange.FILE_NAME;
     @Metadata(label = "consumer", description = "The name of the file that has been consumed", javaType = "String")
     public static final String FILE_NAME_CONSUMED = Exchange.FILE_NAME_CONSUMED;

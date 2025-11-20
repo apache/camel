@@ -70,7 +70,8 @@ public interface Exchange extends VariableAware {
     String AUTHENTICATION = "CamelAuthentication";
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
 
-    @Metadata(label = "aggregate", description = "Number of exchanges that was grouped together.", javaType = "int")
+    @Metadata(label = "aggregate", description = "Number of exchanges that was grouped together.", javaType = "int",
+              important = true)
     String AGGREGATED_SIZE = "CamelAggregatedSize";
     @Metadata(label = "aggregate", description = "The time in millis this group will timeout", javaType = "long")
     String AGGREGATED_TIMEOUT = "CamelAggregatedTimeout";
@@ -112,6 +113,7 @@ public interface Exchange extends VariableAware {
     String CLAIM_CHECK_REPOSITORY = "CamelClaimCheckRepository";
     String CONTENT_ENCODING = "Content-Encoding";
     String CONTENT_LENGTH = "Content-Length";
+    @Metadata(important = true)
     String CONTENT_TYPE = "Content-Type";
     String COOKIE_HANDLER = "CamelCookieHandler";
     String CORRELATION_ID = "CamelCorrelationId";
@@ -130,7 +132,6 @@ public interface Exchange extends VariableAware {
               description = "Whether this exchange is a duplicate detected by the Idempotent Consumer EIP",
               javaType = "boolean")
     String DUPLICATE_MESSAGE = "CamelDuplicateMessage";
-
     String DOCUMENT_BUILDER_FACTORY = "CamelDocumentBuilderFactory";
 
     @Metadata(label = "doCatch,doFinally,errorHandler,onException",
@@ -154,6 +155,7 @@ public interface Exchange extends VariableAware {
     String FATAL_FALLBACK_ERROR_HANDLER = "CamelFatalFallbackErrorHandler";
     String FILE_CONTENT_TYPE = "CamelFileContentType";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
+    @Metadata(important = true)
     String FILE_NAME = "CamelFileName";
     String FILE_NAME_ONLY = "CamelFileNameOnly";
     String FILE_NAME_PRODUCED = "CamelFileNameProduced";
@@ -182,6 +184,7 @@ public interface Exchange extends VariableAware {
     String HTTP_PROTOCOL_VERSION = "CamelHttpProtocolVersion";
     String HTTP_QUERY = "CamelHttpQuery";
     String HTTP_RAW_QUERY = "CamelHttpRawQuery";
+    @Metadata(important = true)
     String HTTP_RESPONSE_CODE = "CamelHttpResponseCode";
     String HTTP_RESPONSE_TEXT = "CamelHttpResponseText";
     String HTTP_URI = "CamelHttpUri";
@@ -277,11 +280,13 @@ public interface Exchange extends VariableAware {
     String SPLIT_COMPLETE = "CamelSplitComplete";
     @Metadata(label = "split",
               description = "The total number of Exchanges that was split. This property is not applied for stream based splitting, except for the very last message because then Camel knows the total size.",
-              javaType = "int")
+              javaType = "int",
+              important = true)
     String SPLIT_SIZE = "CamelSplitSize";
     @Metadata(label = "step", description = "The id of the Step EIP", javaType = "String")
     String STEP_ID = "CamelStepId";
 
+    @Metadata(important = true)
     String TIMER_COUNTER = "CamelTimerCounter";
     String TIMER_FIRED_TIME = "CamelTimerFiredTime";
     String TIMER_NAME = "CamelTimerName";

@@ -175,4 +175,10 @@ public @interface Metadata {
      * Annotations data for Camel concepts such as components, EIP, etc.
      */
     String[] annotations() default {};
+
+    /**
+     * Whether this option is important
+     */
+    boolean important() default false;
+
 }

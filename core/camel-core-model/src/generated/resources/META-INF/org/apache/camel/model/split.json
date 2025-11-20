@@ -35,6 +35,6 @@
   "exchangeProperties": {
     "CamelSplitIndex": { "index": 0, "kind": "exchangeProperty", "displayName": "Split Index", "label": "producer", "required": false, "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "description": "A split counter that increases for each Exchange being split. The counter starts from 0." },
     "CamelSplitComplete": { "index": 1, "kind": "exchangeProperty", "displayName": "Split Complete", "label": "producer", "required": false, "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "description": "Whether this Exchange is the last." },
-    "CamelSplitSize": { "index": 2, "kind": "exchangeProperty", "displayName": "Split Size", "label": "producer", "required": false, "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "description": "The total number of Exchanges that was split. This property is not applied for stream based splitting, except for the very last message because then Camel knows the total size." }
+    "CamelSplitSize": { "index": 2, "kind": "exchangeProperty", "displayName": "Split Size", "label": "producer", "required": false, "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "important": true, "description": "The total number of Exchanges that was split. This property is not applied for stream based splitting, except for the very last message because then Camel knows the total size." }
   }
 }
