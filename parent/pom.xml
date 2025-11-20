@@ -249,7 +249,7 @@
         <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
         <jackson-jq-version>1.4.0</jackson-jq-version>
-        <jackson2-version>2.19.2</jackson2-version>
+        <jackson2-version>2.19.4</jackson2-version>
         <jackrabbit-version>2.22.2</jackrabbit-version>
         <jasminb-jsonapi-version>0.14</jasminb-jsonapi-version>
         <jandex-version>3.4.0</jandex-version>
@@ -286,7 +286,7 @@
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>6.1.0</jedis-client-version>
-        <jetty-version>12.0.29</jetty-version>
+        <jetty-version>12.0.30</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -482,10 +482,10 @@
         <spring-data-redis-version>3.5.5</spring-data-redis-version>
         <spring-ldap-version>3.3.4</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
-        <spring-version>6.2.12</spring-version>
+        <spring-version>6.2.14</spring-version>
         <spring-rabbitmq-version>3.2.6</spring-rabbitmq-version>
-        <spring-security-version>6.5.5</spring-security-version>
-        <spring-ws-version>4.1.1</spring-ws-version>
+        <spring-security-version>6.5.7</spring-security-version>
+        <spring-ws-version>4.1.2</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okhttp5-version>5.1.0</squareup-okhttp5-version>
