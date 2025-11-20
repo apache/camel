@@ -17,6 +17,11 @@
 
 package org.apache.camel.test.infra.common.services;
 
+import java.util.List;
+import java.util.Objects;
+
+import com.github.dockerjava.api.model.Version;
+import com.github.dockerjava.api.model.VersionComponent;
 import org.apache.camel.spi.annotations.InfraService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +56,24 @@ public final class ContainerEnvironmentUtil {
         }
 
         return dockerAvailable;
+    }
+
+    public static boolean isPodman() {
+        try {
+            Version version = DockerClientFactory.instance().client().versionCmd().exec();
+            List<VersionComponent> components = version.getComponents();
+            if (components != null) {
+                return components.stream()
+                        .map(VersionComponent::getName)
+                        .filter(Objects::nonNull)
+                        .map(String::toLowerCase)
+                        .anyMatch(name -> name.contains("podman"));
+            }
+        } catch (Exception e) {
+            LOG.warn("Failed to determine container engine type", e);
+        }
+
+        return false;
     }
 
     public static void configureContainerStartup(GenericContainer<?> container, String property, int defaultValue) {

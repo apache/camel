@@ -158,7 +158,13 @@ public class InfinispanLocalContainerInfraService implements InfinispanInfraServ
     }
 
     private boolean isHostNetworkMode() {
-        return Boolean.parseBoolean(System.getProperty(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST,
-                String.valueOf(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST_DEFAULT)));
+        String isHostMode = System.getProperty(InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST);
+        if (isHostMode != null) {
+            return Boolean.parseBoolean(isHostMode);
+        } else if (System.getProperty("os.name").contains("Linux") && ContainerEnvironmentUtil.isPodman()) {
+            return true;
+        } else {
+            return InfinispanProperties.INFINISPAN_CONTAINER_NETWORK_MODE_HOST_DEFAULT;
+        }
     }
 }
