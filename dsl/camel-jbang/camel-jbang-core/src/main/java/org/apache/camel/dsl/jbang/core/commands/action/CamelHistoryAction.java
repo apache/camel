@@ -56,6 +56,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
+    // TODO: option to max deep level (like trace)
+    // TODO: option to collapse split (to cut very large split)
+
     private final Set<String> usedImportant = new HashSet<>();
 
     public CamelHistoryAction(CamelJBangMain main) {
