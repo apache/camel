@@ -62,9 +62,13 @@ public class OpenTelemetryConstants {
     public static final String DEFAULT_CAMEL_ROUTES_RUNNING = "camel.routes.running";
     public static final String DEFAULT_CAMEL_ROUTES_RELOADED = "camel.routes.reloaded";
 
+    // Message-history metric
+    public static final String DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME = "camel.message.history";
+
     // OpenTelemetry Attribute keys
     public static final String CAMEL_CONTEXT_ATTRIBUTE = "camelContext";
     public static final String ROUTE_ID_ATTRIBUTE = "routeId";
+    public static final String NODE_ID_ATTRIBUTE = "nodeId";
     public static final String FAILED_ATTRIBUTE = "failed";
     public static final String EVENT_TYPE_ATTRIBUTE = "eventType";
     public static final String KIND_ATTRIBUTE = "kind";
@@ -73,6 +77,7 @@ public class OpenTelemetryConstants {
     // OpenTelemetry Attribute values
     public static final String KIND_EXCHANGE = "CamelExchangeEvent";
     public static final String KIND_ROUTE = "CamelRoute";
+    public static final String KIND_HISTORY = "CamelMessageHistory";
 
     private OpenTelemetryConstants() {
         // no-op
