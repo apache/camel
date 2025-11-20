@@ -1,5 +1,6 @@
 [
   "CamelAggregatedSize",
   "CamelFileName",
+  "CamelSplitIndex",
   "CamelSplitSize"
 ]

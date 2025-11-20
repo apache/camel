@@ -29,6 +29,7 @@ public final class ImportantHeaderUtils {
                     // IMPORTANT-HEADER-KEYS: START
                     "CamelAggregatedSize",
                     "CamelFileName",
+                    "CamelSplitIndex",
                     "CamelSplitSize"
             // IMPORTANT-HEADER-KEYS: END
             )));

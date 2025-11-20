@@ -274,7 +274,8 @@ public interface Exchange extends VariableAware {
     String SLIP_PRODUCER = "CamelSlipProducer";
     @Metadata(label = "split",
               description = "A split counter that increases for each Exchange being split. The counter starts from 0.",
-              javaType = "int")
+              javaType = "int",
+              important = true)
     String SPLIT_INDEX = "CamelSplitIndex";
     @Metadata(label = "split", description = "Whether this Exchange is the last.", javaType = "boolean")
     String SPLIT_COMPLETE = "CamelSplitComplete";
