@@ -60,7 +60,7 @@
         <activemq6-version>6.1.5</activemq6-version>
         <activemq-artemis-version>2.39.0</activemq-artemis-version>
         <amazon-kinesis-client-version>2.6.0</amazon-kinesis-client-version>
-        <angus-mail-version>2.0.4</angus-mail-version>
+        <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-drill-version>1.21.2</apache-drill-version>
         <arangodb-java-version>7.17.0</arangodb-java-version>
@@ -200,7 +200,7 @@
         <graphql-java-version>22.3</graphql-java-version>
         <greenmail-version>2.1.3</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
-        <groovy-version>4.0.27</groovy-version>
+        <groovy-version>4.0.29</groovy-version>
         <grpc-version>1.70.0</grpc-version>
         <grpc-google-auth-library-version>1.32.0</grpc-google-auth-library-version>
         <grpc-java-jwt-version>4.5.0</grpc-java-jwt-version>
@@ -240,7 +240,7 @@
         <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.6</jackson-databind-nullable-version>
         <jackson-jq-version>1.2.0</jackson-jq-version>
-        <jackson2-version>2.18.4</jackson2-version>
+        <jackson2-version>2.18.5</jackson2-version>
         <jackrabbit-version>2.22.2</jackrabbit-version>
         <jasminb-jsonapi-version>0.14</jasminb-jsonapi-version>
         <jandex-version>3.2.4</jandex-version>
@@ -278,7 +278,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>5.2.0</jedis-client-version>
         <jetcd-version>0.8.4</jetcd-version>
-        <jetty-version>12.0.29</jetty-version>
+        <jetty-version>12.0.30</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -467,9 +467,9 @@
         <spring-data-redis-version>3.4.11</spring-data-redis-version>
         <spring-ldap-version>3.2.15</spring-ldap-version>
         <spring-vault-core-version>3.1.3</spring-vault-core-version>
-        <spring-version>6.2.12</spring-version>
+        <spring-version>6.2.14</spring-version>
         <spring-rabbitmq-version>3.2.7</spring-rabbitmq-version>
-        <spring-security-version>6.4.12</spring-security-version>
+        <spring-security-version>6.4.13</spring-security-version>
         <spring-ws-version>4.0.16</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
