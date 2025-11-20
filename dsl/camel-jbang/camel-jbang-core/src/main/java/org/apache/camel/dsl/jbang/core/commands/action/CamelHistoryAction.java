@@ -22,7 +22,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -178,20 +180,59 @@ public class CamelHistoryAction extends ActionWatchCommand {
             return "Exception: " + r.exception.getString("message");
         }
         if (r.last) {
-            return r.failed ? "failed" : "success";
+            return r.failed ? "Failed" : "Success";
         }
-        return importantMessage(r);
+
+        Map<String, String> map = extractImportant(r);
+        if (map.isEmpty()) {
+            return null;
+        }
+        StringJoiner sj = new StringJoiner(" ");
+
+        // special for split
+        String si = map.remove("CamelSplitIndex");
+        String sv = map.remove("CamelSplitSize");
+        if (si != null && sv != null) {
+            int num = Integer.parseInt(sv) - 1;
+            sj.add("Split (" + si + "/" + num + ")");
+        } else if (si != null) {
+            sj.add("Split (" + si + ")");
+        }
+        // special for file
+        String fn = map.remove("CamelFileName");
+        String fs = map.remove("CamelFileLength");
+        if (fn != null && fs != null) {
+            String line = "File: " + fn + " (" + fs + " bytes)";
+            if (usedImportant.add(line)) {
+                sj.add(line);
+            }
+        } else if (fn != null) {
+            String line = "File: " + fn;
+            if (usedImportant.add(line)) {
+                sj.add(line);
+            }
+        }
+
+        map.forEach((k,v) -> {
+            String line = k + "=" + v;
+            if (usedImportant.add(line)) {
+                // avoid duplicates so only show unique
+                sj.add(k + "=" + v);
+            }
+        });
+
+        return sj.toString();
     }
 
-    private String importantMessage(Row r) {
-        StringJoiner sj = new StringJoiner(" ");
+    private Map<String, String> extractImportant(Row r) {
+        Map<String, String> answer = new LinkedHashMap<>();
+
         JsonArray arr = r.message.getCollection("exchangeProperties");
         if (arr != null) {
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jo = (JsonObject) arr.get(i);
                 if (jo.getBooleanOrDefault("important", false)) {
-                    String line = jo.getString("key") + "=" + jo.getString("value");
-                    sj.add(line);
+                    answer.put(jo.getString("key"), jo.getString("value"));
                 }
             }
         }
@@ -200,19 +241,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jo = (JsonObject) arr.get(i);
                 if (jo.getBooleanOrDefault("important", false)) {
-                    String line = jo.getString("key") + "=" + jo.getString("value");
-                    sj.add(line);
+                    answer.put(jo.getString("key"), jo.getString("value"));
                 }
             }
         }
-        if (sj.length() > 0) {
-            String line = sj.toString();
-            // avoid printing the same line over and over again
-            if (usedImportant.add(line)) {
-                return line;
-            }
-        }
-        return null;
+        return answer;
     }
 
     protected List<List<Row>> loadRows() throws Exception {

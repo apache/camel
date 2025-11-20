@@ -21,7 +21,7 @@ import org.apache.camel.spi.Metadata;
 
 public final class FileConstants {
 
-    @Metadata(label = "consumer", description = "A `long` value containing the file size.", javaType = "long")
+    @Metadata(label = "consumer", description = "A `long` value containing the file size.", javaType = "long", important = true)
     public static final String FILE_LENGTH = Exchange.FILE_LENGTH;
     @Metadata(label = "consumer", description = "A `Long` value containing the last modified timestamp of the file.",
               javaType = "long")
