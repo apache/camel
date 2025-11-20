@@ -329,6 +329,62 @@ spec:
 <3> Custom container name
 <4> Custom container port exposed
 
+=== Cronjob
+
+It's possible to run the workload as a https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/[CronJob], it allows to set some parameters as `schedule`, `timezone`, `startingDeadlineSeconds`, `activeDeadlineSeconds`, `backoffLimit`, and `durationMaxIdleSeconds`. When the CronJob trait is used, it doesn't contain the container health probes, since the Cronjob doesn't use them to start or check the pods.
+
+To generate the CronJob manifest, these are required trait parameters: `enabled=true` and `schedule`.
+
+.Example
+
+[source,bash]
+----
+camel kubernetes export Sample.java \
+  --trait=cronjob.enabled=true \
+  --trait=cronjob.schedule="* * * * 2" \
+  --trait=cronjob.timezone="Europe/Lisbon" \
+  --trait=cronjob.startingDeadlineSeconds=3 \
+  --trait=cronjob.activeDeadlineSeconds=7 \
+  --trait=cronjob.backoffLimit=4 \
+  --trait=cronjob.durationMaxIdleSeconds=2
+----
+
+The CronJob configuration parameters:
+
+[cols="2m,1m,5a"]
+|===
+|Property | Type | Description
+
+| cronjob.enabled
+| boolean
+| To generate the CronJob manifest instead of Deployment. (default=false)
+
+| cronjob.schedule
+| string
+| To set the schedule to run the workload following the crontab format.
+
+| cronjob.timezone
+| string
+| To set the timezone to run the workload.
+
+| cronjob.startingDeadlineSeconds
+| integer
+| To set the `StartingDeadlineSeconds` field of the CronJob.
+
+| cronjob.activeDeadlineSeconds
+| integer
+| To set the `ActiveDeadlineSeconds` field of the CronJob.
+
+| cronjob.backoffLimit
+| integer
+| To set the `BackoffLimit` field of the CronJob.
+
+| cronjob.durationMaxIdleSeconds
+| integer
+| To set the `camel.main.duration-max-idle-seconds` property for how long time in seconds Camel can be idle before automatic terminating the JVM. (default 1)
+
+|===
+
 === Labels and annotations
 
 You may need to add labels or annotations to the generated Kubernetes resources.

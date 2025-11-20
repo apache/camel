@@ -56,7 +56,8 @@ public class CamelSendAction extends ActionBaseCommand {
                                       " (ex. /path/to/file.properties,/path/to/other.properties")
     String propertiesFiles;
 
-    @CommandLine.Option(names = { "--prop", "--property" }, description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
+    @CommandLine.Option(names = { "--prop", "--property" },
+                        description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
                         arity = "0")
     String[] property;
 

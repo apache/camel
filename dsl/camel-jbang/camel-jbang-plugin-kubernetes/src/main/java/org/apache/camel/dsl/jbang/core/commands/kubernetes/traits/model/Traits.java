@@ -28,7 +28,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "camel", "container", "environment", "ingress", "knative", "knative-service", "mount", "openapi", "pod", "route",
+        "camel", "container", "cronjob", "environment", "ingress", "knative", "knative-service", "mount", "openapi", "pod",
+        "route",
         "service", "service-binding", "jolokia" })
 public class Traits {
 
@@ -46,6 +47,11 @@ public class Traits {
     @JsonPropertyDescription("The configuration of Container trait")
     @JsonSetter(nulls = Nulls.SKIP)
     private Container container;
+
+    @JsonProperty("cronjob")
+    @JsonPropertyDescription("The configuration of CronJob trait")
+    @JsonSetter(nulls = Nulls.SKIP)
+    private CronJob cronjob;
 
     @JsonProperty("environment")
     @JsonPropertyDescription("The configuration of Environment trait")
@@ -119,6 +125,14 @@ public class Traits {
 
     public void setContainer(Container container) {
         this.container = container;
+    }
+
+    public CronJob getCronjob() {
+        return cronjob;
+    }
+
+    public void setCronjob(CronJob cronjob) {
+        this.cronjob = cronjob;
     }
 
     public Environment getEnvironment() {

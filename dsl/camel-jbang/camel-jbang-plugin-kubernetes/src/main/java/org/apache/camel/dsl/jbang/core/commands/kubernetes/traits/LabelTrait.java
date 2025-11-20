@@ -42,5 +42,17 @@ public class LabelTrait extends BaseTrait {
                         .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
                         .addToLabels(context.getLabels())
                         .endMetadata());
+        context.doWithCronJobs(
+                c -> c.editOrNewMetadata()
+                        .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
+                        .addToLabels(context.getLabels())
+                        .endMetadata()
+                        .editOrNewSpec()
+                        .editOrNewJobTemplate()
+                        .editOrNewMetadata()
+                        .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
+                        .endMetadata()
+                        .endJobTemplate()
+                        .endSpec());
     }
 }

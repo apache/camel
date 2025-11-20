@@ -27,8 +27,11 @@ import io.fabric8.kubernetes.api.model.ServicePort;
 import io.fabric8.kubernetes.api.model.Volume;
 import io.fabric8.kubernetes.api.model.VolumeMount;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.batch.v1.CronJob;
+import io.fabric8.kubernetes.api.model.batch.v1.JobSpec;
 import io.fabric8.kubernetes.api.model.networking.v1.Ingress;
 import io.fabric8.openshift.api.model.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
@@ -76,7 +79,6 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Properties applicationProperties = getApplicationProperties(workingDir);
 
         if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
-            Assertions.assertEquals("9876", props.get("quarkus.management.port"));
             Assertions.assertEquals("9876", applicationProperties.get("quarkus.management.port"));
             Assertions.assertEquals("9876", props.get("jkube.enricher.jkube-healthcheck-quarkus.port"));
             Assertions.assertEquals("/observe/health", props.get("quarkus.smallrye-health.root-path"));
@@ -211,6 +213,65 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
 
         Assertions.assertTrue(hasService(rt));
         Assertions.assertFalse(hasKnativeService(rt));
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldGenerateCronjobKubernetesManifest(RuntimeType rt) throws Exception {
+        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+                "--image-registry=quay.io", "--image-group=camel-test", "--runtime=" + rt.runtime(),
+                "--service-account=my-svc-account");
+        command.traits = new String[] {
+                "cronjob.enabled=true",
+                "cronjob.schedule=\"0 22 * * 1-5\"",
+                "cronjob.timezone=Europe/Lisbon",
+                "cronjob.startingDeadlineSeconds=2",
+                "cronjob.activeDeadlineSeconds=3",
+                "cronjob.backoffLimit=4",
+                "cronjob.durationMaxIdleSeconds=5",
+                "container.imagePullPolicy=Never"
+        };
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        CronJob cronjob = getResource(rt, CronJob.class)
+                .orElseThrow(() -> new RuntimeCamelException("Cannot find cronjob for: %s".formatted(rt.runtime())));
+        JobSpec jobSpec = cronjob.getSpec().getJobTemplate().getSpec();
+        Assertions.assertEquals("route", cronjob.getMetadata().getName());
+        Assertions.assertEquals("0 22 * * 1-5", cronjob.getSpec().getSchedule());
+        Assertions.assertEquals("Europe/Lisbon", cronjob.getSpec().getTimeZone());
+        Assertions.assertEquals(2, cronjob.getSpec().getStartingDeadlineSeconds());
+        Assertions.assertEquals(3, jobSpec.getActiveDeadlineSeconds());
+        Assertions.assertEquals(4, jobSpec.getBackoffLimit());
+        Assertions.assertEquals("Never", jobSpec.getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
+        Assertions.assertEquals("my-svc-account", jobSpec.getTemplate().getSpec().getServiceAccountName());
+
+        Properties applicationProperties = getApplicationProperties(workingDir);
+        Assertions.assertEquals("5", applicationProperties.getProperty("camel.main.duration-max-idle-seconds"));
+
+        Model model = readMavenModel();
+        Assertions.assertEquals("org.example.project", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0-SNAPSHOT", model.getVersion());
+
+        Properties props = model.getProperties();
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", props.get("jkube.image.name"));
+        Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", props.get("jkube.container-image.name"));
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
+
+        // there are no health probes for cronjobs
+        if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertNull(applicationProperties.get("quarkus.management.port"));
+            Assertions.assertNull(props.get("jkube.enricher.jkube-healthcheck-quarkus.port"));
+            Assertions.assertNull(props.get("quarkus.smallrye-health.root-path"));
+        } else if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertNull(applicationProperties.get("management.server.port"));
+            Assertions.assertNull(applicationProperties.get("management.endpoints.web.base-path"));
+            Assertions.assertNull(applicationProperties.get("management.health.probes.enabled"));
+        } else if (RuntimeType.main == RuntimeType.fromValue(rt.runtime())) {
+            Assertions.assertNull(applicationProperties.get("camel.management.port"));
+        }
     }
 
     @ParameterizedTest

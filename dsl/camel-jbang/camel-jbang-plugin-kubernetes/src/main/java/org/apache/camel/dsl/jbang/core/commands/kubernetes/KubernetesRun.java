@@ -291,6 +291,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     private KubernetesPodLogs reusablePodLogs;
     private Printer quietPrinter;
+    private Traits computedTraits;
 
     public KubernetesRun(CamelJBangMain main) {
         this(main, null);
@@ -312,6 +313,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     public Integer doCall() throws Exception {
         String projectName = getProjectName();
+        computedTraits = TraitHelper.parseTraits(traits);
 
         Path baseDir = Path.of(".");
         if (files.size() == 1) {
@@ -348,6 +350,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         String workingDir = getIndexedWorkingDir(projectName);
         KubernetesExport export = configureExport(workingDir, baseDir);
+        boolean cronEnabled = computedTraits.getCronjob() != null && computedTraits.getCronjob().getEnabled();
+        if (cronEnabled) {
+            // disable observability-services as CronJob doesn't use the container probes
+            export.setObserve(false);
+        }
         int exit = export.export();
         if (exit != 0) {
             printer().printErr("Project export failed!");
@@ -355,8 +362,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         }
 
         if (output != null) {
-            Traits ptraits = TraitHelper.parseTraits(traits);
-            boolean ksvcEnabled = ptraits.getKnativeService() != null && ptraits.getKnativeService().getEnabled();
+            boolean ksvcEnabled = computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled();
 
             exit = buildProjectOutput(workingDir);
             if (exit != 0) {
@@ -658,8 +664,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         // suppress maven transfer progress
         args.add("-ntp");
 
-        Traits ptraits = TraitHelper.parseTraits(traits);
-        if (ptraits.getKnativeService() != null && ptraits.getKnativeService().getEnabled()) {
+        if (computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled()) {
             // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
             // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
             // and there is no need for the regular Deployment as the knative Service manifest, once deployed
@@ -727,8 +732,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         boolean isOpenshift = ClusterType.OPENSHIFT.isEqualTo(clusterType);
         var prefix = isOpenshift ? "oc" : "k8s";
-        Traits ptraits = TraitHelper.parseTraits(traits);
-        if (ptraits.getKnativeService() != null && ptraits.getKnativeService().getEnabled()) {
+        if (computedTraits.getKnativeService() != null && computedTraits.getKnativeService().getEnabled()) {
             // by default jkube creates a Deployment manifest and it doesn't support knative controller yet.
             // however when knative-service is enabled the knative-service trait generates a src/main/jkube/service.yml
             // and there is no need for the regular Deployment as the knative Service manifest, once deployed

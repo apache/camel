@@ -39,6 +39,7 @@ public class TraitCatalog {
 
     public TraitCatalog() {
         register(new DeploymentTrait());
+        register(new CronJobTrait());
         register(new KnativeTrait());
         register(new KnativeServiceTrait());
         register(new ServiceTrait());
