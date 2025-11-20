@@ -21,7 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -53,6 +55,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
     @CommandLine.Option(names = { "--mask" },
                         description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
+
+    private final Set<String> usedImportant = new HashSet<>();
 
     public CamelHistoryAction(CamelJBangMain main) {
         super(main);
@@ -92,6 +96,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT)
                                 .maxWidth(10, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> "" + r.elapsed),
+                        new Column().header("EXCHANGE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                                .maxWidth(12, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(this::getExchangeId),
                         new Column().header("").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(60, OverflowBehaviour.NEWLINE)
                                 .with(this::getMessage))));
@@ -152,6 +159,17 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
     }
 
+    private String getExchangeId(Row r) {
+        String id = r.exchangeId.substring(r.exchangeId.length() - 4);
+        String cid = r.correlationExchangeId;
+        if (cid != null) {
+            cid = cid.substring(cid.length() - 4);
+            return String.format("%s/%s", id, cid);
+        } else {
+            return String.format("%s", id);
+        }
+    }
+
     private String getMessage(Row r) {
         if (r.failed && !r.last) {
             return "Exception: " + r.exception.getString("message");
@@ -162,14 +180,15 @@ public class CamelHistoryAction extends ActionWatchCommand {
         return importantMessage(r);
     }
 
-    private static String importantMessage(Row r) {
+    private String importantMessage(Row r) {
         StringJoiner sj = new StringJoiner(" ");
         JsonArray arr = r.message.getCollection("exchangeProperties");
         if (arr != null) {
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jo = (JsonObject) arr.get(i);
                 if (jo.getBooleanOrDefault("important", false)) {
-                    sj.add(jo.getString("key") + "=" + jo.getString("value"));
+                    String line = jo.getString("key") + "=" + jo.getString("value");
+                    sj.add(line);
                 }
             }
         }
@@ -178,12 +197,17 @@ public class CamelHistoryAction extends ActionWatchCommand {
             for (int i = 0; i < arr.size(); i++) {
                 JsonObject jo = (JsonObject) arr.get(i);
                 if (jo.getBooleanOrDefault("important", false)) {
-                    sj.add(jo.getString("key") + "=" + jo.getString("value"));
+                    String line = jo.getString("key") + "=" + jo.getString("value");
+                    sj.add(line);
                 }
             }
         }
         if (sj.length() > 0) {
-            return sj.toString();
+            String line = sj.toString();
+            // avoid printing the same line over and over again
+            if (usedImportant.add(line)) {
+                return line;
+            }
         }
         return null;
     }
@@ -270,7 +294,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     row.threadName = jo.getString("threadName");
                     row.message = jo.getMap("message");
                     row.exception = jo.getMap("exception");
-                    row.exchangeId = row.message.getString("exchangeId");
+                    row.exchangeId = jo.getString("exchangeId");
+                    row.correlationExchangeId = jo.getString("correlationExchangeId");
                     row.exchangePattern = row.message.getString("exchangePattern");
                     // we should exchangeId/pattern elsewhere
                     row.message.remove("exchangeId");
@@ -290,6 +315,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         boolean last;
         long uid;
         String exchangeId;
+        String correlationExchangeId;
         String exchangePattern;
         String threadName;
         String location;
