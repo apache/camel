@@ -96,7 +96,7 @@
         <camel-lsp-version>1.34.0</camel-lsp-version>
         <camel-kamelets-catalog-version>4.16.0</camel-kamelets-catalog-version>
         <camunda-version>7.24.0</camunda-version>
-        <cassandra-driver-version>4.19.1</cassandra-driver-version>
+        <cassandra-driver-version>4.19.2</cassandra-driver-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.3.0</cglib-version>
         <!-- This is exclusively required in camel-aws-xray as the dependency is leaking a build time annotation
