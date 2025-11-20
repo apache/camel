@@ -65,4 +65,20 @@ public interface NamedNode extends LineNumberAware {
         return true;
     }
 
+    /**
+     * Processor Level in the route tree
+     */
+    default int getLevel() {
+        NamedNode node = this;
+        int level = 0;
+        while (node != null && node.getParent() != null) {
+            boolean shallow = "when".equals(node.getShortName()) || "otherwise".equals(node.getShortName());
+            node = node.getParent();
+            if (!shallow) {
+                level++;
+            }
+        }
+        return level;
+    }
+
 }

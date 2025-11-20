@@ -47,7 +47,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String toNode;
     private final String toNodeShortName;
     private final String toNodeLabel;
+    private final int toNodeLevel;
     private final String exchangeId;
+    private final String correlationExchangeId;
     private final String threadName;
     private String endpointUri;
     private boolean remoteEndpoint;
@@ -68,8 +70,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     public DefaultBacklogTracerEventMessage(CamelContext camelContext, boolean first, boolean last, long uid, long timestamp,
                                             String location, String routeId, String toNode, String toNodeShortName,
-                                            String toNodeLabel,
-                                            String exchangeId, boolean rest, boolean template, JsonObject data) {
+                                            String toNodeLabel, int toNodeLevel, String exchangeId,
+                                            String correlationExchangeId,
+                                            boolean rest, boolean template, JsonObject data) {
         this.camelContext = camelContext;
         this.watch = new StopWatch();
         this.first = first;
@@ -81,7 +84,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.toNode = toNode;
         this.toNodeShortName = toNodeShortName;
         this.toNodeLabel = toNodeLabel;
+        this.toNodeLevel = toNodeLevel;
         this.exchangeId = exchangeId;
+        this.correlationExchangeId = correlationExchangeId;
         this.rest = rest;
         this.template = template;
         this.threadName = Thread.currentThread().getName();
@@ -151,9 +156,17 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         return toNodeLabel;
     }
 
+    public int getToNodeLevel() {
+        return toNodeLevel;
+    }
+
     @Override
     public String getExchangeId() {
         return exchangeId;
+    }
+
+    public String getCorrelationExchangeId() {
+        return correlationExchangeId;
     }
 
     @Override
@@ -524,8 +537,12 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         if (toNodeLabel != null) {
             jo.put("nodeLabel", Jsoner.escape(toNodeLabel));
         }
+        jo.put("nodeLevel", toNodeLevel);
         if (exchangeId != null) {
             jo.put("exchangeId", exchangeId);
+        }
+        if (correlationExchangeId != null) {
+            jo.put("correlationExchangeId", correlationExchangeId);
         }
         if (timestamp > 0) {
             jo.put("timestamp", timestamp);

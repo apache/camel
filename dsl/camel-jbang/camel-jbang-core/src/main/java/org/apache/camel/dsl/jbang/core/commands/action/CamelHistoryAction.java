@@ -30,6 +30,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
@@ -135,7 +136,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         if (r.first || r.last) {
             return "from[" + r.endpoint.getString("endpoint") + "]";
         } else if (r.nodeLabel != null) {
-            return r.nodeLabel;
+            return StringHelper.padString(r.nodeLevel, 2) + r.nodeLabel;
         } else {
             return r.nodeId;
         }
@@ -245,6 +246,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     if (mask) {
                         row.nodeLabel = URISupport.sanitizeUri(row.nodeLabel);
                     }
+                    row.nodeLevel = jo.getIntegerOrDefault("nodeLevel", 0);
                     String uri = jo.getString("endpointUri");
                     if (uri != null) {
                         row.endpoint = new JsonObject();
@@ -295,6 +297,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         String nodeId;
         String nodeShortName;
         String nodeLabel;
+        int nodeLevel;
         long timestamp;
         long elapsed;
         boolean done;

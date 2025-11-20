@@ -429,18 +429,13 @@ public final class ProcessorDefinitionHelper {
 
     /**
      * Returns the level of the node in the route tree. Level 1 is the root level, level 2 is a child of an EIP, and so
-     * forth
+     * forth\
+     *
+     * @deprecated use {@link NamedNode#getLevel()}
      */
+    @Deprecated(since = "4.17.0")
     public static int getNodeLevel(NamedNode node) {
-        int level = 0;
-        while (node != null && node.getParent() != null) {
-            boolean shallow = node instanceof WhenDefinition || node instanceof OtherwiseDefinition;
-            node = node.getParent();
-            if (!shallow) {
-                level++;
-            }
-        }
-        return level;
+        return node.getLevel();
     }
 
     /**

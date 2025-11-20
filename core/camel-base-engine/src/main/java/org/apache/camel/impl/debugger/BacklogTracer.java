@@ -153,7 +153,7 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
             if (head != null) {
                 tid = head.getExchangeId();
             }
-            if (tid == null || tid.equals(event.getExchangeId())) {
+            if (tid == null || tid.equals(event.getExchangeId()) || tid.equals(event.getCorrelationExchangeId())) {
                 provisionalHistoryQueue.add(event);
                 if (event.isLast()) {
                     completeHistoryQueue.clear();

@@ -84,9 +84,19 @@ public interface BacklogTracerEventMessage {
     String getToNodeLabel();
 
     /**
+     * Node processor level
+     */
+    int getToNodeLevel();
+
+    /**
      * The exchange id
      */
     String getExchangeId();
+
+    /**
+     * The correlation id to a parent exchange (if any)
+     */
+    String getCorrelationExchangeId();
 
     /**
      * The name of the thread that is processing the message, when this event was captured.
