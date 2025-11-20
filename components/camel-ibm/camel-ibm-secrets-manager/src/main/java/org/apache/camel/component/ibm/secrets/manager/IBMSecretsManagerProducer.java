@@ -49,6 +49,12 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
             case listSecrets:
                 listSecrets(exchange);
                 break;
+            case updateSecret:
+                updateSecret(exchange);
+                break;
+            case listSecretVersions:
+                listSecretVersions(exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -60,9 +66,16 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
             arbitrarySecretResourceBuilder
                     .name(exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_NAME, String.class));
         } else {
-            throw new IllegalArgumentException("Secret Name must be specified");
+            throw new IllegalArgumentException(
+                    "Secret Name must be specified. Set the header '" + IBMSecretsManagerConstants.SECRET_NAME
+                                               + "' with the desired secret name.");
         }
-        arbitrarySecretResourceBuilder.payload(exchange.getMessage().getBody(String.class));
+        String payload = exchange.getMessage().getBody(String.class);
+        if (ObjectHelper.isEmpty(payload)) {
+            throw new IllegalArgumentException(
+                    "Secret payload must be provided in the message body for createArbitrarySecret operation.");
+        }
+        arbitrarySecretResourceBuilder.payload(payload);
         arbitrarySecretResourceBuilder.secretType(ArbitrarySecretPrototype.SecretType.ARBITRARY);
         ArbitrarySecretPrototype arbitrarySecretResource = arbitrarySecretResourceBuilder.build();
 
@@ -80,9 +93,16 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
             kvSecretResourceBuilder
                     .name(exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_NAME, String.class));
         } else {
-            throw new IllegalArgumentException("Secret Name must be specified");
+            throw new IllegalArgumentException(
+                    "Secret Name must be specified. Set the header '" + IBMSecretsManagerConstants.SECRET_NAME
+                                               + "' with the desired secret name.");
         }
-        kvSecretResourceBuilder.data(exchange.getMessage().getBody(Map.class));
+        Map<String, Object> data = exchange.getMessage().getBody(Map.class);
+        if (ObjectHelper.isEmpty(data)) {
+            throw new IllegalArgumentException(
+                    "Secret data must be provided as a Map in the message body for createKVSecret operation.");
+        }
+        kvSecretResourceBuilder.data(data);
         kvSecretResourceBuilder.secretType(KVSecretPrototype.SecretType.KV);
         KVSecretPrototype kvSecretResource = kvSecretResourceBuilder.build();
 
@@ -99,7 +119,9 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_ID, String.class))) {
             getSecretOptionsBuilder.id(exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_ID, String.class));
         } else {
-            throw new IllegalArgumentException("Secret ID must be specified");
+            throw new IllegalArgumentException(
+                    "Secret ID must be specified. Set the header '" + IBMSecretsManagerConstants.SECRET_ID
+                                               + "' with the secret ID.");
         }
         Response<Secret> getResp = getEndpoint().getSecretManager().getSecret(getSecretOptionsBuilder.build()).execute();
 
@@ -115,7 +137,9 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
                 exchange.getMessage().setBody(getResp.getResult());
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported Secret Type");
+                throw new IllegalArgumentException(
+                        "Unsupported secret type '" + secretType
+                                                   + "'. Supported types are: arbitrary, kv, service_credentials.");
         }
     }
 
@@ -124,13 +148,83 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_ID, String.class))) {
             deleteSecretOptionsBuilder.id(exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_ID, String.class));
         } else {
-            throw new IllegalArgumentException("Secret ID must be specified");
+            throw new IllegalArgumentException(
+                    "Secret ID must be specified. Set the header '" + IBMSecretsManagerConstants.SECRET_ID
+                                               + "' with the secret ID to delete.");
         }
         getEndpoint().getSecretManager().deleteSecret(deleteSecretOptionsBuilder.build()).execute();
     }
 
     private void listSecrets(Exchange exchange) {
         Response<SecretMetadataPaginatedCollection> result = getEndpoint().getSecretManager().listSecrets().execute();
+        exchange.getMessage().setBody(result.getResult());
+    }
+
+    private void updateSecret(Exchange exchange) {
+        String secretId = exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_ID, String.class);
+        if (ObjectHelper.isEmpty(secretId)) {
+            throw new IllegalArgumentException("Secret ID must be specified for update operation");
+        }
+
+        // First, get the current secret to determine its type
+        GetSecretOptions getSecretOptions = new GetSecretOptions.Builder()
+                .id(secretId)
+                .build();
+        Response<Secret> getResp = getEndpoint().getSecretManager().getSecret(getSecretOptions).execute();
+        String secretType = getResp.getResult().getSecretType();
+
+        SecretVersionPrototype secretVersionPrototype;
+        switch (secretType) {
+            case "arbitrary":
+                String payload = exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_PAYLOAD, String.class);
+                if (ObjectHelper.isEmpty(payload)) {
+                    payload = exchange.getMessage().getBody(String.class);
+                }
+                if (ObjectHelper.isEmpty(payload)) {
+                    throw new IllegalArgumentException("Secret payload must be specified for arbitrary secret update");
+                }
+                ArbitrarySecretVersionPrototype.Builder arbitraryBuilder = new ArbitrarySecretVersionPrototype.Builder();
+                arbitraryBuilder.payload(payload);
+                secretVersionPrototype = arbitraryBuilder.build();
+                break;
+            case "kv":
+                Map<String, Object> data = exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_DATA, Map.class);
+                if (ObjectHelper.isEmpty(data)) {
+                    data = exchange.getMessage().getBody(Map.class);
+                }
+                if (ObjectHelper.isEmpty(data)) {
+                    throw new IllegalArgumentException("Secret data must be specified for KV secret update");
+                }
+                KVSecretVersionPrototype.Builder kvBuilder = new KVSecretVersionPrototype.Builder();
+                kvBuilder.data(data);
+                secretVersionPrototype = kvBuilder.build();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported secret type for update: " + secretType);
+        }
+
+        CreateSecretVersionOptions createSecretVersionOptions = new CreateSecretVersionOptions.Builder()
+                .secretId(secretId)
+                .secretVersionPrototype(secretVersionPrototype)
+                .build();
+
+        Response<SecretVersion> updateResp = getEndpoint().getSecretManager().createSecretVersion(createSecretVersionOptions)
+                .execute();
+        exchange.getMessage().setBody(updateResp.getResult());
+    }
+
+    private void listSecretVersions(Exchange exchange) {
+        String secretId = exchange.getMessage().getHeader(IBMSecretsManagerConstants.SECRET_ID, String.class);
+        if (ObjectHelper.isEmpty(secretId)) {
+            throw new IllegalArgumentException("Secret ID must be specified for listSecretVersions operation");
+        }
+
+        ListSecretVersionsOptions listSecretVersionsOptions = new ListSecretVersionsOptions.Builder()
+                .secretId(secretId)
+                .build();
+
+        Response<SecretVersionMetadataCollection> result
+                = getEndpoint().getSecretManager().listSecretVersions(listSecretVersionsOptions).execute();
         exchange.getMessage().setBody(result.getResult());
     }
 

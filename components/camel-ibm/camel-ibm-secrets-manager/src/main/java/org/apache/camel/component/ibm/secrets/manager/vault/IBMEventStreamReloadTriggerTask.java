@@ -155,13 +155,28 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
     }
 
     @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (kafkaConsumer != null) {
+            try {
+                LOG.info("Closing IBM Event Stream Kafka consumer");
+                kafkaConsumer.close();
+            } catch (Exception e) {
+                LOG.warn("Error closing Kafka consumer: {}", e.getMessage(), e);
+            } finally {
+                kafkaConsumer = null;
+            }
+        }
+    }
+
+    @Override
     public void run() {
 
         lastCheckTime = Instant.now();
         boolean triggerReloading = false;
         ObjectMapper mapper = new ObjectMapper();
 
-        while (true) {
+        while (!isStopping() && !isStopped()) {
             ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(pollTimeout));
 
             for (ConsumerRecord<String, String> record : records) {
