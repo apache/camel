@@ -522,7 +522,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             jo.put("nodeShortName", toNodeShortName);
         }
         if (toNodeLabel != null) {
-            jo.put("nodeLabel", toNodeLabel);
+            jo.put("nodeLabel", Jsoner.escape(toNodeLabel));
         }
         if (exchangeId != null) {
             jo.put("exchangeId", exchangeId);

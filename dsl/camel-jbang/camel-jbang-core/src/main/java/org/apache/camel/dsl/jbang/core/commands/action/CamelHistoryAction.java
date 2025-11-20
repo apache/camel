@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -156,6 +157,32 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
         if (r.last) {
             return r.failed ? "failed" : "success";
+        }
+        return importantMessage(r);
+    }
+
+    private static String importantMessage(Row r) {
+        StringJoiner sj = new StringJoiner(" ");
+        JsonArray arr = r.message.getCollection("exchangeProperties");
+        if (arr != null) {
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject jo = (JsonObject) arr.get(i);
+                if (jo.getBooleanOrDefault("important", false)) {
+                    sj.add(jo.getString("key") + "=" + jo.getString("value"));
+                }
+            }
+        }
+        arr = r.message.getCollection("headers");
+        if (arr != null) {
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject jo = (JsonObject) arr.get(i);
+                if (jo.getBooleanOrDefault("important", false)) {
+                    sj.add(jo.getString("key") + "=" + jo.getString("value"));
+                }
+            }
+        }
+        if (sj.length() > 0) {
+            return sj.toString();
         }
         return null;
     }
