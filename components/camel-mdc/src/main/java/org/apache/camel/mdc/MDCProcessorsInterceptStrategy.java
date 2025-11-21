@@ -54,10 +54,11 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {
                 mdcService.setMDC(exchange);
-                return asyncProcessor.process(exchange, doneSync -> {
-                    mdcService.unsetMDC();
+                boolean answer = asyncProcessor.process(exchange, doneSync -> {
                     callback.done(doneSync);
                 });
+                mdcService.unsetMDC(exchange);
+                return answer;
             }
 
             @Override
@@ -66,7 +67,7 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
                 try {
                     asyncProcessor.process(exchange);
                 } finally {
-                    mdcService.unsetMDC();
+                    mdcService.unsetMDC(exchange);
                 }
             }
 
@@ -80,9 +81,8 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
                     } else {
                         future.complete(exchange);
                     }
-                    mdcService.unsetMDC();
                 });
-
+                mdcService.unsetMDC(exchange);
                 return future;
             }
         };

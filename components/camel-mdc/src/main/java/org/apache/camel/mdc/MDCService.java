@@ -103,22 +103,22 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
         LOG.info("Mapped Diagnostic Context (MDC) enabled");
     }
 
-    protected void setMDC(Exchange exchange) {
+    private void setOrUnsetMDC(Exchange exchange, boolean push) {
         try {
             // Default values
-            prepareMDC(exchange);
+            prepareMDC(exchange, push);
             if (getCustomHeaders() != null) {
                 if (getCustomHeaders().equals("*")) {
-                    allHeadersMDC(exchange);
+                    allHeadersMDC(exchange, push);
                 } else {
-                    userSelectedHeadersMDC(exchange);
+                    userSelectedHeadersMDC(exchange, push);
                 }
             }
             if (getCustomProperties() != null) {
                 if (getCustomProperties().equals("*")) {
-                    allPropertiesMDC(exchange);
+                    allPropertiesMDC(exchange, push);
                 } else {
-                    userSelectedPropertiesMDC(exchange);
+                    userSelectedPropertiesMDC(exchange, push);
                 }
             }
         } catch (Exception t) {
@@ -127,8 +127,12 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
         }
     }
 
-    public void unsetMDC() {
-        MDC.clear();
+    protected void setMDC(Exchange exchange) {
+        setOrUnsetMDC(exchange, true);
+    }
+
+    protected void unsetMDC(Exchange exchange) {
+        setOrUnsetMDC(exchange, false);
     }
 
     private final class MDCLogListener implements LogListener {
@@ -141,65 +145,99 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
 
         @Override
         public void afterLog(Exchange exchange, CamelLogger camelLogger, String message) {
-            unsetMDC();
+            unsetMDC(exchange);
         }
     }
 
-    // Default basic MDC properties to set
-    private void prepareMDC(Exchange exchange) {
-        MDC.put(MDC_EXCHANGE_ID, exchange.getExchangeId());
-        MDC.put(MDC_MESSAGE_ID, exchange.getMessage().getMessageId());
-        MDC.put(MDC_CAMEL_CONTEXT_ID, exchange.getContext().getName());
-        // Useful to make sure aync execution is properly propagating context
-        MDC.put(MDC_CAMEL_THREAD_ID, Thread.currentThread().getName());
-        // Backward compatibility: this info may not be longer widely used
-        String corrId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
-        if (corrId != null) {
-            MDC.put(MDC_CORRELATION_ID, corrId);
-        }
-        // Backward compatibility: this info may not be longer widely used
-        String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
-        if (breadcrumbId != null) {
-            MDC.put(MDC_BREADCRUMB_ID, breadcrumbId);
-        }
-        String routeId = exchange.getFromRouteId();
-        if (routeId != null) {
-            MDC.put(MDC_ROUTE_ID, routeId);
+    // Default basic MDC properties to set/unset MDC context. It leverage the stack capabilities of the MDC.
+    private void prepareMDC(Exchange exchange, boolean push) {
+        if (push) {
+            MDC.pushByKey(MDC_EXCHANGE_ID, exchange.getExchangeId());
+            MDC.pushByKey(MDC_MESSAGE_ID, exchange.getMessage().getMessageId());
+            MDC.pushByKey(MDC_CAMEL_CONTEXT_ID, exchange.getContext().getName());
+            // Useful to make sure aync execution is properly propagating context
+            MDC.pushByKey(MDC_CAMEL_THREAD_ID, Thread.currentThread().getName());
+            // Backward compatibility: this info may not be longer widely used
+            String corrId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+            if (corrId != null) {
+                MDC.pushByKey(MDC_CORRELATION_ID, corrId);
+            }
+            // Backward compatibility: this info may not be longer widely used
+            String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
+            if (breadcrumbId != null) {
+                MDC.pushByKey(MDC_BREADCRUMB_ID, breadcrumbId);
+            }
+            String routeId = exchange.getFromRouteId();
+            if (routeId != null) {
+                MDC.pushByKey(MDC_ROUTE_ID, routeId);
+            }
+        } else {
+            popAndClear(MDC_EXCHANGE_ID);
+            popAndClear(MDC_MESSAGE_ID);
+            popAndClear(MDC_CAMEL_CONTEXT_ID);
+            popAndClear(MDC_CAMEL_THREAD_ID);
+            popAndClear(MDC_CORRELATION_ID);
+            popAndClear(MDC_BREADCRUMB_ID);
+            popAndClear(MDC_ROUTE_ID);
         }
     }
 
-    // Include those headers selected by the user
-    private void userSelectedHeadersMDC(Exchange exchange) {
+    // popAndClear pop the value and clear the key if nothing exists.
+    private void popAndClear(String key) {
+        MDC.popByKey(key);
+        if (MDC.get(key) == null) {
+            MDC.remove(key);
+        }
+    }
+
+    // Set/unset those headers selected by the user. It leverage the stack capabilities of the MDC.
+    private void userSelectedHeadersMDC(Exchange exchange, boolean push) {
         for (String customHeader : getCustomHeaders().split(",")) {
             if (exchange.getIn().getHeader(customHeader) != null) {
-                MDC.put(customHeader, exchange.getIn().getHeader(customHeader, String.class));
+                if (push) {
+                    MDC.pushByKey(customHeader, exchange.getIn().getHeader(customHeader, String.class));
+                } else {
+                    popAndClear(customHeader);
+                }
             }
         }
     }
 
-    // Include all available headers
-    private void allHeadersMDC(Exchange exchange) {
+    // Set/unset all available headers. It leverage the stack capabilities of the MDC.
+    private void allHeadersMDC(Exchange exchange, boolean push) {
         for (String header : exchange.getIn().getHeaders().keySet()) {
             if (exchange.getIn().getHeader(header) != null) {
-                MDC.put(header, exchange.getIn().getHeader(header, String.class));
+                if (push) {
+                    MDC.pushByKey(header, exchange.getIn().getHeader(header, String.class));
+                } else {
+                    popAndClear(header);
+                }
             }
         }
     }
 
-    // Include those properties selected by the user
-    private void userSelectedPropertiesMDC(Exchange exchange) {
+    // Set/unset those properties selected by the user. It leverage the stack capabilities of the MDC.
+    private void userSelectedPropertiesMDC(Exchange exchange, boolean push) {
         for (String customProperty : getCustomProperties().split(",")) {
             if (exchange.getProperty(customProperty) != null) {
-                MDC.put(customProperty, exchange.getProperty(customProperty, String.class));
+                if (push) {
+                    MDC.pushByKey(customProperty, exchange.getProperty(customProperty, String.class));
+                } else {
+                    popAndClear(customProperty);
+                }
             }
         }
     }
 
-    // Include all available properties
-    private void allPropertiesMDC(Exchange exchange) {
+    // Set/unset all available properties. It leverage the stack capabilities of the MDC.
+    private void allPropertiesMDC(Exchange exchange, boolean push) {
         for (String property : exchange.getAllProperties().keySet()) {
             if (exchange.getProperty(property) != null) {
-                MDC.put(property, exchange.getProperty(property, String.class));
+                if (push) {
+                    MDC.pushByKey(property, exchange.getProperty(property, String.class));
+                } else {
+                    popAndClear(property);
+                }
             }
         }
     }

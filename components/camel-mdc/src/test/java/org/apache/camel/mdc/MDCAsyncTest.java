@@ -50,6 +50,9 @@ public class MDCAsyncTest extends ExchangeTestSupport {
 
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye Camel", reply);
+
+        // We should get no MDC after the route has been executed
+        assertEquals(0, MDC.getCopyOfContextMap().size());
     }
 
     @Override
