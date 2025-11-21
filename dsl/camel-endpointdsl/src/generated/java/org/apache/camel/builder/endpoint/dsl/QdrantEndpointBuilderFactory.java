@@ -45,20 +45,6 @@ public interface QdrantEndpointBuilderFactory {
         }
 
         /**
-         * Sets the API key to use for authentication.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param apiKey the value to set
-         * @return the dsl builder
-         */
-        default QdrantEndpointBuilder apiKey(String apiKey) {
-            doSetProperty("apiKey", apiKey);
-            return this;
-        }
-        /**
          * The host to connect to.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -163,13 +149,27 @@ public interface QdrantEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the API key to use for authentication.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default QdrantEndpointBuilder apiKey(String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
+        /**
          * Whether the client uses Transport Layer Security (TLS) to secure
          * communications.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param tls the value to set
          * @return the dsl builder
@@ -185,7 +185,7 @@ public interface QdrantEndpointBuilderFactory {
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
-         * Group: producer
+         * Group: security
          * 
          * @param tls the value to set
          * @return the dsl builder
@@ -253,10 +253,9 @@ public interface QdrantEndpointBuilderFactory {
             return this;
         }
         /**
-         * Filter of type io.qdrant.client.grpc.Points.Points.Filter for
-         * similarity search. This is for advanced usage.
+         * Filter for similarity search.
          * 
-         * The option is a: <code>io.qdrant.client.grpc.Points.Filter</code>
+         * The option is a: <code>io.qdrant.client.grpc.Common.Filter</code>
          * type.
          * 
          * Group: advanced
@@ -264,16 +263,15 @@ public interface QdrantEndpointBuilderFactory {
          * @param filter the value to set
          * @return the dsl builder
          */
-        default AdvancedQdrantEndpointBuilder filter(io.qdrant.client.grpc.Points.Filter filter) {
+        default AdvancedQdrantEndpointBuilder filter(io.qdrant.client.grpc.Common.Filter filter) {
             doSetProperty("filter", filter);
             return this;
         }
         /**
-         * Filter of type io.qdrant.client.grpc.Points.Points.Filter for
-         * similarity search. This is for advanced usage.
+         * Filter for similarity search.
          * 
          * The option will be converted to a
-         * <code>io.qdrant.client.grpc.Points.Filter</code> type.
+         * <code>io.qdrant.client.grpc.Common.Filter</code> type.
          * 
          * Group: advanced
          * 

@@ -51,21 +51,6 @@ public interface QdrantComponentBuilderFactory {
     interface QdrantComponentBuilder extends ComponentBuilder<QdrantComponent> {
     
         /**
-         * Sets the API key to use for authentication.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param apiKey the value to set
-         * @return the dsl builder
-         */
-        default QdrantComponentBuilder apiKey(java.lang.String apiKey) {
-            doSetProperty("apiKey", apiKey);
-            return this;
-        }
-    
-        /**
          * The configuration;.
          * 
          * The option is a:
@@ -174,24 +159,6 @@ public interface QdrantComponentBuilderFactory {
     
         
         /**
-         * Whether the client uses Transport Layer Security (TLS) to secure
-         * communications.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param tls the value to set
-         * @return the dsl builder
-         */
-        default QdrantComponentBuilder tls(boolean tls) {
-            doSetProperty("tls", tls);
-            return this;
-        }
-    
-        
-        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -213,19 +180,51 @@ public interface QdrantComponentBuilderFactory {
         }
     
         /**
-         * Filter of type io.qdrant.client.grpc.Points.Points.Filter for
-         * similarity search. This is for advanced usage.
+         * Filter for similarity search.
          * 
          * The option is a:
-         * &lt;code&gt;io.qdrant.client.grpc.Points.Filter&lt;/code&gt; type.
+         * &lt;code&gt;io.qdrant.client.grpc.Common.Filter&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param filter the value to set
          * @return the dsl builder
          */
-        default QdrantComponentBuilder filter(io.qdrant.client.grpc.Points.Filter filter) {
+        default QdrantComponentBuilder filter(io.qdrant.client.grpc.Common.Filter filter) {
             doSetProperty("filter", filter);
+            return this;
+        }
+    
+        /**
+         * Sets the API key to use for authentication.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param apiKey the value to set
+         * @return the dsl builder
+         */
+        default QdrantComponentBuilder apiKey(java.lang.String apiKey) {
+            doSetProperty("apiKey", apiKey);
+            return this;
+        }
+    
+        
+        /**
+         * Whether the client uses Transport Layer Security (TLS) to secure
+         * communications.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param tls the value to set
+         * @return the dsl builder
+         */
+        default QdrantComponentBuilder tls(boolean tls) {
+            doSetProperty("tls", tls);
             return this;
         }
     }
@@ -249,16 +248,16 @@ public interface QdrantComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "apiKey": getOrCreateConfiguration((QdrantComponent) component).setApiKey((java.lang.String) value); return true;
             case "configuration": ((QdrantComponent) component).setConfiguration((org.apache.camel.component.qdrant.QdrantConfiguration) value); return true;
             case "host": getOrCreateConfiguration((QdrantComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((QdrantComponent) component).setLazyStartProducer((boolean) value); return true;
             case "maxResults": getOrCreateConfiguration((QdrantComponent) component).setMaxResults((int) value); return true;
             case "port": getOrCreateConfiguration((QdrantComponent) component).setPort((int) value); return true;
             case "timeout": getOrCreateConfiguration((QdrantComponent) component).setTimeout((java.time.Duration) value); return true;
-            case "tls": getOrCreateConfiguration((QdrantComponent) component).setTls((boolean) value); return true;
             case "autowiredEnabled": ((QdrantComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "filter": getOrCreateConfiguration((QdrantComponent) component).setFilter((io.qdrant.client.grpc.Points.Filter) value); return true;
+            case "filter": getOrCreateConfiguration((QdrantComponent) component).setFilter((io.qdrant.client.grpc.Common.Filter) value); return true;
+            case "apiKey": getOrCreateConfiguration((QdrantComponent) component).setApiKey((java.lang.String) value); return true;
+            case "tls": getOrCreateConfiguration((QdrantComponent) component).setTls((boolean) value); return true;
             default: return false;
             }
         }
