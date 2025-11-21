@@ -27,8 +27,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
-import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.JobRegistry;
+import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.launch.JobLauncher;
 
 /**
