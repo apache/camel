@@ -35,7 +35,6 @@ public class InfinispanEmbeddedConfigurationTest {
 
         try (InfinispanEmbeddedManager manager = new InfinispanEmbeddedManager(configuration)) {
             manager.start();
-
             BasicCache<Object, Object> cache = manager.getCache("default");
             assertNotNull(cache);
 

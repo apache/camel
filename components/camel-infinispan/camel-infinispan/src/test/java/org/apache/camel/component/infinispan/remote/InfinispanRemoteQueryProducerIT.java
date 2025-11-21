@@ -26,15 +26,12 @@ import org.apache.camel.component.infinispan.InfinispanOperation;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.marshall.MarshallerUtil;
-import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.marshall.ProtoStreamMarshaller;
-import org.infinispan.commons.util.Util;
 import org.infinispan.protostream.FileDescriptorSource;
 import org.infinispan.protostream.SerializationContext;
 import org.infinispan.protostream.domain.User;
 import org.infinispan.protostream.domain.marshallers.GenderMarshaller;
 import org.infinispan.protostream.domain.marshallers.UserMarshaller;
-import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.infinispan.query.remote.client.impl.MarshallerRegistration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -108,10 +105,9 @@ public class InfinispanRemoteQueryProducerIT extends InfinispanRemoteQueryTestSu
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        String proto = Util.read(getClass().getResourceAsStream("/sample_bank_account/bank.proto"));
-
-        BasicCache<Object, Object> cache = getCache(ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
-        cache.put("sample_bank_account/bank.proto", proto);
+        cacheContainer.administration()
+                .schemas()
+                .create(FileDescriptorSource.fromResources("sample_bank_account/bank.proto"));
 
         MarshallerRegistration.init(MarshallerUtil.getSerializationContext(cacheContainer));
         SerializationContext serCtx = MarshallerUtil.getSerializationContext(cacheContainer);

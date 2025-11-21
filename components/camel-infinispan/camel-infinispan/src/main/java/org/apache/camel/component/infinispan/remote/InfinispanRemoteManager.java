@@ -170,4 +170,9 @@ public class InfinispanRemoteManager extends ServiceSupport implements Infinispa
     public Set<String> getCacheNames() {
         return cacheContainer.getCacheNames();
     }
+
+    @Override
+    public void stopCache(String cacheName) {
+        cacheContainer.stopCache(cacheName);
+    }
 }

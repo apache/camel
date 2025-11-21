@@ -34,15 +34,12 @@ public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:created");
         mock.expectedMessageCount(2);
 
-        mock.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
-        mock.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(true);
-        mock.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
-        mock.message(0).header(InfinispanConstants.KEY).isEqualTo(InfinispanConsumerTestSupport.KEY_ONE);
-
-        mock.message(1).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
-        mock.message(1).header(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mock.message(1).header(InfinispanConstants.CACHE_NAME).isNotNull();
-        mock.message(1).header(InfinispanConstants.KEY).isEqualTo(InfinispanConsumerTestSupport.KEY_ONE);
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_CREATED",
+                "CACHE_ENTRY_CREATED");
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.IS_PRE, false, true);
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.CACHE_NAME, getCacheName(), getCacheName());
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE,
+                InfinispanConsumerTestSupport.KEY_ONE);
 
         getCache().put(InfinispanConsumerTestSupport.KEY_ONE, InfinispanConsumerTestSupport.VALUE_ONE);
         mock.assertIsSatisfied();
@@ -55,15 +52,12 @@ public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:removed");
         mock.expectedMessageCount(2);
 
-        mock.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_REMOVED");
-        mock.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(true);
-        mock.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
-        mock.message(0).header(InfinispanConstants.KEY).isEqualTo(InfinispanConsumerTestSupport.KEY_ONE);
-
-        mock.message(1).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_REMOVED");
-        mock.message(1).header(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mock.message(1).header(InfinispanConstants.CACHE_NAME).isNotNull();
-        mock.message(1).header(InfinispanConstants.KEY).isEqualTo(InfinispanConsumerTestSupport.KEY_ONE);
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_REMOVED",
+                "CACHE_ENTRY_REMOVED");
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.IS_PRE, false, true);
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.CACHE_NAME, getCacheName(), getCacheName());
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE,
+                InfinispanConsumerTestSupport.KEY_ONE);
 
         getCache().remove(InfinispanConsumerTestSupport.KEY_ONE);
 
@@ -77,15 +71,12 @@ public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:modified");
         mock.expectedMessageCount(2);
 
-        mock.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_MODIFIED");
-        mock.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(true);
-        mock.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
-        mock.message(0).header(InfinispanConstants.KEY).isEqualTo(InfinispanConsumerTestSupport.KEY_ONE);
-
-        mock.message(1).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_MODIFIED");
-        mock.message(1).header(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mock.message(1).header(InfinispanConstants.CACHE_NAME).isNotNull();
-        mock.message(1).header(InfinispanConstants.KEY).isEqualTo(InfinispanConsumerTestSupport.KEY_ONE);
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_MODIFIED",
+                "CACHE_ENTRY_MODIFIED");
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.IS_PRE, false, true);
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.CACHE_NAME, getCacheName(), getCacheName());
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE,
+                InfinispanConsumerTestSupport.KEY_ONE);
 
         getCache().replace(InfinispanConsumerTestSupport.KEY_ONE, InfinispanConsumerTestSupport.VALUE_TWO);
 
@@ -99,15 +90,12 @@ public class InfinispanEmbeddedConsumerTest extends InfinispanEmbeddedTestSuppor
         MockEndpoint mock = getMockEndpoint("mock:visited");
         mock.expectedMessageCount(2);
 
-        mock.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_VISITED");
-        mock.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(true);
-        mock.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
-        mock.message(0).header(InfinispanConstants.KEY).isEqualTo(InfinispanConsumerTestSupport.KEY_ONE);
-
-        mock.message(1).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_VISITED");
-        mock.message(1).header(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mock.message(1).header(InfinispanConstants.CACHE_NAME).isNotNull();
-        mock.message(1).header(InfinispanConstants.KEY).isEqualTo(InfinispanConsumerTestSupport.KEY_ONE);
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.EVENT_TYPE, "CACHE_ENTRY_VISITED",
+                "CACHE_ENTRY_VISITED");
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.IS_PRE, false, true);
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.CACHE_NAME, getCacheName(), getCacheName());
+        mock.expectedHeaderValuesReceivedInAnyOrder(InfinispanConstants.KEY, InfinispanConsumerTestSupport.KEY_ONE,
+                InfinispanConsumerTestSupport.KEY_ONE);
 
         getCache().get(InfinispanConsumerTestSupport.KEY_ONE);
 
