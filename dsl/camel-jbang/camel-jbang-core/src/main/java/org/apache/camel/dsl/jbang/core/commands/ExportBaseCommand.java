@@ -66,6 +66,7 @@ import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
@@ -821,7 +822,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
             customize.apply(profileProps);
         }
 
-        Path appPropsPath = targetDir.resolve("application.properties");
         StringBuilder content = new StringBuilder();
         for (Map.Entry<Object, Object> entry : profileProps.entrySet()) {
             String k = entry.getKey().toString();
@@ -852,26 +852,24 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
         // User properties
         Properties userProps = new CamelCaseOrderedProperties();
-        prepareUserProperties(userProps);
+        userProps.putAll(propertiesMap(this.applicationProperties));
         for (Map.Entry<Object, Object> entryUserProp : userProps.entrySet()) {
             String uK = entryUserProp.getKey().toString();
             String uV = entryUserProp.getValue().toString();
             String line = applicationPropertyLine(uK, uV);
-            if (line != null && !line.isBlank()) {
+            // properties from the profile are already included so skip them
+            if (profileProps.get(uK) == null && ObjectHelper.isNotEmpty(line)) {
                 content.append(line).append("\n");
             }
         }
 
         // write all the properties
+        Path appPropsPath = targetDir.resolve("application.properties");
         Files.writeString(appPropsPath, content.toString(), StandardCharsets.UTF_8);
     }
 
     protected void prepareApplicationProperties(Properties properties) {
         // NOOP
-    }
-
-    protected void prepareUserProperties(Properties properties) {
-        properties.putAll(propertiesMap(this.applicationProperties));
     }
 
     protected Map<String, String> propertiesMap(String[]... propertySources) {

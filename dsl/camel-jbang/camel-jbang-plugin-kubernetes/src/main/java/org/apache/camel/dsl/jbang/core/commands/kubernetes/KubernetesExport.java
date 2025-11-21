@@ -378,7 +378,15 @@ public class KubernetesExport extends Export {
         var managementPort = httpManagementPort(settingsPath);
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
-        setContainerHealthPaths(managementPort);
+        boolean cronJobEnabled = traitsSpec.getCronjob() != null && traitsSpec.getCronjob().getEnabled();
+        if (cronJobEnabled) {
+            // set this property to allow the JVM to finish quickly once there are no more exchange messages
+            // important for cronjobs so that the jvm can end quickly
+            addToApplicationProperties(
+                    "camel.main.duration-max-idle-seconds=" + traitsSpec.getCronjob().getDurationMaxIdleSeconds());
+        } else {
+            setContainerHealthPaths(managementPort);
+        }
 
         // Run export
         int exit = super.doExport();
@@ -515,39 +523,32 @@ public class KubernetesExport extends Export {
             // jkube reads quarkus properties to set the container health probes path
             buildProperties.add("jkube.enricher.jkube-healthcheck-quarkus.port=" + probePort);
             buildProperties.add("quarkus.smallrye-health.root-path=/observe/health");
-            List<String> newProps = new ArrayList<>();
-            newProps.add("quarkus.management.port=" + probePort);
-            if (applicationProperties == null) {
-                applicationProperties = newProps.toArray(new String[newProps.size()]);
-            } else {
-                newProps.addAll(Arrays.asList(applicationProperties));
-                applicationProperties = newProps.toArray(new String[newProps.size()]);
-            }
+            addToApplicationProperties("quarkus.management.port=" + probePort);
         } else if (RuntimeType.springBoot == runtime) {
-            List<String> newProps = new ArrayList<>();
+            // addDependencies("org.springframework.boot:spring-boot-starter-actuator");
             // jkube reads spring-boot properties to set the kubernetes container health probes path
             // in this case, jkube reads from the application.properties and not from the build properties in pom.xml
-            newProps.add("management.endpoints.web.base-path=/observe");
-            newProps.add("management.server.port=" + probePort);
-            // jkube uses the old property to enable the readiness/liveness probes
-            // TODO: rename this property once https://github.com/eclipse-jkube/jkube/issues/3690 is fixed
-            newProps.add("management.health.probes.enabled=true");
-            if (applicationProperties == null) {
-                applicationProperties = newProps.toArray(new String[newProps.size()]);
-            } else {
-                newProps.addAll(Arrays.asList(applicationProperties));
-                applicationProperties = newProps.toArray(new String[newProps.size()]);
-            }
+            addToApplicationProperties("management.endpoints.web.base-path=/observe",
+                    "management.server.port=" + probePort,
+                    // jkube uses the old property to enable the readiness/liveness probes
+                    // TODO: rename this property once https://github.com/eclipse-jkube/jkube/issues/3690 is fixed
+                    "management.health.probes.enabled=true");
         } else if (RuntimeType.main == runtime) {
-            List<String> newProps = new ArrayList<>();
-            newProps.add("camel.management.port=" + probePort);
-            if (applicationProperties == null) {
-                applicationProperties = newProps.toArray(new String[newProps.size()]);
-            } else {
-                newProps.addAll(Arrays.asList(applicationProperties));
-                applicationProperties = newProps.toArray(new String[newProps.size()]);
-            }
+            addToApplicationProperties("camel.management.port=" + probePort);
         }
+    }
+
+    // helper method to add parameters to the applicationProperties
+    // it takes care to resize the string array
+    private void addToApplicationProperties(String... lines) {
+        List<String> newProps = new ArrayList<>();
+        for (String line : lines) {
+            newProps.add(line);
+        }
+        if (applicationProperties != null) {
+            newProps.addAll(Arrays.asList(applicationProperties));
+        }
+        applicationProperties = newProps.toArray(new String[newProps.size()]);
     }
 
     private String extractImageGroup(String image) {
@@ -598,12 +599,15 @@ public class KubernetesExport extends Export {
         if (image != null) {
             return StringHelper.afterLast(image, ":");
         }
-
         return super.getVersion();
     }
 
     protected void setApplicationProperties(String[] props) {
         this.applicationProperties = props;
+    }
+
+    void setObserve(boolean observe) {
+        this.observe = observe;
     }
 
     /**

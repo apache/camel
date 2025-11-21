@@ -111,9 +111,6 @@ public class ContainerTrait extends BaseTrait {
 
         context.doWithCronJobs(j -> j.editOrNewSpec()
                 .editOrNewJobTemplate()
-                .editOrNewMetadata()
-                .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
-                .endMetadata()
                 .editOrNewSpec()
                 .editOrNewTemplate()
                 .editOrNewSpec()

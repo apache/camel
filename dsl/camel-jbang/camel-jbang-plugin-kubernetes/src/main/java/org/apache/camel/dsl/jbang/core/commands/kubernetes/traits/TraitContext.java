@@ -135,6 +135,13 @@ public class TraitContext {
                 .findFirst();
     }
 
+    public Optional<CronJobBuilder> getCronJob() {
+        return resourceRegistry.stream()
+                .filter(it -> it.getClass().isAssignableFrom(CronJobBuilder.class))
+                .map(it -> (CronJobBuilder) it)
+                .findFirst();
+    }
+
     public Optional<IngressBuilder> getIngress() {
         return resourceRegistry.stream()
                 .filter(it -> it.getClass().isAssignableFrom(IngressBuilder.class))

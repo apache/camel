@@ -28,6 +28,8 @@ import java.util.stream.Stream;
 
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.apps.Deployment;
+import io.fabric8.kubernetes.api.model.batch.v1.CronJob;
+import io.fabric8.kubernetes.api.model.batch.v1.JobSpec;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
@@ -147,6 +149,46 @@ class KubernetesRunTest extends KubernetesBaseTest {
             Assertions.assertEquals(9876, containers.get(0).getReadinessProbe().getHttpGet().getPort().getIntVal());
             Assertions.assertEquals(9876, containers.get(0).getLivenessProbe().getHttpGet().getPort().getIntVal());
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldGenerateKubernetesCronjobManifest(RuntimeType rt) throws Exception {
+        KubernetesRun command = createCommand(List.of("classpath:route.yaml"),
+                "--disable-auto=true", "--image-registry=quay.io", "--image-group=camel-test", "--output=yaml",
+                "--service-account=my-svc-account", "--runtime=" + rt.runtime(), "--java-version=17");
+        command.traits = new String[] {
+                "cronjob.enabled=true",
+                "cronjob.schedule=\"0 22 * * 1-5\"",
+                "cronjob.timezone=Europe/Lisbon",
+                "cronjob.startingDeadlineSeconds=2",
+                "cronjob.activeDeadlineSeconds=3",
+                "cronjob.backoffLimit=4",
+                "cronjob.durationMaxIdleSeconds=5",
+                "container.imagePullPolicy=Never"
+        };
+        int exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        var manifest = getKubernetesManifestAsStream(printer.getOutput(), command.output);
+        List<HasMetadata> resources = kubernetesClient.load(manifest).items();
+        Assertions.assertEquals(2, resources.size());
+
+        CronJob cronjob = resources.stream()
+                .filter(it -> CronJob.class.isAssignableFrom(it.getClass()))
+                .map(CronJob.class::cast)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeCamelException("Missing cronjob in Kubernetes manifest"));
+
+        JobSpec jobSpec = cronjob.getSpec().getJobTemplate().getSpec();
+        Assertions.assertEquals("route", cronjob.getMetadata().getName());
+        Assertions.assertEquals("0 22 * * 1-5", cronjob.getSpec().getSchedule());
+        Assertions.assertEquals("Europe/Lisbon", cronjob.getSpec().getTimeZone());
+        Assertions.assertEquals(2, cronjob.getSpec().getStartingDeadlineSeconds());
+        Assertions.assertEquals(3, jobSpec.getActiveDeadlineSeconds());
+        Assertions.assertEquals(4, jobSpec.getBackoffLimit());
+        Assertions.assertEquals("Never", jobSpec.getTemplate().getSpec().getContainers().get(0).getImagePullPolicy());
+        Assertions.assertEquals("my-svc-account", jobSpec.getTemplate().getSpec().getServiceAccountName());
     }
 
     @ParameterizedTest

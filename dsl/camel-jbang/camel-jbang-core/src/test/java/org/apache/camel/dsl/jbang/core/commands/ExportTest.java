@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
@@ -591,7 +592,8 @@ class ExportTest {
         // We need a real file as we want to test the generated content
         Export command = createCommand(rt, new String[] { "src/test/resources/route.yaml" },
                 "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
-                "--property", "hello=world");
+                // there was a bug where properties starting with camel.main were duplicated in application.properties
+                "--property", "hello=world", "--property", "camel.main.foo=bar");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -600,10 +602,23 @@ class ExportTest {
 
         // Application properties
         File appProperties = new File(workingDir + "/src/main/resources", "application.properties");
-        Assertions.assertTrue(appProperties.exists(), "Missing application properties");
+        Assertions.assertTrue(appProperties.exists(), "Missing application.properties");
         Properties appProps = new Properties();
         appProps.load(new FileInputStream(appProperties));
         Assertions.assertEquals("world", appProps.getProperty("hello"));
+        Assertions.assertEquals("bar", appProps.getProperty("camel.main.foo"));
+        int nrCamelProps = 0;
+        // read the file as text to read the properties as clean text
+        // as using the Properties class won't allow duplicated properties
+        try (Scanner scanner = new Scanner(new File(workingDir + "/src/main/resources/application.properties"))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if ("camel.main.foo=bar".equals(line)) {
+                    nrCamelProps++;
+                }
+            }
+        }
+        Assertions.assertEquals(1, nrCamelProps, "Duplicated property camel.main.foo in application.properties");
     }
 
     @ParameterizedTest
