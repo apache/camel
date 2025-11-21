@@ -35,7 +35,6 @@
 
     <modules>
         <module>camel-spring</module>
-        <module>camel-spring-ai</module>
         <module>camel-spring-batch</module>
         <module>camel-spring-jdbc</module>
         <module>camel-spring-ldap</module>
@@ -47,6 +46,7 @@
         <module>camel-spring-xml</module>
         <module>camel-undertow-spring-security</module>
         <module>camel-spring-cloud-config</module>
+        <module>camel-spring-ai</module>
     </modules>
 
 </project>
