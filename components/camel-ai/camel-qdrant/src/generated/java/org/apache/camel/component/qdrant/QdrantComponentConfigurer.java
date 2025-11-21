@@ -35,7 +35,7 @@ public class QdrantComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.qdrant.QdrantConfiguration.class, value)); return true;
-        case "filter": getOrCreateConfiguration(target).setFilter(property(camelContext, io.qdrant.client.grpc.Points.Filter.class, value)); return true;
+        case "filter": getOrCreateConfiguration(target).setFilter(property(camelContext, io.qdrant.client.grpc.Common.Filter.class, value)); return true;
         case "host": getOrCreateConfiguration(target).setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -61,7 +61,7 @@ public class QdrantComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.qdrant.QdrantConfiguration.class;
-        case "filter": return io.qdrant.client.grpc.Points.Filter.class;
+        case "filter": return io.qdrant.client.grpc.Common.Filter.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;

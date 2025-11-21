@@ -19,7 +19,7 @@ package org.apache.camel.component.qdrant;
 import java.time.Duration;
 
 import io.qdrant.client.QdrantClient;
-import io.qdrant.client.grpc.Points;
+import io.qdrant.client.grpc.Common;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -33,31 +33,23 @@ public class QdrantConfiguration implements Cloneable {
     @Metadata(defaultValue = "localhost")
     @UriParam
     private String host = "localhost";
-
     @Metadata(defaultValue = "6334")
     @UriParam
     private int port = 6334;
-
-    @Metadata(defaultValue = "false")
+    @Metadata(defaultValue = "false", label = "security")
     @UriParam
     private boolean tls;
-
-    @Metadata(secret = true)
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String apiKey;
-
     @UriParam
     private Duration timeout;
-
     @Metadata(autowired = true)
     private QdrantClient client;
-
     @UriParam(defaultValue = "3")
     private int maxResults = 3;
-
     @UriParam(label = "advanced")
     @Metadata(autowired = true)
-    private Points.Filter filter;
+    private Common.Filter filter;
 
     public String getHost() {
         return host;
@@ -131,23 +123,19 @@ public class QdrantConfiguration implements Cloneable {
 
     /**
      * Max results for similarity search
-     *
-     * @param maxResults
      */
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
     }
 
-    public Points.Filter getFilter() {
+    public Common.Filter getFilter() {
         return filter;
     }
 
     /**
-     * Filter of type io.qdrant.client.grpc.Points.Points.Filter for similarity search. This is for advanced usage.
-     *
-     * @param filter
+     * Filter for similarity search.
      */
-    public void setFilter(Points.Filter filter) {
+    public void setFilter(Common.Filter filter) {
         this.filter = filter;
     }
 

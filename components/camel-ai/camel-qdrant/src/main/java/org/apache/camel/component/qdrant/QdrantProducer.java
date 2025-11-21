@@ -29,6 +29,7 @@ import io.qdrant.client.QdrantClient;
 import io.qdrant.client.WithPayloadSelectorFactory;
 import io.qdrant.client.WithVectorsSelectorFactory;
 import io.qdrant.client.grpc.Collections.VectorParams;
+import io.qdrant.client.grpc.Common;
 import io.qdrant.client.grpc.Points;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -42,6 +43,7 @@ import static io.qdrant.client.QueryFactory.nearest;
 import static io.qdrant.client.WithPayloadSelectorFactory.enable;
 
 public class QdrantProducer extends DefaultAsyncProducer {
+
     private QdrantClient client;
     private ExecutorService executor;
 
@@ -143,7 +145,7 @@ public class QdrantProducer extends DefaultAsyncProducer {
     private boolean retrieve(Exchange exchange, AsyncCallback callback) throws Exception {
         final String collection = getEndpoint().getCollection();
         final Message in = exchange.getMessage();
-        final List<Points.PointId> ids = in.getMandatoryBody(List.class);
+        final List<Common.PointId> ids = in.getMandatoryBody(List.class);
 
         call(
                 this.client.retrieveAsync(
@@ -272,7 +274,7 @@ public class QdrantProducer extends DefaultAsyncProducer {
 
         ObjectHelper.notNull(vectors, "vectors");
         final int maxResults = getEndpoint().getConfiguration().getMaxResults();
-        final Points.Filter filter = getEndpoint().getConfiguration().getFilter();
+        final Common.Filter filter = getEndpoint().getConfiguration().getFilter();
         final Duration timeout = getEndpoint().getConfiguration().getTimeout();
 
         var queryRequestBuilder = Points.QueryPoints.newBuilder()

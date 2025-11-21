@@ -44,7 +44,7 @@ public final class QdrantConverterLoader implements TypeConverterLoader, CamelCo
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointId.class, java.lang.Long.class, false,
+        addTypeConverter(registry, io.qdrant.client.grpc.Common.PointId.class, java.lang.Long.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.qdrant.QdrantConverter.toPointId((java.lang.Long) value);
                 if (false && answer == null) {
@@ -52,7 +52,7 @@ public final class QdrantConverterLoader implements TypeConverterLoader, CamelCo
                 }
                 return answer;
             });
-        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointId.class, java.util.UUID.class, false,
+        addTypeConverter(registry, io.qdrant.client.grpc.Common.PointId.class, java.util.UUID.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.qdrant.QdrantConverter.toPointId((java.util.UUID) value);
                 if (false && answer == null) {
@@ -60,7 +60,7 @@ public final class QdrantConverterLoader implements TypeConverterLoader, CamelCo
                 }
                 return answer;
             });
-        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointId.class, long.class, false,
+        addTypeConverter(registry, io.qdrant.client.grpc.Common.PointId.class, long.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.qdrant.QdrantConverter.toPointId((long) value);
                 if (false && answer == null) {
@@ -68,33 +68,33 @@ public final class QdrantConverterLoader implements TypeConverterLoader, CamelCo
                 }
                 return answer;
             });
-        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointsSelector.class, io.qdrant.client.grpc.Points.Condition.class, false,
+        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointsSelector.class, io.qdrant.client.grpc.Common.Condition.class, false,
             (type, exchange, value) -> {
-                Object answer = org.apache.camel.component.qdrant.QdrantConverter.toPointSelector((io.qdrant.client.grpc.Points.Condition) value);
+                Object answer = org.apache.camel.component.qdrant.QdrantConverter.toPointSelector((io.qdrant.client.grpc.Common.Condition) value);
                 if (false && answer == null) {
                     answer = Void.class;
                 }
                 return answer;
             });
-        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointsSelector.class, io.qdrant.client.grpc.Points.Filter.class, false,
+        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointsSelector.class, io.qdrant.client.grpc.Common.Filter.class, false,
             (type, exchange, value) -> {
-                Object answer = org.apache.camel.component.qdrant.QdrantConverter.toPointSelector((io.qdrant.client.grpc.Points.Filter) value);
+                Object answer = org.apache.camel.component.qdrant.QdrantConverter.toPointSelector((io.qdrant.client.grpc.Common.Filter) value);
                 if (false && answer == null) {
                     answer = Void.class;
                 }
                 return answer;
             });
-        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointsSelector.class, io.qdrant.client.grpc.Points.PointId.class, false,
+        addTypeConverter(registry, io.qdrant.client.grpc.Points.PointsSelector.class, io.qdrant.client.grpc.Common.PointId.class, false,
             (type, exchange, value) -> {
-                Object answer = org.apache.camel.component.qdrant.QdrantConverter.toPointSelector((io.qdrant.client.grpc.Points.PointId) value);
+                Object answer = org.apache.camel.component.qdrant.QdrantConverter.toPointSelector((io.qdrant.client.grpc.Common.PointId) value);
                 if (false && answer == null) {
                     answer = Void.class;
                 }
                 return answer;
             });
-        addTypeConverter(registry, java.util.List.class, io.qdrant.client.grpc.Points.PointId.class, false,
+        addTypeConverter(registry, java.util.List.class, io.qdrant.client.grpc.Common.PointId.class, false,
             (type, exchange, value) -> {
-                Object answer = org.apache.camel.component.qdrant.QdrantConverter.toListOfPointIds((io.qdrant.client.grpc.Points.PointId) value);
+                Object answer = org.apache.camel.component.qdrant.QdrantConverter.toListOfPointIds((io.qdrant.client.grpc.Common.PointId) value);
                 if (false && answer == null) {
                     answer = Void.class;
                 }

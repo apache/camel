@@ -25,6 +25,7 @@ import io.qdrant.client.PointIdFactory;
 import io.qdrant.client.ValueFactory;
 import io.qdrant.client.VectorsFactory;
 import io.qdrant.client.grpc.Collections;
+import io.qdrant.client.grpc.Common;
 import io.qdrant.client.grpc.Points;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.qdrant.QdrantAction;
@@ -114,7 +115,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
         Exchange deleteResult = fluentTemplate.to("qdrant:testDelete")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.DELETE)
                 .withBody(
-                        Points.Filter.newBuilder()
+                        Common.Filter.newBuilder()
                                 .addMust(ConditionFactory.matchKeyword("bar", "hello2"))
                                 .build())
                 .request(Exchange.class);

@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.qdrant;
 
-import io.qdrant.client.grpc.Points;
+import io.qdrant.client.grpc.Common;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +31,7 @@ public class QdrantDeleteTest extends QdrantTestSupport {
     @Test
     public void deleteWithoutRequiredParameters() {
         Exchange result = fluentTemplate.to("qdrant:delete")
-                .withBody(Points.Filter.newBuilder()
+                .withBody(Common.Filter.newBuilder()
                         .addMust(matchKeyword("foo", "hello"))
                         .build())
                 .request(Exchange.class);

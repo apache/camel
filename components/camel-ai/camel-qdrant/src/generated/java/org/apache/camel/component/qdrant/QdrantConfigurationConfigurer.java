@@ -26,7 +26,7 @@ public class QdrantConfigurationConfigurer extends org.apache.camel.support.comp
         case "apikey":
         case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "client": target.setClient(property(camelContext, io.qdrant.client.QdrantClient.class, value)); return true;
-        case "filter": target.setFilter(property(camelContext, io.qdrant.client.grpc.Points.Filter.class, value)); return true;
+        case "filter": target.setFilter(property(camelContext, io.qdrant.client.grpc.Common.Filter.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "maxresults":
         case "maxResults": target.setMaxResults(property(camelContext, int.class, value)); return true;
@@ -43,7 +43,7 @@ public class QdrantConfigurationConfigurer extends org.apache.camel.support.comp
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "client": return io.qdrant.client.QdrantClient.class;
-        case "filter": return io.qdrant.client.grpc.Points.Filter.class;
+        case "filter": return io.qdrant.client.grpc.Common.Filter.class;
         case "host": return java.lang.String.class;
         case "maxresults":
         case "maxResults": return int.class;

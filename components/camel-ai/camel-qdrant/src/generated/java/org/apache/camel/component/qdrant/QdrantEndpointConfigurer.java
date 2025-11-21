@@ -25,7 +25,7 @@ public class QdrantEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "filter": target.getConfiguration().setFilter(property(camelContext, io.qdrant.client.grpc.Points.Filter.class, value)); return true;
+        case "filter": target.getConfiguration().setFilter(property(camelContext, io.qdrant.client.grpc.Common.Filter.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -48,7 +48,7 @@ public class QdrantEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
-        case "filter": return io.qdrant.client.grpc.Points.Filter.class;
+        case "filter": return io.qdrant.client.grpc.Common.Filter.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;

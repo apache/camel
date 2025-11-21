@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.qdrant;
 
 import java.util.ArrayList;
@@ -24,9 +23,8 @@ import java.util.List;
 import java.util.UUID;
 
 import io.qdrant.client.PointIdFactory;
+import io.qdrant.client.grpc.Common;
 import io.qdrant.client.grpc.Points;
-import io.qdrant.client.grpc.Points.Filter;
-import io.qdrant.client.grpc.Points.PointId;
 import io.qdrant.client.grpc.Points.PointStruct;
 import io.qdrant.client.grpc.Points.PointsSelector;
 import org.apache.camel.Converter;
@@ -48,17 +46,17 @@ public class QdrantConverter {
     }
 
     @Converter
-    public static List<PointId> toListOfPointIds(PointId p) {
+    public static List<Common.PointId> toListOfPointIds(Common.PointId p) {
         return Collections.singletonList(p);
     }
 
     @Converter
-    public static List<PointId> toListOfPointIdsFromCollection(Collection<PointId> collection) {
+    public static List<Common.PointId> toListOfPointIdsFromCollection(Collection<Common.PointId> collection) {
         return new ArrayList<>(collection);
     }
 
     @Converter
-    public static PointsSelector toPointSelector(PointId id) {
+    public static PointsSelector toPointSelector(Common.PointId id) {
         return Points.PointsSelector.newBuilder()
                 .setPoints(
                         Points.PointsIdsList.newBuilder()
@@ -68,34 +66,34 @@ public class QdrantConverter {
     }
 
     @Converter
-    public static PointsSelector toPointSelector(Points.Condition condition) {
+    public static PointsSelector toPointSelector(Common.Condition condition) {
         return Points.PointsSelector.newBuilder()
                 .setFilter(
-                        Points.Filter.newBuilder()
+                        Common.Filter.newBuilder()
                                 .addMust(condition)
                                 .build())
                 .build();
     }
 
     @Converter
-    public static PointsSelector toPointSelector(Filter filter) {
+    public static PointsSelector toPointSelector(Common.Filter filter) {
         return Points.PointsSelector.newBuilder()
                 .setFilter(filter)
                 .build();
     }
 
     @Converter
-    public static PointId toPointId(long id) {
+    public static Common.PointId toPointId(long id) {
         return PointIdFactory.id(id);
     }
 
     @Converter
-    public static PointId toPointId(Long id) {
+    public static Common.PointId toPointId(Long id) {
         return PointIdFactory.id(id);
     }
 
     @Converter
-    public static PointId toPointId(UUID id) {
+    public static Common.PointId toPointId(UUID id) {
         return PointIdFactory.id(id);
     }
 
