@@ -22,13 +22,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
 
 import static org.apache.camel.util.StringHelper.sanitize;
 
@@ -62,13 +62,13 @@ public @interface InVersion {
                                 return Boolean.FALSE;
                             }
                         }
-                        if (StringUtils.isNotBlank(annotation.from()) && StringUtils.isNotBlank(annotation.to())) {
+                        if (ObjectHelper.isNotEmpty(annotation.from()) && ObjectHelper.isNotEmpty(annotation.to())) {
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("from={},to={},{}", sanitize(annotation.from()), annotation.to(),
                                         VersionHelper.isBetween(currTestClass.version(), annotation.from(), annotation.to()));
                             }
                             return VersionHelper.isBetween(currTestClass.version(), annotation.from(), annotation.to());
-                        } else if (StringUtils.isNotBlank(annotation.from())) {
+                        } else if (ObjectHelper.isNotEmpty(annotation.from())) {
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("from={},{}", annotation.from(),
                                         VersionHelper.isGE(currTestClass.version(), annotation.from()));

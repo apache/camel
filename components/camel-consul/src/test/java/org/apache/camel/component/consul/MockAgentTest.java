@@ -18,6 +18,7 @@ package org.apache.camel.component.consul;
 
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,7 +29,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.kiwiproject.consul.model.health.ImmutableService;
 import org.kiwiproject.consul.model.health.Service;
-import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
 
 import static org.apache.camel.builder.Builder.constant;
 

@@ -30,7 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.smb.services.SmbService;
 import org.apache.camel.test.infra.smb.services.SmbServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
@@ -64,7 +64,7 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
         mock.assertIsSatisfied();
         SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
 
-        Assert.assertEquals("Hello World", new String((byte[]) file.getBody(), StandardCharsets.UTF_8));
+        Assertions.assertEquals("Hello World", new String((byte[]) file.getBody(), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
 
         mock.assertIsSatisfied();
         SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
-        Assert.assertEquals("Hello World", new String((byte[]) file.getBody(), StandardCharsets.UTF_8));
+        Assertions.assertEquals("Hello World", new String((byte[]) file.getBody(), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class SmbComponentConnectionIT extends CamelTestSupport {
 
         mock.assertIsSatisfied();
         SmbFile file = mock.getExchanges().get(0).getIn().getBody(SmbFile.class);
-        Assert.assertEquals("Good Bye", new String((byte[]) file.getBody(), StandardCharsets.UTF_8));
+        Assertions.assertEquals("Good Bye", new String((byte[]) file.getBody(), StandardCharsets.UTF_8));
     }
 
     @Override

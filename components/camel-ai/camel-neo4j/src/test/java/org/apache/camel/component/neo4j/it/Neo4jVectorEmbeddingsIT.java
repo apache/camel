@@ -33,10 +33,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Neo4jVectorEmbeddingsIT extends Neo4jTestSupport {
     @Test

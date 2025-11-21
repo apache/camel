@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.cli.it;
 
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.test.infra.cli.services.CliService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,6 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junitpioneer.jupiter.ReadsSystemProperty;
 import org.junitpioneer.jupiter.RestoreSystemProperties;
 import org.junitpioneer.jupiter.SetSystemProperty;
-import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
 
 @RestoreSystemProperties
 public class RunITCase extends AbstractTestSupport {
@@ -48,6 +48,6 @@ public class RunITCase extends AbstractTestSupport {
     private void checkPidFromBackgroundExec(CliService cliService) {
         cliService.execute("init foo.yaml");
         String pid = cliService.executeBackground("run foo.yaml");
-        Assertions.assertTrue(StringUtils.isNumeric(pid), "pid is numeric: " + pid);
+        Assertions.assertTrue(ObjectHelper.isNumber(pid), "pid is numeric: " + pid);
     }
 }

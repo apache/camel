@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("Doesn't work with Localstack v4")
 public class EventbridgeRemoveTargetsIT extends Aws2EventbridgeBase {

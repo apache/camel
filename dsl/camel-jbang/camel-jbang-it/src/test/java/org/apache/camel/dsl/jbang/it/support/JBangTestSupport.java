@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.test.infra.cli.common.CliProperties;
 import org.apache.camel.test.infra.cli.services.CliService;
 import org.apache.camel.test.infra.cli.services.CliServiceFactory;
+import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -52,7 +53,6 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 public abstract class JBangTestSupport {
 

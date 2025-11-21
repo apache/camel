@@ -35,9 +35,9 @@ import org.junit.jupiter.api.Test;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MongoDbConversionsIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 

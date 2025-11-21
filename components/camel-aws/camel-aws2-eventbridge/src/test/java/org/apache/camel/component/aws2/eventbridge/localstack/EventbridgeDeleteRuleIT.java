@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.eventbridge.model.DeleteRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EventbridgeDeleteRuleIT extends Aws2EventbridgeBase {
 
