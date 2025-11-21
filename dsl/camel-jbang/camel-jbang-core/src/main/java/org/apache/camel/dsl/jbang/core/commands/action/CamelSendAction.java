@@ -50,6 +50,16 @@ public class CamelSendAction extends ActionBaseCommand {
                             arity = "0..1")
     String name;
 
+    @CommandLine.Option(names = { "--properties" },
+                        description = "comma separated list of properties file (only applicable when NOT using an existing running Camel)"
+                                      +
+                                      " (ex. /path/to/file.properties,/path/to/other.properties")
+    String propertiesFiles;
+
+    @CommandLine.Option(names = { "--prop", "--property" }, description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
+                        arity = "0")
+    String[] property;
+
     @CommandLine.Option(names = { "--endpoint", "--uri" },
                         description = "Endpoint where to send the message (can be uri, pattern, or refer to a route id)")
     String endpoint;
@@ -261,6 +271,8 @@ public class CamelSendAction extends ActionBaseCommand {
             }
         };
         run.empty = true;
+        run.propertiesFiles = propertiesFiles;
+        run.property = property;
 
         // spawn thread that waits for response file
         final CountDownLatch latch = new CountDownLatch(1);
@@ -272,7 +284,6 @@ public class CamelSendAction extends ActionBaseCommand {
                 try {
                     showStatus(outputFile);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     // ignore
                 } finally {
                     latch.countDown();
@@ -294,7 +305,7 @@ public class CamelSendAction extends ActionBaseCommand {
     }
 
     private void printStatusLine(JsonObject jo) {
-        // timstamp
+        // timestamp
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String ts = sdf.format(new Date(jo.getLong("timestamp")));
         if (loggingColor) {

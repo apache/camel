@@ -270,10 +270,10 @@ public class Run extends CamelCommand {
     @Option(names = { "--properties" },
             description = "comma separated list of properties file" +
                           " (ex. /path/to/file.properties,/path/to/other.properties")
-    String propertiesFiles;
+    public String propertiesFiles;
 
     @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
-    String[] property;
+    public String[] property;
 
     @Option(names = { "--stub" }, description = "Stubs all the matching endpoint uri with the given component name or pattern."
                                                 + " Multiple names can be separated by comma. (all = stub all endpoints).")
