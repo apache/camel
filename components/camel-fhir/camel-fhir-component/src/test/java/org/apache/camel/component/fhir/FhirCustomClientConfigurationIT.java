@@ -43,6 +43,7 @@ import ca.uhn.fhir.rest.gclient.IHistory;
 import ca.uhn.fhir.rest.gclient.IMeta;
 import ca.uhn.fhir.rest.gclient.IOperation;
 import ca.uhn.fhir.rest.gclient.IPatch;
+import ca.uhn.fhir.rest.gclient.IRawHttp;
 import ca.uhn.fhir.rest.gclient.IRead;
 import ca.uhn.fhir.rest.gclient.ITransaction;
 import ca.uhn.fhir.rest.gclient.IUntypedQuery;
@@ -277,6 +278,11 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
 
         @Override
         public IRead read() {
+            return null;
+        }
+
+        @Override
+        public IRawHttp rawHttpRequest() {
             return null;
         }
 
