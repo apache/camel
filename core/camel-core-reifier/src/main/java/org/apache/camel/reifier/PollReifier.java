@@ -75,6 +75,10 @@ public class PollReifier extends ProcessorReifier<PollDefinition> {
             // only use simple language if needed
             language = LanguageSupport.hasSimpleFunction(uri) ? "simple" : "constant";
         }
+        if ("simple".equals(language)) {
+            // special for simple as we need to not include file functions
+            language = "simple-no-file";
+        }
         Language lan = camelContext.resolveLanguage(language);
         return lan.createExpression(uri);
     }

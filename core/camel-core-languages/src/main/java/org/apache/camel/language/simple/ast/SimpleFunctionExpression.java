@@ -26,6 +26,7 @@ import java.util.StringJoiner;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
@@ -47,10 +48,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
     // use caches to avoid re-parsing the same expressions over and over again
     private final Map<String, Expression> cacheExpression;
+    private final boolean skipFileFunctions;
 
-    public SimpleFunctionExpression(SimpleToken token, Map<String, Expression> cacheExpression) {
+    public SimpleFunctionExpression(SimpleToken token, Map<String, Expression> cacheExpression, boolean skipFileFunctions) {
         super(token);
         this.cacheExpression = cacheExpression;
+        this.skipFileFunctions = skipFileFunctions;
     }
 
     /**
@@ -195,7 +198,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // file: prefix
         remainder = ifStartsWithReturnRemainder("file:", function);
         if (remainder != null) {
-            Expression fileExpression = createSimpleFileExpression(remainder, strict);
+            Expression fileExpression;
+            if (skipFileFunctions) {
+                // do not create file expressions but keep the function as-is as a constant value
+                fileExpression = ConstantLanguage.constant("${" + function + "}");
+            } else {
+                fileExpression = createSimpleFileExpression(remainder, strict);
+            }
             if (fileExpression != null) {
                 return fileExpression;
             }

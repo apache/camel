@@ -14,24 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.csimple;
+package org.apache.camel.language.simple;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.language.simple.SimplePredicateParser;
+public class SimpleNoFileLanguage extends SimpleLanguage {
 
-/**
- * Predicate parser for csimple.
- */
-public class CSimplePredicateParser {
-
-    public String parsePredicate(String predicate) {
-        return parsePredicate(null, predicate);
+    public SimpleNoFileLanguage() {
+        super(true);
     }
-
-    public String parsePredicate(CamelContext camelContext, String predicate) {
-        // reuse simple language parser but output the result as java code
-        SimplePredicateParser parser = new SimplePredicateParser(camelContext, predicate, true, false, null);
-        return parser.parseCode();
-    }
-
 }

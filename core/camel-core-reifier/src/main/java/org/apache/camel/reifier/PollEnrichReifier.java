@@ -26,6 +26,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.language.ConstantExpression;
+import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.model.language.SimpleNoFileExpression;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EndpointHelper;
@@ -44,6 +46,11 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
             exp = createExpression(definition.getExpression());
             Exchange ex = new DefaultExchange(camelContext);
             uri = exp.evaluate(ex, String.class);
+        } else if (definition.getExpression() instanceof SimpleExpression se) {
+            // special for simple as we need to not include file functions
+            SimpleNoFileExpression copy = new SimpleNoFileExpression(se);
+            exp = createExpression(copy);
+            uri = definition.getExpression().getExpression();
         } else {
             exp = createExpression(definition.getExpression());
             uri = definition.getExpression().getExpression();

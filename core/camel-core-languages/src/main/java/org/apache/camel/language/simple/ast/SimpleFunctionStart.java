@@ -34,11 +34,13 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     // use caches to avoid re-parsing the same expressions over and over again
     private final Map<String, Expression> cacheExpression;
     private final CompositeNodes block;
+    private final boolean skipFileFunctions;
 
-    public SimpleFunctionStart(SimpleToken token, Map<String, Expression> cacheExpression) {
+    public SimpleFunctionStart(SimpleToken token, Map<String, Expression> cacheExpression, boolean skipFileFunctions) {
         super(token);
         this.block = new CompositeNodes(token);
         this.cacheExpression = cacheExpression;
+        this.skipFileFunctions = skipFileFunctions;
     }
 
     public CompositeNodes getBlock() {
@@ -68,7 +70,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     }
 
     private Expression doCreateLiteralExpression(CamelContext camelContext, String expression) {
-        SimpleFunctionExpression function = new SimpleFunctionExpression(this.getToken(), cacheExpression);
+        SimpleFunctionExpression function = new SimpleFunctionExpression(this.getToken(), cacheExpression, skipFileFunctions);
         LiteralNode literal = (LiteralNode) block.getChildren().get(0);
         function.addText(literal.getText());
         return function.createExpression(camelContext, expression);
@@ -119,7 +121,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                 // we have now concat the block as a String which contains the function expression
                 // which we then need to evaluate as a function
                 String exp = sb.toString();
-                SimpleFunctionExpression function = new SimpleFunctionExpression(token, cacheExpression);
+                SimpleFunctionExpression function = new SimpleFunctionExpression(token, cacheExpression, skipFileFunctions);
                 function.addText(exp);
                 try {
                     return function.createExpression(camelContext, exp).evaluate(exchange, type);
@@ -161,7 +163,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     }
 
     private String doCreateLiteralCode(CamelContext camelContext, String expression) {
-        SimpleFunctionExpression function = new SimpleFunctionExpression(this.getToken(), cacheExpression);
+        SimpleFunctionExpression function = new SimpleFunctionExpression(this.getToken(), cacheExpression, skipFileFunctions);
         LiteralNode literal = (LiteralNode) block.getChildren().get(0);
         function.addText(literal.getText());
         return function.createCode(camelContext, expression);
@@ -203,7 +205,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
         // we have now concat the block as a String which contains inlined functions parsed
         // so now we should reparse as a single function
         String exp = sb.toString();
-        SimpleFunctionExpression function = new SimpleFunctionExpression(token, cacheExpression);
+        SimpleFunctionExpression function = new SimpleFunctionExpression(token, cacheExpression, skipFileFunctions);
         function.addText(exp);
         try {
             return function.createCode(camelContext, exp);
