@@ -2,6 +2,9 @@
   "CamelAggregatedSize",
   "CamelFileLength",
   "CamelFileName",
+  "CamelHttpResponseCode",
+  "CamelHttpResponseText",
   "CamelSplitIndex",
-  "CamelSplitSize"
+  "CamelSplitSize",
+  "Content-Type"
 ]

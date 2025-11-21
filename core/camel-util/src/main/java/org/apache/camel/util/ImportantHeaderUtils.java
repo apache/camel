@@ -30,8 +30,11 @@ public final class ImportantHeaderUtils {
                     "CamelAggregatedSize",
                     "CamelFileLength",
                     "CamelFileName",
+                    "CamelHttpResponseCode",
+                    "CamelHttpResponseText",
                     "CamelSplitIndex",
-                    "CamelSplitSize"
+                    "CamelSplitSize",
+                    "Content-Type"
             // IMPORTANT-HEADER-KEYS: END
             )));
 
