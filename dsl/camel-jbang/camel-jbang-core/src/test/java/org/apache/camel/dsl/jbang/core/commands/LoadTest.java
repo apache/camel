@@ -56,7 +56,6 @@ class LoadTest {
         Runnable r = () -> {
             try {
                 Thread.sleep(2000);
-                System.out.println("Calling load...");
                 CamelLoadAction load = new CamelLoadAction(new CamelJBangMain());
                 CommandLine.populateCommand(load, getPid(), "--source=src/test/resources/load.yaml");
                 int exit = load.doCall();

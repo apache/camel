@@ -31,7 +31,6 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.main.KameletMain;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -56,7 +55,8 @@ public class CamelSendAction extends ActionBaseCommand {
                                       " (ex. /path/to/file.properties,/path/to/other.properties")
     String propertiesFiles;
 
-    @CommandLine.Option(names = { "--prop", "--property" }, description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
+    @CommandLine.Option(names = { "--prop", "--property" },
+                        description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
                         arity = "0")
     String[] property;
 
@@ -207,7 +207,8 @@ public class CamelSendAction extends ActionBaseCommand {
 
     protected void showStatus(Path outputFile) throws Exception {
         try {
-            JsonObject jo = waitForOutputFile(outputFile);
+            // wait longer than timeout
+            JsonObject jo = getJsonObject(outputFile, timeout + 10000);
             if (jo != null) {
                 printStatusLine(jo);
                 String exchangeId = jo.getString("exchangeId");
@@ -383,28 +384,6 @@ public class CamelSendAction extends ActionBaseCommand {
         } else {
             return status;
         }
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        StopWatch watch = new StopWatch();
-        long wait = timeout + 10000; // wait longer than timeout
-        while (watch.taken() < wait) {
-            File f = outputFile.toFile();
-            try {
-                // give time for response to be ready
-                Thread.sleep(20);
-
-                if (Files.exists(outputFile) && f.length() > 0) {
-                    String text = Files.readString(outputFile);
-                    return (JsonObject) Jsoner.deserialize(text);
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return null;
     }
 
 }

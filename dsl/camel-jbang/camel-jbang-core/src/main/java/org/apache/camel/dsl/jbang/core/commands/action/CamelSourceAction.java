@@ -166,7 +166,7 @@ public class CamelSourceAction extends ActionBaseCommand {
     }
 
     protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject((Path) outputFile);
+        return getJsonObject(outputFile);
     }
 
     public static String extractSourceName(String loc) {

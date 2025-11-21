@@ -39,6 +39,10 @@ abstract class ActionBaseCommand extends CamelCommand {
     }
 
     protected static JsonObject getJsonObject(Path outputFile) {
+        return getJsonObject(outputFile, 5000);
+    }
+
+    protected static JsonObject getJsonObject(Path outputFile, long timeout) {
         StopWatch watch = new StopWatch();
         while (watch.taken() < 5000) {
             File f = outputFile.toFile();

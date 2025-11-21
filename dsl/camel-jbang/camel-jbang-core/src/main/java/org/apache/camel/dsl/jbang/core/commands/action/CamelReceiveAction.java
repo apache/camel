@@ -33,7 +33,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -43,9 +45,11 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -90,8 +94,20 @@ public class CamelReceiveAction extends ActionBaseCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
-    String name = "*";
+    @CommandLine.Parameters(description = "To use an existing running Camel integration for receiving the message (name or pid)",
+                            arity = "0..1")
+    String name;
+
+    @CommandLine.Option(names = { "--properties" },
+                        description = "comma separated list of properties file (only applicable when NOT using an existing running Camel)"
+                                      +
+                                      " (ex. /path/to/file.properties,/path/to/other.properties")
+    String propertiesFiles;
+
+    @CommandLine.Option(names = { "--prop", "--property" },
+                        description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)",
+                        arity = "0")
+    String[] property;
 
     @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class,
                         defaultValue = "status",
@@ -130,6 +146,10 @@ public class CamelReceiveAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--grep" },
                         description = "Filter messages to only output matching text (ignore case).", arity = "0..*")
     String[] grep;
+
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000",
+                        description = "Timeout in millis waiting for message to be received")
+    long timeout = 20000;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
                         description = "Show exchange properties in received messages")
@@ -177,6 +197,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--output" }, description = "Output format (text or json)")
     private String output;
 
+    private volatile long pid;
+
     String findAnsi;
     private int nameMaxWidth;
     private boolean prefixShown;
@@ -202,6 +224,14 @@ public class CamelReceiveAction extends ActionBaseCommand {
             return doStatusCall();
         }
 
+        if (name != null) {
+            return doCall(name, autoDump);
+        } else {
+            return doCallLocal(autoDump);
+        }
+    }
+
+    private Integer doCall(String name, boolean autoDump) throws Exception {
         List<Long> pids = findPids(name);
         for (long pid : pids) {
             if ("clear".equals(action)) {
@@ -210,48 +240,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
                     Files.writeString(f, "{}");
                 }
             } else {
-                // ensure output file is deleted before executing action
-                Path outputFile = getOutputFile(Long.toString(pid));
-                PathUtils.deleteFile(outputFile);
-
-                JsonObject root = new JsonObject();
-                root.put("action", "receive");
-                if ("start".equals(action)) {
-                    root.put("enabled", "true");
-                    if (endpoint != null) {
-                        root.put("endpoint", endpoint);
-                    } else {
-                        root.put("endpoint", "*");
-                    }
-                } else if ("stop".equals(action)) {
-                    root.put("enabled", "false");
-                }
-                Path f = getActionFile(Long.toString(pid));
-                Files.writeString(f, root.toJson());
-
-                JsonObject jo = waitForOutputFile(outputFile);
-                if (jo != null) {
-                    String error = jo.getString("error");
-                    if (error != null) {
-                        error = Jsoner.unescape(error);
-                        String url = jo.getString("url");
-                        List<String> stackTrace = jo.getCollection("stackTrace");
-                        if (url != null) {
-                            printer().println("Error starting to receive messages from: " + url + " due to: " + error);
-
-                        } else {
-                            printer().println("Error starting to receive messages due to: " + error);
-                        }
-                        printer().println(StringHelper.fillChars('-', 120));
-                        printer().println(StringHelper.padString(1, 55) + "STACK-TRACE");
-                        printer().println(StringHelper.fillChars('-', 120));
-                        StringBuilder sb = new StringBuilder();
-                        for (String s : stackTrace) {
-                            sb.append(String.format("\t%s%n", s));
-                        }
-                        printer().println(String.valueOf(sb));
-                    }
-                }
+                Path outputFile = writeReceiveData();
+                showStatus(outputFile);
             }
         }
 
@@ -262,16 +252,125 @@ public class CamelReceiveAction extends ActionBaseCommand {
         return 0;
     }
 
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
+    private Integer doCallLocal(boolean autoDump) throws Exception {
+        AtomicReference<KameletMain> ref = new AtomicReference<>();
+        Run run = new Run(this.getMain()) {
+            @Override
+            protected int runKameletMain(KameletMain main) throws Exception {
+                ref.set(main);
+                return super.runKameletMain(main);
+            }
+        };
+        run.empty = true;
+        run.propertiesFiles = propertiesFiles;
+        run.property = property;
+
+        // spawn thread that waits for response file
+        final CountDownLatch latch = new CountDownLatch(1);
+        this.pid = ProcessHandle.current().pid();
+        Path outputFile = writeReceiveData();
+        Thread t = new Thread("CamelJBangSendStatus") {
+            @Override
+            public void run() {
+                try {
+                    if (!showStatus(outputFile)) {
+                        // some kind of error so exit
+                        return;
+                    }
+                    if (autoDump) {
+                        doDumpCall();
+                    }
+                } catch (Exception e) {
+                    // ignore
+                } finally {
+                    latch.countDown();
+                    // signal to main we are complete
+                    KameletMain main = ref.get();
+                    if (main != null) {
+                        main.completed();
+                    }
+                }
+            }
+        };
+        // keep thread running as we need it to show the status before terminating
+        t.start();
+
+        Integer exit = run.call();
+        latch.await();
+
+        return exit;
+    }
+
+    protected Path writeReceiveData() {
+        // ensure output file is deleted before executing action
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
+
+        JsonObject root = new JsonObject();
+        root.put("action", "receive");
+        if ("start".equals(action)) {
+            root.put("enabled", "true");
+            if (endpoint != null) {
+                root.put("endpoint", endpoint);
+            } else {
+                root.put("endpoint", "*");
+            }
+        } else if ("stop".equals(action)) {
+            root.put("enabled", "false");
+        }
+        Path f = getActionFile(Long.toString(pid));
+        try {
+            String text = root.toJson();
+            Files.writeString(f, text);
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return outputFile;
+    }
+
+    protected boolean showStatus(Path outputFile) throws Exception {
+        // wait longer than timeout
+        JsonObject jo = getJsonObject(outputFile, timeout + 10000);
+        if (jo != null) {
+            String error = jo.getString("error");
+            if (error != null) {
+                error = Jsoner.unescape(error);
+                String url = jo.getString("url");
+                List<String> stackTrace = jo.getCollection("stackTrace");
+                if (url != null) {
+                    printer().println("Error starting to receive messages from: " + url + " due to: " + error);
+
+                } else {
+                    printer().println("Error starting to receive messages due to: " + error);
+                }
+                printer().println(StringHelper.fillChars('-', 120));
+                printer().println(StringHelper.padString(1, 55) + "STACK-TRACE");
+                printer().println(StringHelper.fillChars('-', 120));
+                StringBuilder sb = new StringBuilder();
+                for (String s : stackTrace) {
+                    sb.append(String.format("\t%s%n", s));
+                }
+                printer().println(String.valueOf(sb));
+                return false;
+            }
+        }
+        return true;
     }
 
     protected Integer doStatusCall() {
         List<StatusRow> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
+        List<Long> pids;
+        if (pid != 0) {
+            pids = List.of(pid);
+        } else if (name != null) {
+            pids = findPids(name);
+        } else {
+            return 0;
+        }
         ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
+                .filter(ph -> pid == 0 && pids.contains(ph.pid()))
                 .forEach(ph -> {
                     JsonObject root = loadStatus(ph.pid());
                     if (root != null) {
@@ -481,7 +580,12 @@ public class CamelReceiveAction extends ActionBaseCommand {
     }
 
     private void updatePids(Map<Long, Pid> rows) {
-        List<Long> pids = findPids(name);
+        List<Long> pids;
+        if (name != null) {
+            pids = findPids(name);
+        } else {
+            pids = List.of(pid);
+        }
         ProcessHandle.allProcesses()
                 .filter(ph -> pids.contains(ph.pid()))
                 .forEach(ph -> {
