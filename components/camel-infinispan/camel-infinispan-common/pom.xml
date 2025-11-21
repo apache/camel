@@ -52,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-query-dsl</artifactId>
+            <artifactId>infinispan-query</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
 

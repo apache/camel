@@ -28,12 +28,11 @@ import org.apache.camel.component.infinispan.InfinispanEventListener;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.infinispan.Cache;
+import org.infinispan.commons.api.query.ContinuousQuery;
+import org.infinispan.commons.api.query.ContinuousQueryListener;
 import org.infinispan.commons.api.query.Query;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.notifications.cachelistener.event.Event;
-import org.infinispan.query.Search;
-import org.infinispan.query.api.continuous.ContinuousQuery;
-import org.infinispan.query.api.continuous.ContinuousQueryListener;
 
 public class InfinispanEmbeddedConsumer
         extends InfinispanConsumer<EmbeddedCacheManager, InfinispanEmbeddedManager, InfinispanEmbeddedConfiguration> {
@@ -97,7 +96,7 @@ public class InfinispanEmbeddedConsumer
             Cache<Object, Object> remoteCache = getCache(Cache.class);
             Query<?> query = InfinispanEmbeddedUtil.buildQuery(getConfiguration().getQueryBuilder(), remoteCache);
 
-            continuousQuery = Search.getContinuousQuery(remoteCache);
+            continuousQuery = remoteCache.continuousQuery();
             continuousQuery.addContinuousQueryListener(query, this);
         }
 

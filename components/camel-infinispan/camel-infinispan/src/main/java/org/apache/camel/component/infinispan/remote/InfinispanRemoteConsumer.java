@@ -29,12 +29,11 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
-import org.infinispan.client.hotrod.Search;
 import org.infinispan.client.hotrod.event.ClientEvent;
 import org.infinispan.client.hotrod.exceptions.RemoteCacheManagerNotStartedException;
+import org.infinispan.commons.api.query.ContinuousQuery;
+import org.infinispan.commons.api.query.ContinuousQueryListener;
 import org.infinispan.commons.api.query.Query;
-import org.infinispan.query.api.continuous.ContinuousQuery;
-import org.infinispan.query.api.continuous.ContinuousQueryListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +102,7 @@ public class InfinispanRemoteConsumer
             RemoteCache<Object, Object> remoteCache = getCache(RemoteCache.class);
             Query<?> query = InfinispanRemoteUtil.buildQuery(getConfiguration().getQueryBuilder(), remoteCache);
 
-            continuousQuery = Search.getContinuousQuery(remoteCache);
+            continuousQuery = remoteCache.continuousQuery();
             continuousQuery.addContinuousQueryListener(query, this);
         }
 
@@ -146,7 +145,7 @@ public class InfinispanRemoteConsumer
         @SuppressWarnings("unchecked")
         @Override
         public void doStop() {
-            final RemoteCache cache = getCache(RemoteCache.class);
+            final RemoteCache<Object, Object> cache = getCache(RemoteCache.class);
             if (cache != null) {
                 try {
                     cache.removeClientListener(listener);

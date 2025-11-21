@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.api.annotations.indexing.option.VectorSimilarity;
-import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.marshall.ProtoStreamMarshaller;
@@ -28,7 +27,6 @@ import org.infinispan.protostream.FileDescriptorSource;
 import org.infinispan.protostream.SerializationContext;
 import org.infinispan.protostream.schema.Schema;
 import org.infinispan.protostream.schema.Type;
-import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 
 import static org.apache.camel.impl.engine.DefaultComponentResolver.RESOURCE_PATH;
 
@@ -67,7 +65,7 @@ public final class EmbeddingStoreUtil {
                 .addRepeatedField(Type.Scalar.STRING, FIELD_METADATA_KEYS, 4)
                 .addRepeatedField(Type.Scalar.STRING, FIELD_METADATA_VALUES, 5)
                 .build()
-                .toString();
+                .getContent();
     }
 
     public static String getSchemeFileName(InfinispanRemoteConfiguration configuration) {
@@ -88,9 +86,11 @@ public final class EmbeddingStoreUtil {
     }
 
     public static void registerSchema(InfinispanRemoteConfiguration configuration, RemoteCacheManager cacheContainer) {
-        RemoteCache<Object, Object> metadataCache
-                = cacheContainer.getCache(ProtobufMetadataManagerConstants.PROTOBUF_METADATA_CACHE_NAME);
-        metadataCache.put(getSchemeFileName(configuration), getSchema(configuration));
+        FileDescriptorSource fileDescriptorSource
+                = FileDescriptorSource.fromString(getSchemeFileName(configuration), getSchema(configuration));
+        cacheContainer.administration()
+                .schemas()
+                .create(fileDescriptorSource);
     }
 
     public static String getTypeName(InfinispanRemoteConfiguration configuration) {

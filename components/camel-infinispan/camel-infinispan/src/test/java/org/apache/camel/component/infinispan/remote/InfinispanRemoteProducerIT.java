@@ -65,7 +65,7 @@ public class InfinispanRemoteProducerIT extends InfinispanRemoteTestSupport impl
                         .to("direct:start")
                         .withHeader(InfinispanConstants.OPERATION, InfinispanOperation.STATS)
                         .request(ServerStatistics.class)
-                        .getIntStatistic(ServerStatistics.CURRENT_NR_OF_ENTRIES));
+                        .getIntStatistic(ServerStatistics.APPROXIMATE_ENTRIES));
     }
 
     // *****************************

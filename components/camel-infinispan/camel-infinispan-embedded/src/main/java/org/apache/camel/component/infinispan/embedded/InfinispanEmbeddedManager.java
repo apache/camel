@@ -29,7 +29,7 @@ import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.infinispan.configuration.global.GlobalConfigurationBuilder;
+import org.infinispan.configuration.parsing.ConfigurationBuilderHolder;
 import org.infinispan.context.Flag;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
@@ -74,19 +74,21 @@ public class InfinispanEmbeddedManager extends ServiceSupport implements Infinis
             // Check if a container configuration object has been provided so use
             // it and discard any other additional configuration.
             if (containerConf != null) {
-                cacheContainer = new DefaultCacheManager(
-                        new GlobalConfigurationBuilder().defaultCacheName("default").build(),
-                        containerConf,
-                        true);
+                ConfigurationBuilderHolder holder = new ConfigurationBuilderHolder();
+                holder.getGlobalConfigurationBuilder().defaultCacheName("default");
+                holder.getNamedConfigurationBuilders().put("default", new ConfigurationBuilder());
+
+                cacheContainer = new DefaultCacheManager(holder);
+                cacheContainer.defineConfiguration("default", containerConf);
             } else {
                 if (ObjectHelper.isNotEmpty(configuration.getConfigurationUri())) {
                     cacheContainer = new DefaultCacheManager(
-                            InfinispanUtil.openInputStream(camelContext, configuration.getConfigurationUri()),
-                            true);
+                            InfinispanUtil.openInputStream(camelContext, configuration.getConfigurationUri()));
                 } else {
-                    cacheContainer = new DefaultCacheManager(
-                            new GlobalConfigurationBuilder().defaultCacheName("default").build(),
-                            new ConfigurationBuilder().build());
+                    ConfigurationBuilderHolder holder = new ConfigurationBuilderHolder();
+                    holder.getGlobalConfigurationBuilder().defaultCacheName("default");
+                    holder.getNamedConfigurationBuilders().put("default", new ConfigurationBuilder());
+                    cacheContainer = new DefaultCacheManager(holder);
                 }
             }
 
@@ -143,5 +145,10 @@ public class InfinispanEmbeddedManager extends ServiceSupport implements Infinis
     @Override
     public Set<String> getCacheNames() {
         return cacheContainer.getCacheNames();
+    }
+
+    @Override
+    public void stopCache(String cacheName) {
+        cacheContainer.stopCache(cacheName);
     }
 }

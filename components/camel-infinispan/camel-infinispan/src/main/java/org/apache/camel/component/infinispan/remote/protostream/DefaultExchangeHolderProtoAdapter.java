@@ -31,7 +31,7 @@ final class DefaultExchangeHolderProtoAdapter {
         return DefaultExchangeHolderUtils.deserialize(serializedExchangeHolderBytes);
     }
 
-    @ProtoField(number = 1, required = true)
+    @ProtoField(number = 1)
     public byte[] serializedExchangeHolderBytes(DefaultExchangeHolder defaultExchangeHolder) {
         return DefaultExchangeHolderUtils.serialize(defaultExchangeHolder);
     }
