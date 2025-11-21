@@ -30,7 +30,7 @@ public class CSimplePredicateParser {
 
     public String parsePredicate(CamelContext camelContext, String predicate) {
         // reuse simple language parser but output the result as java code
-        SimplePredicateParser parser = new SimplePredicateParser(camelContext, predicate, true, false, null);
+        SimplePredicateParser parser = new SimplePredicateParser(camelContext, predicate, true, null);
         return parser.parseCode();
     }
 

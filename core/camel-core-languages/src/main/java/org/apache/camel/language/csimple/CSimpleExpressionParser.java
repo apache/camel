@@ -30,7 +30,7 @@ public class CSimpleExpressionParser {
 
     public String parseExpression(CamelContext camelContext, String expression) {
         // reuse simple language parser but output the result as java code
-        SimpleExpressionParser parser = new SimpleExpressionParser(camelContext, expression, true, false, null);
+        SimpleExpressionParser parser = new SimpleExpressionParser(camelContext, expression, true, null);
         return parser.parseCode();
     }
 
