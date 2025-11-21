@@ -30,8 +30,8 @@ import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.kafka.services.ContainerLocalAuthKafkaService;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.awaitility.Awaitility;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -130,7 +130,8 @@ public class KafkaConsumerAuthManualTest {
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
         to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
 
-        Awaitility.await().atMost(1, TimeUnit.HOURS).untilAsserted(() -> Assert.assertEquals(MESSAGE_COUNT, receivedMessages));
+        Awaitility.await().atMost(1, TimeUnit.HOURS)
+                .untilAsserted(() -> Assertions.assertEquals(MESSAGE_COUNT, receivedMessages));
 
         to.assertIsSatisfied();
     }

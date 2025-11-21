@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class S3ConsumerIgnoreBodyIT extends Aws2S3Base {
@@ -52,7 +52,7 @@ public class S3ConsumerIgnoreBodyIT extends Aws2S3Base {
 
         Awaitility.await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
-        Assert.assertNull(result.getExchanges().get(0).getMessage().getBody());
+        Assertions.assertNull(result.getExchanges().get(0).getMessage().getBody());
     }
 
     @Override

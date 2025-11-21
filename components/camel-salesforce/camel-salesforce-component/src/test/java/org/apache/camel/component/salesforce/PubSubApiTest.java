@@ -30,6 +30,7 @@ import org.apache.camel.component.salesforce.internal.pubsub.AuthErrorPubSubServ
 import org.apache.camel.component.salesforce.internal.pubsub.SendInvalidReplayIdErrorPubSubServer;
 import org.apache.camel.component.salesforce.internal.pubsub.SendOneMessagePubSubServer;
 import org.apache.camel.spi.ExceptionHandler;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
@@ -37,7 +38,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -209,7 +209,7 @@ public class PubSubApiTest {
         ArgumentCaptor<InvalidReplayIdException> captor = ArgumentCaptor.forClass(InvalidReplayIdException.class);
         verify(exceptionHandler, timeout(5000).times(3)).handleException(captor.capture());
         for (InvalidReplayIdException exception : captor.getAllValues()) {
-            assertEquals(replayId, exception.getReplayId());
+            Assertions.assertEquals(replayId, exception.getReplayId());
         }
     }
 

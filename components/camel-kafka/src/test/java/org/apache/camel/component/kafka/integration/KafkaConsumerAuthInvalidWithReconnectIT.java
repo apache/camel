@@ -33,8 +33,8 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.awaitility.Awaitility;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -148,7 +148,7 @@ public class KafkaConsumerAuthInvalidWithReconnectIT {
                         () -> KafkaAdminUtil.getConsumerGroupInfo("KafkaConsumerAuthInvalidWithReconnectIT", adminClient));
         final ConsumerGroupDescription groupInfo = allGroups.get("KafkaConsumerAuthInvalidWithReconnectIT");
 
-        Assert.assertEquals("There should be no members in this group", 0, groupInfo.members().size());
+        Assertions.assertEquals(0, groupInfo.members().size(), "There should be no members in this group");
         adminClient.close();
     }
 
@@ -174,10 +174,10 @@ public class KafkaConsumerAuthInvalidWithReconnectIT {
                 = assertDoesNotThrow(
                         () -> KafkaAdminUtil.getConsumerGroupInfo("KafkaConsumerAuthInvalidWithReconnectIT", adminClient));
 
-        Assert.assertTrue("There should be at least one group named KafkaConsumerAuthInvalidWithReconnectIT",
-                allGroups.size() >= 1);
+        Assertions.assertTrue(allGroups.size() >= 1,
+                "There should be at least one group named KafkaConsumerAuthInvalidWithReconnectIT");
 
         final ConsumerGroupDescription groupInfo = allGroups.get("KafkaConsumerAuthInvalidWithReconnectIT");
-        Assert.assertNotNull("There should be at least one group named KafkaConsumerAuthInvalidWithReconnectIT", groupInfo);
+        Assertions.assertNotNull(groupInfo, "There should be at least one group named KafkaConsumerAuthInvalidWithReconnectIT");
     }
 }

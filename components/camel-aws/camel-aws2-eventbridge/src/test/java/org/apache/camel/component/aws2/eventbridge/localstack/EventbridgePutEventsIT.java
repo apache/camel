@@ -29,7 +29,7 @@ import org.apache.camel.test.infra.aws.common.services.AWSService;
 import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -71,9 +71,9 @@ public class EventbridgePutEventsIT extends CamelTestSupport {
             }
         });
         MockEndpoint.assertIsSatisfied(context);
-        Assert.assertTrue(result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).hasEntries());
-        Assert.assertEquals(1, result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).entries().size());
-        Assert.assertNotNull(
+        Assertions.assertTrue(result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).hasEntries());
+        Assertions.assertEquals(1, result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).entries().size());
+        Assertions.assertNotNull(
                 result.getExchanges().get(0).getMessage().getBody(PutEventsResponse.class).entries().get(0).eventId());
 
     }

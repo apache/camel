@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.bouncycastle.util.Strings;
 
@@ -49,8 +49,8 @@ public class SqsProducerSendByteArrayLocalstackIT extends Aws2SQSBaseTest {
         });
 
         MockEndpoint.assertIsSatisfied(context);
-        Assert.assertEquals(3, result.getExchanges().get(0).getMessage().getHeaders().size());
-        Assert.assertEquals("HeaderTest",
+        Assertions.assertEquals(3, result.getExchanges().get(0).getMessage().getHeaders().size());
+        Assertions.assertEquals("HeaderTest",
                 Strings.fromByteArray((byte[]) result.getExchanges().get(0).getMessage().getHeaders().get("value1")));
     }
 
