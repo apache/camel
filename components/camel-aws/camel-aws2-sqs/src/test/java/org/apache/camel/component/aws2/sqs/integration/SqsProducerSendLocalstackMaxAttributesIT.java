@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
@@ -56,7 +56,7 @@ public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
         });
 
         MockEndpoint.assertIsSatisfied(context);
-        Assert.assertEquals(13, result.getExchanges().get(0).getMessage().getHeaders().size());
+        Assertions.assertEquals(13, result.getExchanges().get(0).getMessage().getHeaders().size());
     }
 
     @Override

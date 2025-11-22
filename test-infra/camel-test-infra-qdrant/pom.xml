@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>qdrant</artifactId>
+            <artifactId>testcontainers-qdrant</artifactId>
             <version>${testcontainers-version}</version>
         </dependency>
 

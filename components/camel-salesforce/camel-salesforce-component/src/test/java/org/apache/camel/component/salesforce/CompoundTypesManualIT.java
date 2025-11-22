@@ -19,11 +19,11 @@ package org.apache.camel.component.salesforce;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.dto.generated.Account;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -91,7 +91,7 @@ public class CompoundTypesManualIT extends AbstractSalesforceTestBase {
         } finally {
             // delete the test SObject
             String id = (String) template().requestBody("direct:deleteSObject" + suffix, result.getId());
-            assertEquals(id, result.getId());
+            Assertions.assertEquals(id, result.getId());
             LOG.debug("Delete successful");
         }
     }

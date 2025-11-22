@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sns.Sns2Constants;
 import org.apache.camel.test.infra.common.SharedNameGenerator;
 import org.apache.camel.test.infra.common.TestEntityNameGenerator;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.org.bouncycastle.util.Strings;
@@ -47,7 +47,7 @@ public class SnsTopicProducerByteArrayHeaderIT extends Aws2SNSBase {
         });
 
         assertNotNull(exchange.getIn().getHeader(Sns2Constants.MESSAGE_ID));
-        Assert.assertEquals("HeaderTest",
+        Assertions.assertEquals("HeaderTest",
                 Strings.fromByteArray((byte[]) exchange.getMessage().getHeaders().get("value1")));
     }
 
@@ -63,7 +63,7 @@ public class SnsTopicProducerByteArrayHeaderIT extends Aws2SNSBase {
         });
 
         assertNotNull(exchange.getMessage().getHeader(Sns2Constants.MESSAGE_ID));
-        Assert.assertEquals("HeaderTest",
+        Assertions.assertEquals("HeaderTest",
                 Strings.fromByteArray((byte[]) exchange.getMessage().getHeaders().get("value1")));
     }
 
