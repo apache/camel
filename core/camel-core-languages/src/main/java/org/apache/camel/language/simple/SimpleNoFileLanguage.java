@@ -16,7 +16,12 @@
  */
 package org.apache.camel.language.simple;
 
-public class SimpleNoFileLanguage extends SimpleLanguage {
+/**
+ * The {@link SimpleLanguage} but without support for using the file based functions. This is used in some special
+ * situations with EIPs such as poll/pollEnrich. This language is not exposed as a public standard language and are only
+ * intended for internal use.
+ */
+public final class SimpleNoFileLanguage extends SimpleLanguage {
 
     public SimpleNoFileLanguage() {
         super(true);

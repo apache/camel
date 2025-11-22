@@ -18,8 +18,13 @@ package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlTransient;
 
+/**
+ * The simple language but without support for using the file based functions. This is used in some special situations
+ * with EIPs such as poll/pollEnrich. This language is not exposed as a public standard language and are only intended
+ * for internal use.
+ */
 @XmlTransient
-public class SimpleNoFileExpression extends TypedExpressionDefinition {
+public final class SimpleNoFileExpression extends TypedExpressionDefinition {
 
     public SimpleNoFileExpression(SimpleExpression expression) {
         super(expression);

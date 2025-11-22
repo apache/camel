@@ -26,7 +26,6 @@ import java.util.StringJoiner;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
@@ -201,7 +200,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             Expression fileExpression;
             if (skipFileFunctions) {
                 // do not create file expressions but keep the function as-is as a constant value
-                fileExpression = ConstantLanguage.constant("${" + function + "}");
+                fileExpression = ExpressionBuilder.constantExpression("${" + function + "}");
             } else {
                 fileExpression = createSimpleFileExpression(remainder, strict);
             }
