@@ -33,6 +33,8 @@ public class DefaultLanguageResolver implements LanguageResolver {
     public static final String LANGUAGE_RESOURCE_PATH = "META-INF/services/org/apache/camel/language/";
     public static final String LANGUAGE_RESOLVER_RESOURCE_PATH = LANGUAGE_RESOURCE_PATH + "resolver/";
 
+    private static final String SIMPLE_NO_FILE = "org.apache.camel.language.simple.SimpleNoFileLanguage";
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultLanguageResolver.class);
 
     protected FactoryFinder languageFactory;
@@ -41,12 +43,17 @@ public class DefaultLanguageResolver implements LanguageResolver {
     @Override
     public Language resolveLanguage(String name, CamelContext context) {
         Class<?> type = null;
-        try {
-            type = findLanguage(name, context);
-        } catch (NoFactoryAvailableException e) {
-            // ignore
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid URI, no Language registered for scheme: " + name, e);
+
+        if ("simple-no-file".equals(name)) {
+            type = context.getClassResolver().resolveClass(SIMPLE_NO_FILE);
+        } else {
+            try {
+                type = findLanguage(name, context);
+            } catch (NoFactoryAvailableException e) {
+                // ignore
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Invalid URI, no Language registered for scheme: " + name, e);
+            }
         }
 
         if (type != null) {

@@ -49,6 +49,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     private static final String CACHE_KEY_PREFIX = "@SIMPLE@";
 
     boolean allowEscape = true;
+    boolean skipFileFunctions;
 
     // use caches to avoid re-parsing the same expressions over and over again
     private Map<String, Expression> cacheExpression;
@@ -58,6 +59,13 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      * Default constructor.
      */
     public SimpleLanguage() {
+    }
+
+    /**
+     * Special purpose for {@link SimpleNoFileLanguage}
+     */
+    SimpleLanguage(boolean skipFileFunctions) {
+        this.skipFileFunctions = skipFileFunctions;
     }
 
     @Override
@@ -123,7 +131,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
             // using the expression cache here with the predicate parser is okay
             SimplePredicateParser parser
-                    = new SimplePredicateParser(getCamelContext(), expression, allowEscape, cacheExpression);
+                    = new SimplePredicateParser(getCamelContext(), expression, allowEscape, skipFileFunctions, cacheExpression);
             answer = parser.parsePredicate();
 
             if (cachePredicate != null && answer != null) {
@@ -182,7 +190,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
             // only parse if there are simple functions
             SimpleExpressionParser parser
-                    = new SimpleExpressionParser(getCamelContext(), expression, allowEscape, cacheExpression);
+                    = new SimpleExpressionParser(
+                            getCamelContext(), expression, allowEscape, skipFileFunctions, cacheExpression);
             answer = parser.parseExpression();
 
             if (cacheExpression != null && answer != null) {

@@ -62,11 +62,20 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     // use caches to avoid re-parsing the same expressions over and over again
     private final Map<String, Expression> cacheExpression;
+    private boolean skipFileFunctions;
 
-    public SimplePredicateParser(CamelContext camelContext, String expression, boolean allowEscape,
+    public SimplePredicateParser(CamelContext camelContext, String expression,
+                                 boolean allowEscape,
+                                 Map<String, Expression> cacheExpression) {
+        this(camelContext, expression, allowEscape, false, cacheExpression);
+    }
+
+    public SimplePredicateParser(CamelContext camelContext, String expression,
+                                 boolean allowEscape, boolean skipFileFunctions,
                                  Map<String, Expression> cacheExpression) {
         super(camelContext, expression, allowEscape);
         this.cacheExpression = cacheExpression;
+        this.skipFileFunctions = skipFileFunctions;
     }
 
     public Predicate parsePredicate() {
@@ -295,7 +304,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
             AtomicBoolean startFunction) {
         if (token.getType().isFunctionStart()) {
             startFunction.set(true);
-            return new SimpleFunctionStart(token, cacheExpression);
+            return new SimpleFunctionStart(token, cacheExpression, skipFileFunctions);
         } else if (token.getType().isFunctionEnd()) {
             startFunction.set(false);
             return new SimpleFunctionEnd(token);

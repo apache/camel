@@ -44,11 +44,20 @@ public class SimpleExpressionParser extends BaseSimpleParser {
 
     // use caches to avoid re-parsing the same expressions over and over again
     private final Map<String, Expression> cacheExpression;
+    private boolean skipFileFunctions;
 
-    public SimpleExpressionParser(CamelContext camelContext, String expression, boolean allowEscape,
+    public SimpleExpressionParser(CamelContext camelContext, String expression,
+                                  boolean allowEscape,
+                                  Map<String, Expression> cacheExpression) {
+        this(camelContext, expression, allowEscape, false, cacheExpression);
+    }
+
+    public SimpleExpressionParser(CamelContext camelContext, String expression,
+                                  boolean allowEscape, boolean skipFileFunctions,
                                   Map<String, Expression> cacheExpression) {
         super(camelContext, expression, allowEscape);
         this.cacheExpression = cacheExpression;
+        this.skipFileFunctions = skipFileFunctions;
     }
 
     public Expression parseExpression() {
@@ -172,7 +181,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         if (token.getType().isFunctionStart()) {
             // starting a new function
             functions.incrementAndGet();
-            return new SimpleFunctionStart(token, cacheExpression);
+            return new SimpleFunctionStart(token, cacheExpression, skipFileFunctions);
         } else if (functions.get() > 0 && token.getType().isFunctionEnd()) {
             // there must be a start function already, to let this be a end function
             functions.decrementAndGet();
