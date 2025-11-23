@@ -74,6 +74,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         super(main);
     }
 
+    // TODO: calling endpoint, check next row for important response headers to show
+
     @Override
     public Integer doWatchCall() throws Exception {
         if (name == null) {
