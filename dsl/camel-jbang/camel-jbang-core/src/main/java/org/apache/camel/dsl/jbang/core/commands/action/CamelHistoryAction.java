@@ -64,9 +64,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
     int depth;
 
-    private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
+    @CommandLine.Option(names = { "--limit-split" },
+                        description = "Limit Split to a maximum number of entries to be displayed")
+    int limitSplit;
 
-    // TODO: option to collapse split (to cut very large split)
+    private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
     public CamelHistoryAction(CamelJBangMain main) {
         super(main);
@@ -135,15 +137,32 @@ public class CamelHistoryAction extends ActionWatchCommand {
         return 0;
     }
 
-    private boolean filterDepth(Row row) {
+    private boolean filterDepth(Row r) {
         if (depth >= 9) {
             return true;
         }
         if (depth == 0) {
             // special with only created/completed
-            return row.nodeLevel == 1 && (row.first || row.last);
+            return r.nodeLevel == 1 && (r.first || r.last);
         }
-        return row.nodeLevel <= depth;
+        return r.nodeLevel <= depth;
+    }
+
+    private boolean filterSplit(Row r) {
+        if (limitSplit <= 0) {
+            return true;
+        }
+        JsonArray arr = r.message.getCollection("exchangeProperties");
+        if (arr != null) {
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject jo = (JsonObject) arr.get(i);
+                if ("CamelSplitIndex".equals(jo.getString("key"))) {
+                    long idx = jo.getLongOrDefault("value", Long.MAX_VALUE);
+                    return idx < limitSplit;
+                }
+            }
+        }
+        return true;
     }
 
     private String getId(Row r) {
@@ -303,7 +322,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
             List<Row> answer = new ArrayList<>();
             for (Row r : rows) {
-                if (filterDepth(r)) {
+                if (filterDepth(r) && filterSplit(r)) {
                     answer.add(r);
                 }
             }
