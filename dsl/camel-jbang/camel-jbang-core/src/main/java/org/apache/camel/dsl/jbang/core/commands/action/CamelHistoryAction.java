@@ -60,9 +60,12 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
+    @CommandLine.Option(names = { "--depth" }, defaultValue = "9",
+                        description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
+    int depth;
+
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
-    // TODO: option to max deep level (like trace)
     // TODO: option to collapse split (to cut very large split)
 
     public CamelHistoryAction(CamelJBangMain main) {
@@ -130,6 +133,17 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
 
         return 0;
+    }
+
+    private boolean filterDepth(Row row) {
+        if (depth >= 9) {
+            return true;
+        }
+        if (depth == 0) {
+            // special with only created/completed
+            return row.nodeLevel == 1 && (row.first || row.last);
+        }
+        return row.nodeLevel <= depth;
     }
 
     private String getId(Row r) {
@@ -282,10 +296,18 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     row.message.remove("exchangePattern");
                     rows.add(row);
                 }
+
                 // enhance rows by analysis the history to enrich endpoints and EIPs with summary
                 analyseRows(rows);
             }
-            return rows;
+
+            List<Row> answer = new ArrayList<>();
+            for (Row r : rows) {
+                if (filterDepth(r)) {
+                    answer.add(r);
+                }
+            }
+            return answer;
         }
         return null;
     }
