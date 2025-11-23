@@ -184,102 +184,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         if (r.last) {
             return r.failed ? "Failed" : "Success";
         }
-
-        Map<String, String> map = extractImportant(r);
-        if (map.isEmpty()) {
-            return null;
-        }
-        StringJoiner sj = new StringJoiner(" ");
-
-        // special for split
-        String si = map.remove("CamelSplitIndex");
-        String sv = map.remove("CamelSplitSize");
-        if (si != null && sv != null) {
-            int num = Integer.parseInt(sv) - 1;
-            sj.add("Split (" + si + "/" + num + ")");
-        } else if (si != null) {
-            sj.add("Split (" + si + ")");
-        }
-        // special for file
-        String fn = map.remove("CamelFileName");
-        String fs = map.remove("CamelFileLength");
-        if (fn != null && fs != null) {
-            String line = "File: " + fn + " (" + fs + " bytes)";
-            sj.add(line);
-        } else if (fn != null) {
-            String line = "File: " + fn;
-            sj.add(line);
-        }
-
-        map.forEach((k, v) -> {
-            String line = k + "=" + v;
-            sj.add(line);
-        });
-
-        return sj.toString();
-    }
-
-    private Map<String, String> extractImportant(Row r) {
-        Map<String, String> answer = new LinkedHashMap<>();
-
-        // extract important headers for the endpoint
-        String uri = r.endpoint != null ? r.endpoint.getString("endpoint") : null;
-        if (uri != null) {
-            String scheme = StringHelper.before(uri, ":");
-            if (scheme != null) {
-                ComponentModel cm = camelCatalog.componentModel(scheme);
-                if (cm != null) {
-                    for (var eh : cm.getEndpointHeaders()) {
-                        if (eh.isImportant()) {
-                            JsonArray arr = r.message.getCollection("headers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    String key = jo.getString("key");
-                                    if (key.equals(eh.getName())) {
-                                        answer.put(key, jo.getString("value"));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // extract important exchange properties for the EIP
-        String eip = r.nodeShortName;
-        if (eip != null) {
-            EipModel em = camelCatalog.eipModel(eip);
-            if (em != null) {
-                for (var ep : em.getExchangeProperties()) {
-                    if (ep.isImportant()) {
-                        JsonArray arr = r.message.getCollection("exchangeProperties");
-                        if (arr != null) {
-                            for (int i = 0; i < arr.size(); i++) {
-                                JsonObject jo = (JsonObject) arr.get(i);
-                                String key = jo.getString("key");
-                                if (key.equals(ep.getName())) {
-                                    answer.put(key, jo.getString("value"));
-                                }
-                            }
-                        }
-                        arr = r.message.getCollection("headers");
-                        if (arr != null) {
-                            for (int i = 0; i < arr.size(); i++) {
-                                JsonObject jo = (JsonObject) arr.get(i);
-                                String key = jo.getString("key");
-                                if (key.equals(ep.getName())) {
-                                    answer.put(key, jo.getString("value"));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return answer;
+        return r.summary;
     }
 
     protected List<List<Row>> loadRows() throws Exception {
@@ -303,6 +208,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         answer.add(rows);
                     }
                 } catch (Exception e) {
+                    // TODO: remove me
+                    e.printStackTrace();
                     // ignore
                 } finally {
                     IOHelper.close(reader);
@@ -335,6 +242,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     row.location = jo.getString("location");
                     row.routeId = jo.getString("routeId");
                     row.nodeId = jo.getString("nodeId");
+                    row.nodeParentId = jo.getString("nodeParentId");
                     row.nodeShortName = jo.getString("nodeShortName");
                     row.nodeLabel = jo.getString("nodeLabel");
                     if (mask) {
@@ -372,10 +280,111 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     row.message.remove("exchangePattern");
                     rows.add(row);
                 }
+                // enhance rows by analysis the history to enrich endpoints and EIPs with summary
+                analyseRows(rows);
             }
             return rows;
         }
         return null;
+    }
+
+    private void analyseRows(List<Row> rows) {
+        for (int i = 0; i < rows.size() - 1; i++) {
+            Row r = rows.get(i);
+            Row next = i > 0 && i < rows.size() + 2 ? rows.get(i + 1) : null;
+
+            String uri = r.endpoint != null ? r.endpoint.getString("endpoint") : null;
+            if (uri != null) {
+                var map = extractComponentModel(uri, r);
+                // special for file
+                String fn = map.remove("CamelFileName");
+                String fs = map.remove("CamelFileLength");
+                if (fn != null && fs != null) {
+                    r.summary = "File: " + fn + " (" + fs + " bytes)";
+                } else if (fn != null) {
+                    r.summary = "File: " + fn;
+                } else {
+                    StringJoiner sj = new StringJoiner(" ");
+                    map.forEach((k, v) -> {
+                        String line = k + "=" + v;
+                        sj.add(line);
+                    });
+                    r.summary = sj.toString();
+                }
+            } else if ("filter".equals(r.nodeShortName)) {
+                if (next != null && r.nodeId != null && r.nodeId.equals(next.nodeParentId)) {
+                    r.summary = "Filter: true";
+                } else {
+                    r.summary = "Filter: false";
+                }
+            } else if ("split".equals(r.nodeShortName)) {
+                if (next != null && r.nodeId != null && r.nodeId.equals(next.nodeParentId)) {
+                    var map = extractEipModel("split", next);
+                    String sv = map.remove("CamelSplitSize");
+                    r.summary = "Split (" + sv + ")";
+                }
+            }
+        }
+    }
+
+    private Map<String, String> extractComponentModel(String uri, Row r) {
+        Map<String, String> answer = new LinkedHashMap<>();
+
+        String scheme = StringHelper.before(uri, ":");
+        if (scheme != null) {
+            ComponentModel cm = camelCatalog.componentModel(scheme);
+            if (cm != null) {
+                for (var eh : cm.getEndpointHeaders()) {
+                    if (eh.isImportant()) {
+                        JsonArray arr = r.message.getCollection("headers");
+                        if (arr != null) {
+                            for (int i = 0; i < arr.size(); i++) {
+                                JsonObject jo = (JsonObject) arr.get(i);
+                                String key = jo.getString("key");
+                                if (key.equals(eh.getName())) {
+                                    answer.put(key, jo.getString("value"));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    private Map<String, String> extractEipModel(String eip, Row r) {
+        Map<String, String> answer = new LinkedHashMap<>();
+
+        EipModel em = camelCatalog.eipModel(eip);
+        if (em != null) {
+            for (var ep : em.getExchangeProperties()) {
+                if (ep.isImportant()) {
+                    JsonArray arr = r.message.getCollection("exchangeProperties");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            String key = jo.getString("key");
+                            if (key.equals(ep.getName())) {
+                                answer.put(key, jo.getString("value"));
+                            }
+                        }
+                    }
+                    arr = r.message.getCollection("headers");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            String key = jo.getString("key");
+                            if (key.equals(ep.getName())) {
+                                answer.put(key, jo.getString("value"));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return answer;
     }
 
     private static class Row {
@@ -391,6 +400,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         String location;
         String routeId;
         String nodeId;
+        String nodeParentId;
         String nodeShortName;
         String nodeLabel;
         int nodeLevel;
@@ -402,6 +412,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         JsonObject endpointService;
         JsonObject message;
         JsonObject exception;
+        String summary;
     }
 
 }
