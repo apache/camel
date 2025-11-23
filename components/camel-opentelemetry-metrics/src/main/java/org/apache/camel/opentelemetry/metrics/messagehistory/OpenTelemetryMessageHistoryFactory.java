@@ -43,7 +43,7 @@ public class OpenTelemetryMessageHistoryFactory extends ServiceSupport
     private Meter meter;
     private boolean copyMessage;
     private String nodePattern;
-    private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
+    private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private OpenTelemetryHistoryNamingStrategy namingStrategy = OpenTelemetryHistoryNamingStrategy.DEFAULT;
     private LongHistogram timer;
 
@@ -68,15 +68,15 @@ public class OpenTelemetryMessageHistoryFactory extends ServiceSupport
         this.meter = meter;
     }
 
-    public TimeUnit getDurationUnit() {
-        return durationUnit;
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
     }
 
     /**
      * Sets the time unit to use for timing the duration of processing a message in the route.
      */
-    public void setDurationUnit(TimeUnit durationUnit) {
-        this.durationUnit = durationUnit;
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
     }
 
     public OpenTelemetryHistoryNamingStrategy getNamingStrategy() {
@@ -135,7 +135,7 @@ public class OpenTelemetryMessageHistoryFactory extends ServiceSupport
 
         Route route = camelContext.getRoute(routeId);
         if (route != null) {
-            return new OpenTelemetryMessageHistory(timer, getDurationUnit(), route, namedNode, getNamingStrategy(), msg);
+            return new OpenTelemetryMessageHistory(timer, getTimeUnit(), route, namedNode, getNamingStrategy(), msg);
         } else {
             return null;
         }
@@ -162,7 +162,7 @@ public class OpenTelemetryMessageHistoryFactory extends ServiceSupport
                 .histogramBuilder(getNamingStrategy().getName())
                 .ofLongs()
                 .setDescription("Node performance metrics")
-                .setUnit(durationUnit.name().toLowerCase())
+                .setUnit(timeUnit.name().toLowerCase())
                 .build();
     }
 }

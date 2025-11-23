@@ -48,8 +48,8 @@ public class OpenTelemetryExchangeEventNotifierTimeUnitTest extends AbstractOpen
         eventNotifier.setMeter(otelExtension.getOpenTelemetry().getMeter("meterTest"));
 
         // override default time unit from milliseconds to seconds
-        eventNotifier.setDurationUnit(TimeUnit.SECONDS);
-        eventNotifier.setLastExchangeUnit(TimeUnit.SECONDS);
+        eventNotifier.setTimeUnit(TimeUnit.SECONDS);
+        eventNotifier.setLastExchangeTimeUnit(TimeUnit.SECONDS);
 
         context.getManagementStrategy().addEventNotifier(eventNotifier);
         eventNotifier.init();

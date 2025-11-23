@@ -59,8 +59,8 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport imp
     private OpenTelemetryExchangeEventNotifierNamingStrategy namingStrategy
             = OpenTelemetryExchangeEventNotifierNamingStrategy.DEFAULT;
     boolean baseEndpointURI = true;
-    private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
-    private TimeUnit lastExchangeUnit = TimeUnit.MILLISECONDS;
+    private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+    private TimeUnit lastExchangeTimeUnit = TimeUnit.MILLISECONDS;
 
     // Opentelemetry instruments
     private final Map<String, ObservableLongGauge> inflightGauges = new HashMap<>();
@@ -89,20 +89,20 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport imp
         return ignoreExchanges;
     }
 
-    public void setDurationUnit(TimeUnit durationUnit) {
-        this.durationUnit = durationUnit;
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
     }
 
-    public TimeUnit getDurationUnit() {
-        return durationUnit;
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
     }
 
-    public void setLastExchangeUnit(TimeUnit lastExchangeUnit) {
-        this.lastExchangeUnit = lastExchangeUnit;
+    public void setLastExchangeTimeUnit(TimeUnit lastExchangeUnit) {
+        this.lastExchangeTimeUnit = lastExchangeUnit;
     }
 
-    public TimeUnit getLastExchangeUnit() {
-        return lastExchangeUnit;
+    public TimeUnit getLastExchangeTimeUnit() {
+        return lastExchangeTimeUnit;
     }
 
     public void setNamingStrategy(OpenTelemetryExchangeEventNotifierNamingStrategy namingStrategy) {
@@ -165,24 +165,24 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport imp
         this.elapsedTimer = meter
                 .histogramBuilder(getNamingStrategy().getElapsedTimerName())
                 .setDescription("Time taken to complete exchange")
-                .setUnit(durationUnit.name().toLowerCase())
+                .setUnit(timeUnit.name().toLowerCase())
                 .ofLongs().build();
 
         this.sentTimer = meter
                 .histogramBuilder(getNamingStrategy().getSentTimerName())
                 .setDescription("Time taken to send message to the endpoint")
-                .setUnit(durationUnit.name().toLowerCase())
+                .setUnit(timeUnit.name().toLowerCase())
                 .ofLongs().build();
 
         this.lastExchangeTimeGauge = meter
                 .gaugeBuilder(getNamingStrategy().getLastProcessedTimeName())
                 .setDescription("Last exchange processed time since the Unix epoch")
                 .ofLongs()
-                .setUnit(lastExchangeUnit.name().toLowerCase())
+                .setUnit(lastExchangeTimeUnit.name().toLowerCase())
                 .buildWithCallback(
                         observableMeasurement -> {
                             observableMeasurement.record(
-                                    lastExchangeUnit.convert(lastExchangeTimestampHolder.get(), TimeUnit.MILLISECONDS));
+                                    lastExchangeTimeUnit.convert(lastExchangeTimestampHolder.get(), TimeUnit.MILLISECONDS));
                         });
 
         // add existing routes
@@ -263,7 +263,7 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport imp
 
     protected void handleSentEvent(ExchangeSentEvent sentEvent) {
         Attributes attributes = getNamingStrategy().getAttributes(sentEvent, sentEvent.getEndpoint(), isBaseEndpointURI());
-        this.sentTimer.record(durationUnit.convert(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS), attributes);
+        this.sentTimer.record(timeUnit.convert(sentEvent.getTimeTaken(), TimeUnit.MILLISECONDS), attributes);
     }
 
     protected void handleCreatedEvent(ExchangeCreatedEvent createdEvent) {
@@ -277,7 +277,7 @@ public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport imp
         if (task != null) {
             Attributes attributes = getNamingStrategy().getAttributes(
                     doneEvent, doneEvent.getExchange().getFromEndpoint(), isBaseEndpointURI());
-            this.elapsedTimer.record(task.duration(durationUnit), attributes);
+            this.elapsedTimer.record(task.duration(timeUnit), attributes);
         }
         lastExchangeTimestampHolder.set(System.currentTimeMillis());
     }
