@@ -19,9 +19,7 @@ package org.apache.camel.opentelemetry.metrics.routepolicy;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
-import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
@@ -31,9 +29,11 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFA
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Verifies that there are point data for the 'long task' timers when long task metrics are enabled.
+ */
 public class OpenTelemetryRoutePolicyLongTaskTest extends AbstractOpenTelemetryRoutePolicyTest {
 
     private static final long DELAY = 1500L;
@@ -43,11 +43,6 @@ public class OpenTelemetryRoutePolicyLongTaskTest extends AbstractOpenTelemetryR
     public OpenTelemetryRoutePolicyFactory createOpenTelemetryRoutePolicyFactory() {
         OpenTelemetryRoutePolicyFactory factory = new OpenTelemetryRoutePolicyFactory();
         factory.getPolicyConfiguration().setContextEnabled(false);
-        factory.getPolicyConfiguration().setExchangesSucceeded(false);
-        factory.getPolicyConfiguration().setExchangesFailed(false);
-        factory.getPolicyConfiguration().setExchangesTotal(false);
-        factory.getPolicyConfiguration().setExternalRedeliveries(false);
-        factory.getPolicyConfiguration().setFailuresHandled(false);
         factory.getPolicyConfiguration().setLongTask(true);
         return factory;
     }
@@ -98,32 +93,6 @@ public class OpenTelemetryRoutePolicyLongTaskTest extends AbstractOpenTelemetryR
         md = mdList.get(0);
         assertEquals(DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE, md.getName());
         assertEquals("Route active long task metric", md.getDescription());
-    }
-
-    // returns the maximum value recorded by the 'long-timer' until it goes back to 0, i.e. messaging is done
-    private long pollLongTimer(String meterName) throws Exception {
-        Thread.sleep(250L);
-        long max = 0L;
-        long curr = 0L;
-
-        for (int i = 0; i < 10; i++) {
-            Thread.sleep(250L);
-
-            List<PointData> ls = getAllPointData(meterName);
-            // contextStatistic is not enabled, so only one point data from route statistic
-            assertEquals(1, ls.size(), "Expected one point data");
-
-            for (var pd : ls) {
-                assertInstanceOf(LongPointData.class, pd);
-                LongPointData lpd = (LongPointData) pd;
-                curr = lpd.getValue();
-                max = Math.max(max, curr);
-            }
-            if (curr == 0L) {
-                break;
-            }
-        }
-        return max;
     }
 
     @Override

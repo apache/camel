@@ -16,8 +16,15 @@
  */
 package org.apache.camel.opentelemetry.metrics.routepolicy;
 
+import java.util.List;
+
+import io.opentelemetry.sdk.metrics.data.LongPointData;
+import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public abstract class AbstractOpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryTest {
 
@@ -37,5 +44,30 @@ public abstract class AbstractOpenTelemetryRoutePolicyTest extends AbstractOpenT
         context.addRoutePolicyFactory(factory);
         context.addService(factory);
         return context;
+    }
+
+    // returns the maximum value recorded by the 'long-timer' until it goes back to 0, i.e. messaging is done
+    protected long pollLongTimer(String meterName) throws Exception {
+        Thread.sleep(250L);
+        long max = 0L;
+        long curr = 0L;
+
+        for (int i = 0; i < 10; i++) {
+            Thread.sleep(250L);
+
+            List<PointData> ls = getAllPointData(meterName);
+            assertEquals(1, ls.size(), "Expected one point data");
+
+            for (var pd : ls) {
+                assertInstanceOf(LongPointData.class, pd);
+                LongPointData lpd = (LongPointData) pd;
+                curr = lpd.getValue();
+                max = Math.max(max, curr);
+            }
+            if (curr == 0L) {
+                break;
+            }
+        }
+        return max;
     }
 }

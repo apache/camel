@@ -28,14 +28,14 @@ public class OpenTelemetryMessageHistory extends DefaultMessageHistory {
 
     private final Route route;
     private final OpenTelemetryHistoryNamingStrategy namingStrategy;
-    private final TimeUnit durationUnit;
+    private final TimeUnit timeUnit;
     private final LongHistogram timer;
 
-    public OpenTelemetryMessageHistory(LongHistogram timer, TimeUnit durationUnit, Route route, NamedNode namedNode,
+    public OpenTelemetryMessageHistory(LongHistogram timer, TimeUnit timeUnit, Route route, NamedNode namedNode,
                                        OpenTelemetryHistoryNamingStrategy namingStrategy, Message message) {
         super(route.getId(), namedNode, message);
         this.timer = timer;
-        this.durationUnit = durationUnit;
+        this.timeUnit = timeUnit;
         this.route = route;
         this.namingStrategy = namingStrategy;
     }
@@ -43,7 +43,7 @@ public class OpenTelemetryMessageHistory extends DefaultMessageHistory {
     @Override
     public void nodeProcessingDone() {
         super.nodeProcessingDone();
-        this.timer.record(durationUnit.convert(getElapsed(), TimeUnit.MILLISECONDS),
+        this.timer.record(timeUnit.convert(getElapsed(), TimeUnit.MILLISECONDS),
                 namingStrategy.getAttributes(route, getNode()));
     }
 

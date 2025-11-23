@@ -22,28 +22,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME;
-import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Verifies the 'camel.route.policy' metric.
+ */
 public class OpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryRoutePolicyTest {
 
     private static final long DELAY_FOO = 20;
     private static final long DELAY_BAR = 50;
     private static final long TOLERANCE = 20L;
-
-    @Override
-    public OpenTelemetryRoutePolicyFactory createOpenTelemetryRoutePolicyFactory() {
-        OpenTelemetryRoutePolicyFactory factory = new OpenTelemetryRoutePolicyFactory();
-        factory.getPolicyConfiguration().setContextEnabled(false);
-        factory.getPolicyConfiguration().setExcludePattern(null);
-        factory.getPolicyConfiguration().setAdditionalCounters(false);
-        return factory;
-    }
 
     @Test
     public void testMetricsRoutePolicy() throws Exception {
@@ -66,48 +56,6 @@ public class OpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryRoutePoli
         verifyHistogramMetric(pd, DELAY_BAR, count / 2);
     }
 
-    // verify no 'succeeded' meter name since 'additionalCounters' is false
-    @Test
-    public void testNoSucceededCounter() throws Exception {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(1);
-        template.sendBody("direct:foo", "Hello");
-
-        MockEndpoint.assertIsSatisfied(context);
-        assertTrue(getMetricData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME).isEmpty());
-    }
-
-    // verify no 'total' meter name since 'additionalCounters' is false
-    @Test
-    public void testNoTotalCounter() throws Exception {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(1);
-        template.sendBody("direct:foo", "Hello");
-
-        MockEndpoint.assertIsSatisfied(context);
-        assertTrue(getMetricData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME).isEmpty());
-    }
-
-    // verify no 'failed' meter name since 'additionalCounters' is false
-    @Test
-    public void testNoFailuresMeter() {
-        int count = 3;
-        for (int i = 0; i < count; i++) {
-            template.send("direct:failure", e -> e.getMessage().setBody("Hello World"));
-        }
-        assertTrue(getMetricData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME).isEmpty());
-    }
-
-    // verify no 'handled failures' meter name since 'additionalCounters' is false
-    @Test
-    public void testNoHandledFailuresMeter() {
-        int count = 3;
-        for (int i = 0; i < count; i++) {
-            template.send("direct:failureHandled", e -> e.getMessage().setBody("Hello World"));
-        }
-        assertTrue(getMetricData(DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME).isEmpty());
-    }
-
     private void verifyHistogramMetric(PointData pd, long delay, int msgCount) {
         assertTrue(pd instanceof HistogramPointData);
         HistogramPointData hpd = (HistogramPointData) pd;
@@ -122,9 +70,6 @@ public class OpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryRoutePoli
         return new RouteBuilder() {
             @Override
             public void configure() {
-                onException(IllegalStateException.class)
-                        .handled(true);
-
                 from("direct:foo").routeId("foo")
                         .delay(DELAY_FOO)
                         .to("mock:result");
@@ -132,10 +77,6 @@ public class OpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryRoutePoli
                 from("direct:bar").routeId("bar")
                         .delay(DELAY_BAR)
                         .to("mock:result");
-
-                from("direct:failure").routeId("failure").throwException(new Exception("forced"));
-
-                from("direct:failureHandled").routeId("failureHandled").throwException(new IllegalStateException("forced"));
             }
         };
     }
