@@ -321,7 +321,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 }
             } else if ("choice".equals(r.nodeShortName)) {
                 if (next != null && r.nodeId != null && r.nodeId.equals(next.nodeParentId)) {
-                    r.summary = next.nodeParentWhenLabel;
+                    if (next.nodeParentWhenLabel != null) {
+                        r.summary = "Choice: " + next.nodeParentWhenLabel;
+                    }
                 }
             } else if ("split".equals(r.nodeShortName)) {
                 if (next != null && r.nodeId != null && r.nodeId.equals(next.nodeParentId)) {
