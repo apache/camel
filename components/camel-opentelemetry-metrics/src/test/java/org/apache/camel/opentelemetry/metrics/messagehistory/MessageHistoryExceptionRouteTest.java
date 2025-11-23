@@ -16,6 +16,8 @@
  */
 package org.apache.camel.opentelemetry.metrics.messagehistory;
 
+import java.util.concurrent.TimeUnit;
+
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.metrics.data.HistogramPointData;
 import io.opentelemetry.sdk.metrics.data.PointData;
@@ -26,6 +28,7 @@ import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTest;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -63,7 +66,8 @@ public class MessageHistoryExceptionRouteTest extends AbstractOpenTelemetryTest 
         assertEquals(5, getPointData("route1", "foo").getCount());
         assertEquals(5, getPointData("route2", "bar").getCount());
         // exception process node
-        assertEquals(5, getPointData("route2", "process1").getCount());
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(5, getPointData("route2", "process1").getCount()));
     }
 
     private HistogramPointData getPointData(String routeId, String nodeId) {
