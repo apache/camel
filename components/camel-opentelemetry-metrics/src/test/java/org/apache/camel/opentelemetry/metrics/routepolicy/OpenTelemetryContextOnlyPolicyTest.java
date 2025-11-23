@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Test;
 
 import static io.opentelemetry.api.common.AttributeKey.stringKey;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE;
+import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.EVENT_TYPE_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.ROUTE_ID_ATTRIBUTE;
@@ -40,6 +42,7 @@ public class OpenTelemetryContextOnlyPolicyTest extends AbstractOpenTelemetryRou
 
     private static final long DELAY_FOO = 20;
     private static final long DELAY_BAR = 50;
+    private static final long DELAY_BAZ = 1500L;
     private static final long TOLERANCE = 20L;
 
     @Override
@@ -47,6 +50,7 @@ public class OpenTelemetryContextOnlyPolicyTest extends AbstractOpenTelemetryRou
         OpenTelemetryRoutePolicyFactory factory = new OpenTelemetryRoutePolicyFactory();
         factory.getPolicyConfiguration().setContextEnabled(true);
         factory.getPolicyConfiguration().setRouteEnabled(false);
+        factory.getPolicyConfiguration().setLongTask(true);
         return factory;
     }
 
@@ -80,6 +84,37 @@ public class OpenTelemetryContextOnlyPolicyTest extends AbstractOpenTelemetryRou
         assertEquals(count, hpd.getCount());
     }
 
+    @Test
+    public void testLongTaskDuration() throws Exception {
+        MockEndpoint out = getMockEndpoint("mock:baz");
+        out.expectedMessageCount(1);
+
+        template.asyncSend("direct:baz", x -> {
+        });
+
+        long maxDuration = pollLongTimer(DEFAULT_CAMEL_ROUTE_POLICY_TASKS_DURATION);
+        assertTrue(maxDuration >= 0L && maxDuration < DELAY_BAZ + TOLERANCE, "max duration of long task");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    // verify maximum number of concurrent active long tasks
+    @Test
+    public void testLongTaskActive() throws Exception {
+        final int messageCnt = 2;
+        MockEndpoint out = getMockEndpoint("mock:baz");
+        out.expectedMessageCount(messageCnt);
+
+        for (int i = 0; i < messageCnt; i++) {
+            template.asyncSend("direct:baz", x -> {
+            });
+        }
+        long maxActive = pollLongTimer(DEFAULT_CAMEL_ROUTE_POLICY_TASKS_ACTIVE);
+        assertEquals(messageCnt, maxActive, "max active long tasks");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -92,6 +127,8 @@ public class OpenTelemetryContextOnlyPolicyTest extends AbstractOpenTelemetryRou
                 from("direct:bar").routeId("bar")
                         .delay(DELAY_BAR)
                         .to("mock:result");
+
+                from("direct:baz").routeId("baz").delay(DELAY_BAZ).to("mock:baz");
             }
         };
     }
