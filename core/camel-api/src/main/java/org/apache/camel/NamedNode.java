@@ -93,4 +93,18 @@ public interface NamedNode extends LineNumberAware {
         return null;
     }
 
+    /**
+     * Special methods for Choice EIP
+     */
+    default NamedNode findMatchingWhen(String id) {
+        return null;
+    }
+
+    /**
+     * Special methods for Choice EIP
+     */
+    default NamedNode findMatchingOtherwise(String id) {
+        return null;
+    }
+
 }

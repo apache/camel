@@ -653,6 +653,20 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String toNode = processorDefinition.getId();
                 String toNodeParentId = processorDefinition.getParentId();
                 String toNodeShortName = processorDefinition.getShortName();
+                // special for choice as we want to know which when predicate that was triggered
+                String toNodeParentWhenId = null;
+                String toNodeParentWhenLabel = null;
+                NamedNode pn = processorDefinition.getParent();
+                if (pn != null && "choice".equals(pn.getShortName())) {
+                    NamedNode mn = pn.findMatchingWhen(processorDefinition.getId());
+                    if (mn == null) {
+                        mn = pn.findMatchingOtherwise(processorDefinition.getId());
+                    }
+                    if (mn != null) {
+                        toNodeParentWhenId = mn.getId();
+                        toNodeParentWhenLabel = mn.getLabel();
+                    }
+                }
                 String toNodeLabel = StringHelper.limitLength(processorDefinition.getLabel(), 50);
                 String exchangeId = exchange.getExchangeId();
                 String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
@@ -673,9 +687,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     final long created = exchange.getClock().getCreated();
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null, null, null,
-                            level,
-                            exchangeId, correlationExchangeId, rest, template, data);
+                            true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null, null,
+                            null,
+                            null, null,
+                            level, exchangeId, correlationExchangeId, rest, template, data);
                     if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
                         pseudoFirst.setEndpointServiceUrl(esl.getServiceUrl());
                         pseudoFirst.setEndpointServiceProtocol(esl.getServiceProtocol());
@@ -688,6 +703,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
                         camelContext,
                         false, false, backlogTracer.incrementTraceCounter(), timestamp, source, routeId, toNode, toNodeParentId,
+                        toNodeParentWhenId, toNodeParentWhenLabel,
                         toNodeShortName, toNodeLabel, level,
                         exchangeId, correlationExchangeId, rest, template, data);
                 backlogTracer.traceEvent(event);
@@ -716,9 +732,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                             backlogTracer.getBodyMaxChars());
                     DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null,  null, null,
-                            level,
-                            exchangeId, correlationExchangeId, rest, template, data);
+                            false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null, null,
+                            null, null, null,
+                            level, exchangeId, correlationExchangeId, rest, template, data);
                     backlogTracer.traceEvent(pseudoLast);
                     doneProcessing(exchange, pseudoLast);
                     doneProcessing(exchange, pseudoFirst);

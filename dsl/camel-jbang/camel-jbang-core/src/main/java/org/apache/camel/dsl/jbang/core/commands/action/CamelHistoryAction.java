@@ -243,6 +243,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     row.routeId = jo.getString("routeId");
                     row.nodeId = jo.getString("nodeId");
                     row.nodeParentId = jo.getString("nodeParentId");
+                    row.nodeParentWhenId = jo.getString("nodeParentWhenId");
+                    row.nodeParentWhenLabel = jo.getString("nodeParentWhenLabel");
                     row.nodeShortName = jo.getString("nodeShortName");
                     row.nodeLabel = jo.getString("nodeLabel");
                     if (mask) {
@@ -316,6 +318,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     r.summary = "Filter: true";
                 } else {
                     r.summary = "Filter: false";
+                }
+            } else if ("choice".equals(r.nodeShortName)) {
+                if (next != null && r.nodeId != null && r.nodeId.equals(next.nodeParentId)) {
+                    r.summary = next.nodeParentWhenLabel;
                 }
             } else if ("split".equals(r.nodeShortName)) {
                 if (next != null && r.nodeId != null && r.nodeId.equals(next.nodeParentId)) {
@@ -401,6 +407,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         String routeId;
         String nodeId;
         String nodeParentId;
+        String nodeParentWhenId;
+        String nodeParentWhenLabel;
         String nodeShortName;
         String nodeLabel;
         int nodeLevel;

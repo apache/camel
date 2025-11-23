@@ -46,6 +46,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String routeId;
     private final String toNode;
     private final String toNodeParentId;
+    private final String toNodeParentWhenId;
+    private final String toNodeParentWhenLabel;
     private final String toNodeShortName;
     private final String toNodeLabel;
     private final int toNodeLevel;
@@ -70,8 +72,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private boolean done;
 
     public DefaultBacklogTracerEventMessage(CamelContext camelContext, boolean first, boolean last, long uid, long timestamp,
-                                            String location, String routeId, String toNode, String toNodeParentId, String toNodeShortName,
-                                            String toNodeLabel, int toNodeLevel, String exchangeId,
+                                            String location, String routeId, String toNode, String toNodeParentId,
+                                            String toNodeParentWhenId, String toNodeParentWhenLabel,
+                                            String toNodeShortName, String toNodeLabel, int toNodeLevel, String exchangeId,
                                             String correlationExchangeId,
                                             boolean rest, boolean template, JsonObject data) {
         this.camelContext = camelContext;
@@ -84,6 +87,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.routeId = routeId;
         this.toNode = toNode;
         this.toNodeParentId = toNodeParentId;
+        this.toNodeParentWhenId = toNodeParentWhenId;
+        this.toNodeParentWhenLabel = toNodeParentWhenLabel;
         this.toNodeShortName = toNodeShortName;
         this.toNodeLabel = toNodeLabel;
         this.toNodeLevel = toNodeLevel;
@@ -151,6 +156,16 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public String getToNodeParentId() {
         return toNodeParentId;
+    }
+
+    @Override
+    public String getToNodeParentWhenId() {
+        return toNodeParentWhenId;
+    }
+
+    @Override
+    public String getToNodeParentWhenLabel() {
+        return toNodeParentWhenLabel;
     }
 
     @Override
@@ -540,6 +555,12 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         }
         if (toNodeParentId != null) {
             jo.put("nodeParentId", toNodeParentId);
+        }
+        if (toNodeParentWhenId != null) {
+            jo.put("nodeParentWhenId", toNodeParentWhenId);
+        }
+        if (toNodeParentWhenLabel != null) {
+            jo.put("nodeParentWhenLabel", toNodeParentWhenLabel);
         }
         if (toNodeShortName != null) {
             jo.put("nodeShortName", toNodeShortName);

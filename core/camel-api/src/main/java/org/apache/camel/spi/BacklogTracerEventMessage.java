@@ -79,6 +79,16 @@ public interface BacklogTracerEventMessage {
     String getToNodeParentId();
 
     /**
+     * Special for choice where we want to know which when predicate was triggered
+     */
+    String getToNodeParentWhenId();
+
+    /**
+     * Special for choice where we want to know which when predicate was triggered
+     */
+    String getToNodeParentWhenLabel();
+
+    /**
      * Node short name where the message is being routed to
      */
     String getToNodeShortName();

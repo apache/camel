@@ -885,8 +885,10 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 (nId, message) -> new DefaultBacklogTracerEventMessage(
                         camelContext,
                         false, false, message.getUid(), message.getTimestamp(), message.getLocation(), message.getRouteId(),
-                        message.getToNode(), message.getToNodeShortName(), message.getToNodeLabel(), message.getToNodeParentId(), message.getToNodeLevel(),
-                        message.getExchangeId(), message.getCorrelationExchangeId(),
+                        message.getToNode(), message.getToNodeParentId(), message.getToNodeParentWhenId(),
+                        message.getToNodeParentWhenLabel(),
+                        message.getToNodeShortName(), message.getToNodeLabel(),
+                        message.getToNodeLevel(), message.getExchangeId(), message.getCorrelationExchangeId(),
                         false, false,
                         dumpAsJSonObject(suspendedExchange.getExchange())));
     }
@@ -937,7 +939,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            first, false, uid, timestamp, source, routeId, toNode, toNodeParentId,
+                            first, false, uid, timestamp, source, routeId, toNode, toNodeParentId, null, null,
                             toNodeShortName, toNodeLabel, level, exchangeId, correlationExchangeId,
                             false, false, data);
             suspendedBreakpointMessages.put(nodeId, msg);
@@ -1026,7 +1028,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            false, false, uid, timestamp, source, routeId, toNode, toNodeParentId,
+                            false, false, uid, timestamp, source, routeId, toNode, toNodeParentId, null, null,
                             toNodeShortName, toNodeLabel, level,
                             exchangeId, correlationExchangeId,
                             false, false, data);
@@ -1135,9 +1137,9 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                        false, true, uid, timestamp, source, routeId, toNode, toNodeParentId,
-                        null, null, level, exchangeId, correlationExchangeId,
-                        false, false, data);
+                            false, true, uid, timestamp, source, routeId, toNode, toNodeParentId,
+                            null, null, null, null, level, exchangeId, correlationExchangeId,
+                            false, false, data);
             // we want to capture if there was an exception
             if (cause != null) {
                 msg.setException(cause);
