@@ -74,6 +74,11 @@ public interface BacklogTracerEventMessage {
     String getToNode();
 
     /**
+     * Parent node id for this node
+     */
+    String getToNodeParentId();
+
+    /**
      * Node short name where the message is being routed to
      */
     String getToNodeShortName();

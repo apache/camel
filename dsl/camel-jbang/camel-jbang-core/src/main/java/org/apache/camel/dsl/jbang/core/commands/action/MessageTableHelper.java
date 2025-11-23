@@ -166,7 +166,9 @@ public class MessageTableHelper {
             if (arr != null) {
                 for (Object o : arr) {
                     JsonObject jo = (JsonObject) o;
-                    rows.add(new TableRow("Property", jo.getString("type"), jo.getString("key"), jo.get("value"), jo.getBooleanOrDefault("important", false)));
+                    rows.add(new TableRow(
+                            "Property", jo.getString("type"), jo.getString("key"), jo.get("value"),
+                            jo.getBooleanOrDefault("important", false)));
                 }
             }
             // internal exchange properties
@@ -174,7 +176,9 @@ public class MessageTableHelper {
             if (arr != null) {
                 for (Object o : arr) {
                     JsonObject jo = (JsonObject) o;
-                    rows.add(new TableRow("Property", jo.getString("type"), jo.getString("key"), jo.get("value"), jo.getBooleanOrDefault("important", false)));
+                    rows.add(new TableRow(
+                            "Property", jo.getString("type"), jo.getString("key"), jo.get("value"),
+                            jo.getBooleanOrDefault("important", false)));
                 }
             }
             if (!rows.isEmpty()) {
@@ -220,7 +224,8 @@ public class MessageTableHelper {
                             }
                         }
                     }
-                    rows.add(new TableRow("Header", jo.getString("type"), key, value, jo.getBooleanOrDefault("important", false)));
+                    rows.add(new TableRow(
+                            "Header", jo.getString("type"), key, value, jo.getBooleanOrDefault("important", false)));
                 }
             }
             if (!rows.isEmpty()) {

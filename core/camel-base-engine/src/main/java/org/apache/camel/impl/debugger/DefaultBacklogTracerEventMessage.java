@@ -45,6 +45,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String location;
     private final String routeId;
     private final String toNode;
+    private final String toNodeParentId;
     private final String toNodeShortName;
     private final String toNodeLabel;
     private final int toNodeLevel;
@@ -69,7 +70,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private boolean done;
 
     public DefaultBacklogTracerEventMessage(CamelContext camelContext, boolean first, boolean last, long uid, long timestamp,
-                                            String location, String routeId, String toNode, String toNodeShortName,
+                                            String location, String routeId, String toNode, String toNodeParentId, String toNodeShortName,
                                             String toNodeLabel, int toNodeLevel, String exchangeId,
                                             String correlationExchangeId,
                                             boolean rest, boolean template, JsonObject data) {
@@ -82,6 +83,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.location = location;
         this.routeId = routeId;
         this.toNode = toNode;
+        this.toNodeParentId = toNodeParentId;
         this.toNodeShortName = toNodeShortName;
         this.toNodeLabel = toNodeLabel;
         this.toNodeLevel = toNodeLevel;
@@ -144,6 +146,11 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public String getToNode() {
         return toNode;
+    }
+
+    @Override
+    public String getToNodeParentId() {
+        return toNodeParentId;
     }
 
     @Override
@@ -530,6 +537,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         }
         if (toNode != null) {
             jo.put("nodeId", toNode);
+        }
+        if (toNodeParentId != null) {
+            jo.put("nodeParentId", toNodeParentId);
         }
         if (toNodeShortName != null) {
             jo.put("nodeShortName", toNodeShortName);

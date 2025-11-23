@@ -21,18 +21,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -58,10 +60,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
+    private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
+
     // TODO: option to max deep level (like trace)
     // TODO: option to collapse split (to cut very large split)
-
-    private final Set<String> usedImportant = new HashSet<>();
 
     public CamelHistoryAction(CamelJBangMain main) {
         super(main);
@@ -203,22 +205,15 @@ public class CamelHistoryAction extends ActionWatchCommand {
         String fs = map.remove("CamelFileLength");
         if (fn != null && fs != null) {
             String line = "File: " + fn + " (" + fs + " bytes)";
-            if (usedImportant.add(line)) {
-                sj.add(line);
-            }
+            sj.add(line);
         } else if (fn != null) {
             String line = "File: " + fn;
-            if (usedImportant.add(line)) {
-                sj.add(line);
-            }
+            sj.add(line);
         }
 
-        map.forEach((k,v) -> {
+        map.forEach((k, v) -> {
             String line = k + "=" + v;
-            if (usedImportant.add(line)) {
-                // avoid duplicates so only show unique
-                sj.add(k + "=" + v);
-            }
+            sj.add(line);
         });
 
         return sj.toString();
@@ -227,24 +222,63 @@ public class CamelHistoryAction extends ActionWatchCommand {
     private Map<String, String> extractImportant(Row r) {
         Map<String, String> answer = new LinkedHashMap<>();
 
-        JsonArray arr = r.message.getCollection("exchangeProperties");
-        if (arr != null) {
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject jo = (JsonObject) arr.get(i);
-                if (jo.getBooleanOrDefault("important", false)) {
-                    answer.put(jo.getString("key"), jo.getString("value"));
+        // extract important headers for the endpoint
+        String uri = r.endpoint != null ? r.endpoint.getString("endpoint") : null;
+        if (uri != null) {
+            String scheme = StringHelper.before(uri, ":");
+            if (scheme != null) {
+                ComponentModel cm = camelCatalog.componentModel(scheme);
+                if (cm != null) {
+                    for (var eh : cm.getEndpointHeaders()) {
+                        if (eh.isImportant()) {
+                            JsonArray arr = r.message.getCollection("headers");
+                            if (arr != null) {
+                                for (int i = 0; i < arr.size(); i++) {
+                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    String key = jo.getString("key");
+                                    if (key.equals(eh.getName())) {
+                                        answer.put(key, jo.getString("value"));
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-        arr = r.message.getCollection("headers");
-        if (arr != null) {
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject jo = (JsonObject) arr.get(i);
-                if (jo.getBooleanOrDefault("important", false)) {
-                    answer.put(jo.getString("key"), jo.getString("value"));
+
+        // extract important exchange properties for the EIP
+        String eip = r.nodeShortName;
+        if (eip != null) {
+            EipModel em = camelCatalog.eipModel(eip);
+            if (em != null) {
+                for (var ep : em.getExchangeProperties()) {
+                    if (ep.isImportant()) {
+                        JsonArray arr = r.message.getCollection("exchangeProperties");
+                        if (arr != null) {
+                            for (int i = 0; i < arr.size(); i++) {
+                                JsonObject jo = (JsonObject) arr.get(i);
+                                String key = jo.getString("key");
+                                if (key.equals(ep.getName())) {
+                                    answer.put(key, jo.getString("value"));
+                                }
+                            }
+                        }
+                        arr = r.message.getCollection("headers");
+                        if (arr != null) {
+                            for (int i = 0; i < arr.size(); i++) {
+                                JsonObject jo = (JsonObject) arr.get(i);
+                                String key = jo.getString("key");
+                                if (key.equals(ep.getName())) {
+                                    answer.put(key, jo.getString("value"));
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
+
         return answer;
     }
 

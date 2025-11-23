@@ -81,4 +81,16 @@ public interface NamedNode extends LineNumberAware {
         return level;
     }
 
+    default String getParentId() {
+        NamedNode node = this;
+        while (node != null && node.getParent() != null) {
+            boolean shallow = "when".equals(node.getShortName()) || "otherwise".equals(node.getShortName());
+            node = node.getParent();
+            if (!shallow) {
+                return node.getId();
+            }
+        }
+        return null;
+    }
+
 }

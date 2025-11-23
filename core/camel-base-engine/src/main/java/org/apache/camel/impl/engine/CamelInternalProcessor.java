@@ -651,6 +651,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
                 long timestamp = System.currentTimeMillis();
                 String toNode = processorDefinition.getId();
+                String toNodeParentId = processorDefinition.getParentId();
                 String toNodeShortName = processorDefinition.getShortName();
                 String toNodeLabel = StringHelper.limitLength(processorDefinition.getLabel(), 50);
                 String exchangeId = exchange.getExchangeId();
@@ -672,7 +673,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     final long created = exchange.getClock().getCreated();
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null, null,
+                            true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null, null, null,
                             level,
                             exchangeId, correlationExchangeId, rest, template, data);
                     if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
@@ -686,7 +687,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
                         camelContext,
-                        false, false, backlogTracer.incrementTraceCounter(), timestamp, source, routeId, toNode,
+                        false, false, backlogTracer.incrementTraceCounter(), timestamp, source, routeId, toNode, toNodeParentId,
                         toNodeShortName, toNodeLabel, level,
                         exchangeId, correlationExchangeId, rest, template, data);
                 backlogTracer.traceEvent(event);
@@ -715,7 +716,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                             backlogTracer.getBodyMaxChars());
                     DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null, null,
+                            false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null,  null, null,
                             level,
                             exchangeId, correlationExchangeId, rest, template, data);
                     backlogTracer.traceEvent(pseudoLast);
