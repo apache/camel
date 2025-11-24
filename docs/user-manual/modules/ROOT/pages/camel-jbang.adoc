@@ -623,6 +623,78 @@ NOTE: You have to use the `=` sign right after the `--property`, as in the examp
 
 If both parameters are used, the properties will be merged in a single `application.properties` file.
 
+=== History of last completed message
+
+*Available from Camel 4.17*
+
+When developers are coding Camel using the high level DSL with EIPs and components then it can appear as a mystery box what happened when Camel processed an incoming message. There are of course many ways to find out with logging, tracing, debugging, and good old System.out.println.
+
+In Camel 4.17 there is the `camel get history` command that show a summary of the last completed message of every step of the message; with a column that shows curanted important information. This is a high level summary to quickly allow users to see what happened.
+
+For example the following `foo.java` source file contains a Camel route that consumes a file, split the file line by line, and filter if the line contains world. After the split then calls a non-existing page on the Camel website, and then logs at the end.
+
+[source,java]
+----
+import org.apache.camel.builder.RouteBuilder;
+
+public class foo extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        from("file:inbox?noop=true")
+            .log("Incoming file")
+            .split(body().tokenize("\n"))
+              .filter(body().contains("world"))
+                .log("Stop the world")
+                .stop()
+              .end()
+              .to("log:line")
+            .end()
+            .to("https://camel.apache.org/xxx?throwExceptionOnFailure=false")
+            .to("log:after-http")
+            .log("complete");
+    }
+}
+----
+
+And the file contains 4 lines:
+
+[source,text]
+----
+hello
+world
+from
+me
+----
+
+And when you execute the `camel get history` you would see:
+
+[source,bash]
+----
+$ camel get history --source
+Message History of last completed (id:32E020F6050C165-0000000000000000 status:success ago:4s pid:91133 name:foo)
+       ID           PROCESSOR                                              ELAPSED   EXCHANGE
+ *-->  foo.java:7   from[file://inbox?noop=true]                                 0       0000  File: foo.txt (19 bytes)
+       foo.java:8     log[Incoming file]                                         0       0000
+       foo.java:9     split[tokenize(body, \n)]                                  8       0000  Split (4)
+       foo.java:10      filter[{body contains world}]                            0  0001/0000  Filter: false
+       foo.java:14      to[log:line]                                             0  0001/0000
+       foo.java:10      filter[{body contains world}]                            0  0002/0000  Filter: true
+       foo.java:11        log[Stop the world]                                    0  0002/0000
+       foo.java:12        stop                                                   0  0002/0000
+       foo.java:10      filter[{body contains world}]                            0  0003/0000  Filter: false
+       foo.java:14      to[log:line]                                             0  0003/0000
+       foo.java:10      filter[{body contains world}]                            0  0004/0000  Filter: false
+       foo.java:14      to[log:line]                                             0  0004/0000
+       foo.java:16    to[https:\/\/camel.apache.org\/xxx?throwExceptionO…      143       0000  404=Not Found Content-Type=text/html; charset=utf-8
+       foo.java:17    to[log:after-http]                                         1       0000
+       foo.java:18    log[complete]                                              0       0000
+ *<--  foo.java:7   from[file://inbox?noop=true]                               157       0000  Success
+----
+
+The history command shows what happened and as you can see we are able to show that the there are 4 entries in the Split, and also how each splitted message has its own unique exchange id, that links to the parent exchange id. Also notice how the HTTP call we can see the 404 error code, and the response body is in text/plain.
+
+
 [#_using_profiles]
 === Using profiles
 
