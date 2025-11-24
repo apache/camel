@@ -40,6 +40,7 @@ import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.trait.message.MessageTrait;
+import org.apache.camel.util.ImportantHeaderUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -1009,6 +1010,9 @@ public final class MessageHelper {
                 if (type != null) {
                     jh.put("type", type);
                 }
+                if (ImportantHeaderUtils.isImportantHeader(key)) {
+                    jh.put("important", true);
+                }
                 if (value != null) {
                     Object s = Jsoner.trySerialize(value);
                     if (s == null) {
@@ -1039,9 +1043,13 @@ public final class MessageHelper {
                 Object value = entry.getValue();
                 String type = ObjectHelper.classCanonicalName(value);
                 JsonObject jh = new JsonObject();
-                jh.put("key", entry.getKey());
+                String key = entry.getKey();
+                jh.put("key", key);
                 if (type != null) {
                     jh.put("type", type);
+                }
+                if (ImportantHeaderUtils.isImportantHeader(key)) {
+                    jh.put("important", true);
                 }
                 // dump header value as JSon, use Camel type converter to convert to String
                 if (value != null) {

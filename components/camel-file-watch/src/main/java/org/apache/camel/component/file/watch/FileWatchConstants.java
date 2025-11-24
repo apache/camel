@@ -42,7 +42,7 @@ public final class FileWatchConstants {
     public static final String FILE_PATH = Exchange.FILE_PATH;
     @Metadata(description = "Name of the consumed file as a relative file path with offset from the\n" +
                             "starting directory configured on the endpoint.",
-              javaType = "String")
+              javaType = "String", important = true)
     public static final String FILE_NAME = Exchange.FILE_NAME;
     @Metadata(description = "The relative path.", javaType = "String")
     public static final String FILE_RELATIVE_PATH = "CamelFileRelativePath";

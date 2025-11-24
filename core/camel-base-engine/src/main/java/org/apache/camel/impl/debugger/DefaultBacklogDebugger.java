@@ -885,8 +885,10 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 (nId, message) -> new DefaultBacklogTracerEventMessage(
                         camelContext,
                         false, false, message.getUid(), message.getTimestamp(), message.getLocation(), message.getRouteId(),
-                        message.getToNode(), message.getToNodeShortName(), message.getToNodeLabel(),
-                        message.getExchangeId(),
+                        message.getToNode(), message.getToNodeParentId(), message.getToNodeParentWhenId(),
+                        message.getToNodeParentWhenLabel(),
+                        message.getToNodeShortName(), message.getToNodeLabel(),
+                        message.getToNodeLevel(), message.getExchangeId(), message.getCorrelationExchangeId(),
                         false, false,
                         dumpAsJSonObject(suspendedExchange.getExchange())));
     }
@@ -922,11 +924,14 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             // store a copy of the message so we can see that from the debugger
             long timestamp = System.currentTimeMillis();
             String toNode = definition.getId();
+            String toNodeParentId = definition.getParentId();
             String toNodeShortName = definition.getShortName();
             // avoid label is too large
             String toNodeLabel = StringHelper.limitLength(definition.getLabel(), 50);
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
+            String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+            int level = definition.getLevel();
             long uid = debugCounter.incrementAndGet();
             String source = LoggerHelper.getLineNumberLoggerName(definition);
             boolean first = "from".equals(definition.getShortName());
@@ -934,7 +939,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            first, false, uid, timestamp, source, routeId, toNode, toNodeShortName, toNodeLabel, exchangeId,
+                            first, false, uid, timestamp, source, routeId, toNode, toNodeParentId, null, null,
+                            toNodeShortName, toNodeLabel, level, exchangeId, correlationExchangeId,
                             false, false, data);
             suspendedBreakpointMessages.put(nodeId, msg);
 
@@ -1008,18 +1014,23 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             // store a copy of the message so we can see that from the debugger
             long timestamp = System.currentTimeMillis();
             String toNode = definition.getId();
+            String toNodeParentId = definition.getParentId();
             String toNodeShortName = definition.getShortName();
             // avoid label is too large
             String toNodeLabel = StringHelper.limitLength(definition.getLabel(), 50);
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
+            String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+            int level = definition.getLevel();
             long uid = debugCounter.incrementAndGet();
             String source = LoggerHelper.getLineNumberLoggerName(definition);
             JsonObject data = dumpAsJSonObject(exchange);
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            false, false, uid, timestamp, source, routeId, toNode, toNodeShortName, toNodeLabel, exchangeId,
+                            false, false, uid, timestamp, source, routeId, toNode, toNodeParentId, null, null,
+                            toNodeShortName, toNodeLabel, level,
+                            exchangeId, correlationExchangeId,
                             false, false, data);
             suspendedBreakpointMessages.put(toNode, msg);
 
@@ -1115,15 +1126,20 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             // create pseudo-last step in single step mode
             long timestamp = System.currentTimeMillis();
             String toNode = CamelContextHelper.getRouteId(definition);
+            String toNodeParentId = definition.getParentId();
             String routeId = route != null ? route.getRouteId() : toNode;
             String exchangeId = exchange.getExchangeId();
+            String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+            int level = definition.getLevel();
             long uid = debugCounter.incrementAndGet();
             String source = LoggerHelper.getLineNumberLoggerName(route != null ? route : definition);
             JsonObject data = dumpAsJSonObject(exchange);
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            false, true, uid, timestamp, source, routeId, toNode, null, null, exchangeId, false, false, data);
+                            false, true, uid, timestamp, source, routeId, toNode, toNodeParentId,
+                            null, null, null, null, level, exchangeId, correlationExchangeId,
+                            false, false, data);
             // we want to capture if there was an exception
             if (cause != null) {
                 msg.setException(cause);

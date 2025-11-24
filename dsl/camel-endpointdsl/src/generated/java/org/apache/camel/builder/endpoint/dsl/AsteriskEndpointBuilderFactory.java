@@ -505,7 +505,6 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * The option is a: {@code java.lang.String} type.
          * 
-         * Default: Simple name of the event
          * Group: consumer
          * 
          * @return the name of the header {@code AsteriskEventName}.

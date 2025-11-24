@@ -21,14 +21,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
@@ -51,6 +59,16 @@ public class CamelHistoryAction extends ActionWatchCommand {
     @CommandLine.Option(names = { "--mask" },
                         description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
+
+    @CommandLine.Option(names = { "--depth" }, defaultValue = "9",
+                        description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
+    int depth;
+
+    @CommandLine.Option(names = { "--limit-split" },
+                        description = "Limit Split to a maximum number of entries to be displayed")
+    int limitSplit;
+
+    private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
     public CamelHistoryAction(CamelJBangMain main) {
         super(main);
@@ -90,6 +108,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT)
                                 .maxWidth(10, OverflowBehaviour.ELLIPSIS_RIGHT)
                                 .with(r -> "" + r.elapsed),
+                        new Column().header("EXCHANGE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                                .maxWidth(12, OverflowBehaviour.ELLIPSIS_RIGHT)
+                                .with(this::getExchangeId),
                         new Column().header("").dataAlign(HorizontalAlign.LEFT)
                                 .maxWidth(60, OverflowBehaviour.NEWLINE)
                                 .with(this::getMessage))));
@@ -116,6 +137,34 @@ public class CamelHistoryAction extends ActionWatchCommand {
         return 0;
     }
 
+    private boolean filterDepth(Row r) {
+        if (depth >= 9) {
+            return true;
+        }
+        if (depth == 0) {
+            // special with only created/completed
+            return r.nodeLevel == 1 && (r.first || r.last);
+        }
+        return r.nodeLevel <= depth;
+    }
+
+    private boolean filterSplit(Row r) {
+        if (limitSplit <= 0) {
+            return true;
+        }
+        JsonArray arr = r.message.getCollection("exchangeProperties");
+        if (arr != null) {
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject jo = (JsonObject) arr.get(i);
+                if ("CamelSplitIndex".equals(jo.getString("key"))) {
+                    long idx = jo.getLongOrDefault("value", Long.MAX_VALUE);
+                    return idx < limitSplit;
+                }
+            }
+        }
+        return true;
+    }
+
     private String getId(Row r) {
         String answer;
         if (source && r.location != null) {
@@ -134,7 +183,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         if (r.first || r.last) {
             return "from[" + r.endpoint.getString("endpoint") + "]";
         } else if (r.nodeLabel != null) {
-            return r.nodeLabel;
+            return StringHelper.padString(r.nodeLevel, 2) + r.nodeLabel;
         } else {
             return r.nodeId;
         }
@@ -150,14 +199,25 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
     }
 
+    private String getExchangeId(Row r) {
+        String id = r.exchangeId.substring(r.exchangeId.length() - 4);
+        String cid = r.correlationExchangeId;
+        if (cid != null) {
+            cid = cid.substring(cid.length() - 4);
+            return String.format("%s/%s", id, cid);
+        } else {
+            return String.format("%s", id);
+        }
+    }
+
     private String getMessage(Row r) {
         if (r.failed && !r.last) {
             return "Exception: " + r.exception.getString("message");
         }
         if (r.last) {
-            return r.failed ? "failed" : "success";
+            return r.failed ? "Failed" : "Success";
         }
-        return null;
+        return r.summary;
     }
 
     protected List<List<Row>> loadRows() throws Exception {
@@ -181,6 +241,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         answer.add(rows);
                     }
                 } catch (Exception e) {
+                    // TODO: remove me
+                    e.printStackTrace();
                     // ignore
                 } finally {
                     IOHelper.close(reader);
@@ -213,11 +275,15 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     row.location = jo.getString("location");
                     row.routeId = jo.getString("routeId");
                     row.nodeId = jo.getString("nodeId");
+                    row.nodeParentId = jo.getString("nodeParentId");
+                    row.nodeParentWhenId = jo.getString("nodeParentWhenId");
+                    row.nodeParentWhenLabel = jo.getString("nodeParentWhenLabel");
                     row.nodeShortName = jo.getString("nodeShortName");
                     row.nodeLabel = jo.getString("nodeLabel");
                     if (mask) {
                         row.nodeLabel = URISupport.sanitizeUri(row.nodeLabel);
                     }
+                    row.nodeLevel = jo.getIntegerOrDefault("nodeLevel", 0);
                     String uri = jo.getString("endpointUri");
                     if (uri != null) {
                         row.endpoint = new JsonObject();
@@ -241,17 +307,137 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     row.threadName = jo.getString("threadName");
                     row.message = jo.getMap("message");
                     row.exception = jo.getMap("exception");
-                    row.exchangeId = row.message.getString("exchangeId");
+                    row.exchangeId = jo.getString("exchangeId");
+                    row.correlationExchangeId = jo.getString("correlationExchangeId");
                     row.exchangePattern = row.message.getString("exchangePattern");
                     // we should exchangeId/pattern elsewhere
                     row.message.remove("exchangeId");
                     row.message.remove("exchangePattern");
                     rows.add(row);
                 }
+
+                // enhance rows by analysis the history to enrich endpoints and EIPs with summary
+                analyseRows(rows);
             }
-            return rows;
+
+            List<Row> answer = new ArrayList<>();
+            for (Row r : rows) {
+                if (filterDepth(r) && filterSplit(r)) {
+                    answer.add(r);
+                }
+            }
+            return answer;
         }
         return null;
+    }
+
+    private void analyseRows(List<Row> rows) {
+        for (int i = 0; i < rows.size() - 1; i++) {
+            Row r = rows.get(i);
+            Row next = i > 0 && i < rows.size() + 2 ? rows.get(i + 1) : null;
+
+            String uri = r.endpoint != null ? r.endpoint.getString("endpoint") : null;
+            Row t = r.first ? r : next; // if sending to endpoint then we should find details in the next step as they are response
+            if (uri != null && t != null) {
+                StringJoiner sj = new StringJoiner(" ");
+                var map = extractComponentModel(uri, t);
+                // special for file / http
+                String fn = map.remove("CamelFileName");
+                String fs = map.remove("CamelFileLength");
+                String hn = map.remove("CamelHttpResponseCode");
+                String hs = map.remove("CamelHttpResponseText");
+                if (fn != null && fs != null) {
+                    sj.add("File: " + fn + " (" + fs + " bytes)");
+                } else if (fn != null) {
+                    sj.add("File: " + fn);
+                } else if (hn != null && hs != null) {
+                    sj.add(hn + "=" + hs);
+                }
+                map.forEach((k, v) -> {
+                    String line = k + "=" + v;
+                    sj.add(line);
+                });
+                r.summary = sj.toString();
+            } else if ("filter".equals(r.nodeShortName)) {
+                if (next != null && r.nodeId != null && r.nodeId.equals(next.nodeParentId)) {
+                    r.summary = "Filter: true";
+                } else {
+                    r.summary = "Filter: false";
+                }
+            } else if ("choice".equals(r.nodeShortName)) {
+                if (next != null && r.nodeId != null && r.nodeId.equals(next.nodeParentId)) {
+                    if (next.nodeParentWhenLabel != null) {
+                        r.summary = "Choice: " + next.nodeParentWhenLabel;
+                    }
+                }
+            } else if ("split".equals(r.nodeShortName)) {
+                if (next != null && r.nodeId != null && r.nodeId.equals(next.nodeParentId)) {
+                    var map = extractEipModel("split", next);
+                    String sv = map.remove("CamelSplitSize");
+                    r.summary = "Split (" + sv + ")";
+                }
+            }
+        }
+    }
+
+    private Map<String, String> extractComponentModel(String uri, Row r) {
+        Map<String, String> answer = new LinkedHashMap<>();
+
+        String scheme = StringHelper.before(uri, ":");
+        if (scheme != null) {
+            ComponentModel cm = camelCatalog.componentModel(scheme);
+            if (cm != null) {
+                for (var eh : cm.getEndpointHeaders()) {
+                    if (eh.isImportant()) {
+                        JsonArray arr = r.message.getCollection("headers");
+                        if (arr != null) {
+                            for (int i = 0; i < arr.size(); i++) {
+                                JsonObject jo = (JsonObject) arr.get(i);
+                                String key = jo.getString("key");
+                                if (key.equals(eh.getName())) {
+                                    answer.put(key, jo.getString("value"));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    private Map<String, String> extractEipModel(String eip, Row r) {
+        Map<String, String> answer = new LinkedHashMap<>();
+
+        EipModel em = camelCatalog.eipModel(eip);
+        if (em != null) {
+            for (var ep : em.getExchangeProperties()) {
+                if (ep.isImportant()) {
+                    JsonArray arr = r.message.getCollection("exchangeProperties");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            String key = jo.getString("key");
+                            if (key.equals(ep.getName())) {
+                                answer.put(key, jo.getString("value"));
+                            }
+                        }
+                    }
+                    arr = r.message.getCollection("headers");
+                    if (arr != null) {
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject jo = (JsonObject) arr.get(i);
+                            String key = jo.getString("key");
+                            if (key.equals(ep.getName())) {
+                                answer.put(key, jo.getString("value"));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return answer;
     }
 
     private static class Row {
@@ -261,13 +447,18 @@ public class CamelHistoryAction extends ActionWatchCommand {
         boolean last;
         long uid;
         String exchangeId;
+        String correlationExchangeId;
         String exchangePattern;
         String threadName;
         String location;
         String routeId;
         String nodeId;
+        String nodeParentId;
+        String nodeParentWhenId;
+        String nodeParentWhenLabel;
         String nodeShortName;
         String nodeLabel;
+        int nodeLevel;
         long timestamp;
         long elapsed;
         boolean done;
@@ -276,6 +467,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         JsonObject endpointService;
         JsonObject message;
         JsonObject exception;
+        String summary;
     }
 
 }

@@ -74,6 +74,21 @@ public interface BacklogTracerEventMessage {
     String getToNode();
 
     /**
+     * Parent node id for this node
+     */
+    String getToNodeParentId();
+
+    /**
+     * Special for choice where we want to know which when predicate was triggered
+     */
+    String getToNodeParentWhenId();
+
+    /**
+     * Special for choice where we want to know which when predicate was triggered
+     */
+    String getToNodeParentWhenLabel();
+
+    /**
      * Node short name where the message is being routed to
      */
     String getToNodeShortName();
@@ -84,9 +99,19 @@ public interface BacklogTracerEventMessage {
     String getToNodeLabel();
 
     /**
+     * Node processor level
+     */
+    int getToNodeLevel();
+
+    /**
      * The exchange id
      */
     String getExchangeId();
+
+    /**
+     * The correlation id to a parent exchange (if any)
+     */
+    String getCorrelationExchangeId();
 
     /**
      * The name of the thread that is processing the message, when this event was captured.

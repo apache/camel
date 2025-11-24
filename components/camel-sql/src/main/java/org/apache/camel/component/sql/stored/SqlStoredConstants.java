@@ -23,7 +23,7 @@ public final class SqlStoredConstants {
     public static final String SQL_STORED_TEMPLATE = "CamelSqlStoredTemplate";
     @Metadata(label = "producer", description = "The parameters", javaType = "Iterator")
     public static final String SQL_STORED_PARAMETERS = "CamelSqlStoredParameters";
-    @Metadata(label = "producer", description = "The update count", javaType = "Integer")
+    @Metadata(label = "producer", description = "The update count", javaType = "Integer", important = true)
     public static final String SQL_STORED_UPDATE_COUNT = "CamelSqlStoredUpdateCount";
 
     private SqlStoredConstants() {

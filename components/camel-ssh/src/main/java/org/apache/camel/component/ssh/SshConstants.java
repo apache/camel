@@ -38,6 +38,6 @@ public interface SshConstants {
      * exit value indicates abnormal termination. <br>
      * <b>Note that the exit value is OS dependent.</b>
      */
-    @Metadata(javaType = "Integer")
+    @Metadata(javaType = "Integer", important = true)
     String EXIT_VALUE = "CamelSshExitValue";
 }

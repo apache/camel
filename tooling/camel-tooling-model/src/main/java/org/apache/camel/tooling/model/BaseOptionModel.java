@@ -51,6 +51,7 @@ public abstract class BaseOptionModel {
     protected boolean supportFileReference;
     protected boolean largeInput;
     protected String inputLanguage;
+    protected boolean important;
 
     // todo: move this as a helper method
     protected boolean newGroup; // special for documentation rendering
@@ -301,6 +302,14 @@ public abstract class BaseOptionModel {
 
     public void setInputLanguage(String inputLanguage) {
         this.inputLanguage = inputLanguage;
+    }
+
+    public boolean isImportant() {
+        return important;
+    }
+
+    public void setImportant(boolean important) {
+        this.important = important;
     }
 
     public String getShortGroup() {

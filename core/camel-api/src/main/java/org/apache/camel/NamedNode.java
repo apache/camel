@@ -65,4 +65,46 @@ public interface NamedNode extends LineNumberAware {
         return true;
     }
 
+    /**
+     * Processor Level in the route tree
+     */
+    default int getLevel() {
+        NamedNode node = this;
+        int level = 0;
+        while (node != null && node.getParent() != null) {
+            boolean shallow = "when".equals(node.getShortName()) || "otherwise".equals(node.getShortName());
+            node = node.getParent();
+            if (!shallow) {
+                level++;
+            }
+        }
+        return level;
+    }
+
+    default String getParentId() {
+        NamedNode node = this;
+        while (node != null && node.getParent() != null) {
+            boolean shallow = "when".equals(node.getShortName()) || "otherwise".equals(node.getShortName());
+            node = node.getParent();
+            if (!shallow) {
+                return node.getId();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Special methods for Choice EIP
+     */
+    default NamedNode findMatchingWhen(String id) {
+        return null;
+    }
+
+    /**
+     * Special methods for Choice EIP
+     */
+    default NamedNode findMatchingOtherwise(String id) {
+        return null;
+    }
+
 }

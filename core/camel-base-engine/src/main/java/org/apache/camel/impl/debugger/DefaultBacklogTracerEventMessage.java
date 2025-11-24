@@ -45,9 +45,14 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String location;
     private final String routeId;
     private final String toNode;
+    private final String toNodeParentId;
+    private final String toNodeParentWhenId;
+    private final String toNodeParentWhenLabel;
     private final String toNodeShortName;
     private final String toNodeLabel;
+    private final int toNodeLevel;
     private final String exchangeId;
+    private final String correlationExchangeId;
     private final String threadName;
     private String endpointUri;
     private boolean remoteEndpoint;
@@ -67,9 +72,11 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private boolean done;
 
     public DefaultBacklogTracerEventMessage(CamelContext camelContext, boolean first, boolean last, long uid, long timestamp,
-                                            String location, String routeId, String toNode, String toNodeShortName,
-                                            String toNodeLabel,
-                                            String exchangeId, boolean rest, boolean template, JsonObject data) {
+                                            String location, String routeId, String toNode, String toNodeParentId,
+                                            String toNodeParentWhenId, String toNodeParentWhenLabel,
+                                            String toNodeShortName, String toNodeLabel, int toNodeLevel, String exchangeId,
+                                            String correlationExchangeId,
+                                            boolean rest, boolean template, JsonObject data) {
         this.camelContext = camelContext;
         this.watch = new StopWatch();
         this.first = first;
@@ -79,9 +86,14 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.location = location;
         this.routeId = routeId;
         this.toNode = toNode;
+        this.toNodeParentId = toNodeParentId;
+        this.toNodeParentWhenId = toNodeParentWhenId;
+        this.toNodeParentWhenLabel = toNodeParentWhenLabel;
         this.toNodeShortName = toNodeShortName;
         this.toNodeLabel = toNodeLabel;
+        this.toNodeLevel = toNodeLevel;
         this.exchangeId = exchangeId;
+        this.correlationExchangeId = correlationExchangeId;
         this.rest = rest;
         this.template = template;
         this.threadName = Thread.currentThread().getName();
@@ -142,6 +154,21 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     }
 
     @Override
+    public String getToNodeParentId() {
+        return toNodeParentId;
+    }
+
+    @Override
+    public String getToNodeParentWhenId() {
+        return toNodeParentWhenId;
+    }
+
+    @Override
+    public String getToNodeParentWhenLabel() {
+        return toNodeParentWhenLabel;
+    }
+
+    @Override
     public String getToNodeShortName() {
         return toNodeShortName;
     }
@@ -151,9 +178,17 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         return toNodeLabel;
     }
 
+    public int getToNodeLevel() {
+        return toNodeLevel;
+    }
+
     @Override
     public String getExchangeId() {
         return exchangeId;
+    }
+
+    public String getCorrelationExchangeId() {
+        return correlationExchangeId;
     }
 
     @Override
@@ -518,14 +553,27 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         if (toNode != null) {
             jo.put("nodeId", toNode);
         }
+        if (toNodeParentId != null) {
+            jo.put("nodeParentId", toNodeParentId);
+        }
+        if (toNodeParentWhenId != null) {
+            jo.put("nodeParentWhenId", toNodeParentWhenId);
+        }
+        if (toNodeParentWhenLabel != null) {
+            jo.put("nodeParentWhenLabel", toNodeParentWhenLabel);
+        }
         if (toNodeShortName != null) {
             jo.put("nodeShortName", toNodeShortName);
         }
         if (toNodeLabel != null) {
-            jo.put("nodeLabel", toNodeLabel);
+            jo.put("nodeLabel", Jsoner.escape(toNodeLabel));
         }
+        jo.put("nodeLevel", toNodeLevel);
         if (exchangeId != null) {
             jo.put("exchangeId", exchangeId);
+        }
+        if (correlationExchangeId != null) {
+            jo.put("correlationExchangeId", correlationExchangeId);
         }
         if (timestamp > 0) {
             jo.put("timestamp", timestamp);

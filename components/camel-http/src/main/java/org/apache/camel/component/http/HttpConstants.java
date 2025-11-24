@@ -31,9 +31,10 @@ public final class HttpConstants {
                             "provide a content encoding, such as `gzip`.",
               javaType = "String")
     public static final String CONTENT_ENCODING = Exchange.CONTENT_ENCODING;
-    @Metadata(description = "The HTTP response code from the external server. Is 200 for OK.", javaType = "int")
+    @Metadata(description = "The HTTP response code from the external server. Is 200 for OK.", javaType = "int",
+              important = true)
     public static final String HTTP_RESPONSE_CODE = Exchange.HTTP_RESPONSE_CODE;
-    @Metadata(description = "The HTTP response text from the external server.", javaType = "String")
+    @Metadata(description = "The HTTP response text from the external server.", javaType = "String", important = true)
     public static final String HTTP_RESPONSE_TEXT = Exchange.HTTP_RESPONSE_TEXT;
     @Metadata(label = "producer", description = "URI parameters. Will override existing URI parameters set directly on\n" +
                                                 "the endpoint.",
@@ -67,7 +68,7 @@ public final class HttpConstants {
     public static final String HTTP_CHARACTER_ENCODING = Exchange.HTTP_CHARACTER_ENCODING;
     @Metadata(description = "The HTTP content type. Is set on both the IN and OUT message to provide\n" +
                             "a content type, such as `text/html`.",
-              javaType = "String")
+              javaType = "String", important = true)
     public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
 
     private HttpConstants() {

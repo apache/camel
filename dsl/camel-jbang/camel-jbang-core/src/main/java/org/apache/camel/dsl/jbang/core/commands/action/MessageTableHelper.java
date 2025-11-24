@@ -166,7 +166,9 @@ public class MessageTableHelper {
             if (arr != null) {
                 for (Object o : arr) {
                     JsonObject jo = (JsonObject) o;
-                    rows.add(new TableRow("Property", jo.getString("type"), jo.getString("key"), jo.get("value")));
+                    rows.add(new TableRow(
+                            "Property", jo.getString("type"), jo.getString("key"), jo.get("value"),
+                            jo.getBooleanOrDefault("important", false)));
                 }
             }
             // internal exchange properties
@@ -174,7 +176,9 @@ public class MessageTableHelper {
             if (arr != null) {
                 for (Object o : arr) {
                     JsonObject jo = (JsonObject) o;
-                    rows.add(new TableRow("Property", jo.getString("type"), jo.getString("key"), jo.get("value")));
+                    rows.add(new TableRow(
+                            "Property", jo.getString("type"), jo.getString("key"), jo.get("value"),
+                            jo.getBooleanOrDefault("important", false)));
                 }
             }
             if (!rows.isEmpty()) {
@@ -220,7 +224,8 @@ public class MessageTableHelper {
                             }
                         }
                     }
-                    rows.add(new TableRow("Header", jo.getString("type"), key, value));
+                    rows.add(new TableRow(
+                            "Header", jo.getString("type"), key, value, jo.getBooleanOrDefault("important", false)));
                 }
             }
             if (!rows.isEmpty()) {
@@ -322,9 +327,15 @@ public class MessageTableHelper {
         Object value;
         Long position;
         Long size;
+        Boolean important = Boolean.FALSE;
 
         TableRow(String kind, String type, String key, Object value) {
             this(kind, type, key, value, null, null);
+        }
+
+        TableRow(String kind, String type, String key, Object value, Boolean important) {
+            this(kind, type, key, value, null, null);
+            this.important = important;
         }
 
         TableRow(String kind, String type, String key, Object value, Long size, Long position) {
@@ -338,11 +349,13 @@ public class MessageTableHelper {
 
         String valueAsString() {
             if (value == null || "null".equals(value)) {
+                value = "null";
                 if (loggingColor) {
                     value = Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(value).reset().toString();
-                } else {
-                    value = "null";
                 }
+            }
+            if (loggingColor && important) {
+                value = Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(value).reset().toString();
             }
             return value.toString();
         }

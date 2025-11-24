@@ -30,7 +30,7 @@ public final class WebsocketConstants {
     public static final String SEND_TO_ALL = "websocket.sendToAll";
     @Metadata(label = "consumer",
               description = "The type of event received. It can be `ONOPEN_EVENT_TYPE`, `ONERROR_EVENT_TYPE` or `ONCLOSE_EVENT_TYPE`.",
-              javaType = "int")
+              javaType = "int", important = true)
     public static final String EVENT_TYPE = "websocket.eventType";
     @Metadata(label = "consumer", description = "The type of error that occurred. It can be `MESSAGE_NOT_SENT_ERROR_TYPE`.",
               javaType = "int")

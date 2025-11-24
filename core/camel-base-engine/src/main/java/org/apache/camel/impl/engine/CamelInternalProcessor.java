@@ -651,9 +651,27 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
                 long timestamp = System.currentTimeMillis();
                 String toNode = processorDefinition.getId();
+                String toNodeParentId = processorDefinition.getParentId();
                 String toNodeShortName = processorDefinition.getShortName();
+                // special for choice as we want to know which when predicate that was triggered
+                String toNodeParentWhenId = null;
+                String toNodeParentWhenLabel = null;
+                NamedNode pn = processorDefinition.getParent();
+                if (pn != null && "choice".equals(pn.getShortName())) {
+                    NamedNode mn = pn.findMatchingWhen(processorDefinition.getId());
+                    if (mn == null) {
+                        mn = pn.findMatchingOtherwise(processorDefinition.getId());
+                    }
+                    if (mn != null) {
+                        toNodeParentWhenId = mn.getId();
+                        toNodeParentWhenLabel = mn.getLabel();
+                    }
+                }
                 String toNodeLabel = StringHelper.limitLength(processorDefinition.getLabel(), 50);
                 String exchangeId = exchange.getExchangeId();
+                String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+                int level = processorDefinition.getLevel();
+
                 boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
                 boolean includeExchangeVariables = backlogTracer.isIncludeExchangeVariables();
                 JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties,
@@ -670,7 +688,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
                             camelContext,
                             true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null, null,
-                            exchangeId, rest, template, data);
+                            null,
+                            null, null,
+                            level, exchangeId, correlationExchangeId, rest, template, data);
                     if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
                         pseudoFirst.setEndpointServiceUrl(esl.getServiceUrl());
                         pseudoFirst.setEndpointServiceProtocol(esl.getServiceProtocol());
@@ -682,9 +702,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
                         camelContext,
-                        false, false, backlogTracer.incrementTraceCounter(), timestamp, source, routeId, toNode,
-                        toNodeShortName, toNodeLabel,
-                        exchangeId, rest, template, data);
+                        false, false, backlogTracer.incrementTraceCounter(), timestamp, source, routeId, toNode, toNodeParentId,
+                        toNodeParentWhenId, toNodeParentWhenLabel,
+                        toNodeShortName, toNodeLabel, level,
+                        exchangeId, correlationExchangeId, rest, template, data);
                 backlogTracer.traceEvent(event);
 
                 return event;
@@ -700,9 +721,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     // create pseudo last
                     String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
                     String exchangeId = exchange.getExchangeId();
+                    String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
                     boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
                     boolean includeExchangeVariables = backlogTracer.isIncludeExchangeVariables();
                     long created = exchange.getClock().getCreated();
+                    int level = processorDefinition.getLevel();
                     JsonObject data = MessageHelper.dumpAsJSonObject(exchange.getIn(), includeExchangeProperties,
                             includeExchangeVariables, true,
                             true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
@@ -710,7 +733,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
                             camelContext,
                             false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null, null,
-                            exchangeId, rest, template, data);
+                            null, null, null,
+                            level, exchangeId, correlationExchangeId, rest, template, data);
                     backlogTracer.traceEvent(pseudoLast);
                     doneProcessing(exchange, pseudoLast);
                     doneProcessing(exchange, pseudoFirst);

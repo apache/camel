@@ -403,7 +403,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     private boolean addEndpointHeader(ComponentModel componentModel, String scheme, Field field, String headersNameProvider) {
         final Metadata metadata = field.getAnnotation(Metadata.class);
         if (metadata == null) {
-
             if (getLog().isDebugEnabled()) {
                 getLog().debug(String.format("The field %s in class %s has no Metadata", field.getName(),
                         field.getDeclaringClass().getName()));
@@ -412,7 +411,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         final String[] applicableFor = metadata.applicableFor();
         if (applicableFor.length > 0 && Arrays.stream(applicableFor).noneMatch(s -> s.equals(scheme))) {
-
             if (getLog().isDebugEnabled()) {
                 getLog().debug(String.format("The field %s in class %s is not applicable for %s", field.getName(),
                         field.getDeclaringClass().getName(), scheme));
@@ -436,6 +434,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         header.setGroup(EndpointHelper.labelAsGroupName(metadata.label(), componentModel.isConsumerOnly(),
                 componentModel.isProducerOnly()));
         header.setLabel(metadata.label());
+        header.setImportant(metadata.important());
         try {
             header.setEnums(getEnums(metadata, header.getJavaType().isEmpty() ? null : loadClass(header.getJavaType())));
         } catch (NoClassDefFoundError e) {
@@ -1000,6 +999,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 boolean supportFileReference = metadata != null && metadata.supportFileReference();
                 boolean largeInput = metadata != null && metadata.largeInput();
                 String inputLanguage = metadata != null ? metadata.inputLanguage() : null;
+                boolean important = metadata != null && metadata.important();
 
                 // we do not yet have default values / notes / as no annotation
                 // support yet
@@ -1118,6 +1118,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setSupportFileReference(supportFileReference);
                     option.setLargeInput(largeInput);
                     option.setInputLanguage(inputLanguage);
+                    option.setImportant(important);
                     componentModel.addComponentOption(option);
                 }
             }
@@ -1375,6 +1376,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         boolean isSecret = secret != null && secret || param.secret();
         boolean isAutowired = metadata != null && metadata.autowired();
         boolean supportFileReference = metadata != null && metadata.supportFileReference();
+        boolean important = metadata != null && metadata.important();
         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
                 componentModel.isProducerOnly());
 
@@ -1431,6 +1433,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setOptionalPrefix(paramOptionalPrefix);
         option.setMultiValue(multiValue);
         option.setSupportFileReference(supportFileReference);
+        option.setImportant(important);
         if (componentOption) {
             option.setKind("property");
             componentModel.addComponentOption((ComponentOptionModel) option);
@@ -1564,6 +1567,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             boolean isAutowired = metadata != null && metadata.autowired();
             boolean supportFileReference = metadata != null && metadata.supportFileReference();
             boolean largeInput = metadata != null && metadata.largeInput();
+            boolean important = metadata != null && metadata.important();
             String inputLanguage = metadata != null ? metadata.inputLanguage() : null;
             String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
                     componentModel.isProducerOnly());
@@ -1619,6 +1623,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             option.setSupportFileReference(supportFileReference);
             option.setLargeInput(largeInput);
             option.setInputLanguage(inputLanguage);
+            option.setImportant(important);
             if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
                 componentModel.addEndpointOption((EndpointOptionModel) option);
             }

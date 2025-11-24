@@ -36,7 +36,8 @@ public final class UndertowConstants {
      */
     @Metadata(javaType = "Boolean")
     public static final String SEND_TO_ALL = "websocket.sendToAll";
-    @Metadata(label = "consumer", description = "The numeric identifier of the type of websocket event", javaType = "Integer")
+    @Metadata(label = "consumer", description = "The numeric identifier of the type of websocket event", javaType = "Integer",
+              important = true)
     public static final String EVENT_TYPE = "websocket.eventType";
     @Metadata(label = "consumer", description = "The type of websocket event",
               javaType = "org.apache.camel.component.undertow.UndertowConstants.EventType")
@@ -50,9 +51,9 @@ public final class UndertowConstants {
               javaType = "io.undertow.websockets.spi.WebSocketHttpExchange")
     public static final String EXCHANGE = "websocket.exchange";
 
-    @Metadata(description = "The http response code", javaType = "Integer")
+    @Metadata(description = "The http response code", javaType = "Integer", important = true)
     public static final String HTTP_RESPONSE_CODE = Exchange.HTTP_RESPONSE_CODE;
-    @Metadata(description = "The content type", javaType = "String")
+    @Metadata(description = "The content type", javaType = "String", important = true)
     public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
     @Metadata(label = "consumer", description = "The http character encoding", javaType = "String")
     public static final String HTTP_CHARACTER_ENCODING = Exchange.HTTP_CHARACTER_ENCODING;

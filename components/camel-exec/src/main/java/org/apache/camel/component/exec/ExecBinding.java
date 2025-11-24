@@ -107,7 +107,7 @@ public interface ExecBinding {
     @Metadata(label = "out", description = "The value of this header is the _exit value_ of the executable. Non-zero\n" +
                                            "exit values typically indicate abnormal termination. Note that the exit\n" +
                                            "value is OS-dependent.",
-              javaType = "int")
+              javaType = "int", important = true)
     String EXEC_EXIT_VALUE = "CamelExecExitValue";
 
     /**

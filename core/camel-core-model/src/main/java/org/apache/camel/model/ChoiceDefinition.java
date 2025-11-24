@@ -233,6 +233,30 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         return answer;
     }
 
+    @Override
+    public WhenDefinition findMatchingWhen(String id) {
+        for (WhenDefinition when : whenClauses) {
+            for (ProcessorDefinition<?> out : when.getOutputs()) {
+                if (out.getId().equals(id)) {
+                    return when;
+                }
+            }
+        }
+        return null;
+    }
+
+    public OtherwiseDefinition findMatchingOtherwise(String id) {
+        if (otherwise != null) {
+            for (ProcessorDefinition<?> out : otherwise.getOutputs()) {
+                if (out.getId().equals(id)) {
+                    return otherwise;
+                }
+            }
+            return otherwise;
+        }
+        return null;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 

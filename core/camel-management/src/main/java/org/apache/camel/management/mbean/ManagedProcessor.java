@@ -55,7 +55,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter
         this.context = context;
         this.processor = processor;
         this.definition = definition;
-        this.nodeLevel = ProcessorDefinitionHelper.getNodeLevel(definition);
+        this.nodeLevel = definition.getLevel();
         this.id = definition.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         StepDefinition step;
         if (definition instanceof StepDefinition stepDefinition) {

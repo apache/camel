@@ -26,7 +26,7 @@ public final class PahoConstants {
     /**
      * Header indicating a topic of a MQTT message.
      */
-    @Metadata(label = "consumer", description = "The name of the topic.", javaType = "String")
+    @Metadata(label = "consumer", description = "The name of the topic.", javaType = "String", important = true)
     public static final String MQTT_TOPIC = "CamelMqttTopic";
     /**
      * Header indicating a QoS of a MQTT message.
