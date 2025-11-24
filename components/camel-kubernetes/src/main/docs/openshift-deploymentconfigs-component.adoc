@@ -24,11 +24,10 @@ provides a producer to execute Openshift Deployment Configs operations and a con
 
 // component options: START
 include::partial$component-configure-options.adoc[]
-include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-
+include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 // component headers: START

@@ -22,11 +22,10 @@ The JOOQ component enables you to store and retrieve Java objects from persisten
 
 // component options: START
 include::partial$component-configure-options.adoc[]
-include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 // endpoint options: START
-
+include::partial$component-endpoint-options.adoc[]
 // endpoint options: END
 
 == Usage
