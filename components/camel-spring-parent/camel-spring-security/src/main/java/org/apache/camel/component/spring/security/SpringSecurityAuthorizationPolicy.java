@@ -38,8 +38,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.authorization.event.AuthorizationDeniedEvent;
 import org.springframework.security.authorization.event.AuthorizationGrantedEvent;
 import org.springframework.security.core.Authentication;
@@ -75,7 +75,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType
             }
 
             Authentication authentication = authenticateIfRequired(authToken);
-            AuthorizationDecision decision = this.authorizationManager.check(() -> authentication, exchange);
+            AuthorizationResult decision = this.authorizationManager.authorize(() -> authentication, exchange);
 
             // Attempt authorization with exchange
             try {
