@@ -2630,7 +2630,7 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Query to execute. This query takes precedence over the query
          * specified in the endpoint URI. Note that query parameters in the
-         * header _are_ represented by a instead of a pass:# symbol.
+         * header are represented by a instead of a pass:# symbol.
          * 
          * The option is a: {@code String} type.
          * 

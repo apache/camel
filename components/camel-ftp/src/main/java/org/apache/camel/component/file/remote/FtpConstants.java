@@ -24,7 +24,7 @@ import org.apache.camel.spi.Metadata;
  */
 public final class FtpConstants {
 
-    @Metadata(label = "consumer", description = "A `long` value containing the file size.", javaType = "long")
+    @Metadata(label = "consumer", description = "A `long` value containing the file size.", javaType = "long", important = true)
     public static final String FILE_LENGTH = Exchange.FILE_LENGTH;
     @Metadata(label = "consumer", description = "A `Long` value containing the last modified timestamp of the file.",
               javaType = "long")
@@ -37,7 +37,7 @@ public final class FtpConstants {
                             + " `null` then Camel will auto-generate a filename based on the message"
                             + " unique ID. (consumer) Name of the consumed file as a relative file path with offset from the"
                             + " starting directory configured on the endpoint.",
-              javaType = "String")
+              javaType = "String", important = true)
     public static final String FILE_NAME = Exchange.FILE_NAME;
     @Metadata(label = "consumer", description = "The name of the file that has been consumed", javaType = "String")
     public static final String FILE_NAME_CONSUMED = Exchange.FILE_NAME_CONSUMED;
@@ -80,9 +80,9 @@ public final class FtpConstants {
     public static final String REMOTE_FILE_INPUT_STREAM = RemoteFileComponent.REMOTE_FILE_INPUT_STREAM;
     @Metadata(label = "consumer", description = "The remote hostname.", javaType = "String")
     public static final String FILE_HOST = "CamelFileHost";
-    @Metadata(description = "The FTP client reply code", javaType = "int")
+    @Metadata(description = "The FTP client reply code", javaType = "int", important = true)
     public static final String FTP_REPLY_CODE = "CamelFtpReplyCode";
-    @Metadata(description = "The FTP client reply string", javaType = "String")
+    @Metadata(description = "The FTP client reply string", javaType = "String", important = true)
     public static final String FTP_REPLY_STRING = "CamelFtpReplyString";
 
     private FtpConstants() {

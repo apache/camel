@@ -22,20 +22,19 @@ public final class KafkaConstants {
 
     @Metadata(label = "producer", description = "Explicitly specify the partition", javaType = "Integer")
     public static final String PARTITION_KEY = "kafka.PARTITION_KEY";
-    @Metadata(label = "consumer", description = "The partition where the message was stored", javaType = "Integer")
+    @Metadata(label = "consumer", description = "The partition where the message was stored", javaType = "Integer", important = true)
     public static final String PARTITION = "kafka.PARTITION";
-    @Metadata(description = "*Producer:* The key of the message in order to ensure that all related message goes in the same partition. "
-                            +
-                            "*Consumer:* The key of the message if configured",
-              javaType = "Object", required = true)
+    @Metadata(description = "Producer: The key of the message in order to ensure that all related message goes in the same partition. "
+                            + "Consumer: The key of the message if configured",
+              javaType = "Object", required = true, important = true)
     public static final String KEY = "kafka.KEY";
-    @Metadata(label = "consumer", description = "The topic from where the message originated", javaType = "String")
+    @Metadata(label = "consumer", description = "The topic from where the message originated", javaType = "String", important = true)
     public static final String TOPIC = "kafka.TOPIC";
     @Metadata(label = "producer",
               description = "The topic to which send the message (override and takes precedence), and the header is not preserved.",
               javaType = "String")
     public static final String OVERRIDE_TOPIC = "kafka.OVERRIDE_TOPIC";
-    @Metadata(label = "consumer", description = "The offset of the message", javaType = "Long")
+    @Metadata(label = "consumer", description = "The offset of the message", javaType = "Long", important = true)
     public static final String OFFSET = "kafka.OFFSET";
     @Metadata(label = "consumer", description = "The record headers", javaType = "org.apache.kafka.common.header.Headers")
     public static final String HEADERS = "kafka.HEADERS";

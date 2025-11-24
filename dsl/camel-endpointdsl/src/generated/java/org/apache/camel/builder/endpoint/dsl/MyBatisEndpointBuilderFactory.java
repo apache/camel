@@ -1150,9 +1150,8 @@ public interface MyBatisEndpointBuilderFactory {
         private static final MyBatisHeaderNameBuilder INSTANCE = new MyBatisHeaderNameBuilder();
 
         /**
-         * The response returned from MtBatis in any of the operations. For
-         * instance an INSERT could return the auto-generated key, or number of
-         * rows etc.
+         * The response returned from MyBatis in any of the operations. Such as
+         * INSERT could return the auto-generated key, or number of rows etc.
          * 
          * The option is a: {@code Object} type.
          * 

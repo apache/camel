@@ -37,7 +37,7 @@ public final class NettyHttpConstants {
 
     @Metadata(description = "To set the content-type of the HTTP body. For example:\n" +
                             "`text/plain; charset=\"UTF-8\"`.",
-              javaType = "String")
+              javaType = "String", important = true)
     public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
     @Metadata(description = "The value of the HTTP header connection to use.", javaType = "String")
     public static final String CONNECTION = HttpHeaderNames.CONNECTION.toString();
@@ -45,7 +45,7 @@ public final class NettyHttpConstants {
     public static final String NETTY_CLOSE_CHANNEL_WHEN_COMPLETE = NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE;
     @Metadata(description = "Allows to set the HTTP Status code to use. By default 200 is used for\n" +
                             "success, and 500 for failure.",
-              javaType = "Integer")
+              javaType = "Integer", important = true)
     public static final String HTTP_RESPONSE_CODE = Exchange.HTTP_RESPONSE_CODE;
     @Metadata(description = "The version of the HTTP protocol.", javaType = "String", defaultValue = "HTTP/1.1")
     public static final String HTTP_PROTOCOL_VERSION = Exchange.HTTP_PROTOCOL_VERSION;

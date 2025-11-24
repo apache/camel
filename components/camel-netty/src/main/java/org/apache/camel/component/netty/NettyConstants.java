@@ -27,7 +27,7 @@ public final class NettyConstants {
     @Metadata(description = "The channel handler context.", javaType = "io.netty.channel.ChannelHandlerContext")
     public static final String NETTY_CHANNEL_HANDLER_CONTEXT = "CamelNettyChannelHandlerContext";
     public static final String NETTY_MESSAGE_EVENT = "CamelNettyMessageEvent";
-    @Metadata(description = "The remote address.", javaType = "java.net.SocketAddress")
+    @Metadata(description = "The remote address.", javaType = "java.net.SocketAddress", important = true)
     public static final String NETTY_REMOTE_ADDRESS = "CamelNettyRemoteAddress";
     @Metadata(description = "The local address.", javaType = "java.net.SocketAddress")
     public static final String NETTY_LOCAL_ADDRESS = "CamelNettyLocalAddress";

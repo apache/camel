@@ -25,7 +25,7 @@ public final class RocketMQConstants {
     public static final String TOPIC = "CamelRockerMQTopic";
     @Metadata(label = "consumer", description = "Tag of message", javaType = "String")
     public static final String TAG = "CamelRockerMQTag";
-    @Metadata(label = "consumer", description = "Key of message", javaType = "String")
+    @Metadata(label = "consumer", description = "Key of message", javaType = "String", important = true)
     public static final String KEY = "CamelRockerMQKey";
     @Metadata(label = "producer",
               description = "If this header is set, the message will be routed to the topic specified by this header\n" +

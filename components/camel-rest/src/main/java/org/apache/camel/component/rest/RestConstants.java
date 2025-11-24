@@ -29,13 +29,13 @@ public final class RestConstants {
     public static final String HTTP_METHOD = Exchange.HTTP_METHOD;
     @Metadata(label = "producer",
               description = "The media type such as: 'text/xml', or 'application/json' this REST service returns.",
-              javaType = "String")
+              javaType = "String", important = true)
     public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
     @Metadata(label = "producer",
               description = "The media type such as: 'text/xml', or 'application/json' this REST service accepts.",
               javaType = "String")
     public static final String ACCEPT = "Accept";
-    @Metadata(label = "producer", description = "The http response code", javaType = "Integer")
+    @Metadata(label = "producer", description = "The http response code", javaType = "Integer", important = true)
     public static final String HTTP_RESPONSE_CODE = Exchange.HTTP_RESPONSE_CODE;
 
     private RestConstants() {

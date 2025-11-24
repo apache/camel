@@ -20,7 +20,7 @@ import org.apache.camel.spi.Metadata;
 
 public final class AsteriskConstants {
     @Metadata(label = "consumer", description = "The name of the Asterisk event.", javaType = "java.lang.String",
-              defaultValue = "Simple name of the event")
+              important = true)
     public static final String EVENT_NAME = "CamelAsteriskEventName";
     @Metadata(label = "producer", description = "The extension to query in case of an `ExtensionStateAction`.",
               javaType = "java.lang.String")
