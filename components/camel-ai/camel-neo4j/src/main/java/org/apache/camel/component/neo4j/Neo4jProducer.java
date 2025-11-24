@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
@@ -49,6 +51,10 @@ import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RETRIEVE_LIST_
 import static org.apache.camel.component.neo4j.Neo4jHeaders.QUERY_RETRIEVE_SIZE;
 
 public class Neo4jProducer extends DefaultProducer {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {
+    };
 
     private Driver driver;
 
@@ -104,15 +110,24 @@ public class Neo4jProducer extends DefaultProducer {
 
         final String databaseName = getEndpoint().getName();
 
-        var query = "";
-        Map<String, Object> properties = null;
+        // Always use parameterized queries to prevent Cypher injection
+        var query = String.format("CREATE (%s:%s $props)", alias, label);
+        Map<String, Object> properties;
 
         if (body instanceof String) {
-            // Case we get the object in a Json format
-            query = String.format("CREATE (%s:%s %s)", alias, label, body);
+            try {
+                // Convert JSON string to Map for parameterized query
+                Map<String, Object> bodyMap = OBJECT_MAPPER.readValue((String) body, MAP_TYPE_REF);
+                properties = Map.of("props", bodyMap);
+            } catch (Exception e) {
+                exchange.setException(
+                        new Neo4jOperationException(
+                                Neo4Operation.CREATE_NODE,
+                                new IllegalArgumentException("Failed to parse body as JSON: " + body, e)));
+                return;
+            }
         } else {
-            // body should be a list of properties
-            query = String.format("CREATE (%s:%s $props)", alias, label);
+            // body should be a Map or similar object
             properties = Map.of("props", body);
         }
 
@@ -126,17 +141,55 @@ public class Neo4jProducer extends DefaultProducer {
         final String alias = getEndpoint().getConfiguration().getAlias();
         ObjectHelper.notNull(alias, "alias");
 
-        String matchQuery = exchange.getMessage().getHeader(MATCH_PROPERTIES, String.class);
-        // in this case we search all nodes
-        if (matchQuery == null) {
-            matchQuery = "";
-        }
+        String matchProperties = exchange.getMessage().getHeader(MATCH_PROPERTIES, String.class);
 
         final String databaseName = getEndpoint().getName();
 
-        var query = String.format("MATCH (%s:%s %s) RETURN %s", alias, label, matchQuery, alias);
+        String query;
+        Map<String, Object> queryParams = null;
 
-        queryRetriveNodes(exchange, databaseName, null, query, RETRIEVE_NODES);
+        if (matchProperties == null || matchProperties.isEmpty()) {
+            // Search all nodes
+            query = String.format("MATCH (%s:%s) RETURN %s", alias, label, alias);
+        } else {
+            try {
+                // Convert JSON string to Map and build WHERE clause with parameters
+                Map<String, Object> matchMap = OBJECT_MAPPER.readValue(matchProperties, MAP_TYPE_REF);
+
+                if (!matchMap.isEmpty()) {
+                    StringBuilder whereClause = new StringBuilder();
+                    queryParams = new java.util.HashMap<>();
+                    int paramIndex = 0;
+
+                    for (Map.Entry<String, Object> entry : matchMap.entrySet()) {
+                        if (paramIndex > 0) {
+                            whereClause.append(" AND ");
+                        }
+                        String paramName = "param" + paramIndex;
+                        whereClause.append(alias).append(".").append(entry.getKey())
+                                .append(" = $").append(paramName);
+                        queryParams.put(paramName, entry.getValue());
+                        paramIndex++;
+                    }
+
+                    query = String.format("MATCH (%s:%s) WHERE %s RETURN %s",
+                            alias, label, whereClause.toString(), alias);
+                } else {
+                    // Empty map, match all nodes
+                    query = String.format("MATCH (%s:%s) RETURN %s", alias, label, alias);
+                }
+            } catch (Exception e) {
+                exchange.setException(
+                        new Neo4jOperationException(
+                                RETRIEVE_NODES,
+                                new IllegalArgumentException(
+                                        "Failed to parse MATCH_PROPERTIES as JSON: " + matchProperties,
+                                        e)));
+                return;
+            }
+        }
+
+        queryRetriveNodes(exchange, databaseName, queryParams, query, RETRIEVE_NODES);
     }
 
     private void retrieveNodesWithCypherQuery(Exchange exchange) throws NoSuchHeaderException {
@@ -184,19 +237,57 @@ public class Neo4jProducer extends DefaultProducer {
         final String alias = getEndpoint().getConfiguration().getAlias();
         ObjectHelper.notNull(alias, "alias");
 
-        String matchQuery = exchange.getMessage().getHeader(MATCH_PROPERTIES, String.class);
-        // in this case we search all nodes
-        if (matchQuery == null) {
-            matchQuery = "";
-        }
+        String matchProperties = exchange.getMessage().getHeader(MATCH_PROPERTIES, String.class);
 
         final String databaseName = getEndpoint().getName();
 
         final String detached = getEndpoint().getConfiguration().isDetachRelationship() ? "DETACH" : "";
 
-        var query = String.format("MATCH (%s:%s %s) %s DELETE %s", alias, label, matchQuery, detached, alias);
+        String query;
+        Map<String, Object> queryParams = null;
 
-        executeWriteQuery(exchange, query, null, databaseName, Neo4Operation.DELETE_NODE);
+        if (matchProperties == null || matchProperties.isEmpty()) {
+            // Delete all nodes of this label
+            query = String.format("MATCH (%s:%s) %s DELETE %s", alias, label, detached, alias);
+        } else {
+            try {
+                // Convert JSON string to Map and build WHERE clause with parameters
+                Map<String, Object> matchMap = OBJECT_MAPPER.readValue(matchProperties, MAP_TYPE_REF);
+
+                if (!matchMap.isEmpty()) {
+                    StringBuilder whereClause = new StringBuilder();
+                    queryParams = new java.util.HashMap<>();
+                    int paramIndex = 0;
+
+                    for (Map.Entry<String, Object> entry : matchMap.entrySet()) {
+                        if (paramIndex > 0) {
+                            whereClause.append(" AND ");
+                        }
+                        String paramName = "param" + paramIndex;
+                        whereClause.append(alias).append(".").append(entry.getKey())
+                                .append(" = $").append(paramName);
+                        queryParams.put(paramName, entry.getValue());
+                        paramIndex++;
+                    }
+
+                    query = String.format("MATCH (%s:%s) WHERE %s %s DELETE %s",
+                            alias, label, whereClause.toString(), detached, alias);
+                } else {
+                    // Empty map, delete all nodes of this label
+                    query = String.format("MATCH (%s:%s) %s DELETE %s", alias, label, detached, alias);
+                }
+            } catch (Exception e) {
+                exchange.setException(
+                        new Neo4jOperationException(
+                                Neo4Operation.DELETE_NODE,
+                                new IllegalArgumentException(
+                                        "Failed to parse MATCH_PROPERTIES as JSON: " + matchProperties,
+                                        e)));
+                return;
+            }
+        }
+
+        executeWriteQuery(exchange, query, queryParams, databaseName, Neo4Operation.DELETE_NODE);
     }
 
     private void createVectorIndex(Exchange exchange) {
