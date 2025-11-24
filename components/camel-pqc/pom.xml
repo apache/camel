@@ -48,6 +48,12 @@
             <version>${bouncycastle-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
+
         <!-- Spring Vault for HashicorpVaultKeyLifecycleManager (optional) -->
         <dependency>
             <groupId>org.springframework.vault</groupId>
