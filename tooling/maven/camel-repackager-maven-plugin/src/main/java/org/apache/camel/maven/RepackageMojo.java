@@ -29,8 +29,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.springframework.boot.loader.tools.DefaultLaunchScript;
-import org.springframework.boot.loader.tools.LaunchScript;
 import org.springframework.boot.loader.tools.Library;
 import org.springframework.boot.loader.tools.LibraryCallback;
 import org.springframework.boot.loader.tools.LibraryScope;
@@ -95,10 +93,8 @@ public class RepackageMojo extends AbstractMojo {
             repackager.setBackupSource(backupSource);
             repackager.setMainClass(mainClass);
 
-            LaunchScript launchScript = new DefaultLaunchScript(null, null);
-
             File targetFile = getTargetFile();
-            repackager.repackage(targetFile, this::getLibraries, launchScript);
+            repackager.repackage(targetFile, this::getLibraries);
 
             getLog().info("Successfully created self-executing JAR: " + targetFile);
 
