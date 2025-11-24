@@ -71,16 +71,18 @@ https://debezium.io/documentation/reference/0.10/connectors/postgresql.html#conn
 include::partial$component-endpoint-headers.adoc[]
 // component headers: END
 
+
 == Usage
 
 === Message body
 
-The message body if is not `null` (in case of tombstones), it contains the state of the row after the event occurred as `Struct` format or `Map` format if you use the included Type Converter from `Struct` to `Map`.
+If the message body is not `null` (in case of tombstones), it contains the state of the row after the event occurred. It is one of two formats:
 
-[NOTE]
-====
-Check below for more details.
-====
+- `Struct`
+- `Map` (if you use the included Type Converter from `Struct` to `Map`)
+
+See below for more details.
+
 
 == Examples
 
