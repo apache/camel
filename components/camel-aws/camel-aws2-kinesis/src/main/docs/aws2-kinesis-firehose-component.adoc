@@ -85,10 +85,6 @@ Only one of static, default and profile credentials could be used at the same ti
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Amazon Kinesis Firehose configuration
 
 You then have to reference the FirehoseClient in the `amazonKinesisFirehoseClient` URI option.

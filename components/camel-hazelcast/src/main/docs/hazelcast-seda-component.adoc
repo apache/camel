@@ -30,10 +30,6 @@ include::partial$component-endpoint-options.adoc[]
 The SEDA producer provides no operations. You only send data to the
 specified queue.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 [tabs]
 ====
 

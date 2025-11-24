@@ -47,10 +47,6 @@ The map cache producer provides follow operations specified by *CamelHazelcastOp
 * evict
 * evictAll
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 You can call the samples with:
 
 [source,java]

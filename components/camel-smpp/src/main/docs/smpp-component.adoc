@@ -41,6 +41,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
+[TIP]
+====
+*JSMPP library*
+
+See the documentation of the http://jsmpp.org[JSMPP Library] for more
+details about the underlying library.
+====
+
 == SMS limitations
 
 SMS is neither reliable nor secure. Users who require reliable and
@@ -169,16 +177,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-[TIP]
-====
-*JSMPP library*
-
-See the documentation of the http://jsmpp.org[JSMPP Library] for more
-details about the underlying library.
-====
 
 == Exception handling
 

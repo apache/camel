@@ -30,10 +30,6 @@ include::partial$component-endpoint-options.adoc[]
 
 The topic producer provides only one operation (publish).
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Example for *publish*:
 
 [source,java]

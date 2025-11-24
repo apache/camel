@@ -43,10 +43,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Thrift method parameters mapping
 
 Parameters in the called procedure must be passed as a list of objects inside the message body. The primitives are converted from the objects on the fly.

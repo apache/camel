@@ -49,10 +49,6 @@ You have to provide the amazonSQSClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/sqs[Amazon's SQS].
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 === Batch Consumer

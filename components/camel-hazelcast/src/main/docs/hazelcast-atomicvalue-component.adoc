@@ -37,10 +37,6 @@ The operations for this producer are:
 * compareAndSet
 * getAndAdd
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Example for *set*:
 
 [tabs]

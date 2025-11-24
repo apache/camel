@@ -52,10 +52,6 @@ You have to provide the amazonSTSClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/sts/[Amazon STS] service.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider

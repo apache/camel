@@ -408,10 +408,6 @@ Leave everything as it is and press "Create".
 
 You now have all the required parameters to set up the vault.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Azure Key Vault Producer operations
 
 Azure Key Vault component provides the following operation on the producer side:

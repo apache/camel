@@ -43,10 +43,6 @@ You have to provide the amazonAthenaClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/athena/[AWS Athena] service.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Examples
 
 === Producer Examples

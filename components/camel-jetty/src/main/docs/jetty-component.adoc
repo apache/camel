@@ -69,10 +69,6 @@ header named `orderid` with the value `123`.
 You can get the `request.parameter` from the
 message header not only from Get Method, but also other HTTP methods.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 The Jetty component supports consumer endpoints.

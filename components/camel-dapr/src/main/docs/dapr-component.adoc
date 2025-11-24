@@ -30,10 +30,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Dapr Producer operations
 
 Camel Dapr component provides a wide range of operations on the producer side:

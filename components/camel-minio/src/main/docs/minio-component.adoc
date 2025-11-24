@@ -48,10 +48,6 @@ include::partial$component-endpoint-options.adoc[]
 NOTE: You have to provide the minioClient in the Registry or your `accessKey` and `secretKey` to access
 the https://min.io/[Minio].
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 === Batch Consumer

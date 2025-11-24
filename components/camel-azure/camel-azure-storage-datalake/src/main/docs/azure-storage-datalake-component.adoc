@@ -74,10 +74,6 @@ from("azure-storage-datalake:camelTesting/filesystem?fileName=test.txt&accountKe
 to("file://fileDirectory");
 ----
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Automatic detection of a service client
 
 The component is capable of automatically detecting the presence of a DataLakeServiceClient bean in the registry.

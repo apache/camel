@@ -81,10 +81,6 @@ include::partial$component-endpoint-options.adoc[]
 
 == Usage
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Google Storage Producer operations
 
 Google Storage component provides the following operations on the producer side:

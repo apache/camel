@@ -63,10 +63,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 Headers are set by the consumer once the message is received. The
 producer will also set the headers for downstream processors once the
 insert/update has taken place. Any headers set prior to the producer are

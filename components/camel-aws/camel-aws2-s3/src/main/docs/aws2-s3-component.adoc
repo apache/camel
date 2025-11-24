@@ -49,10 +49,6 @@ You have to provide the amazonS3Client in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/s3[Amazon's S3].
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 === Batch Consumer

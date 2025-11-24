@@ -322,10 +322,6 @@ The endpoints accept either Java request objects as shown in the examples below 
 
 camel-zeebe creates a route exchange per job type with a job in the body.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.

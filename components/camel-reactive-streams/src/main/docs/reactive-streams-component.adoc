@@ -57,10 +57,6 @@ include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 The library is aimed to support all the communication modes needed by an application to interact with Camel data:

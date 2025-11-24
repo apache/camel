@@ -48,10 +48,6 @@ include::partial$component-endpoint-options.adoc[]
 
 == Exchange data format
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 Notice not all headers may be provided depending on available data and
 mode in use (`address` vs. `latlng`).
 

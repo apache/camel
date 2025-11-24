@@ -61,10 +61,6 @@ For more information about configuration:
 https://debezium.io/documentation/reference/1.18/operations/embedded.html#engine-properties[https://debezium.io/documentation/reference/1.8/operations/embedded.html#engine-properties]
 https://debezium.io/documentation/reference/1.18/connectors/db2ql.html#connector-properties[https://debezium.io/documentation/reference/1.8/connectors/db2.html#connector-properties]
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 
 == Usage
 

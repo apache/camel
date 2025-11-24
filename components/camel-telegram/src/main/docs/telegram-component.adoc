@@ -59,10 +59,6 @@ include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 The Telegram component supports both consumer and producer endpoints.

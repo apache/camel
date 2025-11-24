@@ -47,10 +47,6 @@ Required IBM COS component options
 You have to provide the `apiKey` and `serviceInstanceId` to access IBM Cloud Object Storage,
 along with the `endpointUrl` for your region.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 === Batch Consumer

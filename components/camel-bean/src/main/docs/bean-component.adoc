@@ -30,10 +30,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Examples
 
 A *bean:* endpoint cannot be defined as the input to the route; i.e., you

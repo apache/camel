@@ -35,10 +35,6 @@ The ringbuffer producer provides 5 operations:
 * remainingCapacity
 * capacity
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Example for *put*:
 
 [tabs]

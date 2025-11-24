@@ -35,10 +35,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Authentication and Hashicorp vault on-premise vs Hashicorp Cloud
 
 The component supports operations at the producer level. Specifically, it provides the following functionalities:

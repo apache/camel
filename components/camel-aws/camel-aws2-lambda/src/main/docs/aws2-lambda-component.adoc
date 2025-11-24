@@ -48,10 +48,6 @@ You have to provide the awsLambdaClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/lambda/[Amazon Lambda] service.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 === Static credentials, Default Credential Provider and Profile Credentials Provider

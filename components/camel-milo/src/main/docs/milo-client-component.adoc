@@ -67,10 +67,6 @@ include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Discovery
 
 If the server uses a dedicated discovery endpoint (e.g. `/discovery`), which may support different (less secure) security policies,

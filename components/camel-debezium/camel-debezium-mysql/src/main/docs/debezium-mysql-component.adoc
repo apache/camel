@@ -72,10 +72,6 @@ For more information about configuration:
 https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties[https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties]
 https://debezium.io/documentation/reference/0.10/connectors/mysql.html#connector-properties[https://debezium.io/documentation/reference/0.10/connectors/mysql.html#connector-properties]
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 
 == Usage
 

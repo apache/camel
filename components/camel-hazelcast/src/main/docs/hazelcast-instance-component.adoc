@@ -43,8 +43,4 @@ fromF("hazelcast-%sfoo", HazelcastConstants.INSTANCE_PREFIX)
         .to("mock:removed");
 -----------------------------------------------------------------------------------------
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 include::spring-boot:partial$starter.adoc[]

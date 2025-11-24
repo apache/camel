@@ -43,10 +43,6 @@ Required Watson Speech to Text component options
 You must provide the `apiKey` to access IBM Watson Speech to Text.
 Optionally, you can specify a custom `serviceUrl` if you're using a dedicated or private instance.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 === Watson Speech to Text Producer operations

@@ -81,10 +81,6 @@ from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey"
 to("file://queuedirectory");
 --------------------------------------------------------------------------------
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Advanced Azure Storage Queue configuration
 If your Camel Application is running behind a firewall or if you need to
 have more control over the `QueueServiceClient` instance configuration, you can

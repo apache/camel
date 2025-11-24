@@ -36,10 +36,6 @@ The replicatedmap producer provides 6 operations:
 * containsKey
 * containsValue
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Example for *put*:
 
 [tabs]

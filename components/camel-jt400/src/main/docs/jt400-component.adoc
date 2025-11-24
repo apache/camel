@@ -98,10 +98,6 @@ objects representing the values as they were returned by the program.
 Input-only parameters will contain the same data as the beginning of the invocation.
 This endpoint does not implement a provider endpoint!
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Example
 
 In the snippet below, the data for an exchange sent to the

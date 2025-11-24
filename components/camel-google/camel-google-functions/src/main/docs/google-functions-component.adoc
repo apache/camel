@@ -81,10 +81,6 @@ include::partial$component-endpoint-options.adoc[]
 
 == Usage
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Google Functions Producer operations
 
 Google Functions component provides the following operation on the producer side:

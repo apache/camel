@@ -42,10 +42,6 @@ The queue producer provides 12 operations:
 * take
 * retainAll
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Example for *add*:
 
 [source,java]

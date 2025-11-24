@@ -30,10 +30,6 @@ include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Setting up class loader
 
 Grape requires using Groovy class loader with the `CamelContext`. You

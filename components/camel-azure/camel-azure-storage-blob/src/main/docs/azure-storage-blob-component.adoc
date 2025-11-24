@@ -79,10 +79,6 @@ from("azure-storage-blob://camelazure/container1?blobName=hello.txt&credentialTy
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Advanced Azure Storage Blob configuration
 
 If your Camel Application is running behind a firewall or if you need to

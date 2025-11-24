@@ -35,8 +35,4 @@ The set producer provides seven operations:
 * retainAll
 * getAll
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 include::spring-boot:partial$starter.adoc[]

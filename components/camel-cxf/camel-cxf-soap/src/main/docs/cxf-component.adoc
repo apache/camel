@@ -68,10 +68,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 The `serviceName` and `portName` are
 http://en.wikipedia.org/wiki/QName[QNames], so if you provide them be
 sure to prefix them with their _\{namespace}_ as shown in the examples

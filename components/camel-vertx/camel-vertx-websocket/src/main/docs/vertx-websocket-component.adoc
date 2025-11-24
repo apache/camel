@@ -42,10 +42,6 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 The following example shows how to expose a WebSocket on http://localhost:8080/echo and returns an '_echo_' response back to the same channel:
 

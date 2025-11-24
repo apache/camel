@@ -145,10 +145,6 @@ got only one parameter, *since 2.12* you can use `singleParameter` URI
 option to receive it directly in the "in" message body without array
 wrapping.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Examples
 
 An example of using camel avro producers via http:

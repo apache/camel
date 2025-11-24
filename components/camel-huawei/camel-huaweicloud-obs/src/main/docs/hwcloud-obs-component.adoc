@@ -72,10 +72,6 @@ If any of the above properties are set, they will override their corresponding q
 
 |=======================================================================
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === List of Supported OBS Operations
 
 - listBuckets

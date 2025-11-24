@@ -52,10 +52,6 @@ include::partial$component-endpoint-options.adoc[]
 // component options: END
 
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Client
 
 The browse component shares the same base options like the Camel Milo Client component, e.g. concerning topics like discovery,

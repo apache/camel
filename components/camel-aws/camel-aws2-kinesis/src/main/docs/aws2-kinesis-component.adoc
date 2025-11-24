@@ -51,10 +51,6 @@ You have to provide the KinesisClient in the
 Registry with proxies and relevant credentials
 configured.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 === Batch Consumer

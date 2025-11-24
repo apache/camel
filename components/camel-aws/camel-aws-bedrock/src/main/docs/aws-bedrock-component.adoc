@@ -69,10 +69,6 @@ Only one of static, default and profile credentials could be used at the same ti
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 === Supported AWS Bedrock Models
 
 - Titan Text Express V1 with id `amazon.titan-text-express-v1`

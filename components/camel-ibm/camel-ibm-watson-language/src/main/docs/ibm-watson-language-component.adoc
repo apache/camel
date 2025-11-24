@@ -45,10 +45,6 @@ Required IBM Watson Language component options
 
 You must provide the `apiKey` for authentication and optionally the `serviceUrl` for your Watson service instance.
 
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Usage
 
 === IBM Watson Natural Language Understanding
