@@ -190,11 +190,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     checkComponentHeader(file);
                     checkSince(file);
 
-                    updated |= updateOptionsIn(file, "component-configure", "");
                     String options = evaluateTemplate("component-options.mvel", model);
                     updated |= updateOptionsIn(file, kind, options);
-
-                    updated |= updateOptionsIn(file, "endpoint", "");
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
