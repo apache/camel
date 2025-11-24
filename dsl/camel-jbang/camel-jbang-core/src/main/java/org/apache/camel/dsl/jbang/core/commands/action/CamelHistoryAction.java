@@ -338,7 +338,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
             String uri = r.endpoint != null ? r.endpoint.getString("endpoint") : null;
             Row t = r.first ? r : next; // if sending to endpoint then we should find details in the next step as they are response
-            if (uri != null && t != null)  {
+            if (uri != null && t != null) {
                 StringJoiner sj = new StringJoiner(" ");
                 var map = extractComponentModel(uri, t);
                 // special for file / http

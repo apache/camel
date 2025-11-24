@@ -36,7 +36,8 @@ public final class UndertowConstants {
      */
     @Metadata(javaType = "Boolean")
     public static final String SEND_TO_ALL = "websocket.sendToAll";
-    @Metadata(label = "consumer", description = "The numeric identifier of the type of websocket event", javaType = "Integer", important = true)
+    @Metadata(label = "consumer", description = "The numeric identifier of the type of websocket event", javaType = "Integer",
+              important = true)
     public static final String EVENT_TYPE = "websocket.eventType";
     @Metadata(label = "consumer", description = "The type of websocket event",
               javaType = "org.apache.camel.component.undertow.UndertowConstants.EventType")
