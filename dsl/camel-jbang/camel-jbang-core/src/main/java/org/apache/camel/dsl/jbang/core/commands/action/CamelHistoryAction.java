@@ -74,8 +74,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
         super(main);
     }
 
-    // TODO: calling endpoint, check next row for important response headers to show
-
     @Override
     public Integer doWatchCall() throws Exception {
         if (name == null) {
@@ -339,8 +337,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
             Row next = i > 0 && i < rows.size() + 2 ? rows.get(i + 1) : null;
 
             String uri = r.endpoint != null ? r.endpoint.getString("endpoint") : null;
-            if (uri != null) {
-                var map = extractComponentModel(uri, r);
+            Row t = r.first ? r : next; // if sending to endpoint then we should find details in the next step as they are response
+            if (uri != null && t != null)  {
+                var map = extractComponentModel(uri, t);
                 // special for file
                 String fn = map.remove("CamelFileName");
                 String fs = map.remove("CamelFileLength");
