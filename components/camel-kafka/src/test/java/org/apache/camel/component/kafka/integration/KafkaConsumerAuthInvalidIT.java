@@ -36,7 +36,6 @@ import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.common.config.SaslConfigs;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -163,7 +162,7 @@ public class KafkaConsumerAuthInvalidIT {
                         kafkaAdminClient));
         final ConsumerGroupDescription groupInfo = allGroups.get("KafkaConsumerAuthInvalidIT");
 
-        Assert.assertEquals("There should be no members in this group", 0, groupInfo.members().size());
+        Assertions.assertEquals(0, groupInfo.members().size(), "There should be no members in this group");
 
         for (Exchange exchange : dlq.getExchanges()) {
             Assertions.assertEquals("should-no-work", exchange.getFromRouteId());

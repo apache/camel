@@ -33,3 +33,7 @@ Disabling virtual threads by setting system property `org.infinispan.threads.vir
 === Component deprecation
 
 The `camel-stomp` component is deprecated.
+
+=== TestContainers updated to 2.0.2
+
+TestContainers (TC) is updated to 2.0.2, see the https://github.com/testcontainers/testcontainers-java/releases[TC release notes since 2.0.0] and CAMEL-22720, noteworthy are: Removed JUnit 4 support, All modules are now prefixed with testcontainers-. For example, org.testcontainers:mysql is now org.testcontainers:testcontainers-mysql. Update docker image version to 25.0.5. Set default docker API version to 1.44.

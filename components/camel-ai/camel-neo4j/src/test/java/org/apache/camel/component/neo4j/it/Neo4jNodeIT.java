@@ -30,11 +30,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class Neo4jNodeIT extends Neo4jTestSupport {
 

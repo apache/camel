@@ -28,6 +28,7 @@ import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
+import org.apache.commons.lang3.SystemUtils;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.api.BasicCache;
@@ -38,7 +39,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class InfinispanRemoteTestSupport extends InfinispanTestSupport {

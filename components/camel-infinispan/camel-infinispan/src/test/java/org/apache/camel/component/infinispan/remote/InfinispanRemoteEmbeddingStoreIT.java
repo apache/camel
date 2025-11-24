@@ -29,6 +29,7 @@ import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanOperation;
 import org.apache.camel.component.infinispan.remote.embeddingstore.EmbeddingStoreUtil;
 import org.apache.camel.spi.DataType;
+import org.apache.commons.lang3.SystemUtils;
 import org.awaitility.Awaitility;
 import org.infinispan.api.annotations.indexing.option.VectorSimilarity;
 import org.infinispan.client.hotrod.RemoteCacheManager;
@@ -40,7 +41,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

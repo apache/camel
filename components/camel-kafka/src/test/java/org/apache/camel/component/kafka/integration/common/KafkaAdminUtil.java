@@ -31,9 +31,7 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.common.config.SaslConfigs;
-import org.junit.Assert;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import org.junit.jupiter.api.Assertions;
 
 public final class KafkaAdminUtil {
 
@@ -55,12 +53,12 @@ public final class KafkaAdminUtil {
 
     public static void assertGroupIsConnected(String groupId, AdminClient kafkaAdminClient) {
         final Map<String, ConsumerGroupDescription> allGroups
-                = assertDoesNotThrow(() -> getConsumerGroupInfo(groupId, kafkaAdminClient));
+                = Assertions.assertDoesNotThrow(() -> getConsumerGroupInfo(groupId, kafkaAdminClient));
 
-        Assert.assertTrue("There should be at least one group named" + groupId, allGroups.size() >= 1);
+        Assertions.assertTrue(allGroups.size() >= 1, "There should be at least one group named" + groupId);
 
         final ConsumerGroupDescription groupInfo = allGroups.get("KafkaConsumerAuthIT");
-        Assert.assertNotNull("There should be at least one group named KafkaConsumerAuthIT", groupInfo);
+        Assertions.assertNotNull(groupInfo, "There should be at least one group named KafkaConsumerAuthIT");
     }
 
     public static AdminClient createAuthAdminClient(KafkaService service) {

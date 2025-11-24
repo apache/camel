@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.eventbridge.model.ListTargetsByRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EventbridgeListTargetsByRuleIT extends Aws2EventbridgeBase {
 

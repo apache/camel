@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.nats;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -28,7 +28,7 @@ public class NatsSplitServersMultiprotocolTest {
         NatsConfiguration conf = new NatsConfiguration();
         conf.setServers("nats://localhost:1234,localhost:6574,ws://localhost:2134");
         String serv = conf.splitServers();
-        Assert.assertEquals(serv, "nats://localhost:1234,nats://localhost:6574,ws://localhost:2134");
+        Assertions.assertEquals(serv, "nats://localhost:1234,nats://localhost:6574,ws://localhost:2134");
     }
 
     @Test
@@ -36,7 +36,7 @@ public class NatsSplitServersMultiprotocolTest {
         NatsConfiguration conf = new NatsConfiguration();
         conf.setServers("wss://localhost:1234,wss://localhost:6574,wss://localhost:2134");
         String serv = conf.splitServers();
-        Assert.assertEquals(serv, "wss://localhost:1234,wss://localhost:6574,wss://localhost:2134");
+        Assertions.assertEquals(serv, "wss://localhost:1234,wss://localhost:6574,wss://localhost:2134");
     }
 
     @Test
@@ -44,7 +44,7 @@ public class NatsSplitServersMultiprotocolTest {
         NatsConfiguration conf = new NatsConfiguration();
         conf.setServers("ws://localhost:1234,ws://localhost:6574,ws://localhost:2134");
         String serv = conf.splitServers();
-        Assert.assertEquals(serv, "ws://localhost:1234,ws://localhost:6574,ws://localhost:2134");
+        Assertions.assertEquals(serv, "ws://localhost:1234,ws://localhost:6574,ws://localhost:2134");
     }
 
     @Test
@@ -52,6 +52,6 @@ public class NatsSplitServersMultiprotocolTest {
         NatsConfiguration conf = new NatsConfiguration();
         conf.setServers("localhost:1234,localhost:6574,localhost:2134");
         String serv = conf.splitServers();
-        Assert.assertEquals(serv, "nats://localhost:1234,nats://localhost:6574,nats://localhost:2134");
+        Assertions.assertEquals(serv, "nats://localhost:1234,nats://localhost:6574,nats://localhost:2134");
     }
 }

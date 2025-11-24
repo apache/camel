@@ -49,7 +49,7 @@
 
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>elasticsearch</artifactId>
+            <artifactId>testcontainers-elasticsearch</artifactId>
             <version>${testcontainers-version}</version>
         </dependency>
     </dependencies>

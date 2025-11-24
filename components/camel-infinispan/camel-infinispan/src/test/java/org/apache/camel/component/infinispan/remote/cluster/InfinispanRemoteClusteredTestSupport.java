@@ -19,11 +19,11 @@ package org.apache.camel.component.infinispan.remote.cluster;
 import java.util.Properties;
 
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
+import org.apache.commons.lang3.SystemUtils;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.Configuration;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.configuration.cache.CacheMode;
-import org.testcontainers.shaded.org.apache.commons.lang3.SystemUtils;
 
 public final class InfinispanRemoteClusteredTestSupport {
     private InfinispanRemoteClusteredTestSupport() {

@@ -26,11 +26,12 @@ import java.util.stream.Stream;
 
 import org.apache.camel.test.infra.cli.common.CliProperties;
 import org.apache.camel.test.infra.common.services.ContainerService;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Container;
-import org.testcontainers.shaded.org.apache.commons.lang3.StringUtils;
 
 public class CliLocalContainerService implements CliService, ContainerService<CliBuiltContainer> {
     public static final String CONTAINER_NAME = "camel-cli";
@@ -77,11 +78,11 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
             registerProperties();
             LOG.info("{} instance running", CONTAINER_NAME);
-            if (StringUtils.isNotBlank(forceToRunVersion)) {
+            if (ObjectHelper.isNotEmpty(forceToRunVersion)) {
                 LOG.info("force to use version {}", forceToRunVersion);
                 execute("version set " + forceToRunVersion);
             }
-            if (StringUtils.isNotBlank(mavenRepos)) {
+            if (ObjectHelper.isNotEmpty(mavenRepos)) {
                 LOG.info("set repositories {}", mavenRepos);
                 execute(String.format("config set repos=%s", mavenRepos));
             }
@@ -117,8 +118,8 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public String executeBackground(String command) {
-        final String pid = StringUtils.substringAfter(execute(command.concat(" --background")), "PID:").trim();
-        return StringUtils.isNumeric(pid) ? pid : StringUtils.substringBefore(pid, " ");
+        final String pid = StringHelper.after(execute(command.concat(" --background")), "PID:").trim();
+        return org.apache.camel.support.ObjectHelper.isNumber(pid) ? pid : StringHelper.before(pid, " ");
     }
 
     @Override
@@ -131,10 +132,10 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
                         execResult.getStderr()));
             }
             if (LOG.isDebugEnabled()) {
-                if (StringUtils.isNotBlank(execResult.getStdout())) {
+                if (ObjectHelper.isNotEmpty(execResult.getStdout())) {
                     LOG.debug("result out {}", execResult.getStdout());
                 }
-                if (StringUtils.isNotBlank(execResult.getStderr())) {
+                if (ObjectHelper.isNotEmpty(execResult.getStderr())) {
                     LOG.debug("result error {}", execResult.getStderr());
                 }
             }
@@ -195,10 +196,10 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
                 .orElseGet(() -> {
                     final String versionSummary = execute("version");
                     if (versionSummary.contains("User configuration") && versionSummary.contains("camel-version = ")) {
-                        version = StringUtils.substringBetween(versionSummary, "camel-version = ", "\n").trim();
+                        version = StringHelper.between(versionSummary, "camel-version = ", "\n").trim();
                     }
                     if (version == null) {
-                        version = StringUtils.substringBetween(versionSummary, "Camel JBang version:", "\n").trim();
+                        version = StringHelper.between(versionSummary, "Camel JBang version:", "\n").trim();
                     }
                     return version;
                 });
