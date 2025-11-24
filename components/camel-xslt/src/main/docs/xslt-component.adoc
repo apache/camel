@@ -51,10 +51,6 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-/ component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-
 == Using XSLT endpoints
 
 The following format is an example of using an XSLT template to formulate a response for a message for InOut
