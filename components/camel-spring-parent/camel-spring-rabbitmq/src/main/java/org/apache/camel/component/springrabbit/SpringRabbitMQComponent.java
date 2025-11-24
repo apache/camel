@@ -25,9 +25,9 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.PropertiesHelper;
 import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptor;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 import org.springframework.util.ErrorHandler;
 
 import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DIRECT_MESSAGE_LISTENER_CONTAINER;
@@ -104,7 +104,7 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
     private Integer maxConcurrentConsumers;
     @Metadata(label = "consumer,advanced", description = "Custom retry configuration to use. "
                                                          + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
-    private RetryOperationsInterceptor retry;
+    private StatelessRetryOperationsInterceptor retry;
     @Metadata(label = "consumer", defaultValue = "5",
               description = "How many times a Rabbitmq consumer will retry the same message if Camel failed to process the message")
     private int maximumRetryAttempts = 5;
@@ -345,11 +345,11 @@ public class SpringRabbitMQComponent extends HeaderFilterStrategyComponent {
         this.maxConcurrentConsumers = maxConcurrentConsumers;
     }
 
-    public RetryOperationsInterceptor getRetry() {
+    public StatelessRetryOperationsInterceptor getRetry() {
         return retry;
     }
 
-    public void setRetry(RetryOperationsInterceptor retry) {
+    public void setRetry(StatelessRetryOperationsInterceptor retry) {
         this.retry = retry;
     }
 

@@ -83,7 +83,7 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "rejectAndDontRequeue": target.setRejectAndDontRequeue(property(camelContext, boolean.class, value)); return true;
         case "replytimeout":
         case "replyTimeout": target.setReplyTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "retry": target.setRetry(property(camelContext, org.springframework.retry.interceptor.RetryOperationsInterceptor.class, value)); return true;
+        case "retry": target.setRetry(property(camelContext, org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptor.class, value)); return true;
         case "retrydelay":
         case "retryDelay": target.setRetryDelay(property(camelContext, int.class, value)); return true;
         case "routingkey":
@@ -166,7 +166,7 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "rejectAndDontRequeue": return boolean.class;
         case "replytimeout":
         case "replyTimeout": return long.class;
-        case "retry": return org.springframework.retry.interceptor.RetryOperationsInterceptor.class;
+        case "retry": return org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptor.class;
         case "retrydelay":
         case "retryDelay": return int.class;
         case "routingkey":
