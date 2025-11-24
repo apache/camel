@@ -49,10 +49,6 @@ You can append query options to the URI in the following format:
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
-// component-configure options: START
-// component-configure options: END
-// endpoint options: START
-// endpoint options: END
 
 == Usage
 
