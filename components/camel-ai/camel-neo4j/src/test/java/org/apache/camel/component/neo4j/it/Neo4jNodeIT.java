@@ -42,8 +42,8 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
     @Order(0)
     void createNodeWithJsonObject() {
 
-        var body = "{name: 'Alice', email: 'alice@example.com', age: 30}";
-        var expectedCypherQuery = "CREATE (u1:User {name: 'Alice', email: 'alice@example.com', age: 30})";
+        var body = "{\"name\": \"Alice\", \"email\": \"alice@example.com\", \"age\": 30}";
+        var expectedCypherQuery = "CREATE (u1:User $props)";
 
         Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u1&label=User")
                 .withBodyAs(body, String.class)
@@ -144,7 +144,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
     void testRetrieveNode() {
         Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
                 .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.RETRIEVE_NODES)
-                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{name: 'Alice'}")
+                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{\"name\": \"Alice\"}")
                 .request(Exchange.class);
 
         Assertions.assertNotNull(result);
@@ -196,7 +196,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         // delete node
         Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
                 .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.DELETE_NODE)
-                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{name: 'Alice'}")
+                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{\"name\": \"Alice\"}")
                 .request(Exchange.class);
 
         Assertions.assertNotNull(result);
@@ -218,7 +218,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
 
         result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
                 .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.RETRIEVE_NODES)
-                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{name: 'Alice'}")
+                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{\"name\": \"Alice\"}")
                 .request(Exchange.class);
 
         Assertions.assertNotNull(result);
@@ -236,7 +236,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         // try to delete user named Diana and this should fail as Diana has a relationship with Ethan
         Exchange result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
                 .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.DELETE_NODE)
-                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{name: 'Diana'}")
+                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{\"name\": \"Diana\"}")
                 .request(Exchange.class);
 
         Assertions.assertNotNull(result);
@@ -247,7 +247,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
         // delete the Diana by detaching its relationship with Ethan - detachRelationship=true
         result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User&detachRelationship=true")
                 .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.DELETE_NODE)
-                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{name: 'Diana'}")
+                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{\"name\": \"Diana\"}")
                 .request(Exchange.class);
         Assertions.assertNotNull(result);
         Assertions.assertNull(result.getException(), "No exception anymore when deleting relationship at same time");
@@ -270,7 +270,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
 
         result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
                 .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.RETRIEVE_NODES)
-                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{name: 'Diana'}")
+                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{\"name\": \"Diana\"}")
                 .request(Exchange.class);
 
         Assertions.assertNotNull(result);
@@ -312,7 +312,7 @@ public class Neo4jNodeIT extends Neo4jTestSupport {
 
         result = fluentTemplate.to("neo4j:neo4j?alias=u&label=User")
                 .withHeader(Neo4jHeaders.OPERATION, Neo4Operation.RETRIEVE_NODES)
-                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{name: 'Bob'}")
+                .withHeader(Neo4jHeaders.MATCH_PROPERTIES, "{\"name\": \"Bob\"}")
                 .request(Exchange.class);
 
         Assertions.assertNotNull(result);
