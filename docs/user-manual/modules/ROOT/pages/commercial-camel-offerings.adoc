@@ -22,12 +22,12 @@ Software. We specialize in helping our clients to realize new projects
 and support the delivery of the project from end to end.
 
 
-== https://integrationmadeeasy.com[Dovetail]
+== https://fluxygen.com[Fluxygen]
 
-https://integrationmadeeasy.com[Dovetail] is a company based in the Netherlands.
+https://fluxygen.com[Fluxygen] is a company based in the Netherlands.
 It offers a low-code integration platform based on Apache Camel, Apache ActiveMQ and
-https://assimbly.org[Assimbly]. The aim is to make integration as easy as possible.
-We provide cloud services, support and training.
+https://assimbly.org[Assimbly]. The aim is to make integration as easy as possible, 
+and enable businesses to automate processes. We also provide cloud services, support and training.
 
 
 == http://ibm.biz/OSSupport[IBM]
