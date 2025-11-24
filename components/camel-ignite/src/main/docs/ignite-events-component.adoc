@@ -22,6 +22,7 @@ The Exchanges created by this consumer put the received Event object into the bo
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 

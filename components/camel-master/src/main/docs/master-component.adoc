@@ -32,6 +32,7 @@ Where endpoint is any Camel endpoint, you want to run in master/slave mode.
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 == Usage

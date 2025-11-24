@@ -79,6 +79,7 @@ between different signer/verifier endpoints within the camel context.
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 == XML Signature Wrapping Modes

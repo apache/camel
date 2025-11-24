@@ -22,6 +22,7 @@ provides a producer to execute Kubernetes Namespace operations and a consumer to
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 == Usage
