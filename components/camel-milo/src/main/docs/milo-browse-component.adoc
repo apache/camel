@@ -46,10 +46,6 @@ milo-browse:opc.tcp://[user:password@]host:port/path/to/service?node=RAW(nsu=urn
 
 Please refer to the xref:milo-client-component.adoc[Milo Client] component for further details about the construction of the URI.
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]

@@ -40,18 +40,10 @@ http:hostname[:port][/resourceUri][?options]
 Will by default use port 80 for HTTP and 443 for HTTPS.
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 // component headers: START
 include::partial$component-endpoint-headers.adoc[]

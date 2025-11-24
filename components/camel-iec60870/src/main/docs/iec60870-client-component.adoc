@@ -58,18 +58,10 @@ The final connection options will be evaluated in the following order:
 * Apply `dataModuleOptions` if present
 * Apply all explicit connection parameters (e.g. `timeZone`)
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 // component headers: START
 include::partial$component-endpoint-headers.adoc[]

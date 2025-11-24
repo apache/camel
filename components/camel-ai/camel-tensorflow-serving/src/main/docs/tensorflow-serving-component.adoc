@@ -37,18 +37,10 @@ tensorflow-serving:api[?options]
 
 Where `api` represents one of the https://github.com/tensorflow/serving/blob/2.18.0/tensorflow_serving/apis/prediction_service.proto[TensorFlow Serving Client API (gPRC)]. While its RESTful Client API is not directly supported by the component, you can refer to the https://www.tensorflow.org/tfx/serving/api_rest[doc] to get an idea of each API that TensorFlow Serving provides.
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 // component headers: START
 include::partial$component-endpoint-headers.adoc[]

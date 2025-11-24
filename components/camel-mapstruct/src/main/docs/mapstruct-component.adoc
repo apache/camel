@@ -24,10 +24,6 @@ mapstruct:className[?options]
 
 Where `className` is the fully qualified class name of the POJO to convert to.
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]

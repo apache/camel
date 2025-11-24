@@ -78,10 +78,6 @@ For producers:
 
 As Jira is fully customizable, you must ensure the field IDs exist for the project and workflow, as they can change between different Jira servers.
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]

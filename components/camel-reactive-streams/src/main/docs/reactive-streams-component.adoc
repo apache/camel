@@ -51,10 +51,6 @@ reactive-streams://stream?[options]
 Where *stream* is a logical stream name used to bind Camel routes to the
 external stream processing systems.
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]

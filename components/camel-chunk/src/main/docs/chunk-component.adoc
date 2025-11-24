@@ -32,18 +32,10 @@ invoke.
 You can append query options to the URI in the following format: `?option=value&option=value&...`
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 
 Chunk component will look for a specific template in the _themes_ folder
