@@ -79,8 +79,15 @@ include::partial$component-endpoint-headers.adoc[]
 
 *Note*: Debezium Mongodb uses MongoDB’s oplog to populate the CDC events, the update events in MongoDB’s oplog don’t have the before or after states of the changed document, so there’s no way for the Debezium connector to provide this information, therefore header key `CamelDebeziumBefore` is not available in this component.
 
-== Message body
-The message body if is not `null` (in case of tombstones), it contains the state of the row after the event occurred as `String` JSON format, and you can unmarshal using Camel JSON Data Format.
+
+== Usage
+
+=== Message body
+
+If the message body is not `null` (in case of tombstones), it contains the state of the row after the event occurred. It is in `String` JSON format, and you can unmarshal using Camel JSON Data Format.
+
+See below for more details.
+
 
 == Examples
 
