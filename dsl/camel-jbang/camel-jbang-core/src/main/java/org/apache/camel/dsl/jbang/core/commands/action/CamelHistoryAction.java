@@ -339,22 +339,25 @@ public class CamelHistoryAction extends ActionWatchCommand {
             String uri = r.endpoint != null ? r.endpoint.getString("endpoint") : null;
             Row t = r.first ? r : next; // if sending to endpoint then we should find details in the next step as they are response
             if (uri != null && t != null)  {
+                StringJoiner sj = new StringJoiner(" ");
                 var map = extractComponentModel(uri, t);
-                // special for file
+                // special for file / http
                 String fn = map.remove("CamelFileName");
                 String fs = map.remove("CamelFileLength");
+                String hn = map.remove("CamelHttpResponseCode");
+                String hs = map.remove("CamelHttpResponseText");
                 if (fn != null && fs != null) {
-                    r.summary = "File: " + fn + " (" + fs + " bytes)";
+                    sj.add("File: " + fn + " (" + fs + " bytes)");
                 } else if (fn != null) {
-                    r.summary = "File: " + fn;
-                } else {
-                    StringJoiner sj = new StringJoiner(" ");
-                    map.forEach((k, v) -> {
-                        String line = k + "=" + v;
-                        sj.add(line);
-                    });
-                    r.summary = sj.toString();
+                    sj.add("File: " + fn);
+                } else if (hn != null && hs != null) {
+                    sj.add(hn + "=" + hs);
                 }
+                map.forEach((k, v) -> {
+                    String line = k + "=" + v;
+                    sj.add(line);
+                });
+                r.summary = sj.toString();
             } else if ("filter".equals(r.nodeShortName)) {
                 if (next != null && r.nodeId != null && r.nodeId.equals(next.nodeParentId)) {
                     r.summary = "Filter: true";
