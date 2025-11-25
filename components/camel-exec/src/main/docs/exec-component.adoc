@@ -42,22 +42,11 @@ Where `executable` is the name, or file path, of the system command that
 will be executed. If executable name is used (e.g. `exec:java`), the
 executable must in the system path.
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
-// component options: END
-
-// endpoint options: START
-
-// endpoint options: END
-
-// component headers: START
 include::partial$component-endpoint-headers.adoc[]
-// component headers: END
+// component options: END
 
 == Usage
 

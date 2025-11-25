@@ -39,22 +39,11 @@ caffeine-loadcache://cacheName[?options]
 You can append query options to the URI in the following format: `?option=value&option=#beanRef&...`
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
-// component options: END
-
-// endpoint options: START
-
-// endpoint options: END
-
-// component headers: START
 include::partial$component-endpoint-headers.adoc[]
-// component headers: END
+// component options: END
 
 
 include::spring-boot:partial$starter.adoc[]

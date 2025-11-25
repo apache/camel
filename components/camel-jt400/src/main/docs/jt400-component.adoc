@@ -52,18 +52,11 @@ jt400://user:password/system/QSYS.LIB/library.LIB/program.PGM[?options]
 -----------------------------------------------------------------------
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 
 == Usage
@@ -105,10 +98,6 @@ _format_, the returned array will be populated with `byte[]` or `String`
 objects representing the values as they were returned by the program.
 Input-only parameters will contain the same data as the beginning of the invocation.
 This endpoint does not implement a provider endpoint!
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 == Example
 

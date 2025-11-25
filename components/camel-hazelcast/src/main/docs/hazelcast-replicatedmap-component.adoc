@@ -19,18 +19,11 @@ The http://www.hazelcast.com/[Hazelcast] instance component is one of Camel Haze
 A replicated map is a weakly consistent, distributed key-value data structure with no data partition.
  
  
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 
 == replicatedmap cache producer
@@ -43,10 +36,6 @@ The replicatedmap producer provides 6 operations:
 * clear
 * containsKey
 * containsValue
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 === Example for *put*:
 

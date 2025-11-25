@@ -42,21 +42,10 @@ The information object address is encoded in the path in the syntax above.
 Please note that always the full, 5-octet address format is being used.
 Unused octets have to be filled with zero.
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
-// component options: END
-
-// endpoint options: START
-
-// endpoint options: END
-
-// component headers: START
 include::partial$component-endpoint-headers.adoc[]
-// component headers: END
+// component options: END
 
 include::spring-boot:partial$starter.adoc[]

@@ -24,21 +24,12 @@ When using the Direct Message consumer, it will consider only the last 30-day di
 ====
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-// endpoint options: START
-
-// endpoint options: END
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 
 

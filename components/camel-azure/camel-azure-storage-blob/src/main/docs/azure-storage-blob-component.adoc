@@ -52,18 +52,11 @@ The blob will be created if it does not already exist.
 You can append query options to the URI in the following format, `?options=value&option2=value&...`
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 *Required information options:*
 
@@ -86,10 +79,6 @@ located on the `container1` in the `camelazure` storage account, use the followi
 from("azure-storage-blob://camelazure/container1?blobName=hello.txt&credentialType=SHARED_ACCOUNT_KEY&accessKey=RAW(yourAccessKey)").
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 === Advanced Azure Storage Blob configuration
 

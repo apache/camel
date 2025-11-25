@@ -53,18 +53,11 @@ The queue will be created if it does not already exist.
 You can append query options to the URI in the following format: `?options=value&option2=value&...`
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 *Required information options:*
 
@@ -88,10 +81,6 @@ in the `storageAccount` storage account and, use the following snippet:
 from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey").
 to("file://queuedirectory");
 --------------------------------------------------------------------------------
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 === Advanced Azure Storage Queue configuration
 If your Camel Application is running behind a firewall or if you need to

@@ -46,18 +46,11 @@ being requested.
 You can append query options to the URI in the following format: `?option1=value&option2=value&...`
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 
 === Methods of authentication
@@ -81,10 +74,6 @@ For example, to download content from file `test.txt` located on the `filesystem
 from("azure-storage-datalake:camelTesting/filesystem?fileName=test.txt&accountKey=key").
 to("file://fileDirectory");
 ----
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 === Automatic detection of a service client
 

@@ -49,26 +49,15 @@ for this component.
 debezium-sqlserver:name[?options]
 ---------------------------
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 For more information about configuration:
 https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties[https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties]
 https://debezium.io/documentation/reference/0.10/connectors/sqlserver.html#connector-properties[https://debezium.io/documentation/reference/0.10/connectors/sqlserver.html#connector-properties]
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 == Usage
 

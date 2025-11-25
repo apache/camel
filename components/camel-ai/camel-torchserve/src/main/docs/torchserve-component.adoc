@@ -38,22 +38,11 @@ torchserve:api/operation[?options]
 
 Where `api` represents one of the https://pytorch.org/serve/rest_api.html[TorchServe REST API], and `operation` represents a specific operation supported by the API.
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
-// component options: END
-
-// endpoint options: START
-
-// endpoint options: END
-
-// component headers: START
 include::partial$component-endpoint-headers.adoc[]
-// component headers: END
+// component options: END
 
 == Usage
 

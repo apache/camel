@@ -31,18 +31,11 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 == Apache Avro Overview
 
@@ -152,10 +145,6 @@ created exchange. Once the exchange is processed, the body of the
 got only one parameter, *since 2.12* you can use `singleParameter` URI
 option to receive it directly in the "in" message body without array
 wrapping.
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 == Examples
 

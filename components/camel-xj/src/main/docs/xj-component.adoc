@@ -51,22 +51,11 @@ The *templateName* parameter allows using _identify transforma_ by specifying th
 
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
-// component options: END
-
-// endpoint options: START
-
-// endpoint options: END
-
-// component headers: START
 include::partial$component-endpoint-headers.adoc[]
-// component headers: END
+// component options: END
 
 == Usage
 

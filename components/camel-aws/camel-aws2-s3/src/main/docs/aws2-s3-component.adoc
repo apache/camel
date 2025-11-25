@@ -37,18 +37,11 @@ You can append query options to the URI in the following format:
 `?options=value&option2=value&...`
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 
 Required S3 component options
@@ -56,10 +49,6 @@ Required S3 component options
 You have to provide the amazonS3Client in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/s3[Amazon's S3].
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 == Usage
 

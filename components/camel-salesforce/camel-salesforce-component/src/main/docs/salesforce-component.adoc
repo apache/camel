@@ -56,21 +56,12 @@ Spring Boot users should use the starter instead.
 . *Create routes*. Starting creating routes that interact with salesforce!
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-// endpoint options: START
-
-// endpoint options: END
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 == Usage
 

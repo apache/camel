@@ -19,18 +19,11 @@ The http://www.hazelcast.com/[Hazelcast] List component is one of Camel Hazelcas
 
 == Options
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 
 == List producer – to(“hazelcast-list:foo”)
@@ -45,10 +38,6 @@ The list producer provides eight operations:
 * removeAll
 * clear
 * retainAll
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 === Example for *add*:
 

@@ -19,28 +19,17 @@ The http://www.hazelcast.com/[Hazelcast] SEDA component is one of Camel Hazelcas
 SEDA component differs from the rest components provided. It implements a work-queue in order to support asynchronous SEDA architectures, similar to the core "SEDA" component.
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 
 == SEDA producer – to(“hazelcast-seda:foo”)
 
 The SEDA producer provides no operations. You only send data to the
 specified queue.
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 [tabs]
 ====

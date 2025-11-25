@@ -36,28 +36,17 @@ You can append query options to the URI in the following format:
 `?options=value&option2=value&...`
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 
 Required IBM COS component options
 
 You have to provide the `apiKey` and `serviceInstanceId` to access IBM Cloud Object Storage,
 along with the `endpointUrl` for your region.
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 == Usage
 

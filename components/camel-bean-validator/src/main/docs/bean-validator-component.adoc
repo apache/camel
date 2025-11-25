@@ -44,18 +44,11 @@ Where *label* is an arbitrary text value describing the endpoint.
 You can append query options to the URI in the following format: `?option=value&option=value&...`
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-
-// endpoint options: END
 
 === Using HibernateValidationProviderResolver
 

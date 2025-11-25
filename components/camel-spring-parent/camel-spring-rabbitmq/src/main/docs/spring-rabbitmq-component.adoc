@@ -42,21 +42,12 @@ The exchange name determines the exchange to which the produced
 messages will be sent to. In the case of consumers, the exchange name 
 determines the exchange the queue will be bound to.
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-// endpoint options: START
-
-// endpoint options: END
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
 
 == Usage
 

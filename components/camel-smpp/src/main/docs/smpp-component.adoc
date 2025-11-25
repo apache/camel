@@ -41,6 +41,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
+[TIP]
+====
+*JSMPP library*
+
+See the documentation of the http://jsmpp.org[JSMPP Library] for more
+details about the underlying library.
+====
+
 == SMS limitations
 
 SMS is neither reliable nor secure. Users who require reliable and
@@ -164,29 +172,12 @@ If the protocol name is "smpps", camel-smpp with try to
 use SSLSocket to init a connection to the server.
 
 
-// component-configure options: START
-
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-// endpoint options: START
-
-// endpoint options: END
-
-// component headers: START
-include::partial$component-endpoint-headers.adoc[]
-// component headers: END
-[TIP]
-====
-*JSMPP library*
-
-See the documentation of the http://jsmpp.org[JSMPP Library] for more
-details about the underlying library.
-====
 
 == Exception handling
 
