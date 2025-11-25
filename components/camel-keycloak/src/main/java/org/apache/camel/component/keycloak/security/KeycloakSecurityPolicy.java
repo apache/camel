@@ -66,6 +66,22 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
      * Time-to-live for cached introspection results in seconds. Default is 60 seconds.
      */
     private long introspectionCacheTtl = 60;
+    /**
+     * Enable validation that tokens are bound to specific sessions. When enabled, tokens from headers must match the
+     * session-bound token to prevent session fixation attacks. Default is true for security.
+     */
+    private boolean validateTokenBinding = true;
+    /**
+     * Allow token retrieval from HTTP headers. When disabled, tokens can only come from exchange properties. Disabling
+     * this prevents attackers from injecting tokens via headers. Default is true for backward compatibility, but should
+     * be set to false in production environments where tokens are set programmatically.
+     */
+    private boolean allowTokenFromHeader = true;
+    /**
+     * Prefer tokens from exchange properties over headers. When true, if a token exists in both property and header,
+     * the property value is used. This prevents header-based token override attacks. Default is true for security.
+     */
+    private boolean preferPropertyOverHeader = true;
 
     private Keycloak keycloakClient;
     private KeycloakTokenIntrospector tokenIntrospector;
@@ -332,5 +348,29 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
 
     public KeycloakTokenIntrospector getTokenIntrospector() {
         return tokenIntrospector;
+    }
+
+    public boolean isValidateTokenBinding() {
+        return validateTokenBinding;
+    }
+
+    public void setValidateTokenBinding(boolean validateTokenBinding) {
+        this.validateTokenBinding = validateTokenBinding;
+    }
+
+    public boolean isAllowTokenFromHeader() {
+        return allowTokenFromHeader;
+    }
+
+    public void setAllowTokenFromHeader(boolean allowTokenFromHeader) {
+        this.allowTokenFromHeader = allowTokenFromHeader;
+    }
+
+    public boolean isPreferPropertyOverHeader() {
+        return preferPropertyOverHeader;
+    }
+
+    public void setPreferPropertyOverHeader(boolean preferPropertyOverHeader) {
+        this.preferPropertyOverHeader = preferPropertyOverHeader;
     }
 }

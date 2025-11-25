@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.keycloak.security;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Set;
 
 import org.apache.camel.CamelAuthorizationException;
@@ -69,24 +73,143 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
         }
     }
 
-    private String getAccessToken(Exchange exchange) {
-        // Try to get token from header first
-        String token = exchange.getIn().getHeader(KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, String.class);
+    private String getAccessToken(Exchange exchange) throws Exception {
+        // Get token from exchange property (application-controlled, TRUSTED)
+        String propertyToken = exchange.getProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, String.class);
+        String headerToken = null;
 
-        if (token == null) {
-            // Try to get from Authorization header
-            String authHeader = exchange.getIn().getHeader("Authorization", String.class);
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                token = authHeader.substring(7);
+        // Get token from headers only if allowed by policy
+        if (policy.isAllowTokenFromHeader()) {
+            headerToken = exchange.getIn().getHeader(KeycloakSecurityConstants.ACCESS_TOKEN_HEADER, String.class);
+
+            if (headerToken == null) {
+                // Try to get from Authorization header
+                String authHeader = exchange.getIn().getHeader("Authorization", String.class);
+                if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                    headerToken = authHeader.substring(7);
+                }
             }
         }
 
-        if (token == null) {
-            // Try to get from exchange property
-            token = exchange.getProperty(KeycloakSecurityConstants.ACCESS_TOKEN_PROPERTY, String.class);
+        // Determine which token to use based on policy
+        String token;
+        boolean isHeaderSource = false;
+
+        if (policy.isPreferPropertyOverHeader()) {
+            // SECURE DEFAULT: Property (trusted) takes precedence over header (untrusted)
+            if (propertyToken != null) {
+                token = propertyToken;
+                LOG.debug("Using token from exchange property (preferred source)");
+            } else if (headerToken != null) {
+                token = headerToken;
+                isHeaderSource = true;
+                LOG.warn("Using token from HTTP header - this may be a security risk. "
+                         + "Consider setting tokens via exchange properties instead to prevent token injection attacks.");
+            } else {
+                token = null;
+            }
+        } else {
+            // LEGACY MODE (LESS SECURE): Header takes precedence - maintains backward compatibility
+            if (headerToken != null) {
+                token = headerToken;
+                isHeaderSource = true;
+                LOG.warn("Token from header takes precedence over property - this may allow token override attacks. "
+                         + "Consider setting preferPropertyOverHeader=true for better security.");
+            } else if (propertyToken != null) {
+                token = propertyToken;
+                LOG.debug("Using token from exchange property");
+            } else {
+                token = null;
+            }
+        }
+
+        // Validate token binding if enabled and token came from headers
+        if (token != null && policy.isValidateTokenBinding() && isHeaderSource) {
+            validateTokenBinding(exchange, token, propertyToken);
         }
 
         return token;
+    }
+
+    /**
+     * Validates that a token from headers matches the session-bound token to prevent session fixation attacks. This
+     * method performs three levels of validation: 1. Token exact match - header token must match property token if both
+     * exist 2. Subject validation - token subject (user ID) must match stored subject 3. Thumbprint validation - token
+     * integrity check via SHA-256 hash
+     *
+     * @param  exchange                    the current exchange
+     * @param  headerToken                 token retrieved from HTTP headers
+     * @param  propertyToken               token stored in exchange properties (session-bound)
+     * @throws CamelAuthorizationException if token binding validation fails
+     */
+    private void validateTokenBinding(Exchange exchange, String headerToken, String propertyToken)
+            throws Exception {
+
+        // Level 1: Exact token match validation
+        if (propertyToken != null && !propertyToken.equals(headerToken)) {
+            LOG.error("SECURITY: Token binding validation failed - header token does not match session-bound property token");
+            throw new CamelAuthorizationException(
+                    "Token mismatch detected - possible session fixation or token injection attack", exchange);
+        }
+
+        // Level 2: Subject (user ID) validation
+        String storedSubject = exchange.getProperty(KeycloakSecurityConstants.TOKEN_SUBJECT_PROPERTY, String.class);
+        if (storedSubject != null) {
+            try {
+                // Parse token to extract subject (without full validation - just for binding check)
+                AccessToken accessToken = KeycloakSecurityHelper.parseAccessToken(headerToken);
+                String currentSubject = accessToken.getSubject();
+
+                if (!storedSubject.equals(currentSubject)) {
+                    LOG.error("SECURITY: Token subject mismatch - expected user '{}' but token is for user '{}'",
+                            storedSubject, currentSubject);
+                    throw new CamelAuthorizationException(
+                            "Token subject mismatch - token does not belong to current session user", exchange);
+                }
+
+                LOG.debug("Token subject validation successful - subject '{}' matches session", storedSubject);
+            } catch (Exception e) {
+                if (e instanceof CamelAuthorizationException) {
+                    throw e;
+                }
+                LOG.error("SECURITY: Failed to validate token subject binding", e);
+                throw new CamelAuthorizationException(
+                        "Token binding validation failed - unable to parse token", exchange,
+                        e);
+            }
+        }
+
+        // Level 3: Token thumbprint (integrity) validation
+        String storedThumbprint
+                = exchange.getProperty(KeycloakSecurityConstants.TOKEN_THUMBPRINT_PROPERTY, String.class);
+        if (storedThumbprint != null) {
+            String currentThumbprint = calculateTokenThumbprint(headerToken);
+            if (!storedThumbprint.equals(currentThumbprint)) {
+                LOG.error(
+                        "SECURITY: Token thumbprint mismatch - token has been tampered with, replaced, or belongs to different session");
+                throw new CamelAuthorizationException(
+                        "Token integrity check failed - possible token tampering or replacement attack", exchange);
+            }
+            LOG.debug("Token thumbprint validation successful - token integrity verified");
+        }
+    }
+
+    /**
+     * Calculates a SHA-256 thumbprint of the token for integrity validation. This provides a cryptographic fingerprint
+     * that can detect if a token has been tampered with or replaced.
+     *
+     * @param  token                 the access token string
+     * @return                       Base64-encoded SHA-256 hash of the token
+     * @throws IllegalStateException if SHA-256 algorithm is not available (should never happen)
+     */
+    private String calculateTokenThumbprint(String token) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(token.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 algorithm not available - this should never happen", e);
+        }
     }
 
     private void validateRoles(String accessToken, Exchange exchange) throws Exception {
