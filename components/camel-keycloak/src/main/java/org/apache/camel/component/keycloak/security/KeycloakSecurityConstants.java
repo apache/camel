@@ -27,6 +27,21 @@ public final class KeycloakSecurityConstants {
     public static final String USER_ROLES_HEADER = "CamelKeycloakUserRoles";
     public static final String USER_ROLES_PROPERTY = "CamelKeycloakUserRoles";
 
+    /**
+     * Session ID property for binding tokens to specific sessions (prevents session fixation)
+     */
+    public static final String SESSION_ID_PROPERTY = "CamelKeycloakSessionId";
+
+    /**
+     * Token thumbprint property for validating token integrity (SHA-256 hash)
+     */
+    public static final String TOKEN_THUMBPRINT_PROPERTY = "CamelKeycloakTokenThumbprint";
+
+    /**
+     * Token subject (user ID) for binding validation
+     */
+    public static final String TOKEN_SUBJECT_PROPERTY = "CamelKeycloakTokenSubject";
+
     private KeycloakSecurityConstants() {
         // Utility class
     }
