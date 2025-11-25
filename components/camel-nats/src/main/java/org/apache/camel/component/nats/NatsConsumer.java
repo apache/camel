@@ -165,7 +165,7 @@ public class NatsConsumer extends DefaultConsumer {
                     this.configuration.getTopic());
 
             JetStreamManagement jsm = connection.jetStreamManagement();
-            if(streamExists(jsm, streamName)) {
+            if (streamExists(jsm, streamName)) {
                 LOG.debug("JetStream stream '{}' already exists. Skipping creation.", streamName);
             } else {
                 LOG.debug("Creating JetStream {}", streamName);
@@ -294,8 +294,7 @@ public class NatsConsumer extends DefaultConsumer {
         try {
             jsm.getStreamInfo(streamName);
             return true;
-        }
-        catch (JetStreamApiException jsae) {
+        } catch (JetStreamApiException jsae) {
             if (jsae.getErrorCode() == 404) {
                 return false;
             }
