@@ -26,9 +26,6 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.crypto.cipher.ByteSourceBroker;
@@ -148,18 +145,6 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
             try {
                 currentUser.login(token);
                 LOG.debug("Current user {} successfully authenticated", currentUser.getPrincipal());
-            } catch (UnknownAccountException uae) {
-                throw new UnknownAccountException(
-                        "Authentication Failed. There is no user with username of " + token.getPrincipal(), uae.getCause());
-            } catch (IncorrectCredentialsException ice) {
-                throw new IncorrectCredentialsException(
-                        "Authentication Failed. Password for account " + token.getPrincipal() + " was incorrect!",
-                        ice.getCause());
-            } catch (LockedAccountException lae) {
-                throw new LockedAccountException(
-                        "Authentication Failed. The account for username " + token.getPrincipal() + " is locked."
-                                                 + " Please contact your administrator to unlock it.",
-                        lae.getCause());
             } catch (AuthenticationException ae) {
                 throw new AuthenticationException("Authentication Failed.", ae.getCause());
             }
