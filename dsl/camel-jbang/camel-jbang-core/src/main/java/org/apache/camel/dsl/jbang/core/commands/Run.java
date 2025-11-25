@@ -267,6 +267,10 @@ public class Run extends CamelCommand {
             description = "Enables trace logging of the routed messages")
     boolean trace;
 
+    @Option(names = { "--backlog-trace" }, defaultValue = "false",
+            description = "Enables backlog tracing of the routed messages")
+    boolean backlogTrace;
+
     @Option(names = { "--properties" },
             description = "comma separated list of properties file" +
                           " (ex. /path/to/file.properties,/path/to/other.properties")
@@ -618,6 +622,9 @@ public class Run extends CamelCommand {
         }
         if (trace) {
             writeSetting(main, profileProperties, "camel.main.tracing", "true");
+        }
+        if (backlogTrace) {
+            writeSetting(main, profileProperties, "camel.trace.enabled", "true");
         }
         if (modeline) {
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
