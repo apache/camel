@@ -89,4 +89,4 @@ When processing a List<String>, the component returns:
 ** `CamelSpringAiEmbeddingInputTexts` - The original input texts as List<String>
 ** `CamelSpringAiEmbeddingMetadata` - Response metadata
 
-// include::spring-boot:partial$starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

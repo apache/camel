@@ -186,4 +186,4 @@ IMPORTANT: Make sure your vector store is configured with an embedding model to 
 * `similarityThreshold` - Minimum similarity score 0-1 (default: 0.0)
 * `filterExpression` - Metadata-based filter expression
 
-// include::spring-boot:partial$starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

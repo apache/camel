@@ -8,6 +8,7 @@
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
+:group: AI
 :camel-spring-boot-name: spring-ai-chat
 
 *Since Camel {since}*
@@ -593,4 +594,4 @@ logging.level.org.springframework.ai.chat.client.advisor=DEBUG
 * xref:spring-ai-embeddings-component.adoc[Spring AI Embeddings Component]
 * xref:spring-ai-vector-store-component.adoc[Spring AI VectorStore Component]
 
-// include::spring-boot:partial$starter.adoc[]
+include::spring-boot:partial$starter.adoc[]

@@ -287,4 +287,4 @@ String response2 = template.requestBody("direct:billingChat",
 * https://docs.spring.io/spring-ai/reference/[Spring AI Documentation]
 * https://docs.spring.io/spring-ai/reference/api/tools.html[Spring AI Function Calling]
 
-// include::spring-boot:partial$starter.adoc[]
+include::spring-boot:partial$starter.adoc[]
