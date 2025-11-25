@@ -64,7 +64,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         defaultValue = "io.quarkus.platform")
     String quarkusGroupId = "io.quarkus.platform";
 
-    @CommandLine.Option(names = { "--repos" },
+    @CommandLine.Option(names = { "--repo", "--repos" },
                         description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 

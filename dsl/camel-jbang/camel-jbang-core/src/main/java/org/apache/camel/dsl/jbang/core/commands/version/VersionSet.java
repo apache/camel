@@ -37,7 +37,8 @@ public class VersionSet extends CamelCommand {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime;
 
-    @CommandLine.Option(names = { "--repo", "--repos" }, description = "Maven repository for downloading the dependencies")
+    @CommandLine.Option(names = { "--repo", "--repos" },
+                        description = "Maven repository for downloading the dependencies (Use commas to separate multiple repositories)")
     String repo;
 
     @CommandLine.Option(names = { "--reset" }, description = "Reset by removing any custom version settings")
