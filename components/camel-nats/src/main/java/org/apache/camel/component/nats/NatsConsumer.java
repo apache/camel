@@ -165,11 +165,17 @@ public class NatsConsumer extends DefaultConsumer {
                     this.configuration.getTopic());
 
             JetStreamManagement jsm = connection.jetStreamManagement();
-            StreamConfiguration streamConfig = StreamConfiguration.builder()
-                    .name(streamName)
-                    .subjects(topic)
-                    .build();
-            jsm.addStream(streamConfig);
+            if(streamExists(jsm, streamName)) {
+                LOG.debug("JetStream stream '{}' already exists. Skipping creation.", streamName);
+            } else {
+                LOG.debug("Creating JetStream {}", streamName);
+                StreamConfiguration streamConfig = StreamConfiguration.builder()
+                        .name(streamName)
+                        .subjects(topic)
+                        .build();
+                jsm.addStream(streamConfig);
+                LOG.info("JetStream stream '{}' created successfully.", streamName);
+            }
 
             ConsumerConfiguration cc = configuration.getConsumerConfiguration();
             if (cc == null) {
@@ -197,6 +203,7 @@ public class NatsConsumer extends DefaultConsumer {
             } else {
                 PushSubscribeOptions pushOptions = PushSubscribeOptions.builder()
                         .configuration(cc)
+                        .deliverGroup(queueName)
                         .build();
 
                 NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
@@ -280,6 +287,19 @@ public class NatsConsumer extends DefaultConsumer {
                     NatsConsumer.this.releaseExchange(exchange, false);
                 }
             }
+        }
+    }
+
+    private boolean streamExists(JetStreamManagement jsm, String streamName) throws IOException, JetStreamApiException {
+        try {
+            jsm.getStreamInfo(streamName);
+            return true;
+        }
+        catch (JetStreamApiException jsae) {
+            if (jsae.getErrorCode() == 404) {
+                return false;
+            }
+            throw jsae;
         }
     }
 
