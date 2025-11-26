@@ -352,7 +352,7 @@ public class BeanExpression implements Expression, Predicate {
 
         try {
             // do not close BeanExpressionProcessor as beanHolder should not be closed
-            BeanExpressionProcessor processor = new BeanExpressionProcessor(beanHolder);
+            BeanExpressionProcessor processor = new BeanExpressionProcessor(beanHolder); // NOSONAR
 
             if (methodName != null) {
                 processor.setMethod(methodName);
