@@ -112,7 +112,8 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                     DataHandler dh = am.getAttachment(name);
                     Object value = dh;
                     if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {
-                        value = request.getParameter(name);
+                        // prevent potential injections
+                        value = HttpHelper.sanitizeLog(request.getParameter(name));
                     }
                     if (getHeaderFilterStrategy() != null
                             && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
@@ -123,11 +124,13 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
 
                 // there may be multiple values for the same name
                 String[] values = request.getParameterValues(name);
-                if (values != null) {
+                // Avoid potential injections
+                String[] sanitizedValues = HttpHelper.sanitizeLog(values);
+                if (sanitizedValues != null) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("HTTP parameter {} = {}", name, HttpHelper.sanitizeLog(values));
+                        LOG.trace("HTTP parameter {} = {}", name, sanitizedValues);
                     }
-                    for (String value : values) {
+                    for (String value : sanitizedValues) {
                         // use http helper to extract parameter value as it may contain multiple values
                         Object extracted = HttpHelper.extractHttpParameterValue(value);
                         if (getHeaderFilterStrategy() != null
