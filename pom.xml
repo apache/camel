@@ -134,7 +134,7 @@
         <maven-remote-resources-plugin-version>3.3.0</maven-remote-resources-plugin-version>
         <maven-surefire-plugin-version>3.5.4</maven-surefire-plugin-version>
         <templating-maven-plugin-version>3.0.0</templating-maven-plugin-version>
-        <versions-maven-plugin-version>2.20.0</versions-maven-plugin-version>
+        <versions-maven-plugin-version>2.20.1</versions-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
         <invoker.skip>${skipTests}</invoker.skip>
