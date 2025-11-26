@@ -38,7 +38,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.AnnotationHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,9 +73,8 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
         if (packageScanJars) {
             String ext = FileUtil.onlyExt(file.getName(), true);
             if ("jar".equals(ext)) {
-                try {
+                try (JarInputStream is = new JarInputStream(new FileInputStream(file))) {
                     Set<String> packages = new HashSet<>();
-                    JarInputStream is = new JarInputStream(new FileInputStream(file));
                     JarEntry entry;
                     while ((entry = is.getNextJarEntry()) != null) {
                         final String name = entry.getName().trim();
@@ -88,9 +86,9 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
                         String[] arr = packages.toArray(new String[0]);
                         packageScan(arr);
                     }
-                    IOHelper.close(is);
                 } catch (Exception e) {
                     // ignore
+                    LOG.warn("Some error happened: ignoring", e);
                 }
             }
         }
@@ -103,6 +101,7 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
             basePackageScanQuarkus(basePackage);
         } catch (Exception e) {
             // ignore
+            LOG.warn("Some error happened: ignoring", e);
         }
     }
 
