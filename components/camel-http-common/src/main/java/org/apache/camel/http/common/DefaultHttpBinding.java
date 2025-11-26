@@ -241,11 +241,13 @@ public class DefaultHttpBinding implements HttpBinding {
             String name = (String) names.nextElement();
             // there may be multiple values for the same name
             String[] values = request.getParameterValues(name);
-            if (values != null) {
+            // Avoid potential injections
+            String[] sanitizedValues = HttpHelper.sanitizeLog(values);
+            if (sanitizedValues != null) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("HTTP parameter {} = {}", name, HttpHelper.sanitizeLog(values));
+                    LOG.trace("HTTP parameter {} = {}", name, sanitizedValues);
                 }
-                for (String value : values) {
+                for (String value : sanitizedValues) {
                     // use http helper to extract parameter value as it may contain multiple values
                     Object extracted = HttpHelper.extractHttpParameterValue(value);
                     if (headerFilterStrategy != null
