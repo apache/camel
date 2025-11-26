@@ -23,7 +23,7 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.google.pubsub.common.GooglePubSubProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.PubSubEmulatorContainer;
+import org.testcontainers.gcloud.PubSubEmulatorContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = GooglePubSubInfraService.class,
