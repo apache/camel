@@ -96,42 +96,41 @@ public class GraphqlProducer extends DefaultAsyncProducer {
             URI httpUri = getEndpoint().getHttpUri();
             String requestBody = buildRequestBody(getQuery(exchange), getEndpoint().getOperationName(),
                     getVariables(exchange));
-            HttpEntity requestEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
+            try (HttpEntity requestEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON)) {
+                HttpPost httpPost = new HttpPost(httpUri);
+                httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+                httpPost.setHeader(HttpHeaders.ACCEPT, "application/json");
+                httpPost.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip");
+                httpPost.setEntity(requestEntity);
+                populateRequestHeaders(exchange, httpPost);
 
-            HttpPost httpPost = new HttpPost(httpUri);
-            httpPost.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-            httpPost.setHeader(HttpHeaders.ACCEPT, "application/json");
-            httpPost.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip");
-            httpPost.setEntity(requestEntity);
-            populateRequestHeaders(exchange, httpPost);
-
-            httpClient.execute(httpPost, httpResponse -> {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Finished executing http: {} method: {}", httpUri, HttpPost.METHOD_NAME);
-                }
-                int responseCode = httpResponse.getCode();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Http responseCode: {}", responseCode);
-                }
-                if (!getEndpoint().isThrowExceptionOnFailure()) {
-                    // if we do not use failed exception then populate response for all response codes
-                    populateResponse(exchange, httpResponse, getEndpoint().getHeaderFilterStrategy(), responseCode);
-                } else {
-                    boolean ok = HttpHelper.isStatusCodeOk(responseCode, OK_STATUS_RANGE);
-                    if (ok) {
-                        // only populate response for OK response
+                httpClient.execute(httpPost, httpResponse -> {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Finished executing http: {} method: {}", httpUri, HttpPost.METHOD_NAME);
+                    }
+                    int responseCode = httpResponse.getCode();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Http responseCode: {}", responseCode);
+                    }
+                    if (!getEndpoint().isThrowExceptionOnFailure()) {
+                        // if we do not use failed exception then populate response for all response codes
                         populateResponse(exchange, httpResponse, getEndpoint().getHeaderFilterStrategy(), responseCode);
                     } else {
-                        // also store response code when throwing exception
-                        populateResponseCode(exchange.getMessage(), httpResponse, responseCode);
+                        boolean ok = HttpHelper.isStatusCodeOk(responseCode, OK_STATUS_RANGE);
+                        if (ok) {
+                            // only populate response for OK response
+                            populateResponse(exchange, httpResponse, getEndpoint().getHeaderFilterStrategy(), responseCode);
+                        } else {
+                            // also store response code when throwing exception
+                            populateResponseCode(exchange.getMessage(), httpResponse, responseCode);
 
-                        // operation failed so populate exception to throw
-                        exchange.setException(populateHttpOperationFailedException(exchange, httpResponse, responseCode));
+                            // operation failed so populate exception to throw
+                            exchange.setException(populateHttpOperationFailedException(exchange, httpResponse, responseCode));
+                        }
                     }
-                }
-                return null;
-            });
-
+                    return null;
+                });
+            }
         } catch (Exception e) {
             exchange.setException(e);
         }

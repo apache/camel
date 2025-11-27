@@ -58,8 +58,6 @@ import org.apache.hc.core5.http.message.BasicHeader;
              category = { Category.API }, producerOnly = true, lenientProperties = true)
 public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
-    private boolean closeHttpClient;
-
     @UriPath
     @Metadata(required = true)
     private URI httpUri;
