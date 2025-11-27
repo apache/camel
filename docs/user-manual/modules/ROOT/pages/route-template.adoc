@@ -76,15 +76,18 @@ XML DSL::
 ====
 
 In the examples above, there was one route template, but you can define as many as you want.
-Each template must have a unique id. The template parameters are used for defining the parameters
-the template accepts. As you can see, there are three parameters: `_name_`, `_greeting_`, and `_myPeriod_`. The first two
+Each template must have a unique id. 
+
+=== Template parameters
+
+The template parameters are used for defining the parameters
+the template accepts. In the example, there are three parameters: `_name_`, `_greeting_`, and `_myPeriod_`. The first two
 parameters are mandatory, whereas `_myPeriod_` is optional as it has a default value of 3s.
 
 The template parameters are then used in the route as regular property placeholders with the `{{ }}` syntax.
 Notice how we use `{\{name}}` and `{\{greeting}}` in the timer endpoint and the simple language.
 
-The route can, of course, use regular property placeholders as well.
-Now imagine there was a property placeholder with the name greeting:
+The route can use regular property placeholders from a properties file as well:
 
 [source,properties]
 ----
@@ -96,6 +99,42 @@ has defined a template parameter with the same name `greeting` then a value must
 creating routes from the template.
 
 Template parameters take precedence over regular property placeholders.
+
+=== Special Property Placeholders
+
+Template property placeholders are placed between two curly braces:
+
+[source]
+----
+{{myProperty}}
+----
+
+To indicate that a template parameter can have a null value, a question mark can be used.
+
+[source]
+----
+{{?myProperty}}
+----
+
+For example:
+
+[source,java]
+----
+from("timer:{{name}}?period={{myPeriod}}")
+    .setBody(simple("{{greeting}} ${body}"))
+    .to("jms:myqueue?replyTo={{?replyToQueue}}");
+----
+
+In case no replyToQueue property is provided when creating the template the option replyTo is just ignored.
+
+A property can also have a logical negation using the exclamation mark:
+
+[source,java]
+----
+from("timer:{{name}}?period={{myPeriod}}")
+    .setBody(simple("{{greeting}} ${body}"))
+    .to("jms:myqueue?replyTo={{?replyToQueue}}&testConnectionOnStartup={{!testConnectionOnStartup}}");
+----
 
 == Creating a route from a route template
 
