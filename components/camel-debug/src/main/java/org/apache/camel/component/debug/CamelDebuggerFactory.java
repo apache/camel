@@ -29,11 +29,14 @@ import org.apache.camel.support.LifecycleStrategySupport;
 public class CamelDebuggerFactory implements DebuggerFactory {
 
     @Override
+    // Debugger is created and added as a service. This method always returns a null object.
     public Debugger createDebugger(CamelContext camelContext) throws Exception {
         // only create a debugger if none already exists
         if (camelContext.hasService(BacklogDebugger.class) == null) {
 
-            BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(camelContext);
+            // NOTE: the AutoCloseable object is added as a Service, hence it is closed by Camel context
+            // according to the object lifecycle.
+            BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(camelContext); // NOSONAR
             backlog.setStandby(camelContext.isDebugStandby());
 
             // must enable source location and history
