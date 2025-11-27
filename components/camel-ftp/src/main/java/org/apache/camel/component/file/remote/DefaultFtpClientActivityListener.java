@@ -22,11 +22,10 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.commons.net.io.CopyStreamEvent;
-import org.apache.commons.net.io.CopyStreamListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultFtpClientActivityListener implements FtpClientActivityListener, CopyStreamListener {
+public class DefaultFtpClientActivityListener implements FtpClientActivityListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultFtpClientActivityListener.class);
 

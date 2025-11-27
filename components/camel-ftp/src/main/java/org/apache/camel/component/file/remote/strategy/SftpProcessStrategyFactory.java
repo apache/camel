@@ -90,7 +90,6 @@ public final class SftpProcessStrategyFactory implements GenericFileProcessStrat
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static GenericFileExclusiveReadLockStrategy getExclusiveReadLockStrategy(Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy strategy
                 = (GenericFileExclusiveReadLockStrategy) params.get("exclusiveReadLockStrategy");
