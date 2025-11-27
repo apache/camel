@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.core5.http.protocol.BasicHttpContext;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,7 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
 
         this.testBinding = new TestHttpBinding();
         this.testConfigurer = new TestClientConfigurer();
-        this.testHttpContext = new BasicHttpContext();
+        this.testHttpContext = HttpClientContext.create();
     }
 
     @Override

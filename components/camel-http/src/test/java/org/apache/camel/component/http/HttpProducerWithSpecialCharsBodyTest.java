@@ -57,73 +57,76 @@ class HttpProducerWithSpecialCharsBodyTest {
     void createRequestEntityJsonUtf8ThroughContentType() throws CamelExchangeException, IOException {
         HttpEndpoint httpEndpoint = mock(HttpEndpoint.class);
         when(httpEndpoint.isContentTypeCharsetEnabled()).thenReturn(true);
-        HttpProducer httpProducer = new HttpProducer(httpEndpoint);
+        try (HttpProducer httpProducer = new HttpProducer(httpEndpoint)) {
+            Message message = mock(Message.class);
+            when(message.getBody()).thenReturn(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS);
+            when(message.getHeader(Exchange.CONTENT_TYPE, String.class)).thenReturn(APPLICATION_JSON_UTF8);
 
-        Message message = mock(Message.class);
-        when(message.getBody()).thenReturn(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS);
-        when(message.getHeader(Exchange.CONTENT_TYPE, String.class)).thenReturn(APPLICATION_JSON_UTF8);
+            Exchange exchange = mock(Exchange.class);
+            when(exchange.getIn()).thenReturn(message);
 
-        Exchange exchange = mock(Exchange.class);
-        when(exchange.getIn()).thenReturn(message);
+            HttpEntity requestEntity = httpProducer.createRequestEntity(exchange);
 
-        HttpEntity requestEntity = httpProducer.createRequestEntity(exchange);
-
-        assertInstanceOf(StringEntity.class, requestEntity);
-        StringEntity entity = (StringEntity) requestEntity;
-        assertEquals(APPLICATION_JSON_UTF8, entity.getContentType(), "Content type should be given content type and charset");
-        assertNull(entity.getContentEncoding(), "Content encoding should not be given");
-        assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
-                new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
-                "Reading entity content with intended charset should result in the original (readable) message");
+            assertInstanceOf(StringEntity.class, requestEntity);
+            StringEntity entity = (StringEntity) requestEntity;
+            assertEquals(APPLICATION_JSON_UTF8, entity.getContentType(),
+                    "Content type should be given content type and charset");
+            assertNull(entity.getContentEncoding(), "Content encoding should not be given");
+            assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
+                    new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
+                    "Reading entity content with intended charset should result in the original (readable) message");
+        }
     }
 
     @Test
     void createRequestEntityJsonUtf8ThroughCharset() throws CamelExchangeException, IOException {
         HttpEndpoint httpEndpoint = mock(HttpEndpoint.class);
         when(httpEndpoint.isContentTypeCharsetEnabled()).thenReturn(true);
-        HttpProducer httpProducer = new HttpProducer(httpEndpoint);
+        try (HttpProducer httpProducer = new HttpProducer(httpEndpoint)) {
+            Message message = mock(Message.class);
+            when(message.getBody()).thenReturn(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS);
+            when(message.getHeader(Exchange.CONTENT_TYPE, String.class)).thenReturn(APPLICATION_JSON.getMimeType());
+            when(message.getHeader(CHARSET_NAME, String.class)).thenReturn(StandardCharsets.UTF_8.name());
 
-        Message message = mock(Message.class);
-        when(message.getBody()).thenReturn(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS);
-        when(message.getHeader(Exchange.CONTENT_TYPE, String.class)).thenReturn(APPLICATION_JSON.getMimeType());
-        when(message.getHeader(CHARSET_NAME, String.class)).thenReturn(StandardCharsets.UTF_8.name());
+            Exchange exchange = mock(Exchange.class);
+            when(exchange.getIn()).thenReturn(message);
 
-        Exchange exchange = mock(Exchange.class);
-        when(exchange.getIn()).thenReturn(message);
+            HttpEntity requestEntity = httpProducer.createRequestEntity(exchange);
 
-        HttpEntity requestEntity = httpProducer.createRequestEntity(exchange);
-
-        assertInstanceOf(StringEntity.class, requestEntity);
-        StringEntity entity = (StringEntity) requestEntity;
-        assertEquals(APPLICATION_JSON_UTF8, entity.getContentType(), "Content type should be given content type and charset");
-        assertNull(entity.getContentEncoding(), "Content encoding should not be given");
-        assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
-                new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
-                "Reading entity content with intended charset should result in the original (readable) message");
+            assertInstanceOf(StringEntity.class, requestEntity);
+            StringEntity entity = (StringEntity) requestEntity;
+            assertEquals(APPLICATION_JSON_UTF8, entity.getContentType(),
+                    "Content type should be given content type and charset");
+            assertNull(entity.getContentEncoding(), "Content encoding should not be given");
+            assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
+                    new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
+                    "Reading entity content with intended charset should result in the original (readable) message");
+        }
     }
 
     @Test
     void createContentTypeCharsetDisabled() throws CamelExchangeException, IOException {
         HttpEndpoint httpEndpoint = mock(HttpEndpoint.class);
         when(httpEndpoint.isContentTypeCharsetEnabled()).thenReturn(false);
-        HttpProducer httpProducer = new HttpProducer(httpEndpoint);
+        try (HttpProducer httpProducer = new HttpProducer(httpEndpoint)) {
+            Message message = mock(Message.class);
+            when(message.getBody()).thenReturn(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS);
+            when(message.getHeader(Exchange.CONTENT_TYPE, String.class)).thenReturn(APPLICATION_JSON.getMimeType());
+            when(message.getHeader(CHARSET_NAME, String.class)).thenReturn(StandardCharsets.UTF_8.name());
 
-        Message message = mock(Message.class);
-        when(message.getBody()).thenReturn(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS);
-        when(message.getHeader(Exchange.CONTENT_TYPE, String.class)).thenReturn(APPLICATION_JSON.getMimeType());
-        when(message.getHeader(CHARSET_NAME, String.class)).thenReturn(StandardCharsets.UTF_8.name());
+            Exchange exchange = mock(Exchange.class);
+            when(exchange.getIn()).thenReturn(message);
 
-        Exchange exchange = mock(Exchange.class);
-        when(exchange.getIn()).thenReturn(message);
+            HttpEntity requestEntity = httpProducer.createRequestEntity(exchange);
 
-        HttpEntity requestEntity = httpProducer.createRequestEntity(exchange);
-
-        assertInstanceOf(StringEntity.class, requestEntity);
-        StringEntity entity = (StringEntity) requestEntity;
-        assertEquals(APPLICATION_JSON.getMimeType(), entity.getContentType(), "Content type should only be given content type");
-        assertNull(entity.getContentEncoding(), "Content encoding should not be given");
-        assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
-                new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
-                "Reading entity content with intended charset should result in the original (readable) message");
+            assertInstanceOf(StringEntity.class, requestEntity);
+            StringEntity entity = (StringEntity) requestEntity;
+            assertEquals(APPLICATION_JSON.getMimeType(), entity.getContentType(),
+                    "Content type should only be given content type");
+            assertNull(entity.getContentEncoding(), "Content encoding should not be given");
+            assertEquals(TEST_MESSAGE_WITH_SPECIAL_CHARACTERS,
+                    new String(entity.getContent().readAllBytes(), StandardCharsets.UTF_8),
+                    "Reading entity content with intended charset should result in the original (readable) message");
+        }
     }
 }

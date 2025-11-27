@@ -154,9 +154,6 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         private String token;
         private Instant expirationTime;
 
-        public TokenCache() {
-        }
-
         public TokenCache(String token, String expires_in) {
             this.token = token;
             setExpirationTimeSeconds(expires_in);
@@ -165,10 +162,6 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
         public TokenCache(String accessToken, Long seconds) {
             this.token = accessToken;
             this.expirationTime = Instant.now().plusSeconds(seconds);
-        }
-
-        public boolean isExpired() {
-            return Instant.now().isAfter(expirationTime);
         }
 
         public boolean isExpiredWithMargin(Long marginSeconds) {
@@ -181,18 +174,6 @@ public class OAuth2ClientConfigurer extends ServiceSupport implements HttpClient
 
         public String getToken() {
             return token;
-        }
-
-        public void setToken(String token) {
-            this.token = token;
-        }
-
-        public Instant getExpirationTime() {
-            return expirationTime;
-        }
-
-        public void setExpirationTime(Instant expirationTime) {
-            this.expirationTime = expirationTime;
         }
     }
 

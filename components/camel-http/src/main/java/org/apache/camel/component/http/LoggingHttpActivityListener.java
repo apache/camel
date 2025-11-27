@@ -202,7 +202,9 @@ public class LoggingHttpActivityListener extends ServiceSupport implements Camel
                             if (!e.isRepeatable()) {
                                 // need to re-create body as stream is EOL
                                 byte[] arr = bos.toByteArray();
-                                e = new ByteArrayEntity(arr, ct);
+                                // ByteArrayEntity close() is a NOOP. Additionally
+                                // the stream must be closed by client (request/response in our case).
+                                e = new ByteArrayEntity(arr, ct); // NOSONAR
                                 if (request instanceof HttpEntityContainer ec) {
                                     ec.setEntity(e);
                                 } else if (response instanceof HttpEntityContainer ec) {

@@ -89,22 +89,22 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
 
         HttpEndpoint endpoint = (HttpEndpoint) component
                 .createEndpoint("http://localhost:" + localServer.getLocalPort() + "/bridged?bridgeEndpoint=true");
-        HttpProducer producer = new HttpProducer(endpoint);
+        try (HttpProducer producer = new HttpProducer(endpoint)) {
+            Exchange exchange = producer.createExchange();
+            exchange.getIn().setBody(null);
+            exchange.getIn().setHeader(Exchange.HTTP_QUERY, QUERY);
+            exchange.getIn().setHeader("qp1", INSTANT);
+            exchange.getIn().setHeader("qp2", STRING);
+            exchange.getIn().setHeader("qp3", INTEGER);
+            exchange.getIn().setHeader("qp4", LONG);
+            exchange.getIn().setHeader("qp5", BOOLEAN);
 
-        Exchange exchange = producer.createExchange();
-        exchange.getIn().setBody(null);
-        exchange.getIn().setHeader(Exchange.HTTP_QUERY, QUERY);
-        exchange.getIn().setHeader("qp1", INSTANT);
-        exchange.getIn().setHeader("qp2", STRING);
-        exchange.getIn().setHeader("qp3", INTEGER);
-        exchange.getIn().setHeader("qp4", LONG);
-        exchange.getIn().setHeader("qp5", BOOLEAN);
+            producer.start();
+            producer.process(exchange);
+            producer.stop();
 
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
-
-        assertExchange(exchange);
+            assertExchange(exchange);
+        }
     }
 
     @Test
@@ -115,21 +115,21 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
 
         HttpEndpoint endpoint = (HttpEndpoint) component
                 .createEndpoint("http://localhost:" + localServer.getLocalPort() + "/notbridged");
-        HttpProducer producer = new HttpProducer(endpoint);
+        try (HttpProducer producer = new HttpProducer(endpoint)) {
+            Exchange exchange = producer.createExchange();
+            exchange.getIn().setBody(null);
+            exchange.getIn().setHeader(Exchange.HTTP_QUERY, QUERY);
+            exchange.getIn().setHeader("qp1", INSTANT);
+            exchange.getIn().setHeader("qp2", STRING);
+            exchange.getIn().setHeader("qp3", INTEGER);
+            exchange.getIn().setHeader("qp4", LONG);
+            exchange.getIn().setHeader("qp5", BOOLEAN);
 
-        Exchange exchange = producer.createExchange();
-        exchange.getIn().setBody(null);
-        exchange.getIn().setHeader(Exchange.HTTP_QUERY, QUERY);
-        exchange.getIn().setHeader("qp1", INSTANT);
-        exchange.getIn().setHeader("qp2", STRING);
-        exchange.getIn().setHeader("qp3", INTEGER);
-        exchange.getIn().setHeader("qp4", LONG);
-        exchange.getIn().setHeader("qp5", BOOLEAN);
+            producer.start();
+            producer.process(exchange);
+            producer.stop();
 
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
-
-        assertExchange(exchange);
+            assertExchange(exchange);
+        }
     }
 }

@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.http;
 
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
@@ -65,6 +64,8 @@ public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
     }
 
     @Test
+    @SuppressWarnings("unlikely-arg-type")
+    // NOTE: registry can check correctly the String type.
     public void testDynamicAware() {
         Exchange out = fluentTemplate.to("direct:usersDrink")
                 .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes moes").build()).send();
@@ -75,7 +76,7 @@ public class HttpSendDynamicAwareUriWithSpacesTest extends BaseHttpTest {
         assertEquals("a user", out.getMessage().getBody(String.class));
 
         // and there should only be one http endpoint as they are both on same host
-        Map endpointMap = context.getEndpointRegistry();
+        EndpointRegistry endpointMap = context.getEndpointRegistry();
         assertEquals(2, endpointMap.size());
         assertTrue(endpointMap.containsKey("http://localhost:" + localServer.getLocalPort()), "Should find static uri");
         assertTrue(endpointMap.containsKey("direct://usersDrink"), "Should find direct");
