@@ -100,8 +100,10 @@ public class JCachePolicy implements Policy {
             cache = cacheManager.getCache(cacheName);
             if (cache == null) {
                 LOG.debug("Create cache:{}", cacheName);
+                // NOTE: the cache must not be closed. The closure is managed by the client 
+                // (the component in this case) which will close it according to Camel lifecycle.
                 cache = cacheManager.createCache(cacheName,
-                        cacheConfiguration != null ? this.cacheConfiguration : (Configuration) new MutableConfiguration());
+                        cacheConfiguration != null ? this.cacheConfiguration : (Configuration) new MutableConfiguration()); // NOSONAR
             }
 
         }
