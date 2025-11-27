@@ -28,6 +28,8 @@ public class CustomTransformerReifier extends TransformerReifier<CustomTransform
     }
 
     @Override
+    // Returns a Transformer object. This is a Service implementing AutoCloseable interface. Make sure to close
+    // the object accordingly.
     protected Transformer doCreateTransformer() {
         if (definition.getRef() == null && definition.getClassName() == null) {
             throw new IllegalArgumentException("'ref' or 'className' must be specified for customTransformer");
@@ -50,7 +52,8 @@ public class CustomTransformerReifier extends TransformerReifier<CustomTransform
             if (transformerClass == null) {
                 throw new IllegalArgumentException("Cannot find transformer class: " + definition.getClassName());
             }
-            transformer = camelContext.getInjector().newInstance(transformerClass, false);
+            // NOTE: this AutoCloseable is used outside this factory method. Make sure the client closes it.
+            transformer = camelContext.getInjector().newInstance(transformerClass, false); // NOSONAR
         }
         transformer.setCamelContext(camelContext);
         return transformer.setName(definition.getScheme(), definition.getName()).setFrom(definition.getFromType())

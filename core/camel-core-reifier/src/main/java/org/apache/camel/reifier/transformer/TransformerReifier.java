@@ -91,6 +91,8 @@ public abstract class TransformerReifier<T> extends AbstractReifier {
         TRANSFORMERS.clear();
     }
 
+    // Returns a Transformer object. This is a Service implementing AutoCloseable interface. Make sure to close
+    // the object accordingly.
     public Transformer createTransformer() {
         return doCreateTransformer();
     }

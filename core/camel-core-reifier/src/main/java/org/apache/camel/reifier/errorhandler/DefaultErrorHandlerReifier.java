@@ -19,21 +19,15 @@ package org.apache.camel.reifier.errorhandler;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
-import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition;
-import org.apache.camel.processor.FatalFallbackErrorHandler;
-import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.slf4j.LoggerFactory;
 
@@ -63,20 +57,6 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
         return answer;
     }
 
-    @Deprecated
-    private Predicate resolveRetryWhilePolicy(DeadLetterChannelDefinition definition, CamelContext camelContext) {
-        Predicate answer = definition.getRetryWhilePredicate();
-
-        if (answer == null && definition.getRetryWhileRef() != null) {
-            // it is a bean expression
-            Language bean = camelContext.resolveLanguage("bean");
-            answer = bean.createPredicate(definition.getRetryWhileRef());
-            answer.initPredicate(camelContext);
-        }
-
-        return answer;
-    }
-
     private CamelLogger resolveLogger(DefaultErrorHandlerDefinition definition) {
         CamelLogger answer = definition.getLoggerBean();
         if (answer == null && definition.getLoggerRef() != null) {
@@ -89,16 +69,6 @@ public class DefaultErrorHandlerReifier extends ErrorHandlerReifier<DefaultError
             answer.setLevel(parse(LoggingLevel.class, definition.getLevel()));
         }
         return answer;
-    }
-
-    @Deprecated
-    private Processor createDeadLetterChannelProcessor(String uri) {
-        // wrap in our special safe fallback error handler if sending to
-        // dead letter channel fails
-        Processor child = new SendProcessor(camelContext.getEndpoint(uri), ExchangePattern.InOnly);
-        // force MEP to be InOnly so when sending to DLQ we would not expect
-        // a reply if the MEP was InOut
-        return new FatalFallbackErrorHandler(child, true);
     }
 
     private RedeliveryPolicy resolveRedeliveryPolicy(DefaultErrorHandlerDefinition definition, CamelContext camelContext) {
