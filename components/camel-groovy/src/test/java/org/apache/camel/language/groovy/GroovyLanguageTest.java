@@ -58,22 +58,23 @@ public class GroovyLanguageTest extends LanguageTestSupport {
 
     @Test
     public void testValidateExpression() throws Exception {
-        GroovyLanguage g = new GroovyLanguage();
-        g.setCamelContext(context);
+        try (GroovyLanguage g = new GroovyLanguage()) {
+            g.setCamelContext(context);
 
-        assertTrue(g.validateExpression("2 * 3"));
-        assertTrue(g.validateExpression("exchange.getExchangeId()"));
-        assertTrue(g.validatePredicate("2 * 3 > 4"));
+            assertTrue(g.validateExpression("2 * 3"));
+            assertTrue(g.validateExpression("exchange.getExchangeId()"));
+            assertTrue(g.validatePredicate("2 * 3 > 4"));
 
-        try {
-            g.validateExpression("""
-                    var a = 123;
-                    println a */ 2;
-                    """);
-            fail("Should throw error");
-        } catch (GroovyValidationException e) {
-            assertEquals(23, e.getIndex());
-            assertInstanceOf(MultipleCompilationErrorsException.class, e.getCause());
+            try {
+                g.validateExpression("""
+                        var a = 123;
+                        println a */ 2;
+                        """);
+                fail("Should throw error");
+            } catch (GroovyValidationException e) {
+                assertEquals(23, e.getIndex());
+                assertInstanceOf(MultipleCompilationErrorsException.class, e.getCause());
+            }
         }
     }
 

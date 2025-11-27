@@ -32,20 +32,21 @@ public class DefaultGroovyCompilerTest extends CamelTestSupport {
 
     @Test
     public void testCompiler() throws Exception {
-        DefaultGroovyScriptCompiler compiler = new DefaultGroovyScriptCompiler();
-        compiler.setCamelContext(context);
-        compiler.setScriptPattern("camel-groovy/*");
-        compiler.start();
+        try (DefaultGroovyScriptCompiler compiler = new DefaultGroovyScriptCompiler()) {
+            compiler.setCamelContext(context);
+            compiler.setScriptPattern("camel-groovy/*");
+            compiler.start();
 
-        Class<?> clazz = context.getClassResolver().resolveMandatoryClass("Dude");
-        Object dude = ObjectHelper.newInstance(clazz);
-        Assertions.assertNotNull(dude);
+            Class<?> clazz = context.getClassResolver().resolveMandatoryClass("Dude");
+            Object dude = ObjectHelper.newInstance(clazz);
+            Assertions.assertNotNull(dude);
 
-        Method m = clazz.getMethod("order", int.class);
-        Object o = ObjectHelper.newInstance(clazz);
+            Method m = clazz.getMethod("order", int.class);
+            Object o = ObjectHelper.newInstance(clazz);
 
-        Object out = m.invoke(o, 5);
-        Assertions.assertEquals("I want to order 5 gauda", out);
+            Object out = m.invoke(o, 5);
+            Assertions.assertEquals("I want to order 5 gauda", out);
+        }
     }
 
     @Test
@@ -56,36 +57,38 @@ public class DefaultGroovyCompilerTest extends CamelTestSupport {
         cs.setWorkDir("target/compiled");
         context.getCamelContextExtension().addContextPlugin(CompileStrategy.class, cs);
 
-        DefaultGroovyScriptCompiler compiler = new DefaultGroovyScriptCompiler();
-        compiler.setCamelContext(context);
-        compiler.setScriptPattern("camel-groovy/*");
-        compiler.start();
+        try (DefaultGroovyScriptCompiler compiler = new DefaultGroovyScriptCompiler()) {
+            compiler.setCamelContext(context);
+            compiler.setScriptPattern("camel-groovy/*");
+            compiler.start();
 
-        Assertions.assertEquals(0, compiler.getPreloadedCounter());
-        Assertions.assertTrue(new File("target/compiled/groovy/Cheese.class").exists());
-        Assertions.assertTrue(new File("target/compiled/groovy/Dude.class").exists());
+            Assertions.assertEquals(0, compiler.getPreloadedCounter());
+            Assertions.assertTrue(new File("target/compiled/groovy/Cheese.class").exists());
+            Assertions.assertTrue(new File("target/compiled/groovy/Dude.class").exists());
 
-        compiler.stop();
+            compiler.stop();
+        }
 
-        compiler = new DefaultGroovyScriptCompiler();
-        compiler.setCamelContext(context);
-        compiler.setScriptPattern("camel-groovy/*");
-        compiler.setPreloadCompiled(true);
-        compiler.start();
+        try (DefaultGroovyScriptCompiler compiler = new DefaultGroovyScriptCompiler()) {
+            compiler.setCamelContext(context);
+            compiler.setScriptPattern("camel-groovy/*");
+            compiler.setPreloadCompiled(true);
+            compiler.start();
 
-        Assertions.assertEquals(2, compiler.getPreloadedCounter());
+            Assertions.assertEquals(2, compiler.getPreloadedCounter());
 
-        Class<?> clazz = context.getClassResolver().resolveMandatoryClass("Dude");
-        Object dude = ObjectHelper.newInstance(clazz);
-        Assertions.assertNotNull(dude);
+            Class<?> clazz = context.getClassResolver().resolveMandatoryClass("Dude");
+            Object dude = ObjectHelper.newInstance(clazz);
+            Assertions.assertNotNull(dude);
 
-        Method m = clazz.getMethod("order", int.class);
-        Object o = ObjectHelper.newInstance(clazz);
+            Method m = clazz.getMethod("order", int.class);
+            Object o = ObjectHelper.newInstance(clazz);
 
-        Object out = m.invoke(o, 5);
-        Assertions.assertEquals("I want to order 5 gauda", out);
+            Object out = m.invoke(o, 5);
+            Assertions.assertEquals("I want to order 5 gauda", out);
 
-        compiler.stop();
+            compiler.stop();
+        }
     }
 
 }
