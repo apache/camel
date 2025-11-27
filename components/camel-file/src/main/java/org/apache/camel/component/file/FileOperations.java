@@ -478,7 +478,8 @@ public class FileOperations implements GenericFileOperations<File> {
         FileChannel channel
                 = exchange.getProperty(asExclusiveReadLockKey(path, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
         if (channel != null) {
-            try (FileChannel out = new FileOutputStream(target).getChannel()) {
+            try (FileOutputStream fos = new FileOutputStream(target);
+                 FileChannel out = fos.getChannel()) {
                 LOG.trace("writeFileByFile using FileChannel: {} -> {}", source, target);
                 channel.transferTo(0, channel.size(), out);
             }
@@ -559,11 +560,15 @@ public class FileOperations implements GenericFileOperations<File> {
     /**
      * Creates and prepares the output file channel. Will position itself in correct position if the file is writable
      * eg. it should append or override any existing content.
+     *
+     * NOTE: the client of this factory method is in charge to close the resource.
      */
     private SeekableByteChannel prepareOutputFileChannel(File target) throws IOException {
         if (endpoint.getFileExist() == GenericFileExist.Append) {
+            // NOTE: we open the channel and seek the position at the end of the channel. As we return
+            // this stream, we must not close it (letting the client doing so).
             SeekableByteChannel out
-                    = Files.newByteChannel(target.toPath(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                    = Files.newByteChannel(target.toPath(), StandardOpenOption.CREATE, StandardOpenOption.APPEND); // NOSONAR
             return out.position(out.size());
         }
         return Files.newByteChannel(target.toPath(), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING,
