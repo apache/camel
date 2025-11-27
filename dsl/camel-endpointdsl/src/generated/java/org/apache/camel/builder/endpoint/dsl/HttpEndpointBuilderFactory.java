@@ -428,6 +428,21 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated list of hosts that should bypass the proxy. Supports
+         * wildcards, e.g., localhost,.example.com,192.168..
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         * 
+         * @param nonProxyHosts the value to set
+         * @return the dsl builder
+         */
+        default HttpEndpointBuilder nonProxyHosts(String nonProxyHosts) {
+            doSetProperty("nonProxyHosts", nonProxyHosts);
+            return this;
+        }
+        /**
          * Proxy authentication domain to use with NTLM.
          * 
          * The option is a: <code>java.lang.String</code> type.

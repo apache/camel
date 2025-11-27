@@ -208,6 +208,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     @Deprecated
     @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTLM")
     private String proxyAuthNtHost;
+    @UriParam(label = "producer,proxy", description = "Comma-separated list of hosts that should bypass the proxy. "
+                                                      + "Supports wildcards, e.g., localhost,*.example.com,192.168.*.")
+    private String nonProxyHosts;
 
     protected HttpCommonEndpoint() {
     }
@@ -814,6 +817,18 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
 
     public String getProxyAuthNtHost() {
         return proxyAuthNtHost;
+    }
+
+    public String getNonProxyHosts() {
+        return nonProxyHosts;
+    }
+
+    /**
+     * To specify a set of hosts that should bypass the proxy. The hosts can be specified as a comma-separated list.
+     * Supports wildcards such as *.example.com or 192.168.*. Matching is case-insensitive.
+     */
+    public void setNonProxyHosts(String nonProxyHosts) {
+        this.nonProxyHosts = nonProxyHosts;
     }
 
     /**

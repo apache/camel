@@ -134,6 +134,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected String proxyHost;
     @Metadata(label = "producer,proxy", description = "Proxy server port")
     protected Integer proxyPort;
+    @Metadata(label = "producer,proxy", description = "Comma-separated list of hosts that should bypass the proxy. "
+                                                      + "Supports wildcards, e.g., localhost,*.example.com,192.168.*.")
+    protected String nonProxyHosts;
     @Metadata(label = "producer,proxy", enums = "http,https",
               description = "Proxy server authentication protocol scheme to use")
     protected String proxyAuthScheme;
@@ -322,6 +325,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     private HttpClientConfigurer configureHttpProxy(
             Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure,
             HttpCredentialsHelper credentialsProvider) {
+
+        String nonProxyhosts = getParameter(parameters, "nonProxyHosts", String.class, getNonProxyHosts());
         String proxyAuthScheme = getParameter(parameters, "proxyAuthScheme", String.class, getProxyAuthScheme());
         if (proxyAuthScheme == null) {
             // fallback and use either http or https depending on secure
@@ -350,10 +355,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                         configurer,
                         new ProxyHttpClientConfigurer(
                                 proxyAuthHost, proxyAuthPort, proxyAuthScheme, proxyAuthUsername, proxyAuthPassword,
-                                proxyAuthDomain, proxyAuthNtHost, credentialsProvider));
+                                proxyAuthDomain, proxyAuthNtHost, credentialsProvider, nonProxyhosts));
             } else {
                 return CompositeHttpConfigurer.combineConfigurers(configurer,
-                        new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthScheme));
+                        new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthScheme, nonProxyhosts));
             }
         }
 
@@ -1118,6 +1123,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     public void setContentTypeCharsetEnabled(boolean contentTypeCharsetEnabled) {
         this.contentTypeCharsetEnabled = contentTypeCharsetEnabled;
+    }
+
+    public String getNonProxyHosts() {
+        return this.nonProxyHosts;
+    }
+
+    public void setNonProxyHosts(String nonProxyHosts) {
+        this.nonProxyHosts = nonProxyHosts;
     }
 
     @Override
