@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.http;
 
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
@@ -69,6 +68,8 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
     }
 
     @Test
+    @SuppressWarnings("unlikely-arg-type")
+    // NOTE: registry can check correctly the String type.
     public void testDynamicAware() {
         Exchange out = fluentTemplate.to("direct:usersDrink")
                 .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes").build()).send();
@@ -79,7 +80,7 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
         assertEquals("a user", out.getMessage().getBody(String.class));
 
         // and there should only be one http endpoint as they are both on same host
-        Map endpointMap = context.getEndpointRegistry();
+        EndpointRegistry endpointMap = context.getEndpointRegistry();
         assertTrue(endpointMap.containsKey("http://localhost:" + localServer.getLocalPort()), "Should find static uri");
         assertTrue(endpointMap.containsKey("direct://usersDrink"), "Should find direct");
         assertTrue(endpointMap.containsKey("direct://usersDrinkWithoutSlash"), "Should find direct");
@@ -87,6 +88,8 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
     }
 
     @Test
+    @SuppressWarnings("unlikely-arg-type")
+    // NOTE: registry can check correctly the String type.
     public void testDynamicAwareWithoutSlash() {
         Exchange out = fluentTemplate.to("direct:usersDrinkWithoutSlash")
                 .withExchange(ExchangeBuilder.anExchange(context).withProperty("user", "joes").build()).send();
@@ -97,7 +100,7 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
         assertEquals("a user", out.getMessage().getBody(String.class));
 
         // and there should only be one http endpoint as they are both on same host
-        Map endpointMap = context.getEndpointRegistry();
+        EndpointRegistry endpointMap = context.getEndpointRegistry();
         assertTrue(endpointMap.containsKey("http://localhost:" + localServer.getLocalPort()), "Should find static uri");
         assertTrue(endpointMap.containsKey("direct://usersDrink"), "Should find direct");
         assertTrue(endpointMap.containsKey("direct://usersDrinkWithoutSlash"), "Should find direct");

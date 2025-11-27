@@ -58,14 +58,15 @@ public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
         HttpEndpoint endpoiont
                 = (HttpEndpoint) component.createEndpoint("http://localhost:"
                                                           + localServer.getLocalPort() + "/myget?connectionClose=true");
-        HttpProducer producer = new HttpProducer(endpoiont);
-        Exchange exchange = producer.createExchange();
-        exchange.getIn().setBody(null);
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
+        try (HttpProducer producer = new HttpProducer(endpoiont)) {
+            Exchange exchange = producer.createExchange();
+            exchange.getIn().setBody(null);
+            producer.start();
+            producer.process(exchange);
+            producer.stop();
 
-        assertEquals(HeaderElements.CLOSE, exchange.getMessage().getHeader("connection"));
-        assertExchange(exchange);
+            assertEquals(HeaderElements.CLOSE, exchange.getMessage().getHeader("connection"));
+            assertExchange(exchange);
+        }
     }
 }

@@ -80,6 +80,8 @@ public class HttpSendDynamicAwareRawTest extends BaseHttpTest {
         out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
         assertEquals("Drinking wine", out);
 
+        @SuppressWarnings("unlikely-arg-type")
+        // NOTE: this the registry can check correctly the String type.
         // and there should only be one http endpoint as they are both on same host
         boolean found = context.getEndpointRegistry()
                 .containsKey("http://localhost:" + localServer.getLocalPort() + "?throwExceptionOnFailure=false");

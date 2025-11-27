@@ -41,7 +41,7 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
                 .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .registerVirtual(CUSTOM_HOST, "*",
+                .register(CUSTOM_HOST, "*",
                         new HeaderValidationHandler(
                                 "GET",
                                 null,
@@ -77,16 +77,16 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
         HttpEndpoint endpoint = (HttpEndpoint) component
                 .createEndpoint(
                         "http://localhost:" + localServer.getLocalPort() + "/myget?customHostHeader=" + CUSTOM_HOST);
-        HttpProducer producer = new HttpProducer(endpoint);
+        try (HttpProducer producer = new HttpProducer(endpoint)) {
+            Exchange exchange = producer.createExchange();
+            exchange.getIn().setBody(null);
 
-        Exchange exchange = producer.createExchange();
-        exchange.getIn().setBody(null);
+            producer.start();
+            producer.process(exchange);
+            producer.stop();
 
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
-
-        assertExchange(exchange);
+            assertExchange(exchange);
+        }
     }
 
     @Test
@@ -98,15 +98,15 @@ public class HttpProducerCustomHeaderTest extends BaseHttpTest {
         HttpEndpoint endpoint
                 = (HttpEndpoint) component.createEndpoint("http://localhost:"
                                                           + localServer.getLocalPort() + "/myget");
-        HttpProducer producer = new HttpProducer(endpoint);
+        try (HttpProducer producer = new HttpProducer(endpoint)) {
+            Exchange exchange = producer.createExchange();
+            exchange.getIn().setBody(null);
 
-        Exchange exchange = producer.createExchange();
-        exchange.getIn().setBody(null);
+            producer.start();
+            producer.process(exchange);
+            producer.stop();
 
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
-
-        assertExchange(exchange);
+            assertExchange(exchange);
+        }
     }
 }

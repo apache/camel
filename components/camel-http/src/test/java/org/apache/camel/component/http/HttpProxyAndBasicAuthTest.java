@@ -51,7 +51,7 @@ public class HttpProxyAndBasicAuthTest extends BaseHttpTest {
                 .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .registerVirtual("authtest.org", "*", new ProxyAndBasicAuthenticationValidationHandler(
+                .register("authtest.org", "*", new ProxyAndBasicAuthenticationValidationHandler(
                         GET.name(),
                         null, null, getExpectedContent(), user, password, proxyUser, proxyPassword))
                 .create();

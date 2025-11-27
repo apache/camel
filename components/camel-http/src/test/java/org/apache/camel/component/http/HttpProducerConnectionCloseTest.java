@@ -20,7 +20,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.http.common.HttpHeaderFilterStrategy;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.hc.core5.http.HeaderElements;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
@@ -65,16 +65,17 @@ public class HttpProducerConnectionCloseTest extends BaseHttpTest {
         HttpEndpoint endpoint = (HttpEndpoint) component
                 .createEndpoint("http://localhost:"
                                 + localServer.getLocalPort() + "/myget?headerFilterStrategy=#myFilter");
-        HttpProducer producer = new HttpProducer(endpoint);
-        Exchange exchange = producer.createExchange();
-        exchange.getIn().setBody(null);
-        exchange.getIn().setHeader("connection", HeaderElements.CLOSE);
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
+        try (HttpProducer producer = new HttpProducer(endpoint)) {
+            Exchange exchange = producer.createExchange();
+            exchange.getIn().setBody(null);
+            exchange.getIn().setHeader("connection", HeaderElements.CLOSE);
+            producer.start();
+            producer.process(exchange);
+            producer.stop();
 
-        assertEquals(HeaderElements.CLOSE, exchange.getMessage().getHeader("connection"));
-        assertExchange(exchange);
+            assertEquals(HeaderElements.CLOSE, exchange.getMessage().getHeader("connection"));
+            assertExchange(exchange);
+        }
     }
 
     @Override

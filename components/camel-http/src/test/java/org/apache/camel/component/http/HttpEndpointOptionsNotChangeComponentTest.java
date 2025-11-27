@@ -18,8 +18,8 @@ package org.apache.camel.component.http;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.http.common.DefaultHttpBinding;
-import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 

@@ -21,7 +21,7 @@ import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.CredentialsProvider;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
-import org.apache.hc.core5.http.protocol.BasicHttpContext;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class HttpCredentialsHelperTest extends CamelTestSupport {
 
     private final HttpCredentialsHelper credentialsHelper = new HttpCredentialsHelper();
-    private final HttpContext context = new BasicHttpContext();
+    private final HttpContext context = HttpClientContext.create();
 
     private final String host = "credentials.test.org";
     private final Integer port = 80;

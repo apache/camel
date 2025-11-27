@@ -73,6 +73,8 @@ public class HttpSendDynamicAwareMultiValueTest extends BaseHttpTest {
                 .to("direct:dynamicAwareWithMultiValue")
                 .send();
 
+        @SuppressWarnings("unlikely-arg-type")
+        // NOTE: this the registry can check correctly the String type.
         boolean found = context.getEndpointRegistry().containsKey("http://localhost:" + localServer.getLocalPort()
                                                                   + "?httpClient.responseTimeout=60000&okStatusCodeRange=200-500");
 
