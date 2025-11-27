@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -129,7 +130,12 @@ public class GroovyLanguage extends TypedLanguageSupport implements ScriptingLan
     }
 
     public static GroovyExpression groovy(String expression) {
-        return new GroovyLanguage().createExpression(expression);
+        try (GroovyLanguage factory = new GroovyLanguage()) {
+            return factory.createExpression(expression);
+        } catch (IOException e) {
+            LOG.error("Some error happened while creating a Groovy expression", e);
+            return null;
+        }
     }
 
     @Override
