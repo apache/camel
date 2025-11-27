@@ -31,12 +31,16 @@ public class DataFormatTransformerReifier extends TransformerReifier<DataFormatT
     }
 
     @Override
+    // Transformer implements AutoCloseable and must be closed by this method client.
     protected Transformer doCreateTransformer() {
         DataFormat dataFormat
                 = DataFormatReifier.getDataFormat(camelContext, definition.getDataFormatType());
-        return new DataFormatTransformer(camelContext).setDataFormat(dataFormat)
+        @SuppressWarnings("resource")
+        // NOTE: the client must take care of closing this resource.
+        Transformer dft = new DataFormatTransformer(camelContext).setDataFormat(dataFormat)
                 .setName(definition.getScheme(), definition.getName())
                 .setFrom(definition.getFromType()).setTo(definition.getToType());
+        return dft;
     }
 
 }

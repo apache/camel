@@ -96,6 +96,8 @@ public class SplitReifier extends ExpressionReifier<SplitDefinition> {
                 }
                 strategy = adapter;
             } else if (aggStrategy != null) {
+                @SuppressWarnings("resource")
+                // NOTE: the adapter holds no leaking resources, so we can safely ignore its closure.
                 AggregationStrategyBeanAdapter adapter
                         = new AggregationStrategyBeanAdapter(aggStrategy, definition.getAggregationStrategyMethodName());
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {

@@ -62,7 +62,8 @@ public class ChoiceReifier extends ProcessorReifier<ChoiceDefinition> {
                     output = createOutputsProcessor(whenClause.getOutputs());
                     if (output == null) {
                         // when with no outputs, then its like its disabled
-                        output = new DisabledProcessor();
+                        // NOTE: resource closure is managed by Camel at a later stage.
+                        output = new DisabledProcessor(); // NOSONAR
                     }
                 }
                 if (when != null) {

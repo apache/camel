@@ -88,6 +88,8 @@ public abstract class ValidatorReifier<T> extends AbstractReifier {
         VALIDATORS.clear();
     }
 
+    // Returns a Validator object. This is a Service implementing AutoCloseable interface. Make sure to close
+    // the object accordingly.
     public Validator createValidator() {
         return doCreateValidator();
     }

@@ -32,15 +32,19 @@ public class EndpointTransformerReifier extends TransformerReifier<EndpointTrans
     }
 
     @Override
+    // Transformer implements AutoCloseable and must be closed by this method client.
     protected Transformer doCreateTransformer() {
         Endpoint endpoint = definition.getUri() != null
                 ? camelContext.getEndpoint(definition.getUri())
                 : lookupByNameAndType(parseString(definition.getRef()), Endpoint.class);
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
-        return new ProcessorTransformer(camelContext).setProcessor(processor)
+        @SuppressWarnings("resource")
+        // NOTE: the client must take care of closing this resource.
+        Transformer t = new ProcessorTransformer(camelContext).setProcessor(processor)
                 .setName(parseString(definition.getScheme()), parseString(definition.getName()))
                 .setFrom(parseString(definition.getFromType()))
                 .setTo(parseString(definition.getToType()));
+        return t;
     }
 
 }

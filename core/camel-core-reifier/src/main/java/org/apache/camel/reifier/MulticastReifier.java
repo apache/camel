@@ -103,6 +103,8 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
                 }
                 strategy = adapter;
             } else if (aggStrategy != null) {
+                @SuppressWarnings("resource")
+                // NOTE: the adapter holds no leaking resources, so we can safely ignore its closure.
                 AggregationStrategyBeanAdapter adapter
                         = new AggregationStrategyBeanAdapter(
                                 aggStrategy, parseString(definition.getAggregationStrategyMethodName()));

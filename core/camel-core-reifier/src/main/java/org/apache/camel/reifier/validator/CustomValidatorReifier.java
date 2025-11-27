@@ -28,6 +28,8 @@ public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefi
     }
 
     @Override
+    // Returns a Validator object. This is a Service implementing AutoCloseable interface. Make sure to close
+    // the object accordingly.
     protected Validator doCreateValidator() {
         if (definition.getRef() == null && definition.getClassName() == null) {
             throw new IllegalArgumentException("'ref' or 'type' must be specified for customValidator");
@@ -49,7 +51,8 @@ public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefi
             if (validatorClass == null) {
                 throw new IllegalArgumentException("Cannot find validator class: " + definition.getClassName());
             }
-            validator = camelContext.getInjector().newInstance(validatorClass, false);
+            // NOTE: this AutoCloseable is used outside this factory method. Make sure the client closes it.
+            validator = camelContext.getInjector().newInstance(validatorClass, false); // NOSONAR
         }
         validator.setCamelContext(camelContext);
         return validator.setType(definition.getType());

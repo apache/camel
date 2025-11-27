@@ -32,11 +32,16 @@ public class EndpointValidatorReifier extends ValidatorReifier<EndpointValidator
     }
 
     @Override
+    // Validator implements AutoCloseable and must be closed by this method client.
     protected Validator doCreateValidator() {
         Endpoint endpoint = definition.getUri() != null
                 ? camelContext.getEndpoint(definition.getUri()) : lookupByNameAndType(definition.getRef(), Endpoint.class);
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
-        return new ProcessorValidator(camelContext).setProcessor(processor).setType(parseString(definition.getType()));
+        @SuppressWarnings("resource")
+        // NOTE: the client must take care of closing this resource.
+        Validator v = new ProcessorValidator(camelContext).setProcessor(processor).setType(parseString(definition.getType()));
+
+        return v;
     }
 
 }
