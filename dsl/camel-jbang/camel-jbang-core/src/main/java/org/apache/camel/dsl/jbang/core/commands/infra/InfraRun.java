@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -134,7 +135,7 @@ public class InfraRun extends InfraBaseCommand {
 
     protected Integer doRun(String testService, String testServiceImplementation, TestInfraService testInfraService)
             throws Exception {
-        DependencyDownloaderClassLoader cl = getDependencyDownloaderClassLoader(testInfraService);
+        DependencyDownloaderClassLoader cl = getDependencyDownloaderClassLoader(testInfraService, printer());
 
         // Update the class loader
         Thread.currentThread().setContextClassLoader(cl);
@@ -288,21 +289,24 @@ public class InfraRun extends InfraBaseCommand {
     }
 
     private static DependencyDownloaderClassLoader getDependencyDownloaderClassLoader(
-            TestInfraService testInfraService) {
+            TestInfraService testInfraService, Printer printer) {
         DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(InfraRun.class.getClassLoader());
 
-        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-        downloader.setClassLoader(cl);
-        downloader.start();
-        // download required camel-test-infra-* dependency
-        downloader.downloadDependency(testInfraService.groupId(),
-                testInfraService.artifactId(),
-                testInfraService.version(), true);
+        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
+            downloader.setClassLoader(cl);
+            downloader.start();
+            // download required camel-test-infra-* dependency
+            downloader.downloadDependency(testInfraService.groupId(),
+                    testInfraService.artifactId(),
+                    testInfraService.version(), true);
 
-        MavenArtifact ma = downloader.downloadArtifact(testInfraService.groupId(),
-                testInfraService.artifactId(),
-                testInfraService.version());
-        cl.addFile(ma.getFile());
+            MavenArtifact ma = downloader.downloadArtifact(testInfraService.groupId(),
+                    testInfraService.artifactId(),
+                    testInfraService.version());
+            cl.addFile(ma.getFile());
+        } catch (Exception e) {
+            printer.printErr(e);
+        }
         return cl;
     }
 

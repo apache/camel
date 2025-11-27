@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.console.ConsoleHelper;
@@ -64,8 +65,8 @@ public class SourceDirDevConsole extends AbstractDevConsole {
             // list files in this directory
             Path dir = Paths.get(reload.getFolder());
             if (Files.exists(dir) && Files.isDirectory(dir)) {
-                try {
-                    List<Path> files = Files.list(dir).collect(Collectors.toList());
+                try (Stream<Path> streams = Files.list(dir)) {
+                    List<Path> files = streams.collect(Collectors.toList());
                     if (!files.isEmpty()) {
                         sb.append("Files:\n");
                         // sort files by name (ignore case)
@@ -131,8 +132,8 @@ public class SourceDirDevConsole extends AbstractDevConsole {
             // list files in this directory
             Path dir = Paths.get(reload.getFolder());
             if (Files.exists(dir) && Files.isDirectory(dir)) {
-                try {
-                    List<Path> files = Files.list(dir).collect(Collectors.toList());
+                try (Stream<Path> streams = Files.list(dir)) {
+                    List<Path> files = streams.collect(Collectors.toList());
                     if (!files.isEmpty()) {
                         // sort files by name (ignore case)
                         files.sort((o1, o2) -> o1.getFileName().toString().compareToIgnoreCase(o2.getFileName().toString()));

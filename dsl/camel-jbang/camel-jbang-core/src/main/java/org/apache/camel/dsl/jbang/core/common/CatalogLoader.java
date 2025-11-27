@@ -85,6 +85,7 @@ public final class CatalogLoader {
             answer.enableCache();
         } finally {
             downloader.stop();
+            downloader.close();
         }
 
         return answer;
@@ -145,6 +146,7 @@ public final class CatalogLoader {
             answer.enableCache();
         } finally {
             downloader.stop();
+            downloader.close();
         }
 
         return answer;
@@ -225,6 +227,7 @@ public final class CatalogLoader {
             answer.enableCache();
         } finally {
             downloader.stop();
+            downloader.close();
         }
 
         return answer;
@@ -252,6 +255,7 @@ public final class CatalogLoader {
             }
         } finally {
             downloader.stop();
+            downloader.close();
         }
 
         return null;
@@ -280,6 +284,7 @@ public final class CatalogLoader {
             }
         } finally {
             downloader.stop();
+            downloader.close();
         }
 
         return null;
@@ -306,6 +311,7 @@ public final class CatalogLoader {
             }
         } finally {
             downloader.stop();
+            downloader.close();
         }
 
         return null;

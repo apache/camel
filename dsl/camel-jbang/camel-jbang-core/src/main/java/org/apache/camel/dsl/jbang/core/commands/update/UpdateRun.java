@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -57,13 +58,14 @@ public class UpdateRun extends CamelCommand {
      */
     @Override
     public Integer doCall() throws Exception {
-        // Check if the current directory contains a Maven project (i.e., a pom.xml file)
-        if (Files.list(Path.of("."))
-                .noneMatch(f -> f.getFileName().toString().equals("pom.xml"))) {
-            printer().println("No Maven Project found in the current directory, " +
-                              "please execute camel upgrade run command in the directory containing the Maven project to update");
+        try (Stream<Path> files = Files.list(Path.of("."))) {
+            // Check if the current directory contains a Maven project (i.e., a pom.xml file)
+            if (files.noneMatch(f -> f.getFileName().toString().equals("pom.xml"))) {
+                printer().println("No Maven Project found in the current directory, " +
+                                  "please execute camel upgrade run command in the directory containing the Maven project to update");
 
-            return -1;
+                return -1;
+            }
         }
 
         List<String> command = new ArrayList<>();

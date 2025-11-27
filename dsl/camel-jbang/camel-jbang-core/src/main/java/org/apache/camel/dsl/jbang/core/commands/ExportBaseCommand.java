@@ -45,6 +45,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
@@ -1216,9 +1217,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected void copyApplicationPropertiesFiles(Path srcResourcesDir) throws Exception {
-        try {
-            Files.list(exportBaseDir)
-                    .filter(p -> Files.isRegularFile(p))
+        try (Stream<Path> files = Files.list(exportBaseDir)) {
+            files.filter(p -> Files.isRegularFile(p))
                     .filter(p -> {
                         String fileName = p.getFileName().toString();
                         String ext = FileUtil.onlyExt(fileName);
@@ -1246,7 +1246,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         }
                     });
         } catch (IOException e) {
-            // Ignore
+            printer().printErr("Error copying application properties due to: " + e.getMessage());
         }
     }
 

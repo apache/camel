@@ -287,15 +287,14 @@ public final class RunHelper {
      */
     public static void dirToFiles(String dir, List<String> files) {
         files.clear();
-        try {
-            Files.list(Paths.get(dir))
-                    .filter(p -> {
-                        try {
-                            return Files.isRegularFile(p) && !Files.isHidden(p);
-                        } catch (IOException e) {
-                            return false;
-                        }
-                    })
+        try (Stream<Path> paths = Files.list(Paths.get(dir))) {
+            paths.filter(p -> {
+                try {
+                    return Files.isRegularFile(p) && !Files.isHidden(p);
+                } catch (IOException e) {
+                    return false;
+                }
+            })
                     .forEach(f -> files.add(dir + "/" + f.getFileName()));
         } catch (IOException e) {
             // Ignore

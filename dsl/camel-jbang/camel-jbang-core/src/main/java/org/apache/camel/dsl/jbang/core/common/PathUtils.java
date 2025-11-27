@@ -98,9 +98,8 @@ public final class PathUtils {
             return false;
         }
 
-        try {
-            Files.walk(directory)
-                    .sorted(java.util.Comparator.reverseOrder())
+        try (Stream<Path> paths = Files.walk(directory)) {
+            paths.sorted(java.util.Comparator.reverseOrder())
                     .forEach(path -> {
                         try {
                             Files.deleteIfExists(path);

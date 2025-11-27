@@ -215,6 +215,11 @@ public final class PluginHelper {
             throw new RuntimeCamelException(String.format("Failed to read the file %s.", path), e);
         } finally {
             downloader.stop();
+            try {
+                downloader.close();
+            } catch (Exception e) {
+                printer.printErr(e);
+            }
             IOHelper.close(in);
         }
         return instance;
