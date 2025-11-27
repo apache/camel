@@ -58,7 +58,6 @@ public class SftpDevConsole extends AbstractDevConsole {
 
         JsonObject jo = new JsonObject();
         for (var e : map.entrySet()) {
-            String v = e.getValue() != null ? e.getValue().toString() : "";
             jo.put(e.getKey(), e.getValue());
         }
         root.put("config", jo);

@@ -107,12 +107,13 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             // already configured configuration
             // from the socket for all future sockets it creates. Not sexy and a
             // little brittle, but it works.
-            SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
-            client.setEnabledCipherSuites(socket.getEnabledCipherSuites());
-            client.setEnabledProtocols(socket.getEnabledProtocols());
-            client.setNeedClientAuth(socket.getNeedClientAuth());
-            client.setWantClientAuth(socket.getWantClientAuth());
-            client.setEnabledSessionCreation(socket.getEnableSessionCreation());
+            try (SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket()) {
+                client.setEnabledCipherSuites(socket.getEnabledCipherSuites());
+                client.setEnabledProtocols(socket.getEnabledProtocols());
+                client.setNeedClientAuth(socket.getNeedClientAuth());
+                client.setWantClientAuth(socket.getWantClientAuth());
+                client.setEnabledSessionCreation(socket.getEnableSessionCreation());
+            }
         } else {
             client = new FTPSClient(getFtpsConfiguration().getSecurityProtocol(), getFtpsConfiguration().isImplicit());
 
