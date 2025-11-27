@@ -696,7 +696,9 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setDebugging(config.isEnabled());
         camelContext.setDebugStandby(config.isStandby());
 
-        BacklogDebugger debugger = DefaultBacklogDebugger.createDebugger(camelContext);
+        // NOTE: BacklogDebugger is autocloseable. It is added as a Service to the context.
+        // The context will be in charge to suspend and close it according the its lifecycle.
+        BacklogDebugger debugger = DefaultBacklogDebugger.createDebugger(camelContext); // NOSONAR
         debugger.setEnabled(config.isEnabled());
         debugger.setStandby(config.isStandby());
         debugger.setInitialBreakpoints(config.getBreakpoints());
