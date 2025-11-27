@@ -404,7 +404,7 @@
           "completionFromBatchConsumer" : {
             "type" : "boolean",
             "title" : "Completion From Batch Consumer",
-            "description" : "Enables the batch completion mode where we aggregate from a org.apache.camel.BatchConsumer and aggregate the total number of exchanges the org.apache.camel.BatchConsumer has reported as total by checking the exchange property org.apache.camel.Exchange#BATCH_COMPLETE when its complete. This option cannot be used together with discardOnAggregationFailure.",
+            "description" : "Enables the batch completion mode where we aggregate from a org.apache.camel.BatchConsumer and aggregate the total number of exchanges the org.apache.camel.BatchConsumer has reported as total by checking the exchange property org.apache.camel.Exchange#BATCH_COMPLETE when its complete. This option cannot be used together with discardOnAggregationFailure. Important: When using this option, you should also enable eagerCheckCompletion() to ensure the aggregator checks for batch completion on each incoming exchange. Without eager checking, the batch completion signal may not be properly detected.",
             "default" : false
           },
           "completionInterval" : {
