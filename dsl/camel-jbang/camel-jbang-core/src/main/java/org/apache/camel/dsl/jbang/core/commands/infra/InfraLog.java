@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -53,12 +54,11 @@ public class InfraLog extends InfraBaseCommand {
         List<Future<?>> futures = new ArrayList<>();
         if (serviceName == null || serviceName.isEmpty()) {
             // Log everything
-            try {
-                List<Path> logFiles = Files.list(CommandLineHelper.getCamelDir())
-                        .filter(p -> {
-                            String name = p.getFileName().toString();
-                            return name.startsWith("infra-") && name.endsWith(".log");
-                        })
+            try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
+                List<Path> logFiles = files.filter(p -> {
+                    String name = p.getFileName().toString();
+                    return name.startsWith("infra-") && name.endsWith(".log");
+                })
                         .toList();
 
                 for (Path logFile : logFiles) {
@@ -77,12 +77,11 @@ public class InfraLog extends InfraBaseCommand {
             String alias = serviceName.get(0);
 
             Path logFile = null;
-            try {
-                logFile = Files.list(CommandLineHelper.getCamelDir())
-                        .filter(p -> {
-                            String name = p.getFileName().toString();
-                            return name.startsWith("infra-" + alias + "-") && name.endsWith(".log");
-                        })
+            try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
+                logFile = files.filter(p -> {
+                    String name = p.getFileName().toString();
+                    return name.startsWith("infra-" + alias + "-") && name.endsWith(".log");
+                })
                         .findFirst()
                         .orElse(null);
             } catch (IOException e) {
@@ -150,10 +149,9 @@ public class InfraLog extends InfraBaseCommand {
         @Override
         public void init(Tailer tailer) {
             this.self = tailer;
-            try {
+            try (ReversedLinesFileReader fileReader = new ReversedLinesFileReader(tailer.getFile())) {
                 StringBuilder sb = new StringBuilder();
                 int linesToRead = 50;
-                ReversedLinesFileReader fileReader = new ReversedLinesFileReader(tailer.getFile());
                 for (int i = 0; i < linesToRead; i++) {
                     String line = fileReader.readLine();
                     if (line == null) {

@@ -38,6 +38,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -536,10 +537,9 @@ public class Run extends CamelCommand {
         if (!empty && autoDetectFiles) {
             if (sourceDir != null) {
                 // silent-run then auto-detect all initial files for source-dir
-                try {
-                    Path sourceDirPath = Paths.get(sourceDir);
-                    Files.list(sourceDirPath)
-                            .forEach(p -> files.add(sourceDirPath.resolve(p.getFileName()).toString()));
+                Path sourceDirPath = Paths.get(sourceDir);
+                try (Stream<Path> paths = Files.list(sourceDirPath)) {
+                    paths.forEach(p -> files.add(sourceDirPath.resolve(p.getFileName()).toString()));
                 } catch (IOException e) {
                     // Ignore
                 }
@@ -2066,10 +2066,9 @@ public class Run extends CamelCommand {
     }
 
     protected static void removeDir(Path directory) {
-        try {
-            if (Files.exists(directory)) {
-                Files.walk(directory)
-                        .sorted(java.util.Comparator.reverseOrder())
+        if (Files.exists(directory)) {
+            try (Stream<Path> files = Files.walk(directory)) {
+                files.sorted(java.util.Comparator.reverseOrder())
                         .forEach(path -> {
                             try {
                                 Files.deleteIfExists(path);
@@ -2082,29 +2081,7 @@ public class Run extends CamelCommand {
                                 }
                             }
                         });
-            }
-        } catch (IOException e) {
-            // Ignore
-        }
-    }
-
-    private static void delete(Path path) {
-        try {
-            if (!Files.deleteIfExists(path)) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
-                if (!Files.deleteIfExists(path)) {
-                    path.toFile().deleteOnExit();
-                }
-            }
-        } catch (IOException e) {
-            // Fallback to deleteOnExit
-            try {
-                path.toFile().deleteOnExit();
-            } catch (Exception ex) {
+            } catch (IOException e) {
                 // Ignore
             }
         }

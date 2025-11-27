@@ -33,6 +33,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -86,18 +87,19 @@ public abstract class InfraBaseCommand extends CamelCommand {
 
         final String pattern = name;
 
-        List<Path> pidFiles = Files.list(CommandLineHelper.getCamelDir())
-                .filter(p -> {
-                    var n = p.getFileName().toString();
-                    return n.startsWith("infra-") && n.endsWith(".json");
-                })
-                .toList();
-        for (Path pidFile : pidFiles) {
-            String fn = pidFile.getFileName().toString();
-            String sn = fn.substring(fn.indexOf("-") + 1, fn.lastIndexOf('-'));
-            String pid = fn.substring(fn.lastIndexOf("-") + 1, fn.lastIndexOf('.'));
-            if (pid.equals(pattern) || PatternHelper.matchPattern(sn, pattern)) {
-                pids.put(Long.valueOf(pid), pidFile);
+        try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
+            List<Path> pidFiles = files.filter(p -> {
+                var n = p.getFileName().toString();
+                return n.startsWith("infra-") && n.endsWith(".json");
+            })
+                    .toList();
+            for (Path pidFile : pidFiles) {
+                String fn = pidFile.getFileName().toString();
+                String sn = fn.substring(fn.indexOf("-") + 1, fn.lastIndexOf('-'));
+                String pid = fn.substring(fn.lastIndexOf("-") + 1, fn.lastIndexOf('.'));
+                if (pid.equals(pattern) || PatternHelper.matchPattern(sn, pattern)) {
+                    pids.put(Long.valueOf(pid), pidFile);
+                }
             }
         }
 

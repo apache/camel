@@ -114,15 +114,14 @@ public class CodeSchemaGenerator extends CamelCommand {
             SchemaGeneratorConfig config = createSchemaGeneratorConfig(jacksonModule);
             SchemaGenerator generator = new SchemaGenerator(config);
 
-            // Download dependencies and create class loader
-            DependencyDownloaderClassLoader cl = getDependencyDownloaderClassLoader(camelComponent, camelVersion, verbose);
-            if (cl == null) {
-                return 1; // Error already reported
-            }
-
             // Set context class loader
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-            try {
+            // Download dependencies and create class loader
+            try (DependencyDownloaderClassLoader cl
+                    = getDependencyDownloaderClassLoader(camelComponent, camelVersion, verbose)) {
+                if (cl == null) {
+                    return 1; // Error already reported
+                }
                 Thread.currentThread().setContextClassLoader(cl);
 
                 // Load the target class
@@ -177,7 +176,8 @@ public class CodeSchemaGenerator extends CamelCommand {
     }
 
     /**
-     * Downloads dependencies and creates a class loader for the specified Camel component.
+     * Downloads dependencies and creates a class loader for the specified Camel component. NOTE: Make sure to close the
+     * stream after using it!
      *
      * @param  camelComponent The name of the Camel component
      * @param  version        The Camel version to use
@@ -195,36 +195,38 @@ public class CodeSchemaGenerator extends CamelCommand {
             DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(
                     CodeSchemaGenerator.class.getClassLoader());
 
-            MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-            downloader.setClassLoader(cl);
-            downloader.setDownload(download);
-            downloader.setRepositories(repositories);
-            downloader.start();
+            try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
+                downloader.setClassLoader(cl);
+                downloader.setDownload(download);
+                downloader.setRepositories(repositories);
+                downloader.start();
 
-            if (verbose) {
-                printer().println("Downloading artifacts for camel-" + camelComponent + ":" + version);
+                if (verbose) {
+                    printer().println("Downloading artifacts for camel-" + camelComponent + ":" + version);
+                }
+
+                List<MavenArtifact> artifacts = downloader.downloadArtifacts(
+                        "org.apache.camel",
+                        "camel-" + camelComponent,
+                        version,
+                        true);
+
+                if (artifacts == null || artifacts.isEmpty()) {
+                    printer().printErr(
+                            "Error: No artifacts found for component 'camel-" + camelComponent + "' version '" + version + "'");
+                    printer().printErr("Please verify that the component name is correct and the version exists.");
+                    printer().printErr("Available components can be found at: https://camel.apache.org/components/");
+                    return null;
+                }
+
+                if (verbose) {
+                    printer().println("Downloaded " + artifacts.size() + " artifact(s)");
+                    artifacts.forEach(artifact -> printer().println("  - " + artifact.getFile().getName()));
+                }
+
+                artifacts.forEach(artifact -> cl.addFile(artifact.getFile()));
             }
 
-            List<MavenArtifact> artifacts = downloader.downloadArtifacts(
-                    "org.apache.camel",
-                    "camel-" + camelComponent,
-                    version,
-                    true);
-
-            if (artifacts == null || artifacts.isEmpty()) {
-                printer().printErr(
-                        "Error: No artifacts found for component 'camel-" + camelComponent + "' version '" + version + "'");
-                printer().printErr("Please verify that the component name is correct and the version exists.");
-                printer().printErr("Available components can be found at: https://camel.apache.org/components/");
-                return null;
-            }
-
-            if (verbose) {
-                printer().println("Downloaded " + artifacts.size() + " artifact(s)");
-                artifacts.forEach(artifact -> printer().println("  - " + artifact.getFile().getName()));
-            }
-
-            artifacts.forEach(artifact -> cl.addFile(artifact.getFile()));
             return cl;
 
         } catch (Exception e) {
