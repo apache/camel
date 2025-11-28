@@ -27,27 +27,28 @@ import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstractTest {
-    private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftClusteredRoutePolicyTest.class);
 
     private ArrayList<CamelContext> lcc = new ArrayList<>();
     private ArrayList<String> rn = new ArrayList<>();
 
     @Test
+    @SuppressWarnings("resource")
     public void test() throws Exception {
+        // NOTE: to be closed by component lifecycle.
         JChannel chA = new JChannel("raftABC.xml").name("A");
         RaftHandle handleA = new RaftHandle(chA, new NopStateMachine()).raftId("A");
         CamelContext contextA = createContext("A", handleA);
 
+        // NOTE: to be closed by component lifecycle.
         JChannel chB = new JChannel("raftABC.xml").name("B");
         RaftHandle handleB = new RaftHandle(chB, new NopStateMachine()).raftId("B");
         CamelContext contextB = createContext("B", handleB);
 
+        // NOTE: to be closed by component lifecycle.
         JChannel chC = new JChannel("raftABC.xml").name("C");
         RaftHandle handleC = new RaftHandle(chC, new NopStateMachine()).raftId("C");
         CamelContext contextC = createContext("C", handleC);
@@ -70,6 +71,7 @@ public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbstr
         assertEquals(1, countActiveFromEndpoints(lcc, rn));
 
         contextB.stop();
+        // NOTE: to be closed by component lifecycle.
         chA = new JChannel("raftABC.xml").name("A");
         handleA = new RaftHandle(chA, new NopStateMachine()).raftId("A");
         contextA = createContext("A", handleA);

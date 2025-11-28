@@ -59,6 +59,8 @@ public class JGroupsRaftEndpointTest extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
+        @SuppressWarnings("resource")
+        // NOTE: will be closed by the component lifecycle.
         JChannel ch = new JChannel("raftB.xml").name("B");
         RaftHandle handle = new RaftHandle(ch, new NopStateMachine()).raftId("B");
         registry.bind("rh", handle);
