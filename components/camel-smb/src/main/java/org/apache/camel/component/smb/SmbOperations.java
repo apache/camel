@@ -196,18 +196,7 @@ public class SmbOperations implements SmbFileOperations {
         try (File src
                 = share.openFile(from, EnumSet.of(AccessMask.GENERIC_READ, AccessMask.DELETE), null,
                         SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null)) {
-
-            try (File dst
-                    = share.openFile(to, EnumSet.of(AccessMask.GENERIC_WRITE), EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
-                            SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_CREATE,
-                            EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
-
-                src.remoteCopyTo(dst);
-            } catch (Exception e) {
-                throw new GenericFileOperationFailedException(e.getMessage(), e);
-            }
-
-            src.deleteOnClose();
+            src.rename(to);
         } catch (SMBRuntimeException smbre) {
             safeDisconnect(smbre);
             throw smbre;
