@@ -119,11 +119,18 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         if (channelProperties != null && !channelProperties.isEmpty()) {
             LOG.trace("Raft Handle created with configured channelProperties: {} and state machine: {}", channelProperties,
                     stateMachine);
-            return new RaftHandle(new JChannel(channelProperties).name(raftId), stateMachine).raftId(raftId);
+            @SuppressWarnings("resource")
+            // NOTE: channel will be closed by the component during
+            // stop() lifecycle step.
+            JChannel channel = new JChannel(channelProperties).name(raftId); // NOSONAR
+            return new RaftHandle(channel, stateMachine).raftId(raftId);
         }
         LOG.trace("Raft Handle created with defaults: {}, {},", JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG, stateMachine);
-        return new RaftHandle(new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG).name(raftId), stateMachine)
-                .raftId(raftId);
+        @SuppressWarnings("resource")
+        // NOTE: channel will be closed by the component during
+        // stop() lifecycle step.
+        JChannel channel = new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG).name(raftId); // NOSONAR
+        return new RaftHandle(channel, stateMachine).raftId(raftId);
     }
 
     /**

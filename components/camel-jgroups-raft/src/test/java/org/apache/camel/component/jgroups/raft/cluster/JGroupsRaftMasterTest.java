@@ -29,27 +29,30 @@ import org.awaitility.Awaitility;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JGroupsRaftMasterTest extends JGroupsRaftClusterAbstractTest {
-    private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftMasterTest.class);
 
     private ArrayList<CamelContext> lcc = new ArrayList<>();
     private ArrayList<String> rn = new ArrayList<>();
 
     @Test
     public void test() throws Exception {
+        @SuppressWarnings("resource")
+        // NOTE: to be closed by component lifecycle.
         JChannel chA = new JChannel("raftABC.xml").name("A");
         RaftHandle handleA = new RaftHandle(chA, new NopStateMachine()).raftId("A");
         CamelContext contextA = createContext("A", handleA);
 
+        @SuppressWarnings("resource")
+        // NOTE: to be closed by component lifecycle.
         JChannel chB = new JChannel("raftABC.xml").name("B");
         RaftHandle handleB = new RaftHandle(chB, new NopStateMachine()).raftId("B");
         CamelContext contextB = createContext("B", handleB);
 
+        @SuppressWarnings("resource")
+        // NOTE: to be closed by component lifecycle.
         JChannel chC = new JChannel("raftABC.xml").name("C");
         RaftHandle handleC = new RaftHandle(chC, new NopStateMachine()).raftId("C");
         CamelContext contextC = createContext("C", handleC);
