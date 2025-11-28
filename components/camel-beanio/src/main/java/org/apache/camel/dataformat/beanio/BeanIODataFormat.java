@@ -196,12 +196,9 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
         List<Object> results = new ArrayList<>();
         BufferedReader streamReader = IOHelper.buffered(new InputStreamReader(stream, getEncoding()));
 
-        BeanReader in = factory.createReader(getStreamName(), streamReader);
-
-        BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange, results, null);
-        in.setErrorHandler(errorHandler);
-
-        try {
+        try (BeanReader in = factory.createReader(getStreamName(), streamReader)) {
+            BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange, results, null);
+            in.setErrorHandler(errorHandler);
             Object readObject;
             while ((readObject = in.read()) != null) {
                 if (readObject instanceof BeanIOHeader) {
@@ -209,8 +206,6 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
                 }
                 results.add(readObject);
             }
-        } finally {
-            in.close();
         }
 
         return results;
