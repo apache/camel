@@ -38,6 +38,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
+import org.apache.camel.util.AnnotationHelper;
 import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -421,7 +422,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         final Class<?> entityType = getEndpoint().getEntityType();
         if (entityType != null) {
             // Inspect the method(s) annotated with @PreConsumed
-            List<Method> methods = org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation(entityType, PreConsumed.class);
+            List<Method> methods = AnnotationHelper.findMethodsWithAnnotation(entityType, PreConsumed.class);
             if (methods.size() > 1) {
                 throw new IllegalStateException(
                         "Only one method can be annotated with the @PreConsumed annotation but found: " + methods);
@@ -451,7 +452,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         // look for @Consumed to allow custom callback when the Entity has been consumed
         final Class<?> entityType = getEndpoint().getEntityType();
         if (entityType != null) {
-            List<Method> methods = org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation(entityType, Consumed.class);
+            List<Method> methods = AnnotationHelper.findMethodsWithAnnotation(entityType, Consumed.class);
             if (methods.size() > 1) {
                 throw new IllegalArgumentException(
                         "Only one method can be annotated with the @Consumed annotation but found: " + methods);
