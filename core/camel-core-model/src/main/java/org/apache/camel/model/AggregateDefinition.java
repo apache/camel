@@ -667,6 +667,10 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
      * exchange property {@link org.apache.camel.Exchange#BATCH_COMPLETE} when its complete.
      * <p/>
      * This option cannot be used together with discardOnAggregationFailure.
+     * <p/>
+     * <b>Important:</b> When using this option, you should also enable {@link #eagerCheckCompletion()} to ensure the
+     * aggregator checks for batch completion on each incoming exchange. Without eager checking, the batch completion
+     * signal may not be properly detected.
      *
      * @return builder
      */
