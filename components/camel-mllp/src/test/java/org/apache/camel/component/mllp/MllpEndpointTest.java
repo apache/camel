@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mllp;
 
+import java.io.IOException;
+
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -31,26 +33,30 @@ public class MllpEndpointTest extends CamelTestSupport {
 
     /**
      * Assert that the default maxConcurrentConsumers property is correctly set on the endpoint instance.
+     *
+     * @throws IOException
      */
     @Test
-    public void testCreateEndpointWithDefaultConfigurations() {
-        MllpEndpoint mllpEndpoint = new MllpEndpoint("mllp://dummy", new MllpComponent(), new MllpConfiguration());
-
-        assertEquals(5, mllpEndpoint.getConfiguration().getMaxConcurrentConsumers());
+    public void testCreateEndpointWithDefaultConfigurations() throws IOException {
+        try (MllpEndpoint mllpEndpoint = new MllpEndpoint("mllp://dummy", new MllpComponent(), new MllpConfiguration())) {
+            assertEquals(5, mllpEndpoint.getConfiguration().getMaxConcurrentConsumers());
+        }
     }
 
     /**
      * Assert that the maxConcurrentConsumers property overridden in the MllpConfiguration object is correctly set on
      * the endpoint instance.
+     *
+     * @throws IOException
      */
     @Test
-    public void testCreateEndpointWithCustomMaxConcurrentConsumers() {
+    public void testCreateEndpointWithCustomMaxConcurrentConsumers() throws IOException {
         final int maxConcurrentConsumers = 10;
         MllpConfiguration mllpConfiguration = new MllpConfiguration();
         mllpConfiguration.setMaxConcurrentConsumers(maxConcurrentConsumers);
-        MllpEndpoint mllpEndpoint = new MllpEndpoint("mllp://dummy", new MllpComponent(), mllpConfiguration);
-
-        assertEquals(maxConcurrentConsumers, mllpEndpoint.getConfiguration().getMaxConcurrentConsumers());
+        try (MllpEndpoint mllpEndpoint = new MllpEndpoint("mllp://dummy", new MllpComponent(), mllpConfiguration)) {
+            assertEquals(maxConcurrentConsumers, mllpEndpoint.getConfiguration().getMaxConcurrentConsumers());
+        }
     }
 
     /**

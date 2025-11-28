@@ -740,26 +740,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                     log.warn("Timeout waiting for client connection");
                 } catch (SocketException socketEx) {
                     log.debug("SocketException encountered accepting client connection - ignoring", socketEx);
-                    if (null == clientSocket) {
-                        continue;
-                    } else if (!clientSocket.isClosed()) {
-                        try {
-                            clientSocket.setSoLinger(true, 0);
-                        } catch (SocketException soLingerEx) {
-                            log.warn(
-                                    "Ignoring SocketException encountered when setting SO_LINGER in preparation of resetting client Socket",
-                                    soLingerEx);
-                        }
-                        try {
-                            clientSocket.close();
-                        } catch (IOException ioEx) {
-                            log.warn("Ignoring IOException encountered when resetting client Socket", ioEx);
-                        }
-                        continue;
-                    } else {
-                        throw new MllpJUnitResourceException(
-                                "Unexpected SocketException encountered accepting client connection", socketEx);
-                    }
+                    // Socket is null at this stage
+                    continue;
                 } catch (Exception ex) {
                     throw new MllpJUnitResourceException("Unexpected exception encountered accepting client connection", ex);
                 }
