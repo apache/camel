@@ -527,6 +527,7 @@ public final class EntityParser {
         }
     }
 
+    // MultipartSignedEntity returned must be closed by the client after using it.
     public static MultipartSignedEntity parseMultipartSignedEntityBody(
             AS2SessionInputBuffer inbuffer,
             InputStream is,
@@ -552,8 +553,10 @@ public final class EntityParser {
                     new BasicNameValuePair("boundary", boundary), new BasicNameValuePair("micalg", micalg),
                     new BasicNameValuePair("charset", charsetName) };
             ContentType contentType = ContentType.create(AS2MimeType.MULTIPART_SIGNED, parameters);
+            // NOTE: this object is returned by the factory method.
+            // Client must make sure to close it.
             MultipartSignedEntity multipartSignedEntity
-                    = new MultipartSignedEntity(contentType, contentTransferEncoding, boundary, false);
+                    = new MultipartSignedEntity(contentType, contentTransferEncoding, boundary, false); // NOSONAR
 
             // Skip Preamble and Start Boundary line
             skipPreambleAndStartBoundary(inbuffer, is, boundary);
@@ -635,6 +638,7 @@ public final class EntityParser {
         }
     }
 
+    // DispositionNotificationMultipartReportEntity must be closed by the client after using it.
     public static DispositionNotificationMultipartReportEntity parseMultipartReportEntityBody(
             AS2SessionInputBuffer inbuffer,
             InputStream is,
@@ -654,8 +658,9 @@ public final class EntityParser {
 
             inbuffer.setCharsetDecoder(charsetDecoder);
 
+            // NOTE: the client must close the resource created by this factory method.
             DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity
-                    = new DispositionNotificationMultipartReportEntity(boundary, contentTransferEncoding, false);
+                    = new DispositionNotificationMultipartReportEntity(boundary, contentTransferEncoding, false); // NOSONAR
 
             // Skip Preamble and Start Boundary line
             skipPreambleAndStartBoundary(inbuffer, is, boundary);
