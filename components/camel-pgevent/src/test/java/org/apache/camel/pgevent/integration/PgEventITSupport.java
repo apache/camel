@@ -23,10 +23,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 public class PgEventITSupport extends CamelTestSupport {
+
     @RegisterExtension
     public static JDBCService service = JDBCServiceFactory
             .builder()
@@ -38,7 +38,7 @@ public class PgEventITSupport extends CamelTestSupport {
     protected static final String POSTGRES_PASSWORD = "mysecretpassword";
     protected static final String POSTGRES_DB = "postgres";
 
-    private static final Logger LOG = LoggerFactory.getLogger(PgEventITSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PgEventITSupport.class.getName());
 
     private static PostgreSQLContainer container;
 
@@ -49,8 +49,7 @@ public class PgEventITSupport extends CamelTestSupport {
 
         container.withUsername(POSTGRES_USER)
                 .withPassword(POSTGRES_PASSWORD)
-                .withDatabaseName(POSTGRES_DB)
-                .withLogConsumer(new Slf4jLogConsumer(LOG));
+                .withDatabaseName(POSTGRES_DB);
 
         return new JDBCLocalContainerService<>(container);
     }

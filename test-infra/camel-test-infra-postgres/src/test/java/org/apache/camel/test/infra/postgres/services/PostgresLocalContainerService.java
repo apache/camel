@@ -16,9 +16,10 @@
  */
 package org.apache.camel.test.infra.postgres.services;
 
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 public class PostgresLocalContainerService extends PostgresLocalContainerInfraService implements PostgresService {
+
     public PostgresLocalContainerService() {
         super();
     }

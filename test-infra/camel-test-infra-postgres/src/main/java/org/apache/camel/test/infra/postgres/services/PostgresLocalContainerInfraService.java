@@ -23,18 +23,20 @@ import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.postgres.common.PostgresProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @InfraService(service = PostgresInfraService.class,
               description = "Postgres SQL Database",
               serviceAlias = { "postgres" })
-public class PostgresLocalContainerInfraService implements PostgresInfraService, ContainerService<PostgreSQLContainer<?>> {
+public class PostgresLocalContainerInfraService implements PostgresInfraService, ContainerService<PostgreSQLContainer> {
+
     public static final String DEFAULT_POSTGRES_CONTAINER
             = LocalPropertyResolver.getProperty(PostgresLocalContainerInfraService.class,
                     PostgresProperties.POSTGRES_CONTAINER);
     private static final Logger LOG = LoggerFactory.getLogger(PostgresLocalContainerInfraService.class);
-    private final PostgreSQLContainer<?> container;
+    private final PostgreSQLContainer container;
 
     public PostgresLocalContainerInfraService() {
         this(DEFAULT_POSTGRES_CONTAINER);
@@ -48,11 +50,11 @@ public class PostgresLocalContainerInfraService implements PostgresInfraService,
         }
     }
 
-    public PostgresLocalContainerInfraService(PostgreSQLContainer<?> container) {
+    public PostgresLocalContainerInfraService(PostgreSQLContainer container) {
         this.container = container;
     }
 
-    protected PostgreSQLContainer<?> initContainer(String imageName) {
+    protected PostgreSQLContainer initContainer(String imageName) {
         class TestInfraPostgreSQLContainer extends PostgreSQLContainer {
             public TestInfraPostgreSQLContainer(boolean fixedPort) {
                 super(DockerImageName.parse(imageName)
@@ -61,6 +63,7 @@ public class PostgresLocalContainerInfraService implements PostgresInfraService,
                 if (fixedPort) {
                     addFixedExposedPort(5432, 5432);
                 }
+                withLogConsumer(new Slf4jLogConsumer(LOG));
             }
         }
 
@@ -92,7 +95,7 @@ public class PostgresLocalContainerInfraService implements PostgresInfraService,
     }
 
     @Override
-    public PostgreSQLContainer<?> getContainer() {
+    public PostgreSQLContainer getContainer() {
         return container;
     }
 

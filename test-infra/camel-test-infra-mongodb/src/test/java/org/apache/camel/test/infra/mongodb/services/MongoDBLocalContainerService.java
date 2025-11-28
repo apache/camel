@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.infra.mongodb.services;
 
-import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.mongodb.MongoDBContainer;
 
 public class MongoDBLocalContainerService extends MongoDBLocalContainerInfraService implements MongoDBService {
     public MongoDBLocalContainerService() {

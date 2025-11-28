@@ -19,8 +19,8 @@ package org.apache.camel.test.infra.postgres.services;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 
 public final class PostgresServiceFactory {
-    private PostgresServiceFactory() {
 
+    private PostgresServiceFactory() {
     }
 
     public static SimpleTestServiceBuilder<PostgresService> builder() {

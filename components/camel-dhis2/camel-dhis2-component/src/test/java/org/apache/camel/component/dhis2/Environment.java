@@ -30,8 +30,8 @@ import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public final class Environment {
@@ -44,7 +44,7 @@ public final class Environment {
 
     private static final Network NETWORK = Network.newNetwork();
 
-    private static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER;
+    private static final PostgreSQLContainer POSTGRESQL_CONTAINER;
 
     private static final GenericContainer<?> DHIS2_CONTAINER;
 
@@ -53,7 +53,7 @@ public final class Environment {
     }
 
     static {
-        POSTGRESQL_CONTAINER = new PostgreSQLContainer<>(
+        POSTGRESQL_CONTAINER = new PostgreSQLContainer(
                 DockerImageName.parse("postgis/postgis:12-3.2-alpine").asCompatibleSubstituteFor("postgres"))
                 .withDatabaseName("dhis2")
                 .withNetworkAliases("db")
