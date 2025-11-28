@@ -89,6 +89,17 @@ public class SmbConfiguration extends GenericFileConfiguration {
                             + " configurations, like timeouts")
     private SmbConfig smbConfig;
 
+    @UriParam(label = "producer,advanced",
+              description = "Perform rename operations using a copy and delete strategy. This option takes "
+                            + "precedence over the copyAndDeleteOnRenameFail parameter that will automatically fall back to the copy and delete "
+                            + "strategy, but only after additional delays.",
+              defaultValue = "false")
+    private boolean renameUsingCopy = false;
+
+    @UriParam(label = "advanced", defaultValue = "false",
+              description = "Whether to fall back and do a copy and delete file, in case the file could not be renamed directly.")
+    private boolean copyAndDeleteOnRenameFail = false;
+
     public SmbConfiguration() {
         setProtocol("smb");
     }
@@ -262,4 +273,24 @@ public class SmbConfiguration extends GenericFileConfiguration {
         return protocol + "://" + (username != null ? username : "anonymous") + "@" + hostname + ":" + getPort();
     }
 
+    public boolean isRenameUsingCopy() {
+        return renameUsingCopy;
+    }
+
+    /**
+     * Perform rename operations using a copy and delete strategy. This option takes precedence over the
+     * copyAndDeleteOnRenameFail parameter that will automatically fall back to the copy and delete strategy, but only
+     * after additional delays.
+     */
+    public void setRenameUsingCopy(boolean renameUsingCopy) {
+        this.renameUsingCopy = renameUsingCopy;
+    }
+
+    public boolean isCopyAndDeleteOnRenameFail() {
+        return copyAndDeleteOnRenameFail;
+    }
+
+    public void setCopyAndDeleteOnRenameFail(boolean copyAndDeleteOnRenameFail) {
+        this.copyAndDeleteOnRenameFail = copyAndDeleteOnRenameFail;
+    }
 }

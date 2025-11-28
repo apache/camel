@@ -48,6 +48,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "charset": target.setCharset(property(camelContext, java.lang.String.class, value)); return true;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "copyanddeleteonrenamefail":
+        case "copyAndDeleteOnRenameFail": target.getConfiguration().setCopyAndDeleteOnRenameFail(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "delete": target.setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
@@ -149,6 +151,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readlocktimeout":
         case "readLockTimeout": target.setReadLockTimeout(property(camelContext, long.class, value)); return true;
         case "recursive": target.setRecursive(property(camelContext, boolean.class, value)); return true;
+        case "renameusingcopy":
+        case "renameUsingCopy": target.getConfiguration().setRenameUsingCopy(property(camelContext, boolean.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
@@ -222,6 +226,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "charset": return java.lang.String.class;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return java.lang.String.class;
+        case "copyanddeleteonrenamefail":
+        case "copyAndDeleteOnRenameFail": return boolean.class;
         case "delay": return long.class;
         case "delete": return boolean.class;
         case "disconnect": return boolean.class;
@@ -323,6 +329,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readlocktimeout":
         case "readLockTimeout": return long.class;
         case "recursive": return boolean.class;
+        case "renameusingcopy":
+        case "renameUsingCopy": return boolean.class;
         case "repeatcount":
         case "repeatCount": return long.class;
         case "runlogginglevel":
@@ -392,6 +400,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "charset": return target.getCharset();
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
+        case "copyanddeleteonrenamefail":
+        case "copyAndDeleteOnRenameFail": return target.getConfiguration().isCopyAndDeleteOnRenameFail();
         case "delay": return target.getDelay();
         case "delete": return target.isDelete();
         case "disconnect": return target.getConfiguration().isDisconnect();
@@ -493,6 +503,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "readlocktimeout":
         case "readLockTimeout": return target.getReadLockTimeout();
         case "recursive": return target.isRecursive();
+        case "renameusingcopy":
+        case "renameUsingCopy": return target.getConfiguration().isRenameUsingCopy();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":
