@@ -63,7 +63,6 @@ import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.client5.http.utils.Base64;
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -795,7 +794,6 @@ public class VertxPlatformHttpEngineTest {
                         .then()
                         .statusCode(200);
 
-                Matcher<String> expectedBody;
                 if (method.equals(Method.HEAD)) {
                     // HEAD response body is ignored
                     validatableResponse.body(emptyString());

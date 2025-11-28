@@ -61,7 +61,8 @@ class StreamingHttpRequestBodyHandler extends HttpRequestBodyHandler {
             request.endHandler(promise::complete);
         } else {
             // Process each body 'chunk' and write it to CachedOutputStream
-            CachedOutputStream stream = new CachedOutputStream(message.getExchange(), true);
+            // NOTE: the stream is going to be closed on endHandler event.
+            CachedOutputStream stream = new CachedOutputStream(message.getExchange(), true); // NOSONAR
             AtomicReference<Exception> failureCause = new AtomicReference<>();
             request.handler(buffer -> {
                 try {
