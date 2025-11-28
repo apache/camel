@@ -19,6 +19,7 @@ package org.apache.camel.main;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -240,7 +241,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
             return new ArrayList<>();
         }
 
-        Collection<Resource> accepted = new ArrayList<>();
+        Collection<Resource> accepted = new LinkedHashSet<>();
         for (String include : includes) {
             if (include.endsWith("?optional=true")) {
                 include = include.substring(0, include.length() - 14);

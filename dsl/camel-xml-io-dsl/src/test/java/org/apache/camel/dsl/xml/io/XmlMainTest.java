@@ -95,29 +95,38 @@ public class XmlMainTest {
                 null);
     }
 
+    @Test
+    public void testMainRoutesCollectorWithOverlappingWildcardPaths() throws Exception {
+        doTestMain(
+                "classpath:org/apache/camel/main/*dummy.xml,classpath:org/apache/camel/main/*scan.xml,classpath:org/apache/camel/main/xml/*dummy.xml classpath:org/apache/camel/main/xml/*scan.xml",
+                null);
+    }
+
     protected void doTestMain(String includes, String excludes) throws Exception {
         Main main = new Main();
-        main.bind("restConsumerFactory", new MockRestConsumerFactory());
-        main.configure().withRoutesIncludePattern(includes);
-        main.configure().withRoutesExcludePattern(excludes);
-        main.start();
+        try {
+            main.bind("restConsumerFactory", new MockRestConsumerFactory());
+            main.configure().withRoutesIncludePattern(includes);
+            main.configure().withRoutesExcludePattern(excludes);
+            main.start();
 
-        CamelContext camelContext = main.getCamelContext();
-        assertNotNull(camelContext);
-        assertEquals(2, camelContext.getRoutes().size());
+            CamelContext camelContext = main.getCamelContext();
+            assertNotNull(camelContext);
+            assertEquals(2, camelContext.getRoutes().size());
 
-        MockEndpoint endpoint = camelContext.getEndpoint("mock:scan", MockEndpoint.class);
-        endpoint.expectedBodiesReceived("Hello World");
-        MockEndpoint endpoint2 = camelContext.getEndpoint("mock:dummy", MockEndpoint.class);
-        endpoint2.expectedBodiesReceived("Bye World");
+            MockEndpoint endpoint = camelContext.getEndpoint("mock:scan", MockEndpoint.class);
+            endpoint.expectedBodiesReceived("Hello World");
+            MockEndpoint endpoint2 = camelContext.getEndpoint("mock:dummy", MockEndpoint.class);
+            endpoint2.expectedBodiesReceived("Bye World");
 
-        main.getCamelTemplate().sendBody("direct:scan", "Hello World");
-        main.getCamelTemplate().sendBody("direct:dummy", "Bye World");
+            main.getCamelTemplate().sendBody("direct:scan", "Hello World");
+            main.getCamelTemplate().sendBody("direct:dummy", "Bye World");
 
-        endpoint.assertIsSatisfied();
-        endpoint2.assertIsSatisfied();
-
-        main.stop();
+            endpoint.assertIsSatisfied();
+            endpoint2.assertIsSatisfied();
+        } finally {
+            main.stop();
+        }
     }
 
 }
