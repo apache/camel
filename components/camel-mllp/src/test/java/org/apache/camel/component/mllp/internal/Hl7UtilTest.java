@@ -126,7 +126,7 @@ public class Hl7UtilTest {
     @Test
     public void testGenerateInvalidPayloadExceptionMessageWithLengthLargerThanArraySize() {
         byte[] payload = TEST_MESSAGE.getBytes();
-        String message = hl7util.generateInvalidPayloadExceptionMessage(payload, payload.length * 2);
+        String message = Hl7Util.generateInvalidPayloadExceptionMessage(payload, payload.length * 2);
 
         assertNull(message, "Valid payload should result in a null message");
     }
@@ -134,7 +134,7 @@ public class Hl7UtilTest {
     @Test
     public void testGenerateInvalidPayloadExceptionMessageWithLengthSmallerThanArraySize() {
         byte[] payload = TEST_MESSAGE.getBytes();
-        String message = hl7util.generateInvalidPayloadExceptionMessage(payload, 10);
+        String message = Hl7Util.generateInvalidPayloadExceptionMessage(payload, 10);
 
         assertEquals("The HL7 payload terminating byte [0x7c] is incorrect - expected [0xd]  {ASCII [<CR>]}", message);
     }
@@ -143,7 +143,7 @@ public class Hl7UtilTest {
     public void testGenerateInvalidPayloadExceptionMessageWithNullPayload() {
         assertEquals("HL7 payload is null", hl7util.generateInvalidPayloadExceptionMessage(null));
 
-        assertEquals("HL7 payload is null", hl7util.generateInvalidPayloadExceptionMessage(null, 1234));
+        assertEquals("HL7 payload is null", Hl7Util.generateInvalidPayloadExceptionMessage(null, 1234));
     }
 
     @Test
@@ -164,7 +164,7 @@ public class Hl7UtilTest {
         byte[] payload = new byte[0];
 
         assertEquals("HL7 payload is empty", hl7util.generateInvalidPayloadExceptionMessage(payload));
-        assertEquals("HL7 payload is empty", hl7util.generateInvalidPayloadExceptionMessage(payload, payload.length));
+        assertEquals("HL7 payload is empty", Hl7Util.generateInvalidPayloadExceptionMessage(payload, payload.length));
     }
 
     @Test
@@ -290,8 +290,8 @@ public class Hl7UtilTest {
      */
     @Test
     public void testConvertStringToPrintFriendlyString() {
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString((String) null));
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(""));
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString((String) null));
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(""));
         assertEquals(EXPECTED_MESSAGE, hl7util.convertToPrintFriendlyString(TEST_MESSAGE));
     }
 
@@ -301,8 +301,8 @@ public class Hl7UtilTest {
      */
     @Test
     public void testConvertBytesToPrintFriendlyString() {
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString((byte[]) null));
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0]));
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString((byte[]) null));
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0]));
         assertEquals(EXPECTED_MESSAGE, hl7util.convertToPrintFriendlyString(TEST_MESSAGE_BYTES));
     }
 
@@ -328,13 +328,13 @@ public class Hl7UtilTest {
         assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], 200, 1000));
         assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], -200, 1000));
 
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], 0, 0));
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], 200, 0));
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], -200, 0));
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], 0, 0));
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], 200, 0));
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], -200, 0));
 
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], 0, -1000));
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], 200, -1000));
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], -200, -1000));
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], 0, -1000));
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], 200, -1000));
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.convertToPrintFriendlyString(new byte[0], -200, -1000));
 
         assertEquals(EXPECTED_MESSAGE, hl7util.convertToPrintFriendlyString(TEST_MESSAGE_BYTES, 0, TEST_MESSAGE_BYTES.length));
         assertEquals("", hl7util.convertToPrintFriendlyString(TEST_MESSAGE_BYTES, 0, 0));
@@ -363,8 +363,8 @@ public class Hl7UtilTest {
      */
     @Test
     public void testBytesToPrintFriendlyStringBuilder() {
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null).toString());
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder(new byte[0]).toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null).toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder(new byte[0]).toString());
         assertEquals(EXPECTED_MESSAGE, hl7util.bytesToPrintFriendlyStringBuilder(TEST_MESSAGE_BYTES).toString());
     }
 
@@ -374,44 +374,44 @@ public class Hl7UtilTest {
      */
     @Test
     public void testBytesToPrintFriendlyStringBuilderWithStartAndEndPositions() {
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, 1000).toString());
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 200, 1000).toString());
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, -200, 1000).toString());
 
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, 0).toString());
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, 0).toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 200, 0).toString());
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, -200, 0).toString());
 
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 0, -1000).toString());
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, 200, -1000).toString());
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder((byte[]) null, -200, -1000).toString());
 
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 0, 1000).toString());
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 200, 1000).toString());
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], -200, 1000).toString());
 
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 0, 0).toString());
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 0, 0).toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 200, 0).toString());
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], -200, 0).toString());
 
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 0, -1000).toString());
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], 200, -1000).toString());
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE,
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE,
                 hl7util.bytesToPrintFriendlyStringBuilder(new byte[0], -200, -1000).toString());
 
         assertEquals(EXPECTED_MESSAGE,
@@ -455,11 +455,11 @@ public class Hl7UtilTest {
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, (byte[]) null);
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, new byte[0]);
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, TEST_MESSAGE_BYTES);
@@ -483,75 +483,75 @@ public class Hl7UtilTest {
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, null, 0, 1000);
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, null, 200, 1000);
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, null, -200, 1000);
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, null, 0, 0);
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, null, 200, 0);
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, null, -200, 0);
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, null, 0, -1000);
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, null, 200, -1000);
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, null, -200, -1000);
-        assertEquals(hl7util.NULL_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.NULL_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, new byte[0], 0, 1000);
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, new byte[0], 200, 1000);
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, new byte[0], -200, 1000);
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, new byte[0], 0, 0);
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, new byte[0], 200, 0);
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, new byte[0], -200, 0);
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, new byte[0], 0, -1000);
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, new byte[0], 200, -1000);
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, new byte[0], -200, -1000);
-        assertEquals(hl7util.EMPTY_REPLACEMENT_VALUE, builder.toString());
+        assertEquals(Hl7Util.EMPTY_REPLACEMENT_VALUE, builder.toString());
 
         builder = new StringBuilder();
         hl7util.appendBytesAsPrintFriendlyString(builder, TEST_MESSAGE_BYTES, 0, TEST_MESSAGE_BYTES.length);

@@ -54,8 +54,6 @@ public class MllpTcpServerConsumerMessageHeadersTest extends CamelTestSupport {
     protected void doPreSetup() throws Exception {
         mllpClient.setMllpHost("localhost");
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
-
-        super.doPreSetup();
     }
 
     @Override
