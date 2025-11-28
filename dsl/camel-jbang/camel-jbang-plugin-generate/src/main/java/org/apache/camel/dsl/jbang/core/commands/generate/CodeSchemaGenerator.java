@@ -77,7 +77,7 @@ public class CodeSchemaGenerator extends CamelCommand {
                         description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
-    @CommandLine.Option(names = { "--repos" },
+    @CommandLine.Option(names = { "--repo", "--repos" },
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 

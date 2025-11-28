@@ -84,7 +84,7 @@ import picocli.CommandLine;
                      description = "List available update versions for Apache Camel and its runtime variants")
 public class UpdateList extends CamelCommand {
 
-    @CommandLine.Option(names = { "--repos" },
+    @CommandLine.Option(names = { "--repo", "--repos" },
                         description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 

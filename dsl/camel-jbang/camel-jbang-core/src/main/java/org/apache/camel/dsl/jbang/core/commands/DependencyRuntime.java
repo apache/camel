@@ -39,7 +39,7 @@ public class DependencyRuntime extends CamelCommand {
     @CommandLine.Parameters(description = "The pom.xml to analyze", arity = "1", paramLabel = "<pom.xml>")
     Path pomXml;
 
-    @CommandLine.Option(names = { "--repos" },
+    @CommandLine.Option(names = { "--repo", "--repos" },
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 

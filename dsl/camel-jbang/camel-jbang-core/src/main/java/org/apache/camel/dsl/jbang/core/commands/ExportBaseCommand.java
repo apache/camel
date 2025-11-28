@@ -105,7 +105,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--repos" },
+    @CommandLine.Option(names = { "--repo", "--repos" },
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
     protected String repositories;
 

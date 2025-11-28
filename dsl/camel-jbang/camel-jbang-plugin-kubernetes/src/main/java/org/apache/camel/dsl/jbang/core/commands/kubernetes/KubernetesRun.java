@@ -75,7 +75,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
     String serviceAccount;
 
-    @CommandLine.Option(names = { "--property" },
+    @CommandLine.Option(names = { "--prop", "--property" },
                         description = "Add a runtime property or properties from a file (syntax: [my-key=my-value|file:/path/to/my-conf.properties|/path/to/my-conf.properties].")
     String[] properties;
 
@@ -183,7 +183,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     // Export base options
 
-    @CommandLine.Option(names = { "--repos" },
+    @CommandLine.Option(names = { "--repo", "--repos" },
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
     String repositories;
 

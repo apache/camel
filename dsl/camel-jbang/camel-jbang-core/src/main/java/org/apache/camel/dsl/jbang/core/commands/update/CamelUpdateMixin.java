@@ -70,7 +70,7 @@ public class CamelUpdateMixin {
                         description = "Runtime (${COMPLETION-CANDIDATES})")
     RuntimeType runtime = RuntimeType.main;
 
-    @CommandLine.Option(names = { "--repos" },
+    @CommandLine.Option(names = { "--repo", "--repos" },
                         description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
