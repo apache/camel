@@ -45,7 +45,6 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.CamelFileDataSource;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
@@ -71,7 +70,7 @@ import static org.apache.camel.util.CollectionHelper.appendEntry;
  * based on Vert.x Web.
  */
 public class VertxPlatformHttpConsumer extends DefaultConsumer
-        implements PlatformHttpConsumer, Suspendable, SuspendableService {
+        implements PlatformHttpConsumer, Suspendable {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpConsumer.class);
     private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 public class PathCreator {
     public String createNewUri(String uri) {
-        return "vertx-http:" + StringUtils.replaceOnce(uri, "/camel", "");
+        return "vertx-http:" + Strings.CS.replaceOnce(uri, "/camel", "");
     }
 }
