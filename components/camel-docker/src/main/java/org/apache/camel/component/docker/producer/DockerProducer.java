@@ -1167,11 +1167,11 @@ public class DockerProducer extends DefaultProducer {
     }
 
     /**
-     * Produces a network create request
+     * Produces a network create request. Client must close the resource returned by this factory method.
      *
      * @param  client
      * @param  message
-     * @return
+     * @return         a resource which must be closed by the client
      */
     private CreateNetworkCmd executeCreateNetworkRequest(DockerClient client, Message message) {
         LOGGER.debug("Executing Docker Network Create Request");
@@ -1180,7 +1180,8 @@ public class DockerProducer extends DefaultProducer {
 
         ObjectHelper.notNull(networkName, "Network Name must be specified");
 
-        return client.createNetworkCmd().withName(networkName);
+        // NOTE: the client must close the resource returned in this factory method.
+        return client.createNetworkCmd().withName(networkName); // NOSONAR
     }
 
     /**
