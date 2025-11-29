@@ -60,7 +60,6 @@ public class LogPhiTest extends CamelTestSupport {
         mllpServer.setDelayDuringAcknowledgement(SERVER_ACKNOWLEDGEMENT_DELAY);
         mllpServer.startup();
         assertTrue(mllpServer.isActive());
-        super.doPreSetup();
     }
 
     @Override
@@ -118,7 +117,7 @@ public class LogPhiTest extends CamelTestSupport {
         String message = Hl7TestMessageGenerator.generateMessage();
         exchange.getIn().setBody(message);
         assertEquals(ServiceStatus.Started, context.getStatus());
-        Exchange out = template.send(endpoint, exchange);
+        template.send(endpoint, exchange);
         assertTrue(exchange.isFailed(), "Should be failed");
         contains.accept(exchange.getException().getMessage());
     }

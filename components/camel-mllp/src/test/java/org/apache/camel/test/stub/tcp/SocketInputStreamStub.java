@@ -26,8 +26,12 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 import org.apache.camel.test.util.PayloadBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SocketInputStreamStub extends InputStream {
+    private static final Logger LOG = LoggerFactory.getLogger(SocketInputStreamStub.class);
+
     public boolean useSocketExceptionOnNullPacket = true;
 
     private Queue<Object> packetQueue = new LinkedList<>();
@@ -44,12 +48,13 @@ public class SocketInputStreamStub extends InputStream {
             }
             Object element = packetQueue.element();
             if (element instanceof ByteArrayInputStream) {
-                ByteArrayInputStream inputStreamElement = (ByteArrayInputStream) element;
-                int answer = inputStreamElement.read();
-                if (answer == -1 || inputStreamElement.available() == 0) {
-                    packetQueue.remove();
+                try (ByteArrayInputStream inputStreamElement = (ByteArrayInputStream) element) {
+                    int answer = inputStreamElement.read();
+                    if (answer == -1 || inputStreamElement.available() == 0) {
+                        packetQueue.remove();
+                    }
+                    return answer;
                 }
-                return answer;
             } else if (element instanceof IOException) {
                 packetQueue.remove();
                 throw (IOException) element;
@@ -71,12 +76,13 @@ public class SocketInputStreamStub extends InputStream {
             }
             Object element = packetQueue.element();
             if (element instanceof ByteArrayInputStream) {
-                ByteArrayInputStream inputStreamElement = (ByteArrayInputStream) element;
-                int answer = inputStreamElement.read(buffer);
-                if (answer == -1 || inputStreamElement.available() == 0) {
-                    packetQueue.remove();
+                try (ByteArrayInputStream inputStreamElement = (ByteArrayInputStream) element) {
+                    int answer = inputStreamElement.read(buffer);
+                    if (answer == -1 || inputStreamElement.available() == 0) {
+                        packetQueue.remove();
+                    }
+                    return answer;
                 }
-                return answer;
             } else if (element instanceof IOException) {
                 packetQueue.remove();
                 throw (IOException) element;
@@ -98,12 +104,13 @@ public class SocketInputStreamStub extends InputStream {
             }
             Object element = packetQueue.element();
             if (element instanceof ByteArrayInputStream) {
-                ByteArrayInputStream inputStreamElement = (ByteArrayInputStream) element;
-                int answer = inputStreamElement.read(buffer, offset, length);
-                if (answer == -1 || inputStreamElement.available() == 0) {
-                    packetQueue.remove();
+                try (ByteArrayInputStream inputStreamElement = (ByteArrayInputStream) element) {
+                    int answer = inputStreamElement.read(buffer, offset, length);
+                    if (answer == -1 || inputStreamElement.available() == 0) {
+                        packetQueue.remove();
+                    }
+                    return answer;
                 }
-                return answer;
             } else if (element instanceof IOException) {
                 packetQueue.remove();
                 throw (IOException) element;
@@ -118,8 +125,12 @@ public class SocketInputStreamStub extends InputStream {
         if (packetQueue.size() > 0) {
             Object element = packetQueue.element();
             if (element instanceof ByteArrayInputStream) {
-                ByteArrayInputStream inputStreamElement = (ByteArrayInputStream) element;
-                return inputStreamElement.available();
+                try (ByteArrayInputStream inputStreamElement = (ByteArrayInputStream) element) {
+                    return inputStreamElement.available();
+                } catch (IOException e) {
+                    LOG.error("An error happened while closing element stream ", e);
+                    return 0;
+                }
             }
 
             return 1;

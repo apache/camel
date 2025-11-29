@@ -515,6 +515,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
         return socketAddress;
     }
 
+    // The Socket must be closed by the client using this factory method.
     private Socket createNewSocket(final SSLContextParameters sslContextParameters) throws Exception {
 
         Socket newSocket;
@@ -524,10 +525,12 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             // Create SSLContext from SSLContextParameters
             SSLContext sslContext = sslContextParameters.createSSLContext(getEndpoint().getCamelContext());
             SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-            newSocket = sslSocketFactory.createSocket();
+            // NOTE: the socket must be closed by the client of this factory method.
+            newSocket = sslSocketFactory.createSocket(); // NOSONAR
         } else {
             log.debug("Creating plain socket without SSLContextParameters");
-            newSocket = new Socket();
+            // NOTE: the socket must be closed by the client of this factory method.
+            newSocket = new Socket(); // NOSONAR
         }
 
         if (getConfiguration().hasKeepAlive()) {

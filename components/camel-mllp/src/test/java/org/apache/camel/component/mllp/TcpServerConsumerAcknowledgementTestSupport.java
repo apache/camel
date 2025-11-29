@@ -61,8 +61,6 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
 
     @Override
     protected void doPostSetup() throws Exception {
-        super.doPostSetup();
-
         result.expectedMessageCount(0);
         complete.expectedMessageCount(0);
         failure.expectedMessageCount(0);

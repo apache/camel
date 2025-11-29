@@ -59,8 +59,6 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
 
         mllpClient2.setMllpHost("localhost");
         mllpClient2.setMllpPort(AvailablePortFinder.getNextAvailable());
-
-        super.doPreSetup();
     }
 
     @Override

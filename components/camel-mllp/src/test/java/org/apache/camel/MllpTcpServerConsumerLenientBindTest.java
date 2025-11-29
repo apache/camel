@@ -56,8 +56,6 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
         portBlocker = new ServerSocket(mllpClient.getMllpPort());
 
         assertTrue(portBlocker.isBound());
-
-        super.doPreSetup();
     }
 
     @Override
