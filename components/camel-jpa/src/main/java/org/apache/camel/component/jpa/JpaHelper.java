@@ -42,7 +42,7 @@ public final class JpaHelper {
      *                                  been stored on the exchange in the header with key
      *                                  {@link org.apache.camel.component.jpa.JpaConstants#ENTITY_MANAGER}
      * @param  useSharedEntityManager   whether to use SharedEntityManagerCreator if not already passed in
-     * @return                          the entity manager (is never null)
+     * @return                          the entity manager (is never null): the resource must be closed by the client
      */
     public static EntityManager getTargetEntityManager(
             Exchange exchange, EntityManagerFactory entityManagerFactory,
@@ -68,7 +68,8 @@ public final class JpaHelper {
         }
 
         if (em == null && useSharedEntityManager) {
-            em = SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
+            // NOTE: the stream will be closed by the client of this factory method
+            em = SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory); // NOSONAR
         }
 
         if (em == null) {
