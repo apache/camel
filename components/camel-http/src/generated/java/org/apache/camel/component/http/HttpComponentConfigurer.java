@@ -75,6 +75,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "logHttpActivity": target.setLogHttpActivity(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
         case "maxTotalConnections": target.setMaxTotalConnections(property(camelContext, int.class, value)); return true;
+        case "nonproxyhosts":
+        case "nonProxyHosts": target.setNonProxyHosts(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthdomain":
         case "proxyAuthDomain": target.setProxyAuthDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyauthhost":
@@ -183,6 +185,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "logHttpActivity": return boolean.class;
         case "maxtotalconnections":
         case "maxTotalConnections": return int.class;
+        case "nonproxyhosts":
+        case "nonProxyHosts": return java.lang.String.class;
         case "proxyauthdomain":
         case "proxyAuthDomain": return java.lang.String.class;
         case "proxyauthhost":
@@ -287,6 +291,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "logHttpActivity": return target.isLogHttpActivity();
         case "maxtotalconnections":
         case "maxTotalConnections": return target.getMaxTotalConnections();
+        case "nonproxyhosts":
+        case "nonProxyHosts": return target.getNonProxyHosts();
         case "proxyauthdomain":
         case "proxyAuthDomain": return target.getProxyAuthDomain();
         case "proxyauthhost":

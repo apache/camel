@@ -40,7 +40,7 @@ import org.apache.camel.util.StringHelper;
 @Metadata(excludeProperties = "httpUri,contextPath,cookieHandler,connectionClose,authMethod,authUsername,authPassword,authDomain,authHost,authBearerToken,"
                               + "copyHeaders,httpMethod,ignoreResponseBody,preserveHostHeader,throwExceptionOnFailure,okStatusCodeRange,"
                               + "proxyAuthScheme,proxyAuthMethod,proxyAuthUsername,proxyAuthPassword,proxyAuthHost,proxyAuthPort,proxyAuthDomain,"
-                              + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort,"
+                              + "proxyAuthNtHost,proxyAuthScheme,proxyHost,proxyPort,nonProxyHosts,"
                               + "oauth2ClientId,oauth2ClientSecret,oauth2TokenEndpoint,oauth2Scope,oauth2CacheTokens,oauth2CachedTokensDefaultExpirySeconds,"
                               + "oauth2CachedTokensExpirationMarginSeconds,oauth2ResourceIndicator,oauth2BodyAuthentication",
           annotations = {

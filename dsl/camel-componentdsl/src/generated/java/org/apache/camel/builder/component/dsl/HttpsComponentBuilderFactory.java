@@ -614,6 +614,22 @@ public interface HttpsComponentBuilderFactory {
         }
     
         /**
+         * Comma-separated list of hosts that should bypass the proxy. Supports
+         * wildcards, e.g., localhost,.example.com,192.168..
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: proxy
+         * 
+         * @param nonProxyHosts the value to set
+         * @return the dsl builder
+         */
+        default HttpsComponentBuilder nonProxyHosts(java.lang.String nonProxyHosts) {
+            doSetProperty("nonProxyHosts", nonProxyHosts);
+            return this;
+        }
+    
+        /**
          * Proxy authentication domain to use with NTLM.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -939,6 +955,7 @@ public interface HttpsComponentBuilderFactory {
             case "redirectHandlingDisabled": ((HttpComponent) component).setRedirectHandlingDisabled((boolean) value); return true;
             case "useSystemProperties": ((HttpComponent) component).setUseSystemProperties((boolean) value); return true;
             case "headerFilterStrategy": ((HttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "nonProxyHosts": ((HttpComponent) component).setNonProxyHosts((java.lang.String) value); return true;
             case "proxyAuthDomain": ((HttpComponent) component).setProxyAuthDomain((java.lang.String) value); return true;
             case "proxyAuthHost": ((HttpComponent) component).setProxyAuthHost((java.lang.String) value); return true;
             case "proxyAuthMethod": ((HttpComponent) component).setProxyAuthMethod((java.lang.String) value); return true;

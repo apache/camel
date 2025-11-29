@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.http;
 
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.NTCredentials;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
@@ -35,13 +40,18 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
     private final String domain;
     private final String ntHost;
     private final HttpCredentialsHelper credentialsHelper;
+    private final Set<String> nonProxyHosts;
 
     public ProxyHttpClientConfigurer(String host, Integer port, String scheme) {
-        this(host, port, scheme, null, null, null, null, null);
+        this(host, port, scheme, null, null, null, null, null, null);
+    }
+
+    public ProxyHttpClientConfigurer(String host, Integer port, String scheme, String nonProxyHosts) {
+        this(host, port, scheme, null, null, null, null, null, nonProxyHosts);
     }
 
     public ProxyHttpClientConfigurer(String host, Integer port, String scheme, String username, String password, String domain,
-                                     String ntHost, HttpCredentialsHelper credentialsHelper) {
+                                     String ntHost, HttpCredentialsHelper credentialsHelper, String nonProxyHosts) {
         this.host = host;
         this.port = port;
         this.scheme = scheme;
@@ -50,11 +60,23 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
         this.domain = domain;
         this.ntHost = ntHost;
         this.credentialsHelper = credentialsHelper;
+        this.nonProxyHosts = Optional.ofNullable(nonProxyHosts)
+                .stream()
+                .flatMap(s -> Arrays.stream(s.split(",")))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toSet());
     }
 
     @Override
     public void configureHttpClient(HttpClientBuilder clientBuilder) {
-        clientBuilder.setProxy(new HttpHost(scheme, host, port));
+        HttpHost proxy = new HttpHost(scheme, host, port);
+        if (nonProxyHosts.isEmpty()) {
+            clientBuilder.setProxy(proxy);
+        } else {
+            CamelProxyRoutePlanner nonProxyHostsAwareRoutePlanner = new CamelProxyRoutePlanner(proxy, nonProxyHosts);
+            clientBuilder.setRoutePlanner(nonProxyHostsAwareRoutePlanner);
+        }
 
         if (username != null && password != null) {
             Credentials defaultcreds;
@@ -67,5 +89,4 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
                     .getCredentialsProvider(host, port, defaultcreds));
         }
     }
-
 }
