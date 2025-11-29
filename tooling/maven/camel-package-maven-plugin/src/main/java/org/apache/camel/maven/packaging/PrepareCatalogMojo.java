@@ -938,7 +938,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-infinispan":
                 case "camel-jetty-common":
                 case "camel-knative":
-                case "camel-langchain4j-core":
                 case "camel-microprofile":
                 case "camel-olingo2":
                 case "camel-olingo4":
@@ -1046,6 +1045,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
                                     // the dir must be active (inactive can be removed component from old branch)
                                     String[] poms = dir.toFile().list((dir1, name) -> "pom.xml".equals(name));
                                     valid = poms != null && poms.length == 1;
+                                }
+                                if (valid && "core".equals(n)) {
+                                    // skip camel-core
+                                    valid = false;
                                 }
                                 if (valid) {
                                     missingAdocFiles.add(dir);

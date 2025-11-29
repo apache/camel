@@ -39,11 +39,10 @@ public final class MojoHelper {
         switch (dir.getFileName().toString()) {
             case "camel-ai":
                 return Arrays.asList(dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
-                        dir.resolve("camel-langchain4j-agent"),
-                        dir.resolve("camel-langchain4j-core"), dir.resolve("camel-langchain4j-chat"),
+                        dir.resolve("camel-langchain4j-agent"), dir.resolve("camel-langchain4j-chat"),
                         dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-langchain4j-embeddingstore"),
-                        dir.resolve("camel-langchain4j-tokenizer"),
-                        dir.resolve("camel-langchain4j-tools"), dir.resolve("camel-langchain4j-web-search"),
+                        dir.resolve("camel-langchain4j-tokenizer"), dir.resolve("camel-langchain4j-tools"),
+                        dir.resolve("camel-langchain4j-web-search"),
                         dir.resolve("camel-qdrant"), dir.resolve("camel-milvus"), dir.resolve("camel-neo4j"),
                         dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"),
                         dir.resolve("camel-torchserve"), dir.resolve("camel-tensorflow-serving"),
