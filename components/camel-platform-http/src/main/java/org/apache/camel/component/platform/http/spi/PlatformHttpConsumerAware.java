@@ -33,6 +33,6 @@ public interface PlatformHttpConsumerAware {
      * <p/>
      * For example used by camel-rest-openapi
      */
-    void registerAfterConfigured(AfterPropertiesConfigured processor);
+    void registerAfterConfigured(AfterPropertiesConfigured listener);
 
 }

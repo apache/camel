@@ -65,8 +65,8 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
     }
 
     @Override
-    public void registerAfterConfigured(AfterPropertiesConfigured processor) {
-        this.afterConfiguredListener = processor;
+    public void registerAfterConfigured(AfterPropertiesConfigured listener) {
+        this.afterConfiguredListener = listener;
     }
 
     @Override
