@@ -147,9 +147,10 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
 
             context.start();
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             Assertions.assertTrue(
-                    e.getMessage().startsWith("OpenAPI specification has 18 unmapped operations to corresponding routes"));
+                    e.getCause().getMessage()
+                            .startsWith("OpenAPI specification has 18 unmapped operations to corresponding routes"));
         } finally {
             context.stop();
         }

@@ -27,18 +27,14 @@ import org.apache.camel.*;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.support.processor.RestBindingAdviceFactory;
 import org.apache.camel.support.processor.RestBindingConfiguration;
 import org.apache.camel.support.service.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class RestOpenApiProcessor extends DelegateAsyncProcessor implements CamelContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiProcessor.class);
+public class RestOpenApiProcessor extends AsyncProcessorSupport implements CamelContextAware, AfterPropertiesConfigured {
 
     // just use the most common verbs
     private static final List<String> METHODS = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "PATCH");
@@ -55,8 +51,7 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     private OpenApiUtils openApiUtils;
 
     public RestOpenApiProcessor(RestOpenApiEndpoint endpoint, OpenAPI openAPI, String basePath, String apiContextPath,
-                                Processor processor, RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
-        super(processor);
+                                RestOpenapiProcessorStrategy restOpenapiProcessorStrategy) {
         this.endpoint = endpoint;
         this.basePath = basePath;
         // ensure starts with leading slash
@@ -95,9 +90,6 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // use HTTP_URI as this works for all runtimes
         String path = exchange.getMessage().getHeader(Exchange.HTTP_PATH, String.class);
-        //        if (path != null) {
-        //            path = URISupport.stripQuery(path);
-        //        }
         if (path != null && path.startsWith(basePath)) {
             path = path.substring(basePath.length());
         }
@@ -147,9 +139,16 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        this.openApiUtils = new OpenApiUtils(camelContext, endpoint.getBindingPackageScan(), openAPI.getComponents());
         CamelContextAware.trySetCamelContext(restOpenapiProcessorStrategy, getCamelContext());
+    }
 
+    @Override
+    public void afterPropertiesConfigured(CamelContext camelContext) {
+        // this method is triggered by platformHttpConsumer when it has been initialized and would be possible
+        // to know the actual url of the http server that would service the incoming requests
+        // this is required to build the paths with all the details
+
+        this.openApiUtils = new OpenApiUtils(camelContext, endpoint.getBindingPackageScan(), openAPI.getComponents());
         // register all openapi paths
         for (var e : openAPI.getPaths().entrySet()) {
             String path = e.getKey(); // path
@@ -174,23 +173,38 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
                 camelContext.getRestRegistry().addRestService(consumer, true, url, path, basePath, null, v, bc.getConsumes(),
                         bc.getProduces(), bc.getType(), bc.getOutType(), routeId, desc);
 
-                RestBindingAdvice binding = RestBindingAdviceFactory.build(camelContext, bc);
-
-                ServiceHelper.buildService(binding);
-                paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), binding));
+                try {
+                    RestBindingAdvice binding = RestBindingAdviceFactory.build(camelContext, bc);
+                    ServiceHelper.buildService(binding);
+                    paths.add(new RestOpenApiConsumerPath(v, path, o.getValue(), binding));
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
         openApiUtils.clear(); // no longer needed
+
+        for (var p : paths) {
+            if (p instanceof RestOpenApiConsumerPath rcp) {
+                ServiceHelper.startService(rcp.getBinding());
+            }
+        }
 
         restOpenapiProcessorStrategy.setMissingOperation(endpoint.getMissingOperation());
         restOpenapiProcessorStrategy.setMockIncludePattern(endpoint.getMockIncludePattern());
         ServiceHelper.initService(restOpenapiProcessorStrategy);
 
-        // validate openapi contract
-        restOpenapiProcessorStrategy.validateOpenApi(openAPI, basePath, platformHttpConsumer);
+        try {
+            // validate openapi contract
+            restOpenapiProcessorStrategy.validateOpenApi(openAPI, basePath, platformHttpConsumer);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+
+        ServiceHelper.startService(restOpenapiProcessorStrategy);
     }
 
-    private RestBindingConfiguration createRestBindingConfiguration(Operation o) throws Exception {
+    private RestBindingConfiguration createRestBindingConfiguration(Operation o) {
         RestConfiguration config = camelContext.getRestConfiguration();
         RestConfiguration.RestBindingMode mode = config.getBindingMode();
 
@@ -220,17 +234,6 @@ public class RestOpenApiProcessor extends DelegateAsyncProcessor implements Came
         bc.setOutType(openApiUtils.manageResponseBody(o));
 
         return bc;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        ServiceHelper.startService(restOpenapiProcessorStrategy);
-        for (var p : paths) {
-            if (p instanceof RestOpenApiConsumerPath rcp) {
-                ServiceHelper.startService(rcp.getBinding());
-            }
-        }
     }
 
     @Override
