@@ -38,7 +38,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
-import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -49,7 +48,6 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.processor.DelegateProcessor;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -1047,7 +1045,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         if (openApi.getRouteId() != null) {
             route.routeId(parseText(camelContext, openApi.getRouteId()));
         }
-        // add dummy empty stop (not in use)
+        // the route must have an output so use a dummy stop
         route.getOutputs().add(new StopDefinition());
 
         // local configuration can override global

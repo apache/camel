@@ -31,7 +31,7 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
 
     private PlatformHttpConsumer platformHttpConsumer;
     private boolean register = true;
-    private AfterPropertiesConfigured restOpenApiProcessor;
+    private AfterPropertiesConfigured afterConfiguredListener;
 
     public DefaultPlatformHttpConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -65,8 +65,8 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
     }
 
     @Override
-    public void registerOpenApiProcessor(AfterPropertiesConfigured processor) {
-        this.restOpenApiProcessor = processor;
+    public void registerAfterConfigured(AfterPropertiesConfigured processor) {
+        this.afterConfiguredListener = processor;
     }
 
     @Override
@@ -77,14 +77,15 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
 
         ServiceHelper.initService(platformHttpConsumer);
 
-        // signal to camel-rest-openapi that the platform-http consumer now has been configured
-        // and that rest-dsl can continue to initialize and start so it's ready when this consumer is started
-        if (restOpenApiProcessor != null) {
-            restOpenApiProcessor.afterPropertiesConfigured(getEndpoint().getCamelContext());
+        // signal that the platform-http consumer now has been configured
+        // (rest-dsl can continue to initialize and start so it's ready when this consumer is started)
+        if (afterConfiguredListener != null) {
+            afterConfiguredListener.afterPropertiesConfigured(getEndpoint().getCamelContext());
         }
     }
 
     protected void configurePlatformHttpConsumer(PlatformHttpConsumer platformHttpConsumer) {
+        // noop
     }
 
     @Override

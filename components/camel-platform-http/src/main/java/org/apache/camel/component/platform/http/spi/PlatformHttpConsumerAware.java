@@ -29,8 +29,10 @@ public interface PlatformHttpConsumerAware {
     PlatformHttpConsumer getPlatformHttpConsumer();
 
     /**
-     * Special when using camel-rest-openapi for contract-first Rest DSL.
+     * Registers a listener that is called after the {@link PlatformHttpConsumer} has set options from properties.
+     * <p/>
+     * For example used by camel-rest-openapi
      */
-    void registerOpenApiProcessor(AfterPropertiesConfigured processor);
+    void registerAfterConfigured(AfterPropertiesConfigured processor);
 
 }

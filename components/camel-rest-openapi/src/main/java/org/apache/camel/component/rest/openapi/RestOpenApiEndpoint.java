@@ -222,7 +222,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         // use an advice to call the processor that is responsible for routing to the route that matches the
         // operation id, and also do validation of the incoming request
-        // any camel route is just a dummy facade that is not in use
+        // the camel route is invoked AFTER the rest-dsl is complete
         if (processor instanceof InternalProcessor ip) {
             // remove existing rest binding advice because RestOpenApiProcessorAdvice has its own binding
             RestBindingAdvice advice = ip.getAdvice(RestBindingAdvice.class);
@@ -235,12 +235,12 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         Consumer consumer = createConsumerFor(path, openApiProcessor, processor);
         openApiProcessor.setConsumer(consumer);
         if (consumer instanceof PlatformHttpConsumerAware phca) {
-            phca.registerOpenApiProcessor(openApiProcessor);
+            phca.registerAfterConfigured(openApiProcessor);
         }
         return consumer;
     }
 
-    protected Consumer createConsumerFor(String basePath, RestOpenApiProcessor openApiProcessor, Processor processor)
+    private Consumer createConsumerFor(String basePath, RestOpenApiProcessor openApiProcessor, Processor processor)
             throws Exception {
         RestOpenApiConsumerFactory factory = null;
         String cname = null;
@@ -539,7 +539,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return new RestOpenApiProducer(endpoint.createProducer(), hasHost, requestValidator);
     }
 
-    @Deprecated
     String determineBasePath(final OpenAPI openapi) {
         if (isNotEmpty(basePath)) {
             return basePath;
