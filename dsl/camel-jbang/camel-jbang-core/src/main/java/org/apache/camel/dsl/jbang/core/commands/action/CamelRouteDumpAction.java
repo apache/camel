@@ -240,7 +240,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
                 loc = FileUtil.stripPath(loc);
             }
         }
-        return loc;
+        return loc != null ? loc : "";
     }
 
     private static class Row {
