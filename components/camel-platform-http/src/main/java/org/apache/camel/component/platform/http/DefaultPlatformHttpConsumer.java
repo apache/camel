@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.platform.http;
 
+import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
@@ -26,10 +27,11 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 
 public class DefaultPlatformHttpConsumer extends DefaultConsumer
-        implements PlatformHttpConsumerAware, Suspendable, SuspendableService {
+        implements PlatformHttpConsumer, PlatformHttpConsumerAware, Suspendable, SuspendableService {
 
     private PlatformHttpConsumer platformHttpConsumer;
     private boolean register = true;
+    private AfterPropertiesConfigured restOpenApiProcessor;
 
     public DefaultPlatformHttpConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -63,15 +65,26 @@ public class DefaultPlatformHttpConsumer extends DefaultConsumer
     }
 
     @Override
+    public void registerOpenApiProcessor(AfterPropertiesConfigured processor) {
+        this.restOpenApiProcessor = processor;
+    }
+
+    @Override
     protected void doInit() throws Exception {
         platformHttpConsumer = getEndpoint().createPlatformHttpConsumer(getProcessor());
         configurePlatformHttpConsumer(platformHttpConsumer);
         super.doInit();
+
         ServiceHelper.initService(platformHttpConsumer);
+
+        // signal to camel-rest-openapi that the platform-http consumer now has been configured
+        // and that rest-dsl can continue to initialize and start so it's ready when this consumer is started
+        if (restOpenApiProcessor != null) {
+            restOpenApiProcessor.afterPropertiesConfigured(getEndpoint().getCamelContext());
+        }
     }
 
     protected void configurePlatformHttpConsumer(PlatformHttpConsumer platformHttpConsumer) {
-        // noop
     }
 
     @Override

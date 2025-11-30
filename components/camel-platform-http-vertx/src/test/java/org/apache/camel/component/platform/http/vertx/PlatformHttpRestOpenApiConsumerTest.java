@@ -18,6 +18,7 @@ package org.apache.camel.component.platform.http.vertx;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
                 @Override
                 public void configure() {
                     from("rest-openapi:classpath:openapi-v3.json?missingOperation=ignore")
-                            .log("dummy");
+                            .to("mock:result");
 
                     from("direct:getPetById")
                             .setBody().constant("{\"pet\": \"tony the tiger\"}");
@@ -46,12 +47,17 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
             context.start();
 
+            MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
+            mock.expectedMessageCount(1);
+
             given()
                     .when()
                     .get("/api/v3/pet/123")
                     .then()
                     .statusCode(200)
                     .body(equalTo("{\"pet\": \"tony the tiger\"}"));
+
+            mock.assertIsSatisfied();
 
         } finally {
             context.stop();
@@ -69,7 +75,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
                 @Override
                 public void configure() {
                     from("rest-openapi:classpath:openapi-v3.json")
-                            .log("dummy");
+                            .stop(); // use stop if you dont need to do anything after rest-dsl
 
                     from("direct:getPetById")
                             .setBody().constant("{\"pet\": \"tony the tiger\"}");
@@ -144,9 +150,10 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
             context.start();
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             Assertions.assertTrue(
-                    e.getMessage().startsWith("OpenAPI specification has 18 unmapped operations to corresponding routes"));
+                    e.getCause().getMessage()
+                            .startsWith("OpenAPI specification has 18 unmapped operations to corresponding routes"));
         } finally {
             context.stop();
         }

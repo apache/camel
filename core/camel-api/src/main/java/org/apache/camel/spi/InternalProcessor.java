@@ -55,6 +55,13 @@ public interface InternalProcessor extends AsyncProcessor {
     <T> T getAdvice(Class<T> type);
 
     /**
+     * Removes an {@link CamelInternalProcessorAdvice} advice from the list of advices.
+     *
+     * @param advice the advice to remove
+     */
+    void removeAdvice(CamelInternalProcessorAdvice<?> advice);
+
+    /**
      * Adds advice for handling {@link RoutePolicy} for the route
      */
     void addRoutePolicyAdvice(List<RoutePolicy> routePolicyList);

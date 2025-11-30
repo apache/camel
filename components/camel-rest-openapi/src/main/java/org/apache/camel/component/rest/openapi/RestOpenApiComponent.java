@@ -19,6 +19,7 @@ package org.apache.camel.component.rest.openapi;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
@@ -141,7 +142,7 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
     @Metadata(label = "consumer", description = "Sets the context-path to use for servicing the OpenAPI specification")
     private String apiContextPath;
     @Metadata(description = "To use a custom strategy for how to process Rest DSL requests", label = "consumer,advanced")
-    private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
+    private RestOpenapiProcessorStrategy restOpenapiProcessorStrategy;
     @Metadata(description = "Enable usage of global SSL context parameters.", label = "security")
     private boolean useGlobalSslContextParameters;
     @Metadata(description = "Customize TLS parameters used by the component. If not set defaults to the TLS parameters set in the Camel context ",
@@ -194,6 +195,10 @@ public final class RestOpenApiComponent extends DefaultComponent implements SSLC
                 base = getCamelContext().getCamelContextExtension().getBasePackageScan();
             }
             bindingPackageScan = base;
+        }
+        if (restOpenapiProcessorStrategy == null) {
+            restOpenapiProcessorStrategy = new DefaultRestOpenapiProcessorStrategy();
+            CamelContextAware.trySetCamelContext(restOpenapiProcessorStrategy, getCamelContext());
         }
     }
 

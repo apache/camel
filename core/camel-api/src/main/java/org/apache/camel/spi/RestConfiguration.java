@@ -34,6 +34,8 @@ public class RestConfiguration {
 
     public static final String DEFAULT_REST_CONFIGURATION_ID = "rest-configuration";
 
+    public static final String CONTRACT_FIRST_PROCESSOR_REF = "camel-contract-first-openapi-";
+
     public enum RestBindingMode {
         auto,
         off,
