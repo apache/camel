@@ -49,12 +49,15 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * OpenAI producer for chat completion.
  */
 public class OpenAIProducer extends DefaultAsyncProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OpenAIProducer.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public OpenAIProducer(OpenAIEndpoint endpoint) {
@@ -347,8 +350,9 @@ public class OpenAIProducer extends DefaultAsyncProducer {
     }
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {
+        // NOTE: the stream is going to be closed after the exchange completes.
         StreamResponse<ChatCompletionChunk> streamResponse = getEndpoint().getClient().chat().completions()
-                .createStreaming(params);
+                .createStreaming(params); // NOSONAR
 
         // hand Camel an Iterator for streaming EIPs (split, recipientList, etc.)
         Iterator<ChatCompletionChunk> it = streamResponse.stream().iterator();
@@ -370,6 +374,7 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 try {
                     streamResponse.close();
                 } catch (Exception ignore) {
+                    LOG.warn("An error happened while processing streaming: ignoring", ignore);
                 }
             }
         });
