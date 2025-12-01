@@ -76,8 +76,6 @@ public class PQCEndToEndIntegrationTest extends CamelTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
-        super.doPreSetup();
-
         // Ensure providers are registered BEFORE any key operations
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());

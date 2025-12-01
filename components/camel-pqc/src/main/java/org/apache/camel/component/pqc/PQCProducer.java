@@ -31,15 +31,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
 import org.bouncycastle.jcajce.spec.KEMExtractSpec;
 import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sign or verify a payload
  */
 public class PQCProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PQCProducer.class);
 
     private Signature signer;
     private KeyGenerator keyGenerator;
