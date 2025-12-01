@@ -110,7 +110,7 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     }
 
     /**
-     * Port to use for binding embedded HTTP server
+     * Port to use for binding embedded HTTP management server. Use 0 to dynamic assign a free random port number.
      */
     public void setPort(int port) {
         this.port = port;
@@ -375,7 +375,7 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     }
 
     /**
-     * Port to use for binding embedded HTTP management server
+     * Port to use for binding embedded HTTP management server. Use 0 to dynamic assign a free random port number.
      */
     public HttpManagementServerConfigurationProperties withPort(int port) {
         this.port = port;

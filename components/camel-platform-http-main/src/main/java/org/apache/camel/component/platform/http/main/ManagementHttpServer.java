@@ -391,8 +391,8 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
         }
 
         VertxPlatformHttpServer mainServer = camelContext.hasService(VertxPlatformHttpServer.class);
-        if (mainServer != null && mainServer.getPort() == configuration.getPort()) {
-            // reuse main server as we use same port
+        if (mainServer != null && mainServer.getConfigurationPort() == configuration.getPort()) {
+            // reuse main server as we should use same port
             server = mainServer;
         } else {
             server = new VertxPlatformHttpServer(configuration);

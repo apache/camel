@@ -60,6 +60,7 @@ import org.apache.camel.util.MimeTypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter.PLATFORM_HTTP_ROUTER_NAME_ZERO;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isFormUrlEncoded;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.isMultiPartFormData;
 import static org.apache.camel.component.platform.http.vertx.VertxPlatformHttpSupport.populateCamelHeaders;
@@ -112,6 +113,13 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
         path = configureEndpointPath(getEndpoint());
         router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext(), routerName);
+        if (router == null) {
+            // dynamic assigned port number, then lookup using -0
+            router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext(), PLATFORM_HTTP_ROUTER_NAME_ZERO);
+        }
+        if (router == null) {
+            throw new IllegalArgumentException("No PlatformHttpEngine created and setup in registry with name: " + routerName);
+        }
         if (!getEndpoint().isHttpProxy() && getEndpoint().isUseStreaming()) {
             httpRequestBodyHandler = new StreamingHttpRequestBodyHandler(router.bodyHandler());
         } else if (!getEndpoint().isHttpProxy() && !getEndpoint().isUseBodyHandler()) {

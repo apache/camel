@@ -33,7 +33,10 @@ import org.apache.camel.component.platform.http.PlatformHttpConstants;
 import org.apache.camel.support.CamelContextHelper;
 
 public class VertxPlatformHttpRouter implements Router {
+
     public static final String PLATFORM_HTTP_ROUTER_NAME = PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME + "-router";
+    public static final String PLATFORM_HTTP_ROUTER_NAME_ZERO
+            = PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME + "-router-0";
 
     private final String name;
     private final VertxPlatformHttpServer server;
@@ -292,21 +295,22 @@ public class VertxPlatformHttpRouter implements Router {
     //
     // **********************
 
+    /**
+     * Default router lookup method.
+     */
     public static VertxPlatformHttpRouter lookup(CamelContext camelContext, String routerName) {
-        return CamelContextHelper.mandatoryLookup(
+        return CamelContextHelper.lookup(
                 camelContext,
                 routerName,
                 VertxPlatformHttpRouter.class);
     }
 
-    @Deprecated
     /**
-     * Default router lookup method. Used for backward compatibility only. You should instead use @lookup(CamelContext,
-     * String)
+     * Default router lookup method. Used for backward compatibility only.
      *
-     * @param  camelContext
-     * @return              the default port router
+     * @see #lookup(CamelContext, String)
      */
+    @Deprecated
     public static VertxPlatformHttpRouter lookup(CamelContext camelContext) {
         return lookup(camelContext, getRouterNameFromPort(VertxPlatformHttpServerConfiguration.DEFAULT_BIND_PORT));
     }

@@ -122,11 +122,16 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         }
     }
 
-    @ManagedAttribute(description = "HTTP port number")
+    @ManagedAttribute(description = "HTTP port number (actual)")
     public int getPort() {
         if (server != null) {
             return server.actualPort();
         }
+        return configuration.getBindPort();
+    }
+
+    @ManagedAttribute(description = "HTTP port number (configured)")
+    public int getConfigurationPort() {
         return configuration.getBindPort();
     }
 
@@ -233,7 +238,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                             }
 
                             LOGGER.info("Vert.x HttpServer started on {}:{}", configuration.getBindHost(),
-                                    configuration.getBindPort());
+                                    server.actualPort());
                         } finally {
                             latch.countDown();
                         }
