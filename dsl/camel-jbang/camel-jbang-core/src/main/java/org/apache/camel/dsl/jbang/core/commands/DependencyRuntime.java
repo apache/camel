@@ -18,14 +18,13 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.model.DependencyRuntimeDTO;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.model.Model;
@@ -143,42 +142,11 @@ public class DependencyRuntime extends CamelCommand {
         }
 
         if (jsonOutput) {
-            Map<String, String> map = new LinkedHashMap<>();
-            map.put("runtime", runtime);
-            if (camelVersion != null) {
-                map.put("camelVersion", camelVersion);
-            }
-            if (camelSpringBootVersion != null) {
-                map.put("camelSpringBootVersion", camelSpringBootVersion);
-            }
-            if (camelQuarkusVersion != null) {
-                map.put("camelQuarkusVersion", camelQuarkusVersion);
-            }
-            if (springBootVersion != null) {
-                map.put("springBootVersion", springBootVersion);
-            }
-            if (quarkusVersion != null) {
-                map.put("quarkusVersion", quarkusVersion);
-            }
-            if (camelSpringBootBomGroupId != null) {
-                map.put("camelSpringBootBomGroupId", camelSpringBootBomGroupId);
-            }
-            if (camelSpringBootBomArtifactId != null) {
-                map.put("camelSpringBootBomArtifactId", camelSpringBootBomArtifactId);
-            }
-            if (quarkusBomGroupId != null) {
-                map.put("quarkusBomGroupId", quarkusBomGroupId);
-            }
-            if (quarkusBomArtifactId != null) {
-                map.put("quarkusBomArtifactId", quarkusBomArtifactId);
-            }
-            if (camelQuarkusBomGroupId != null) {
-                map.put("camelQuarkusBomGroupId", camelQuarkusBomGroupId);
-            }
-            if (camelQuarkusBomArtifactId != null) {
-                map.put("camelQuarkusBomArtifactId", camelQuarkusBomArtifactId);
-            }
-            printer().println(Jsoner.serialize(map));
+            DependencyRuntimeDTO dto = new DependencyRuntimeDTO(
+                    runtime, camelVersion, camelSpringBootVersion, camelQuarkusVersion, springBootVersion, quarkusVersion,
+                    camelSpringBootBomGroupId, camelSpringBootBomArtifactId, quarkusBomGroupId, quarkusBomArtifactId,
+                    camelQuarkusBomGroupId, camelQuarkusBomArtifactId);
+            printer().println(Jsoner.serialize(dto.toMap()));
         } else {
             printer().println("Runtime: " + runtime);
             if (camelVersion != null) {

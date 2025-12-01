@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -35,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.core.model.CatalogBaseDTO;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.json.Jsoner;
@@ -149,10 +149,12 @@ public abstract class CatalogBaseCommand extends CamelCommand {
             if (jsonOutput) {
                 printer().println(
                         Jsoner.serialize(
-                                rows.stream().map(row -> Map.of(
-                                        "name", row.name,
-                                        "level", row.level,
-                                        "native", row.nativeSupported)).collect(Collectors.toList())));
+                                rows.stream()
+                                        .map(row -> new CatalogBaseDTO(
+                                                row.name, row.title, row.level, row.since, row.nativeSupported, row.description,
+                                                row.label, row.gav, row.deprecated))
+                                        .map(CatalogBaseDTO::toMap)
+                                        .collect(Collectors.toList())));
             } else {
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                         new Column().header("NAME").visible(!displayGav).dataAlign(HorizontalAlign.LEFT).maxWidth(nameWidth())
