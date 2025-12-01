@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
@@ -290,9 +291,8 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     }
 
     private void loadExistingKeys() {
-        try {
-            Files.list(keyDirectory)
-                    .filter(path -> path.toString().endsWith(".metadata"))
+        try (Stream<Path> files = Files.list(keyDirectory)) {
+            files.filter(path -> path.toString().endsWith(".metadata"))
                     .forEach(path -> {
                         try {
                             String keyId = path.getFileName().toString().replace(".metadata", "");
