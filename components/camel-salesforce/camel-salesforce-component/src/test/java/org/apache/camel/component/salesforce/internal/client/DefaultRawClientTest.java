@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.IOException;
+
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -29,13 +31,13 @@ import static org.mockito.Mockito.mock;
 public class DefaultRawClientTest {
 
     @Test
-    public void shouldNotThrowNPEWhenNoResponseContent() throws SalesforceException {
-        var client = new DefaultRawClient(
-                mock(SalesforceHttpClient.class), "", mock(SalesforceSession.class), new SalesforceLoginConfig());
-
-        var response = mock(Response.class);
-        var resultException = client.createRestException(response, null);
-        assertInstanceOf(SalesforceException.class, resultException);
+    public void shouldNotThrowNPEWhenNoResponseContent() throws SalesforceException, IOException {
+        try (var client = new DefaultRawClient(
+                mock(SalesforceHttpClient.class), "", mock(SalesforceSession.class), new SalesforceLoginConfig())) {
+            var response = mock(Response.class);
+            var resultException = client.createRestException(response, null);
+            assertInstanceOf(SalesforceException.class, resultException);
+        }
     }
 
 }

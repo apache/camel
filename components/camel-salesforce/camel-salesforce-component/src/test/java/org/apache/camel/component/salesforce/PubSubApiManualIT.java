@@ -211,11 +211,9 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
         record.setCreatedDate(123);
         record.setCreatedById("123");
 
-        PubSubApiClient client = null;
-        try {
-            client = new PubSubApiClient(
-                    component.getSession(), new SalesforceLoginConfig(),
-                    "api.pubsub.salesforce.com", 7443, 0, 0, true);
+        try (PubSubApiClient client = new PubSubApiClient(
+                component.getSession(), new SalesforceLoginConfig(),
+                "api.pubsub.salesforce.com", 7443, 0, 0, true)) {
             client.start();
 
             byte[] bytes;
@@ -236,10 +234,6 @@ public class PubSubApiManualIT extends AbstractSalesforceTestBase {
             template.requestBody("direct:publishCamelEventMessage", List.of(record));
 
             mock.assertIsSatisfied();
-        } finally {
-            if (client != null) {
-                client.stop();
-            }
         }
     }
 

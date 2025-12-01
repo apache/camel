@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -181,26 +182,28 @@ public class AbstractClientBaseTest {
     }
 
     @Test
-    public void shouldNotLoginWhenAccessTokenIsNullAndLazyLoginIsTrue() throws SalesforceException {
+    public void shouldNotLoginWhenAccessTokenIsNullAndLazyLoginIsTrue() throws SalesforceException, IOException {
         SalesforceLoginConfig loginConfig = new SalesforceLoginConfig();
         loginConfig.setLazyLogin(true);
-        Client lazyClient = new Client(session, loginConfig);
-        when(session.getAccessToken()).thenReturn(null);
+        try (Client lazyClient = new Client(session, loginConfig)) {
+            when(session.getAccessToken()).thenReturn(null);
 
-        lazyClient.start();
+            lazyClient.start();
 
-        verify(session, never()).login(null);
+            verify(session, never()).login(null);
+        }
     }
 
     @Test
-    public void shouldLoginWhenAccessTokenIsNullAndLazyLoginIsFalse() throws SalesforceException {
+    public void shouldLoginWhenAccessTokenIsNullAndLazyLoginIsFalse() throws SalesforceException, IOException {
         SalesforceLoginConfig loginConfig = new SalesforceLoginConfig();
         loginConfig.setLazyLogin(false);
-        Client eagerClient = new Client(session, loginConfig);
-        when(session.getAccessToken()).thenReturn(null);
+        try (Client eagerClient = new Client(session, loginConfig)) {
+            when(session.getAccessToken()).thenReturn(null);
 
-        eagerClient.start();
+            eagerClient.start();
 
-        verify(session).login(null);
+            verify(session).login(null);
+        }
     }
 }

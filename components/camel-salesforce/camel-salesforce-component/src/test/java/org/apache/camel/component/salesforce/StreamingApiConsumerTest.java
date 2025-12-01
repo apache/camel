@@ -156,25 +156,26 @@ public class StreamingApiConsumerTest {
         when(endpoint.getTopicName()).thenReturn("AccountUpdates");
         configuration.setSObjectClass(AccountUpdates.class.getName());
 
-        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
-        consumer.determineSObjectClass();
+        try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
+            consumer.determineSObjectClass();
 
-        consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
+            consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
 
-        final AccountUpdates accountUpdates = new AccountUpdates();
-        accountUpdates.phone = "(415) 555-1212";
-        accountUpdates.id = "001D000000KneakIAB";
-        accountUpdates.name = "Blackbeard";
+            final AccountUpdates accountUpdates = new AccountUpdates();
+            accountUpdates.phone = "(415) 555-1212";
+            accountUpdates.id = "001D000000KneakIAB";
+            accountUpdates.name = "Blackbeard";
 
-        verify(in).setBody(accountUpdates);
-        verify(in).setHeader("CamelSalesforceEventType", "created");
-        verify(in).setHeader("CamelSalesforceCreatedDate", "2016-09-16T19:45:27.454Z");
-        verify(in).setHeader("CamelSalesforceReplayId", 1L);
-        verify(in).setHeader("CamelSalesforceTopicName", "AccountUpdates");
-        verify(in).setHeader("CamelSalesforceChannel", "/topic/AccountUpdates");
-        verify(in).setHeader("CamelSalesforceClientId", "lxdl9o32njygi1gj47kgfaga4k");
+            verify(in).setBody(accountUpdates);
+            verify(in).setHeader("CamelSalesforceEventType", "created");
+            verify(in).setHeader("CamelSalesforceCreatedDate", "2016-09-16T19:45:27.454Z");
+            verify(in).setHeader("CamelSalesforceReplayId", 1L);
+            verify(in).setHeader("CamelSalesforceTopicName", "AccountUpdates");
+            verify(in).setHeader("CamelSalesforceChannel", "/topic/AccountUpdates");
+            verify(in).setHeader("CamelSalesforceClientId", "lxdl9o32njygi1gj47kgfaga4k");
 
-        verify(processor).process(same(exchange), any());
+            verify(processor).process(same(exchange), any());
+        }
     }
 
     @Test
@@ -194,44 +195,44 @@ public class StreamingApiConsumerTest {
         message.put("data", data);
         message.put("channel", "/event/TestEvent__e");
 
-        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
+        try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
+            consumer.processMessage(mock(ClientSessionChannel.class), message);
 
-        consumer.processMessage(mock(ClientSessionChannel.class), message);
+            final ZonedDateTime created = ZonedDateTime.parse("2018-07-06T12:41:04Z");
+            final PlatformEvent event = new PlatformEvent(created, "00541000002WYFpAAO");
+            event.set("Test_Field__c", "abc");
+            verify(in).setBody(event);
+            verify(in).setHeader("CamelSalesforceCreatedDate", created);
+            verify(in).setHeader("CamelSalesforceReplayId", 4L);
+            verify(in).setHeader("CamelSalesforceChannel", "/event/TestEvent__e");
+            verify(in).setHeader("CamelSalesforceEventType", "TestEvent__e");
+            verify(in).setHeader("CamelSalesforcePlatformEventSchema", "30H2pgzuWcF844p26Ityvg");
 
-        final ZonedDateTime created = ZonedDateTime.parse("2018-07-06T12:41:04Z");
-        final PlatformEvent event = new PlatformEvent(created, "00541000002WYFpAAO");
-        event.set("Test_Field__c", "abc");
-        verify(in).setBody(event);
-        verify(in).setHeader("CamelSalesforceCreatedDate", created);
-        verify(in).setHeader("CamelSalesforceReplayId", 4L);
-        verify(in).setHeader("CamelSalesforceChannel", "/event/TestEvent__e");
-        verify(in).setHeader("CamelSalesforceEventType", "TestEvent__e");
-        verify(in).setHeader("CamelSalesforcePlatformEventSchema", "30H2pgzuWcF844p26Ityvg");
+            verify(processor).process(same(exchange), any());
 
-        verify(processor).process(same(exchange), any());
-
-        verifyNoMoreInteractions(in, processor);
+            verifyNoMoreInteractions(in, processor);
+        }
     }
 
     @Test
     public void shouldProcessPushTopicMessages() throws Exception {
         when(endpoint.getTopicName()).thenReturn("AccountUpdates");
 
-        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
+        try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
+            consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
 
-        consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
+            @SuppressWarnings("unchecked")
+            final Object sobject = ((Map<String, Object>) pushTopicMessage.get("data")).get("sobject");
+            verify(in).setBody(sobject);
+            verify(in).setHeader("CamelSalesforceEventType", "created");
+            verify(in).setHeader("CamelSalesforceCreatedDate", "2016-09-16T19:45:27.454Z");
+            verify(in).setHeader("CamelSalesforceReplayId", 1L);
+            verify(in).setHeader("CamelSalesforceTopicName", "AccountUpdates");
+            verify(in).setHeader("CamelSalesforceChannel", "/topic/AccountUpdates");
+            verify(in).setHeader("CamelSalesforceClientId", "lxdl9o32njygi1gj47kgfaga4k");
 
-        @SuppressWarnings("unchecked")
-        final Object sobject = ((Map<String, Object>) pushTopicMessage.get("data")).get("sobject");
-        verify(in).setBody(sobject);
-        verify(in).setHeader("CamelSalesforceEventType", "created");
-        verify(in).setHeader("CamelSalesforceCreatedDate", "2016-09-16T19:45:27.454Z");
-        verify(in).setHeader("CamelSalesforceReplayId", 1L);
-        verify(in).setHeader("CamelSalesforceTopicName", "AccountUpdates");
-        verify(in).setHeader("CamelSalesforceChannel", "/topic/AccountUpdates");
-        verify(in).setHeader("CamelSalesforceClientId", "lxdl9o32njygi1gj47kgfaga4k");
-
-        verify(processor).process(same(exchange), any());
+            verify(processor).process(same(exchange), any());
+        }
     }
 
     @Test
@@ -239,19 +240,19 @@ public class StreamingApiConsumerTest {
         when(endpoint.getTopicName()).thenReturn("AccountUpdates");
         configuration.setRawPayload(true);
 
-        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
+        try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
+            consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
 
-        consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
+            verify(in).setBody("{\"Phone\":\"(415) 555-1212\",\"Id\":\"001D000000KneakIAB\",\"Name\":\"Blackbeard\"}");
+            verify(in).setHeader("CamelSalesforceEventType", "created");
+            verify(in).setHeader("CamelSalesforceCreatedDate", "2016-09-16T19:45:27.454Z");
+            verify(in).setHeader("CamelSalesforceReplayId", 1L);
+            verify(in).setHeader("CamelSalesforceTopicName", "AccountUpdates");
+            verify(in).setHeader("CamelSalesforceChannel", "/topic/AccountUpdates");
+            verify(in).setHeader("CamelSalesforceClientId", "lxdl9o32njygi1gj47kgfaga4k");
 
-        verify(in).setBody("{\"Phone\":\"(415) 555-1212\",\"Id\":\"001D000000KneakIAB\",\"Name\":\"Blackbeard\"}");
-        verify(in).setHeader("CamelSalesforceEventType", "created");
-        verify(in).setHeader("CamelSalesforceCreatedDate", "2016-09-16T19:45:27.454Z");
-        verify(in).setHeader("CamelSalesforceReplayId", 1L);
-        verify(in).setHeader("CamelSalesforceTopicName", "AccountUpdates");
-        verify(in).setHeader("CamelSalesforceChannel", "/topic/AccountUpdates");
-        verify(in).setHeader("CamelSalesforceClientId", "lxdl9o32njygi1gj47kgfaga4k");
-
-        verify(processor).process(same(exchange), any());
+            verify(processor).process(same(exchange), any());
+        }
     }
 
     @Test
@@ -272,52 +273,52 @@ public class StreamingApiConsumerTest {
         message.put("data", data);
         message.put("channel", "/event/TestEvent__e");
 
-        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
+        try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
+            consumer.processMessage(mock(ClientSessionChannel.class), message);
 
-        consumer.processMessage(mock(ClientSessionChannel.class), message);
+            verify(in).setBody(new org.cometd.common.JacksonJSONContextClient()
+                    .generate(new org.cometd.common.HashMapMessage(message)));
+            verify(in).setHeader("CamelSalesforceCreatedDate", ZonedDateTime.parse("2018-07-06T12:41:04Z"));
+            verify(in).setHeader("CamelSalesforceReplayId", 4L);
+            verify(in).setHeader("CamelSalesforceChannel", "/event/TestEvent__e");
+            verify(in).setHeader("CamelSalesforceEventType", "TestEvent__e");
+            verify(in).setHeader("CamelSalesforcePlatformEventSchema", "30H2pgzuWcF844p26Ityvg");
 
-        verify(in).setBody(new org.cometd.common.JacksonJSONContextClient()
-                .generate(new org.cometd.common.HashMapMessage(message)));
-        verify(in).setHeader("CamelSalesforceCreatedDate", ZonedDateTime.parse("2018-07-06T12:41:04Z"));
-        verify(in).setHeader("CamelSalesforceReplayId", 4L);
-        verify(in).setHeader("CamelSalesforceChannel", "/event/TestEvent__e");
-        verify(in).setHeader("CamelSalesforceEventType", "TestEvent__e");
-        verify(in).setHeader("CamelSalesforcePlatformEventSchema", "30H2pgzuWcF844p26Ityvg");
+            verify(processor).process(same(exchange), any());
 
-        verify(processor).process(same(exchange), any());
-
-        verifyNoMoreInteractions(in, processor);
+            verifyNoMoreInteractions(in, processor);
+        }
     }
 
     @Test
     public void shouldProcessChangeEvents() throws Exception {
         when(endpoint.getTopicName()).thenReturn("/data/AccountChangeEvent");
 
-        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
+        try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
+            consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
 
-        consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
+            verify(in).setBody(mockChangeEventPayload);
+            verify(in).setHeader("CamelSalesforceChannel", "/data/AccountChangeEvent");
+            verify(in).setHeader("CamelSalesforceReplayId", 4L);
+            verify(in).setHeader("CamelSalesforceChangeEventSchema", "30H2pgzuWcF844p26Ityvg");
+            verify(in).setHeader("CamelSalesforceEventType", "AccountChangeEvent");
+            verify(in).setHeader("CamelSalesforceChangeType", "CREATE");
+            verify(in).setHeader("CamelSalesforceChangeOrigin", "com/salesforce/api/rest/45.0");
+            verify(in).setHeader("CamelSalesforceTransactionKey", "000bc577-90c7-0d33-cebb-971bb50d75b8");
+            verify(in).setHeader("CamelSalesforceSequenceNumber", 1L);
+            verify(in).setHeader("CamelSalesforceIsTransactionEnd", Boolean.TRUE);
+            verify(in).setHeader("CamelSalesforceCommitTimestamp", 1558949299000L);
+            verify(in).setHeader("CamelSalesforceCommitUser", "0052p000009cl8uBBB");
+            verify(in).setHeader("CamelSalesforceCommitNumber", 10585193272713L);
+            verify(in).setHeader("CamelSalesforceEntityName", "Account");
+            verify(in).setHeader("CamelSalesforceRecordIds", new Object[] { "0012p00002HHpNlAAL" });
 
-        verify(in).setBody(mockChangeEventPayload);
-        verify(in).setHeader("CamelSalesforceChannel", "/data/AccountChangeEvent");
-        verify(in).setHeader("CamelSalesforceReplayId", 4L);
-        verify(in).setHeader("CamelSalesforceChangeEventSchema", "30H2pgzuWcF844p26Ityvg");
-        verify(in).setHeader("CamelSalesforceEventType", "AccountChangeEvent");
-        verify(in).setHeader("CamelSalesforceChangeType", "CREATE");
-        verify(in).setHeader("CamelSalesforceChangeOrigin", "com/salesforce/api/rest/45.0");
-        verify(in).setHeader("CamelSalesforceTransactionKey", "000bc577-90c7-0d33-cebb-971bb50d75b8");
-        verify(in).setHeader("CamelSalesforceSequenceNumber", 1L);
-        verify(in).setHeader("CamelSalesforceIsTransactionEnd", Boolean.TRUE);
-        verify(in).setHeader("CamelSalesforceCommitTimestamp", 1558949299000L);
-        verify(in).setHeader("CamelSalesforceCommitUser", "0052p000009cl8uBBB");
-        verify(in).setHeader("CamelSalesforceCommitNumber", 10585193272713L);
-        verify(in).setHeader("CamelSalesforceEntityName", "Account");
-        verify(in).setHeader("CamelSalesforceRecordIds", new Object[] { "0012p00002HHpNlAAL" });
+            verify(mockChangeEventPayload).remove("ChangeEventHeader");
 
-        verify(mockChangeEventPayload).remove("ChangeEventHeader");
+            verify(processor).process(same(exchange), any());
 
-        verify(processor).process(same(exchange), any());
-
-        verifyNoMoreInteractions(in, processor);
+            verifyNoMoreInteractions(in, processor);
+        }
     }
 
     @Test
@@ -325,11 +326,11 @@ public class StreamingApiConsumerTest {
         when(endpoint.getTopicName()).thenReturn("/data/AccountChangeEvent");
         when(mockChangeEventMap.get("replayId")).thenReturn(null);
 
-        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
+        try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
+            consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
 
-        consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
-
-        verify(in, never()).setHeader(eq("CamelSalesforceReplayId"), any());
+            verify(in, never()).setHeader(eq("CamelSalesforceReplayId"), any());
+        }
     }
 
     @Test
@@ -337,12 +338,12 @@ public class StreamingApiConsumerTest {
         when(endpoint.getTopicName()).thenReturn("/data/AccountChangeEvent");
         configuration.setRawPayload(true);
 
-        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
+        try (final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED)) {
+            consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
 
-        consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
-
-        verify(in).setBody(new org.cometd.common.JacksonJSONContextClient()
-                .generate(new org.cometd.common.HashMapMessage(mockChangeEvent)));
+            verify(in).setBody(new org.cometd.common.JacksonJSONContextClient()
+                    .generate(new org.cometd.common.HashMapMessage(mockChangeEvent)));
+        }
     }
 
     static Message createPushTopicMessage() {

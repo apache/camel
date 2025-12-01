@@ -118,11 +118,15 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         switch (operationName) {
             case SUBSCRIBE -> {
                 final SubscriptionHelper subscriptionHelper = getComponent().getSubscriptionHelper();
+                @SuppressWarnings("resource")
+                // NOTE: the resource will be closed by the client according to the component lifecycle.
                 StreamingApiConsumer answer = new StreamingApiConsumer(this, processor, subscriptionHelper);
                 answer.setExecutorService(consumerWorkerPoolExecutorService);
                 consumer = answer;
             }
             case PUBSUB_SUBSCRIBE -> {
+                @SuppressWarnings("resource")
+                // NOTE: the resource will be closed by the client according to the component lifecycle.
                 PubSubApiConsumer answer = new PubSubApiConsumer(this, processor);
                 answer.setExecutorService(consumerWorkerPoolExecutorService);
                 consumer = answer;

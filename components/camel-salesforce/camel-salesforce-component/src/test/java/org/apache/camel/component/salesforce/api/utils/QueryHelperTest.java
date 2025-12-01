@@ -54,7 +54,7 @@ public class QueryHelperTest {
     @Test
     public void shouldGenerateQueryForFilteredFields() {
         String s = QueryHelper.queryToFetchFilteredFieldsOf(new Account(), SObjectField::isCustom);
-        assertThat(QueryHelper.queryToFetchFilteredFieldsOf(new Account(), SObjectField::isCustom))
+        assertThat(s)
                 .isEqualTo(
                         "SELECT Shipping_Location__Latitude__s, Shipping_Location__Longitude__s, Shipping_Location__c, External_Id__c FROM Account");
     }

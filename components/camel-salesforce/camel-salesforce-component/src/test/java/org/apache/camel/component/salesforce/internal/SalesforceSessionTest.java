@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.internal;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -51,16 +52,15 @@ public class SalesforceSessionTest {
     }
 
     @Test
-    public void shouldGenerateJwtTokens() {
+    public void shouldGenerateJwtTokens() throws IOException {
         final SalesforceLoginConfig config
                 = new SalesforceLoginConfig("https://login.salesforce.com", "ABCD", "username", parameters, true);
 
-        final SalesforceSession session
-                = new SalesforceSession(new DefaultCamelContext(), mock(SalesforceHttpClient.class), TIMEOUT, config);
-
-        final String jwtAssertion = session.generateJwtAssertion();
-
-        assertNotNull(jwtAssertion);
+        try (final SalesforceSession session
+                = new SalesforceSession(new DefaultCamelContext(), mock(SalesforceHttpClient.class), TIMEOUT, config)) {
+            final String jwtAssertion = session.generateJwtAssertion();
+            assertNotNull(jwtAssertion);
+        }
     }
 
     @Test

@@ -161,7 +161,7 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
         Line_Item__c lineItem = new Line_Item__c();
         final String lineItemId = String.valueOf(TEST_LINE_ITEM_ID.incrementAndGet());
         lineItem.setName(lineItemId);
-        CreateSObjectResult result = template().requestBody("direct:createLineItem", lineItem, CreateSObjectResult.class);
+        template().requestBody("direct:createLineItem", lineItem, CreateSObjectResult.class);
     }
 
     private void createLineItems(int count) {
@@ -720,17 +720,18 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
         final ClientConnector connector = new ClientConnector();
         connector.setSslContextFactory(sslContextFactory);
         final HttpClientTransport transport = new HttpClientTransportOverHTTP(connector);
-        final HttpClient httpClient = new HttpClient(transport);
-        httpClient.setConnectTimeout(60000);
-        httpClient.start();
+        try (final HttpClient httpClient = new HttpClient(transport)) {
+            httpClient.setConnectTimeout(60000);
+            httpClient.start();
 
-        final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
-        final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
+            final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
+            final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
 
-        final ContentResponse response = logoutGet.send();
-        assertEquals(HttpStatus.OK_200, response.getStatus());
+            final ContentResponse response = logoutGet.send();
+            assertEquals(HttpStatus.OK_200, response.getStatus());
 
-        testGetGlobalObjects();
+            testGetGlobalObjects();
+        }
     }
 
     @Test
@@ -743,34 +744,36 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
         final ClientConnector connector = new ClientConnector();
         connector.setSslContextFactory(sslContextFactory);
         final HttpClientTransport transport = new HttpClientTransportOverHTTP(connector);
-        final HttpClient httpClient = new HttpClient(transport);
-        httpClient.setConnectTimeout(60000);
-        httpClient.start();
+        try (final HttpClient httpClient = new HttpClient(transport)) {
+            httpClient.setConnectTimeout(60000);
+            httpClient.start();
 
-        final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
-        final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
+            final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
+            final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
 
-        final ContentResponse response = logoutGet.send();
-        assertEquals(HttpStatus.OK_200, response.getStatus());
+            final ContentResponse response = logoutGet.send();
+            assertEquals(HttpStatus.OK_200, response.getStatus());
 
-        // set component config to bad password to cause relogin attempts to
-        // fail
-        final String password = sf.getLoginConfig().getPassword();
-        sf.getLoginConfig().setPassword("bad_password");
+            // set component config to bad password to cause relogin attempts to
+            // fail
+            final String password = sf.getLoginConfig().getPassword();
+            sf.getLoginConfig().setPassword("bad_password");
 
-        try {
-            testGetGlobalObjects();
-            fail("Expected CamelExecutionException!");
-        } catch (final CamelExecutionException e) {
-            if (e.getCause() instanceof SalesforceException) {
-                final SalesforceException cause = (SalesforceException) e.getCause();
-                assertEquals(HttpStatus.BAD_REQUEST_400, cause.getStatusCode(), "Expected 400 on authentication retry failure");
-            } else {
-                fail("Expected SalesforceException!");
+            try {
+                testGetGlobalObjects();
+                fail("Expected CamelExecutionException!");
+            } catch (final CamelExecutionException e) {
+                if (e.getCause() instanceof SalesforceException) {
+                    final SalesforceException cause = (SalesforceException) e.getCause();
+                    assertEquals(HttpStatus.BAD_REQUEST_400, cause.getStatusCode(),
+                            "Expected 400 on authentication retry failure");
+                } else {
+                    fail("Expected SalesforceException!");
+                }
+            } finally {
+                // reset password and retries to allow other tests to pass
+                sf.getLoginConfig().setPassword(password);
             }
-        } finally {
-            // reset password and retries to allow other tests to pass
-            sf.getLoginConfig().setPassword(password);
         }
     }
 
