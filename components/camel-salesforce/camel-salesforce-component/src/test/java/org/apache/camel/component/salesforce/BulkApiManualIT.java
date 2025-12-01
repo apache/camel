@@ -50,20 +50,21 @@ public class BulkApiManualIT extends AbstractBulkApiTestBase {
         final ClientConnector connector = new ClientConnector();
         connector.setSslContextFactory(sslContextFactory);
         final HttpClientTransport transport = new HttpClientTransportOverHTTP(connector);
-        final HttpClient httpClient = new HttpClient(transport);
-        httpClient.setConnectTimeout(60000);
-        httpClient.start();
+        try (final HttpClient httpClient = new HttpClient(transport)) {
+            httpClient.setConnectTimeout(60000);
+            httpClient.start();
 
-        final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
-        final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
+            final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
+            final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
 
-        final ContentResponse response = logoutGet.send();
-        assertEquals(HttpStatus.OK_200, response.getStatus());
+            final ContentResponse response = logoutGet.send();
+            assertEquals(HttpStatus.OK_200, response.getStatus());
 
-        final JobInfo jobInfo = new JobInfo();
-        jobInfo.setOperation(OperationEnum.INSERT);
-        jobInfo.setContentType(ContentType.CSV);
-        jobInfo.setObject(Merchandise__c.class.getSimpleName());
-        createJob(jobInfo);
+            final JobInfo jobInfo = new JobInfo();
+            jobInfo.setOperation(OperationEnum.INSERT);
+            jobInfo.setContentType(ContentType.CSV);
+            jobInfo.setObject(Merchandise__c.class.getSimpleName());
+            createJob(jobInfo);
+        }
     }
 }

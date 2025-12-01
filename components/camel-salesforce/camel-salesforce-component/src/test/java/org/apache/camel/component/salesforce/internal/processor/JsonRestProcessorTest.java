@@ -62,13 +62,13 @@ public class JsonRestProcessorTest {
         final SalesforceEndpoint endpoint
                 = new SalesforceEndpoint("", salesforce, configuration, OperationName.UPDATE_SOBJECT, "");
 
-        final JsonRestProcessor jsonProcessor = new JsonRestProcessor(endpoint);
-
-        final Message in = new DefaultMessage(new DefaultCamelContext());
-        try (InputStream stream = jsonProcessor.getRequestStream(in, new TestObject());
-             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-            final String json = IOUtils.toString(reader);
-            assertThat(json).isEqualTo("{\"attributes\":{\"referenceId\":null,\"type\":null,\"url\":null}}");
+        try (final JsonRestProcessor jsonProcessor = new JsonRestProcessor(endpoint)) {
+            final Message in = new DefaultMessage(new DefaultCamelContext());
+            try (InputStream stream = jsonProcessor.getRequestStream(in, new TestObject());
+                 InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+                final String json = IOUtils.toString(reader);
+                assertThat(json).isEqualTo("{\"attributes\":{\"referenceId\":null,\"type\":null,\"url\":null}}");
+            }
         }
     }
 
@@ -79,16 +79,16 @@ public class JsonRestProcessorTest {
         final SalesforceEndpoint endpoint
                 = new SalesforceEndpoint("", salesforce, configuration, OperationName.UPDATE_SOBJECT, "");
 
-        final JsonRestProcessor jsonProcessor = new JsonRestProcessor(endpoint);
-
-        final Message in = new DefaultMessage(new DefaultCamelContext());
-        TestObject testObject = new TestObject();
-        testObject.getFieldsToNull().add("creationDate");
-        try (InputStream stream = jsonProcessor.getRequestStream(in, testObject);
-             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-            final String json = IOUtils.toString(reader);
-            assertThat(json)
-                    .isEqualTo("{\"creationDate\":null,\"attributes\":{\"referenceId\":null,\"type\":null,\"url\":null}}");
+        try (final JsonRestProcessor jsonProcessor = new JsonRestProcessor(endpoint)) {
+            final Message in = new DefaultMessage(new DefaultCamelContext());
+            TestObject testObject = new TestObject();
+            testObject.getFieldsToNull().add("creationDate");
+            try (InputStream stream = jsonProcessor.getRequestStream(in, testObject);
+                 InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+                final String json = IOUtils.toString(reader);
+                assertThat(json)
+                        .isEqualTo("{\"creationDate\":null,\"attributes\":{\"referenceId\":null,\"type\":null,\"url\":null}}");
+            }
         }
     }
 
@@ -98,17 +98,18 @@ public class JsonRestProcessorTest {
         final SalesforceEndpointConfig conf = new SalesforceEndpointConfig();
         final OperationName op = OperationName.CREATE_BATCH;
         final SalesforceEndpoint endpoint = new SalesforceEndpoint("", comp, conf, op, "");
-        final JsonRestProcessor jsonRestProcessor = new JsonRestProcessor(endpoint);
-        final DefaultCamelContext context = new DefaultCamelContext();
-        final Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
-        final TestObject doc = new TestObject();
-        doc.setCreationDate(ZonedDateTime.of(1717, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
+        try (final JsonRestProcessor jsonRestProcessor = new JsonRestProcessor(endpoint)) {
+            final DefaultCamelContext context = new DefaultCamelContext();
+            final Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
+            final TestObject doc = new TestObject();
+            doc.setCreationDate(ZonedDateTime.of(1717, 1, 2, 3, 4, 5, 6, ZoneId.systemDefault()));
 
-        exchange.getIn().setBody(doc);
-        try (InputStream stream = jsonRestProcessor.getRequestStream(exchange);
-             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-            final String result = IOUtils.toString(reader);
-            assertThat(result.length()).isLessThanOrEqualTo(104);
+            exchange.getIn().setBody(doc);
+            try (InputStream stream = jsonRestProcessor.getRequestStream(exchange);
+                 InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+                final String result = IOUtils.toString(reader);
+                assertThat(result.length()).isLessThanOrEqualTo(104);
+            }
         }
     }
 }

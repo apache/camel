@@ -235,14 +235,15 @@ public class PubSubApiTest {
                 .build();
         grpcServer.start();
 
-        PubSubApiClient client = new PubSubApiClient(
+        try (PubSubApiClient client = new PubSubApiClient(
                 session, new SalesforceLoginConfig(), "localhost",
-                port, 1000, 10000, true);
-        client.setUsePlainTextConnection(true);
-        client.start();
-        client.subscribe(consumer, ReplayPreset.LATEST, null, true);
+                port, 1000, 10000, true)) {
+            client.setUsePlainTextConnection(true);
+            client.start();
+            client.subscribe(consumer, ReplayPreset.LATEST, null, true);
 
-        verify(session, timeout(5000)).attemptLoginUntilSuccessful(anyLong(), anyLong());
+            verify(session, timeout(5000)).attemptLoginUntilSuccessful(anyLong(), anyLong());
+        }
     }
 
     private int getPort() throws IOException {

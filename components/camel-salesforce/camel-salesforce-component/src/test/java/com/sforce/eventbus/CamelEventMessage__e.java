@@ -28,8 +28,7 @@ import org.apache.avro.specific.SpecificData;
 import org.apache.avro.util.Utf8;
 
 @org.apache.avro.specific.AvroGenerated
-public class CamelEventMessage__e extends org.apache.avro.specific.SpecificRecordBase
-        implements org.apache.avro.specific.SpecificRecord {
+public class CamelEventMessage__e extends org.apache.avro.specific.SpecificRecordBase {
     private static final long serialVersionUID = 4603183847267960866L;
 
     public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse(
@@ -150,7 +149,6 @@ public class CamelEventMessage__e extends org.apache.avro.specific.SpecificRecor
 
     // Used by DatumReader.  Applications should not call.
     @Override
-    @SuppressWarnings(value = "unchecked")
     public void put(int field$, Object value$) {
         switch (field$) {
             case 0:
@@ -262,8 +260,7 @@ public class CamelEventMessage__e extends org.apache.avro.specific.SpecificRecor
      * RecordBuilder for CamelEventMessage__e instances.
      */
     @org.apache.avro.specific.AvroGenerated
-    public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<CamelEventMessage__e>
-            implements org.apache.avro.data.RecordBuilder<CamelEventMessage__e> {
+    public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<CamelEventMessage__e> {
 
         /** CreatedDate:DateTime */
         private long CreatedDate;
@@ -445,7 +442,6 @@ public class CamelEventMessage__e extends org.apache.avro.specific.SpecificRecor
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public CamelEventMessage__e build() {
             try {
                 CamelEventMessage__e record = new CamelEventMessage__e();

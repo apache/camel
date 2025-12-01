@@ -87,9 +87,6 @@ public class SalesforceTimeFormatsTest {
     }
 
     private static final String JSON_FMT = "{\"value\":\"%s\"}";
-
-    private static final String XML_FMT = "<Dto><value>%s</value></Dto>";
-
     private final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
 
     @ParameterizedTest
