@@ -27,6 +27,7 @@ import java.util.StringJoiner;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -60,7 +61,7 @@ public class RestProducer extends DefaultAsyncProducer {
     private String outType;
 
     // the producer of the Camel component that is used as the HTTP client to call the REST service
-    private AsyncProcessor producer;
+    private AsyncProducer producer;
     // if binding is enabled then this processor should be used to wrap the call with binding before/after
     private AsyncProcessor binding;
 
@@ -265,6 +266,7 @@ public class RestProducer extends DefaultAsyncProducer {
     protected void doStop() throws Exception {
         super.doStop();
         ServiceHelper.stopService(producer, binding);
+        producer.close();
     }
 
     protected AsyncProcessor createBindingProcessor() throws Exception {
