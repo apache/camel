@@ -32,7 +32,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
-import org.apache.camel.StaticService;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
@@ -40,7 +39,7 @@ import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
-public class DefaultRestRegistry extends ServiceSupport implements StaticService, RestRegistry, CamelContextAware {
+public class DefaultRestRegistry extends ServiceSupport implements RestRegistry, CamelContextAware {
 
     private CamelContext camelContext;
     private final Map<Consumer, List<RestService>> registry = new LinkedHashMap<>();
