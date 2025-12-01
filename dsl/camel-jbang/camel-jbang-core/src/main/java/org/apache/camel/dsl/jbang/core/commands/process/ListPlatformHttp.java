@@ -77,14 +77,14 @@ public class ListPlatformHttp extends ProcessWatchCommand {
                         row.uptime = extractSince(ph);
                         row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("platform-http");
-                        if (jo != null) {
-                            String server = jo.getString("server");
-                            JsonArray arr = (JsonArray) jo.get("endpoints");
+                        JsonObject jph = (JsonObject) root.get("platform-http");
+                        if (jph != null) {
+                            String server = jph.getString("server");
+                            JsonArray arr = (JsonArray) jph.get("endpoints");
                             if (arr != null) {
                                 for (int i = 0; i < arr.size(); i++) {
                                     row = row.copy();
-                                    jo = (JsonObject) arr.get(i);
+                                    JsonObject jo = (JsonObject) arr.get(i);
                                     row.server = server;
                                     row.url = jo.getString("url");
                                     row.path = jo.getString("path");
@@ -95,11 +95,11 @@ public class ListPlatformHttp extends ProcessWatchCommand {
                                 }
                             }
                             if (all) {
-                                arr = (JsonArray) jo.get("managementEndpoints");
+                                arr = (JsonArray) jph.get("managementEndpoints");
                                 if (arr != null) {
                                     for (int i = 0; i < arr.size(); i++) {
                                         row = row.copy();
-                                        jo = (JsonObject) arr.get(i);
+                                        JsonObject jo = (JsonObject) arr.get(i);
                                         row.server = server;
                                         row.url = jo.getString("url");
                                         row.path = jo.getString("path");
