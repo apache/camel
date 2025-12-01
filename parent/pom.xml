@@ -385,7 +385,7 @@
         <maven-shared-utils-plugin-version>3.4.2</maven-shared-utils-plugin-version>
         <maven-surefire-report-plugin-version>3.5.4</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
-        <maven-war-plugin-version>3.5.0</maven-war-plugin-version>
+        <maven-war-plugin-version>3.5.1</maven-war-plugin-version>
         <metrics-version>4.2.37</metrics-version>
         <micrometer-version>1.15.6</micrometer-version>
         <micrometer-tracing-version>1.5.5</micrometer-tracing-version>
