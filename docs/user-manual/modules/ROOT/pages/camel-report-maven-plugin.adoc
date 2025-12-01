@@ -183,8 +183,7 @@ In particular, in order to use the validate plugin with transitive dependencies,
 * The route `from("direct:out")` is declared into a dependency of your project, for example `my.company:routes-dependency:1.0`
 * If `routes-dependency` sources are released into a maven repository, the following plugin configuration can be used:
 
-[source, xml]
-----
+```xml
 <plugin>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-report-maven-plugin</artifactId>
@@ -205,7 +204,7 @@ In particular, in order to use the validate plugin with transitive dependencies,
     </execution>
   </executions>
 </plugin>
-----
+```
 
 == camel-report:route-coverage
 
