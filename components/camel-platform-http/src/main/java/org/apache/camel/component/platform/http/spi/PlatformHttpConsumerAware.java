@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.platform.http.spi;
 
+import org.apache.camel.AfterPropertiesConfigured;
+
 /**
  * An interface to represent an object that has been injected with {@link PlatformHttpConsumer}.
  */
@@ -25,5 +27,12 @@ public interface PlatformHttpConsumerAware {
      * Gets the {@link PlatformHttpConsumer}.
      */
     PlatformHttpConsumer getPlatformHttpConsumer();
+
+    /**
+     * Registers a listener that is called after the {@link PlatformHttpConsumer} has set options from properties.
+     * <p/>
+     * For example used by camel-rest-openapi
+     */
+    void registerAfterConfigured(AfterPropertiesConfigured listener);
 
 }

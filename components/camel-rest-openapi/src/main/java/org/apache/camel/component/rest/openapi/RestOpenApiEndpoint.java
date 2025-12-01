@@ -51,14 +51,18 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RestOpenApiOperation;
+import org.apache.camel.spi.CamelInternalProcessorAdvice;
+import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RestConfiguration;
@@ -69,6 +73,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -210,15 +215,33 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(final Processor processor) throws Exception {
         OpenAPI doc = loadSpecificationFrom(getCamelContext(), specificationUri);
         String path = determineBasePath(doc);
-        RestOpenApiProcessor target
-                = new RestOpenApiProcessor(this, doc, path, apiContextPath, processor, restOpenapiProcessorStrategy);
-        CamelContextAware.trySetCamelContext(target, getCamelContext());
-        Consumer consumer = createConsumerFor(path, target);
-        target.setConsumer(consumer);
+
+        RestOpenApiProcessor openApiProcessor
+                = new RestOpenApiProcessor(this, doc, path, apiContextPath, restOpenapiProcessorStrategy);
+        CamelContextAware.trySetCamelContext(openApiProcessor, getCamelContext());
+
+        // use an advice to call the processor that is responsible for routing to the route that matches the
+        // operation id, and also do validation of the incoming request
+        // the camel route is invoked AFTER the rest-dsl is complete
+        if (processor instanceof InternalProcessor ip) {
+            // remove existing rest binding advice because RestOpenApiProcessorAdvice has its own binding
+            RestBindingAdvice advice = ip.getAdvice(RestBindingAdvice.class);
+            if (advice != null) {
+                ip.removeAdvice(advice);
+            }
+            ip.addAdvice(new RestOpenApiProcessorAdvice(openApiProcessor));
+        }
+
+        Consumer consumer = createConsumerFor(path, openApiProcessor, processor);
+        openApiProcessor.setConsumer(consumer);
+        if (consumer instanceof PlatformHttpConsumerAware phca) {
+            phca.registerAfterConfigured(openApiProcessor);
+        }
         return consumer;
     }
 
-    protected Consumer createConsumerFor(String basePath, RestOpenApiProcessor processor) throws Exception {
+    private Consumer createConsumerFor(String basePath, RestOpenApiProcessor openApiProcessor, Processor processor)
+            throws Exception {
         RestOpenApiConsumerFactory factory = null;
         String cname = null;
         if (getConsumerComponentName() != null) {
@@ -305,7 +328,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             }
             Consumer consumer = factory.createConsumer(getCamelContext(), processor, basePath, config, copy);
             if (consumer instanceof PlatformHttpConsumerAware phca) {
-                processor.setPlatformHttpConsumer(phca);
+                openApiProcessor.setPlatformHttpConsumer(phca);
             }
             configureConsumer(consumer);
             return consumer;
@@ -516,7 +539,6 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return new RestOpenApiProducer(endpoint.createProducer(), hasHost, requestValidator);
     }
 
-    @Deprecated
     String determineBasePath(final OpenAPI openapi) {
         if (isNotEmpty(basePath)) {
             return basePath;
@@ -949,5 +971,40 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         expression.append('}');
 
         return expression.toString();
+    }
+
+    private static class RestOpenApiProcessorAdvice implements CamelInternalProcessorAdvice<Object>, Ordered {
+
+        private final RestOpenApiProcessor openApiProcessor;
+
+        public RestOpenApiProcessorAdvice(RestOpenApiProcessor openApiProcessor) {
+            this.openApiProcessor = openApiProcessor;
+        }
+
+        @Override
+        public boolean hasState() {
+            return false;
+        }
+
+        @Override
+        public Object before(Exchange exchange) throws Exception {
+            try {
+                openApiProcessor.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, Object data) throws Exception {
+            // noop
+        }
+
+        @Override
+        public int getOrder() {
+            // should be lowest so all existing advices are triggered first
+            return Ordered.LOWEST;
+        }
     }
 }

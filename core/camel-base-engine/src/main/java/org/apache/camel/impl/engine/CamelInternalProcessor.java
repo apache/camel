@@ -169,6 +169,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     @Override
+    public void removeAdvice(CamelInternalProcessorAdvice<?> advice) {
+        if (advices.remove(advice) && advice.hasState()) {
+            statefulAdvices--;
+        }
+    }
+
+    @Override
     public <T> T getAdvice(Class<T> type) {
         for (CamelInternalProcessorAdvice<?> task : advices) {
             Object advice = unwrap(task);
