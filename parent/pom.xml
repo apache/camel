@@ -345,7 +345,7 @@
         <keycloak-client-version>26.0.7</keycloak-client-version>
         <kubernetes-client-version>7.4.0</kubernetes-client-version>
         <kudu-version>1.18.0</kudu-version>
-        <langchain4j-version>1.9.0</langchain4j-version>
+        <langchain4j-version>1.9.1</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
         <langchain4j-beta-version>1.9.1-beta17</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
         <langchain4j-community-version>1.9.0-beta16</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
