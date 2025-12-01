@@ -392,7 +392,7 @@
         <microprofile-config-version>3.1</microprofile-config-version>
         <milo-version>1.0.8</milo-version>
         <milvus-client-version>2.6.9</milvus-client-version>
-        <mina-version>2.2.4</mina-version>
+        <mina-version>2.2.5</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.6.0</minio-version>
