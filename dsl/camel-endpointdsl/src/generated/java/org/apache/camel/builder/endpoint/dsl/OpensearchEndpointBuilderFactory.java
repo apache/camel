@@ -789,7 +789,9 @@ public interface OpensearchEndpointBuilderFactory {
             return "scrollKeepAliveMs";
         }
         /**
-         * Set to true to enable scroll usage.
+         * Set to true to enable scroll usage. When enabled, the body is
+         * returned as a OpensearchScrollRequestIterator. Make sure to use the
+         * stream and close it accordingly to avoid potential resource leaks.
          * 
          * The option is a: {@code Boolean} type.
          * 
