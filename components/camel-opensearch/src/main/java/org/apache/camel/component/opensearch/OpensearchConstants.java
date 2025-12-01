@@ -35,7 +35,10 @@ public interface OpensearchConstants {
     String PARAM_WAIT_FOR_ACTIVE_SHARDS = "waitForActiveShards";
     @Metadata(description = "The starting index of the response.", javaType = "Integer")
     String PARAM_SCROLL_KEEP_ALIVE_MS = "scrollKeepAliveMs";
-    @Metadata(description = "Set to true to enable scroll usage", javaType = "Boolean")
+    @Metadata(description = "Set to true to enable scroll usage. When enabled, the body is returned as a `OpensearchScrollRequestIterator`."
+                            +
+                            " Make sure to use the stream and close it accordingly to avoid potential resource leaks.",
+              javaType = "Boolean")
     String PARAM_SCROLL = "useScroll";
     @Metadata(description = "The size of the response.", javaType = "Integer")
     String PARAM_SIZE = "size";
