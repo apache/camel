@@ -457,7 +457,7 @@
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.9.0</qpid-jms-client-version>
         <quarkus-version>3.30.1</quarkus-version>
-        <quartz-version>2.5.1</quartz-version>
+        <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>2.3.2</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.8.0</reactor-version>
