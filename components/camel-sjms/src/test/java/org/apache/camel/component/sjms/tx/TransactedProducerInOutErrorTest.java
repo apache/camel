@@ -38,13 +38,14 @@ public class TransactedProducerInOutErrorTest {
 
     @Test
     public void test() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(createRouteBuilder());
-        SjmsComponent component = context.getComponent("sjms", SjmsComponent.class);
-        component.setConnectionFactory(CamelJmsTestHelper.createConnectionFactory());
-        FailedToStartRouteException t = assertThrows(FailedToStartRouteException.class, context::start);
-        assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
-        LOG.info("Exception was thrown as expected", t);
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(createRouteBuilder());
+            SjmsComponent component = context.getComponent("sjms", SjmsComponent.class);
+            component.setConnectionFactory(CamelJmsTestHelper.createConnectionFactory());
+            FailedToStartRouteException t = assertThrows(FailedToStartRouteException.class, context::start);
+            assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
+            LOG.info("Exception was thrown as expected", t);
+        }
     }
 
     protected RouteBuilder createRouteBuilder() {

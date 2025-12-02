@@ -28,21 +28,16 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
-import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
-import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class QueueProducerQoSTest extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(QueueProducerQoSTest.class);
 
     private static final String TEST_INONLY_DESTINATION_NAME = "queue.producer.test.qos.inonly.QueueProducerQoSTest";
     private static final String TEST_INOUT_DESTINATION_NAME = "queue.producer.test.qos.inout.QueueProducerQoSTest";
@@ -63,7 +58,6 @@ public class QueueProducerQoSTest extends CamelTestSupport {
 
     private Connection connection;
     private Session session;
-    private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -119,8 +113,8 @@ public class QueueProducerQoSTest extends CamelTestSupport {
     private static Configuration configureArtemis(Configuration configuration) {
         return configuration.addAddressSetting("#",
                 new AddressSettings()
-                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
-                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue"))
+                        .setDeadLetterAddress(SimpleString.of("DLQ"))
+                        .setExpiryAddress(SimpleString.of("ExpiryQueue"))
                         .setExpiryDelay(1000L))
                 .setMessageExpiryScanPeriod(500L);
     }
