@@ -1,0 +1,363 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: Container Version Upgrade
+
+on:
+  schedule:
+    # Run every Monday at 6:00 AM UTC
+    - cron: '0 6 * * MON'
+  workflow_dispatch:
+    inputs:
+      scan_path:
+        description: 'Path to scan for container.properties files'
+        required: false
+        default: 'test-infra'
+      check_prereleases:
+        description: 'Include pre-release versions'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  upgrade-container-versions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests packaging colorama
+
+      - name: Check container versions
+        id: version_check
+        run: |
+          SCAN_PATH="${{ github.event.inputs.scan_path || 'test-infra' }}"
+          PRERELEASE_FLAG=""
+
+          if [[ "${{ github.event.inputs.check_prereleases }}" == "true" ]]; then
+            PRERELEASE_FLAG="--check-prereleases"
+          fi
+
+          echo "Scanning path: $SCAN_PATH"
+
+          # Run the version checker and capture output
+          # Use || true to ensure the script runs to completion even if exit code is non-zero
+          set +e
+          python3 .github/actions/check-container-upgrade/check-container-versions.py --scan-path "$SCAN_PATH" $PRERELEASE_FLAG --json > versions.json 2>&1
+          EXIT_CODE=$?
+          set -e
+
+          # Check if versions.json exists and is valid JSON
+          if [[ ! -f versions.json ]] || [[ ! -s versions.json ]]; then
+            echo "❌ Error: versions.json not created or is empty"
+            echo "check_passed=error" >> $GITHUB_OUTPUT
+            echo "outdated_count=0" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # Validate JSON
+          if ! jq empty versions.json 2>/dev/null; then
+            echo "❌ Error: versions.json contains invalid JSON"
+            cat versions.json
+            echo "check_passed=error" >> $GITHUB_OUTPUT
+            echo "outdated_count=0" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # Count outdated images
+          OUTDATED_COUNT=$(jq '[.[] | select(.is_latest == false and .newer_versions != null and (.newer_versions | length) > 0)] | length' versions.json)
+
+          if [[ "$EXIT_CODE" -eq 0 ]]; then
+            echo "check_passed=true" >> $GITHUB_OUTPUT
+            echo "outdated_count=0" >> $GITHUB_OUTPUT
+          else
+            echo "check_passed=false" >> $GITHUB_OUTPUT
+            echo "outdated_count=$OUTDATED_COUNT" >> $GITHUB_OUTPUT
+          fi
+
+          echo "Found $OUTDATED_COUNT outdated images"
+
+      - name: Create individual PRs for each container update
+        if: steps.version_check.outputs.check_passed == 'false'
+        id: create_prs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create Python script to update a single container
+          cat > update_single_container.py << 'SCRIPT_EOF'
+          import json
+          import re
+          import sys
+
+          if len(sys.argv) != 2:
+              print("Usage: update_single_container.py <index>")
+              sys.exit(1)
+
+          index = int(sys.argv[1])
+
+          # Load the version check results
+          with open('versions.json', 'r') as f:
+              results = json.load(f)
+
+          # Filter to only outdated images
+          outdated = [r for r in results if not r.get('is_latest') and not r.get('error') and r.get('newer_versions')]
+
+          if index >= len(outdated):
+              print(f"Index {index} out of range (only {len(outdated)} outdated images)")
+              sys.exit(1)
+
+          result = outdated[index]
+          image = result['image']
+          file_path = image['file_path']
+          property_name = image['property_name']
+          current_version = image['current_version']
+          latest_version = result['latest_version']
+
+          # Read the properties file
+          with open(file_path, 'r', encoding='utf-8') as f:
+              content = f.read()
+
+          # Build the full image reference for find/replace
+          registry = image['registry']
+          namespace = image['namespace']
+          name = image['name']
+
+          # Construct the image path
+          if namespace:
+              image_path = f"{registry}/{namespace}/{name}" if registry not in ['docker.io', ''] else f"{namespace}/{name}"
+          else:
+              image_path = f"{registry}/{name}" if registry not in ['docker.io', ''] else name
+
+          # Create the old and new references
+          old_ref = f"{image_path}:{current_version}"
+          new_ref = f"{image_path}:{latest_version}"
+
+          # Also handle case where registry might be implicit
+          if registry in ['docker.io', '']:
+              # Try both with and without explicit registry
+              old_pattern = f"(docker\\.io/)?{re.escape(image_path)}:{re.escape(current_version)}"
+              new_content = re.sub(old_pattern, new_ref, content)
+          else:
+              # Direct replacement
+              new_content = content.replace(old_ref, new_ref)
+
+          if new_content != content:
+              # Write the updated content
+              with open(file_path, 'w', encoding='utf-8') as f:
+                  f.write(new_content)
+
+              update_info = {
+                  'property': property_name,
+                  'file': file_path,
+                  'old_version': current_version,
+                  'new_version': latest_version,
+                  'image_name': image_path,
+                  'full_image_name': f"{image_path}:{latest_version}",
+                  'registry': registry
+              }
+
+              # Save update info
+              with open('current_update.json', 'w') as f:
+                  json.dump(update_info, f, indent=2)
+
+              print(f"✅ Updated {property_name}: {current_version} → {latest_version}")
+              sys.exit(0)
+          else:
+              print(f"⚠️  Could not update {property_name} in {file_path}")
+              sys.exit(1)
+          SCRIPT_EOF
+
+          # Count outdated images
+          OUTDATED_COUNT=$(jq '[.[] | select(.is_latest == false and .error == null and (.newer_versions | length) > 0)] | length' versions.json)
+
+          echo "Found $OUTDATED_COUNT outdated images to update"
+
+          if [[ "$OUTDATED_COUNT" -eq 0 ]]; then
+            echo "No updates needed"
+            echo "prs_created=0" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          PRS_CREATED=0
+
+          # Loop through each outdated container
+          for i in $(seq 0 $((OUTDATED_COUNT - 1))); do
+            echo ""
+            echo "========================================="
+            echo "Processing container $((i + 1)) of $OUTDATED_COUNT"
+            echo "========================================="
+
+            # Update this specific container
+            if ! python3 update_single_container.py $i; then
+              echo "Failed to update container at index $i, skipping..."
+              continue
+            fi
+
+            # Load update info
+            UPDATE_INFO=$(cat current_update.json)
+            PROPERTY_NAME=$(echo "$UPDATE_INFO" | jq -r '.property')
+            IMAGE_NAME=$(echo "$UPDATE_INFO" | jq -r '.image_name')
+            OLD_VERSION=$(echo "$UPDATE_INFO" | jq -r '.old_version')
+            NEW_VERSION=$(echo "$UPDATE_INFO" | jq -r '.new_version')
+            FILE_PATH=$(echo "$UPDATE_INFO" | jq -r '.file')
+            FULL_IMAGE=$(echo "$UPDATE_INFO" | jq -r '.full_image_name')
+
+            # Extract module name from file path
+            MODULE_NAME=$(echo "$FILE_PATH" | grep -oP 'test-infra/\K[^/]+' || echo "test-infra")
+
+            # Generate PR title and body
+            PR_TITLE="chore($MODULE_NAME): upgrade $PROPERTY_NAME to $NEW_VERSION"
+
+            # Create PR body
+            cat > pr_body.md << EOF
+          This PR updates the \`$PROPERTY_NAME\` container image to version \`$NEW_VERSION\`.
+
+          ## Update Details
+
+          - **Property**: \`$PROPERTY_NAME\`
+          - **Image**: \`$IMAGE_NAME\`
+          - **File**: \`$FILE_PATH\`
+          - **Old version**: \`$OLD_VERSION\`
+          - **New version**: \`$NEW_VERSION\`
+
+          ## Verification
+
+          Please verify:
+          - [ ] Container image version is compatible with existing tests
+          - [ ] No breaking changes in the updated version
+          - [ ] Tests pass with the new version
+
+          Run the following to verify:
+          \`\`\`bash
+          mvn clean verify -pl $MODULE_NAME
+          \`\`\`
+
+          ---
+
+          This PR was automatically created by the [Container Version Upgrade workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+          EOF
+
+            PR_BODY=$(cat pr_body.md)
+
+            # Create commit message
+            COMMIT_MSG=$(cat << EOF
+          chore($MODULE_NAME): upgrade $PROPERTY_NAME to $NEW_VERSION
+
+          Update $PROPERTY_NAME from $OLD_VERSION to $NEW_VERSION
+          EOF
+          )
+
+            # Generate unique branch name
+            BRANCH_NAME="automated/upgrade-$(echo "$PROPERTY_NAME" | tr '.' '-' | tr '_' '-')-${NEW_VERSION}-${{ github.run_number }}"
+
+            echo "Creating PR: $PR_TITLE"
+            echo "Branch: $BRANCH_NAME"
+
+            # Configure git
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+
+            # Create and switch to new branch
+            git checkout -b "$BRANCH_NAME"
+
+            # Add and commit changes
+            git add "$FILE_PATH"
+            git commit -m "$COMMIT_MSG"
+
+            # Push branch
+            if git push origin "$BRANCH_NAME"; then
+              # Create PR using gh CLI
+              if gh pr create \
+                --title "$PR_TITLE" \
+                --body "$PR_BODY" \
+                --base main \
+                --head "$BRANCH_NAME" \
+                --label "dependencies,container-images,automated"; then
+
+                echo "✅ PR created successfully for $PROPERTY_NAME"
+                PRS_CREATED=$((PRS_CREATED + 1))
+              else
+                echo "❌ Failed to create PR for $PROPERTY_NAME"
+              fi
+            else
+              echo "❌ Failed to push branch for $PROPERTY_NAME"
+            fi
+
+            # Switch back to main and clean up
+            git checkout main
+            git branch -D "$BRANCH_NAME" 2>/dev/null || true
+            git reset --hard origin/main
+
+            # Clean up temp file
+            rm -f current_update.json pr_body.md
+
+            # Small delay to avoid rate limiting
+            sleep 2
+          done
+
+          echo ""
+          echo "========================================="
+          echo "Summary: Created $PRS_CREATED PRs"
+          echo "========================================="
+          echo "prs_created=$PRS_CREATED" >> $GITHUB_OUTPUT
+
+      - name: Upload results artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: container-version-check-results
+          path: |
+            versions.json
+          retention-days: 30
+
+      - name: Job summary
+        if: always()
+        run: |
+          OUTDATED_COUNT=$(jq '[.[] | select(.is_latest == false and .error == null and (.newer_versions | length) > 0)] | length' versions.json 2>/dev/null || echo "0")
+          PRS_CREATED="${{ steps.create_prs.outputs.prs_created }}"
+
+          echo "## Container Version Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "$OUTDATED_COUNT" -eq 0 ]]; then
+            echo "✅ All container images are up to date!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "📦 Found **$OUTDATED_COUNT** outdated container image(s)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            if [[ -n "$PRS_CREATED" ]] && [[ "$PRS_CREATED" -gt 0 ]]; then
+              echo "📬 **$PRS_CREATED** Pull Request(s) created successfully" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "Check the [Pull Requests page](https://github.com/${{ github.repository }}/pulls?q=is%3Apr+is%3Aopen+label%3Aautomated+label%3Acontainer-images) to review the updates." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⚠️ No Pull Requests were created" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
