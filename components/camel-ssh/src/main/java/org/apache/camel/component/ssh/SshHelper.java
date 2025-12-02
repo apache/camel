@@ -79,7 +79,7 @@ public final class SshHelper {
         ClientChannel channel = null;
         ClientSession session = null;
 
-        try {
+        try (PipedOutputStream reply = new PipedOutputStream()) {
             AuthFuture authResult;
             session = connectFuture.getSession();
 
@@ -137,7 +137,6 @@ public final class SshHelper {
             }
 
             InputStream in = null;
-            PipedOutputStream reply = new PipedOutputStream();
 
             // for now only two channel types are supported
             // shell option is added for specific purpose for now
