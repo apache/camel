@@ -34,6 +34,6 @@ public class UpdateListTest extends CamelCommandBaseTest {
 
         List<String> lines = printer.getLines();
         Assertions.assertThat(lines.stream().collect(Collectors.joining("\n")))
-                .contains("Migrates Apache Camel 4 application to Apache Camel 4.9.0");
+                .contains("Migrates Camel 4 application to Camel 4.9.0");
     }
 }

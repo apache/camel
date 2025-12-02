@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -38,6 +37,8 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.model.UpdateListDTO;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.json.Jsoner;
@@ -81,7 +82,7 @@ import picocli.CommandLine;
  * @see org.apache.camel.dsl.jbang.core.commands.CamelJBangMain
  */
 @CommandLine.Command(name = "list",
-                     description = "List available update versions for Apache Camel and its runtime variants")
+                     description = "List available update versions for Camel and its runtime variants")
 public class UpdateList extends CamelCommand {
 
     @CommandLine.Option(names = { "--repo", "--repos" },
@@ -121,8 +122,8 @@ public class UpdateList extends CamelCommand {
             recipesVersions.plainCamelRecipesVersion()
                     .forEach(l -> rows
                             .add(new Row(
-                                    l[0], "Camel", "",
-                                    "Migrates Apache Camel 4 application to Apache Camel " + l[0])));
+                                    l[0], RuntimeType.main.runtime(), "",
+                                    "Migrates Camel 4 application to Camel " + l[0])));
             recipesVersions.camelSpringBootRecipesVersion().forEach(l -> {
 
                 String[] runtimeVersion
@@ -145,8 +146,8 @@ public class UpdateList extends CamelCommand {
                 }
 
                 rows.add(new Row(
-                        l[0], "Camel Spring Boot", runtimeVersion[1],
-                        "Migrates Apache Camel Spring Boot 4 application to Apache Camel Spring Boot " + l[0]));
+                        l[0], RuntimeType.springBoot.runtime(), runtimeVersion[1],
+                        "Migrates Camel Spring Boot 4 application to Camel Spring Boot " + l[0]));
             });
             // Translate quarkus versions to Camel
             recipesVersions.camelQuarkusRecipesVersions();
@@ -160,7 +161,7 @@ public class UpdateList extends CamelCommand {
                     String quarkusVersion = runtimeVersion[1];
                     quarkusVersion = quarkusVersion.substring(0, quarkusVersion.lastIndexOf('.')) + ".x";
 
-                    rows.add(new Row(runtimeVersion[0], "Camel Quarkus", quarkusVersion, l.description()));
+                    rows.add(new Row(runtimeVersion[0], RuntimeType.quarkus.runtime(), quarkusVersion, l.description()));
                 }
             });
         }
@@ -171,15 +172,14 @@ public class UpdateList extends CamelCommand {
         if (jsonOutput) {
             printer().println(
                     Jsoner.serialize(
-                            rows.stream().map(row -> Map.of(
-                                    "version", row.version(),
-                                    "runtime", row.runtime(),
-                                    "runtimeVersion", row.runtimeVersion(),
-                                    "description", row.description()))
+                            rows.stream()
+                                    .map(row -> new UpdateListDTO(
+                                            row.version.toString(), row.runtime, row.runtimeVersion, row.description))
+                                    .map(UpdateListDTO::toMap)
                                     .collect(Collectors.toList())));
         } else {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("VERSION").minWidth(30).dataAlign(HorizontalAlign.LEFT)
+                    new Column().header("VERSION").minWidth(10).dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.version().toString()),
                     new Column().header("RUNTIME")
                             .dataAlign(HorizontalAlign.LEFT).with(r -> r.runtime()),
@@ -317,6 +317,8 @@ public class UpdateList extends CamelCommand {
                             .filter(l -> l.startsWith("description"))
                             .map(l -> l.substring(l.indexOf(":") + 1).trim())
                             .findFirst().orElse("");
+                    // cleanup ugly ` in description
+                    description = description.replace("`", "");
 
                     quarkusUpdateRecipes.add(new QuarkusUpdates(
                             name.substring(name.lastIndexOf("/") + 1, name.indexOf(".yaml")),

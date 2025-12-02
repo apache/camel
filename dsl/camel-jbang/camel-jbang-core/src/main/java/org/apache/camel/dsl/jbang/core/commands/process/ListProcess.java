@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.model.ListProcessDTO;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -136,15 +137,12 @@ public class ListProcess extends ProcessWatchCommand {
                 if (jsonOutput) {
                     printer().println(
                             Jsoner.serialize(
-                                    rows.stream().map(row -> Map.of(
-                                            "pid", row.pid,
-                                            "name", row.name,
-                                            "ready", row.ready,
-                                            "status", getStatus(row),
-                                            "age", row.ago,
-                                            "total", getTotal(row),
-                                            "fail", getFailed(row),
-                                            "inflight", getInflight(row))).collect(Collectors.toList())));
+                                    rows.stream()
+                                            .map(row -> new ListProcessDTO(
+                                                    row.pid, row.name, row.ready, getStatus(row), row.ago, row.total,
+                                                    row.failed, row.inflight))
+                                            .map(ListProcessDTO::toMap)
+                                            .collect(Collectors.toList())));
                 } else {
                     printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                             new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),

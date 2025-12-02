@@ -48,6 +48,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.model.InfraBaseDTO;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.DeserializationException;
@@ -172,13 +173,9 @@ public abstract class InfraBaseCommand extends CamelCommand {
                                 } catch (DeserializationException e) {
                                     // ignore
                                 }
-
-                                return Map.of(
-                                        "alias", row.alias(),
-                                        "aliasImplementation", row.aliasImplementation(),
-                                        "description", row.description() == null ? "" : row.description(),
-                                        "serviceData", serviceDataObj);
+                                return new InfraBaseDTO(row.alias, row.aliasImplementation, row.description, serviceDataObj);
                             })
+                                    .map(InfraBaseDTO::toMap)
                                     .collect(Collectors.toList())));
         } else {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(

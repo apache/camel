@@ -30,10 +30,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -47,6 +45,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
+import org.apache.camel.dsl.jbang.core.model.VersionListDTO;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.RepositoryResolver;
@@ -207,7 +206,13 @@ public class VersionList extends CamelCommand {
         if (jsonOutput) {
             printer().println(
                     Jsoner.serialize(
-                            rows.stream().map(VersionList::mapOf).collect(Collectors.toList())));
+                            rows.stream()
+                                    .map(row -> new VersionListDTO(
+                                            row.coreVersion, runtime.runtime(), row.runtimeVersion, row.jdks, row.kind,
+                                            row.releaseDate,
+                                            row.eolDate))
+                                    .map(VersionListDTO::toMap)
+                                    .collect(Collectors.toList())));
         } else {
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("CAMEL VERSION")
@@ -377,17 +382,6 @@ public class VersionList extends CamelCommand {
             // ignore
         }
         return true;
-    }
-
-    private static Map<String, Object> mapOf(Row r) {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("camelVersion", r.coreVersion);
-        map.put("runtimeVersion", r.runtimeVersion);
-        map.put("jdkVersion", r.jdks);
-        map.put("kind", r.kind);
-        map.put("releaseDate", r.releaseDate);
-        map.put("eolDate", r.eolDate);
-        return map;
     }
 
     protected int sortRow(Row o1, Row o2) {
