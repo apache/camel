@@ -89,15 +89,15 @@ public final class SmppConnectionFactory implements ConnectionFactory {
                     ? SSLSocketFactory
                             .getDefault()
                     : SocketFactory.getDefault();
+            // NOTE: the socket must be closed by the factory method client.
+            socket = socketFactory.createSocket(); // NOSONAR
             if (config.getHttpProxyHost() != null) {
                 // setup the proxy tunnel
-                socket = socketFactory.createSocket();
                 // jsmpp uses enquire link timer as socket read timeout, so also use it to establish the initial connection
                 socket.connect(new InetSocketAddress(config.getHttpProxyHost(), config.getHttpProxyPort()),
                         config.getEnquireLinkTimer());
                 connectProxy(host, port, socket);
             } else {
-                socket = socketFactory.createSocket();
                 // jsmpp uses enquire link timer as socket read timeout, so also use it to establish the initial connection
                 socket.connect(new InetSocketAddress(host, port), config.getEnquireLinkTimer());
             }
@@ -105,7 +105,8 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             if (config.isUsingSSL() && config.getHttpProxyHost() != null) {
                 // Init the SSL socket which is based on the proxy socket
                 SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-                SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(socket, host, port, true);
+                // NOTE: the socket must be closed by the factory method client.
+                SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(socket, host, port, true); // NOSONAR
                 sslSocket.startHandshake();
                 socket = sslSocket;
             }
