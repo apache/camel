@@ -143,33 +143,35 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final DefaultCamelContext context = new DefaultCamelContext();
-        final ServiceNowComponent component = new ServiceNowComponent(context);
+        try (final ServiceNowComponent component = new ServiceNowComponent(context)) {
+            for (String objectName : objects) {
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("instanceName", instanceName);
+                parameters.put("userName", userName);
+                parameters.put("password", userPassword);
+                parameters.put("oauthClientId", oauthClientId);
+                parameters.put("oauthClientSecret", oauthClientSecret);
+                parameters.put("objectType", "table");
+                parameters.put("objectName", objectName);
 
-        for (String objectName : objects) {
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("instanceName", instanceName);
-            parameters.put("userName", userName);
-            parameters.put("password", userPassword);
-            parameters.put("oauthClientId", oauthClientId);
-            parameters.put("oauthClientSecret", oauthClientSecret);
-            parameters.put("objectType", "table");
-            parameters.put("objectName", objectName);
+                for (Map.Entry<String, String> entry : fields.entrySet()) {
+                    parameters.put("object." + entry.getKey() + ".fields", entry.getValue());
+                }
+                for (Map.Entry<String, String> entry : fieldsExcludePattern.entrySet()) {
+                    parameters.put("object." + entry.getKey() + ".fields.exclude.pattern", entry.getValue());
+                }
 
-            for (Map.Entry<String, String> entry : fields.entrySet()) {
-                parameters.put("object." + entry.getKey() + ".fields", entry.getValue());
+                JsonNode schema = component.getExtension(MetaDataExtension.class)
+                        .flatMap(e -> e.meta(parameters))
+                        .flatMap(m -> Optional.ofNullable(m.getPayload(JsonNode.class)))
+                        .orElseThrow(() -> new MojoExecutionException("Unable to get grab MetaData for object: " + objectName));
+
+                validateSchema(schema);
+
+                generateBean(objectName, schema);
             }
-            for (Map.Entry<String, String> entry : fieldsExcludePattern.entrySet()) {
-                parameters.put("object." + entry.getKey() + ".fields.exclude.pattern", entry.getValue());
-            }
-
-            JsonNode schema = component.getExtension(MetaDataExtension.class)
-                    .flatMap(e -> e.meta(parameters))
-                    .flatMap(m -> Optional.ofNullable(m.getPayload(JsonNode.class)))
-                    .orElseThrow(() -> new MojoExecutionException("Unable to get grab MetaData for object: " + objectName));
-
-            validateSchema(schema);
-
-            generateBean(objectName, schema);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Unable to close ServiceNowComponent", e);
         }
     }
 
