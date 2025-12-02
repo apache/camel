@@ -289,24 +289,17 @@ public class GenerateMojo extends AbstractExecMojo {
     }
 
     private static String load(String configFile) {
-        String loaded;
-        InputStream is = null;
-        try {
-            // load from file system
-            File file = new File(configFile);
-            if (file.exists()) {
-                is = new FileInputStream(file);
-            }
-            if (is == null) {
-                return null;
-            }
-            loaded = IOHelper.loadText(is);
+        // load from file system
+        File file = new File(configFile);
+        if (!file.exists()) {
+            return null;
+        }
+
+        try (InputStream is = new FileInputStream(file)) {
+            return IOHelper.loadText(is);
         } catch (IOException e) {
             throw new RuntimeCamelException("Cannot load " + configFile);
-
         }
-        IOHelper.close(is);
-        return loaded;
     }
 
     private boolean matchRouteFile(File file) {
