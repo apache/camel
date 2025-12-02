@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ws.WebServiceMessage;
@@ -38,13 +39,17 @@ public class CamelDirectConnection implements WebServiceConnection {
 
     public CamelDirectConnection(CamelContext camelContext, URI uri) throws URISyntaxException {
         this.camelContext = camelContext;
-        destination = new URI("direct:" + uri + "?block=false");
+        destination = CamelDirectConnection.destination(uri);
+    }
+
+    public static URI destination(URI uri) throws URISyntaxException {
+        return new URI("direct:" + uri + "?block=false");
     }
 
     @Override
     public void send(WebServiceMessage message) throws IOException {
-        try {
-            camelContext.createProducerTemplate().sendBody(destination.toString(), message);
+        try (ProducerTemplate producer = camelContext.createProducerTemplate()) {
+            producer.sendBody(destination.toString(), message);
         } catch (CamelExecutionException e) {
             // simply discard replyTo message
             LOG.warn("Could not found any camel endpoint [{}] for wsa:ReplyTo camel mapping.", destination);

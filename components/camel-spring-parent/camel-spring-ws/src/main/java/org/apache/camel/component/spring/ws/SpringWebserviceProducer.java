@@ -229,7 +229,8 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
         @Override
         public WebServiceConnection createConnection(URI uri) throws IOException {
-            WebServiceConnection wsc = delegate.createConnection(uri);
+            // NOTE: factory method, the client must close the connection.
+            WebServiceConnection wsc = delegate.createConnection(uri); // NOSONAR
             if (wsc instanceof HttpUrlConnection) {
                 HttpURLConnection connection = ((HttpUrlConnection) wsc).getConnection();
 
