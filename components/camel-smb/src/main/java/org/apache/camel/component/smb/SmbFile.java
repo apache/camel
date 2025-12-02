@@ -85,6 +85,7 @@ public class SmbFile extends GenericFile<FileIdBothDirectoryInformation> {
     }
 
     @Override
+    // NOTE: when the returned object is an InputStream, the client must close it.
     public Object getBody() {
         if (!download) {
             return null;

@@ -549,12 +549,14 @@ public class SmbOperations implements SmbFileOperations {
         }
     }
 
+    // The stream must be closed by the client.
     public InputStream getBodyAsInputStream(Exchange exchange, String path) {
         connectIfNecessary();
         InputStream is;
         try {
+            // NOTE: the streams opened must be closed byt the client.
             File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null,
-                    SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
+                    SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null); // NOSONAR
             is = shareFile.getInputStream();
             exchange.getIn().setHeader(SmbComponent.SMB_FILE_INPUT_STREAM, is);
             exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
