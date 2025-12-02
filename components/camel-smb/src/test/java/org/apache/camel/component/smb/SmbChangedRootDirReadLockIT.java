@@ -72,25 +72,26 @@ public class SmbChangedRootDirReadLockIT extends SmbServerTestSupport {
     }
 
     private void writeSlowFile() throws Exception {
+        try (SMBClient smbClient = new SMBClient()) {
+            int port = Integer.parseInt(service.address().split(":")[1]);
+            try (Connection connection = smbClient.connect("localhost", port)) {
+                AuthenticationContext ac
+                        = new AuthenticationContext(service.userName(), service.password().toCharArray(), null);
+                Session session = connection.authenticate(ac);
 
-        SMBClient smbClient = new SMBClient();
-        int port = Integer.parseInt(service.address().split(":")[1]);
-        try (Connection connection = smbClient.connect("localhost", port)) {
-            AuthenticationContext ac = new AuthenticationContext(service.userName(), service.password().toCharArray(), null);
-            Session session = connection.authenticate(ac);
+                // write file to SMB dir
+                try (DiskShare share = (DiskShare) session.connectShare(service.shareName())) {
+                    try (File f = share.openFile("slowfile.dat", EnumSet.of(AccessMask.FILE_WRITE_DATA),
+                            EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL), SMB2ShareAccess.ALL,
+                            SMB2CreateDisposition.FILE_OPEN_IF, EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
 
-            // write file to SMB dir
-            try (DiskShare share = (DiskShare) session.connectShare(service.shareName())) {
-                try (File f = share.openFile("slowfile.dat", EnumSet.of(AccessMask.FILE_WRITE_DATA),
-                        EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL), SMB2ShareAccess.ALL,
-                        SMB2CreateDisposition.FILE_OPEN_IF, EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
-
-                    int offset = 0;
-                    for (int i = 0; i < 20; i++) {
-                        byte[] b = ("Line " + i + System.lineSeparator()).getBytes(StandardCharsets.UTF_8);
-                        f.write(new ArrayByteChunkProvider(b, offset));
-                        offset += b.length;
-                        Thread.sleep(200L);
+                        int offset = 0;
+                        for (int i = 0; i < 20; i++) {
+                            byte[] b = ("Line " + i + System.lineSeparator()).getBytes(StandardCharsets.UTF_8);
+                            f.write(new ArrayByteChunkProvider(b, offset));
+                            offset += b.length;
+                            Thread.sleep(200L);
+                        }
                     }
                 }
             }

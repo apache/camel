@@ -30,6 +30,7 @@ public class SmbConverter {
     }
 
     @Converter(allowNull = true)
+    // NOTE: the client must close the stream returned.
     public static InputStream smbToInputStream(SmbFile file, Exchange exchange) throws Exception {
         // allow null as valid response, because camel-smb can be set to download=false
         Object body = file.getBody();
