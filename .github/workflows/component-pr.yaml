@@ -26,6 +26,7 @@ on:
       - 'parent/**'
       - 'core/**'
       - 'components/**'
+      - 'test-infra/**'
 
 permissions: {}
 jobs:
