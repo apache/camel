@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,11 +37,12 @@ public class SjmsSendDynamicAwareTest extends CamelTestSupport {
     @Test
     public void testUriParsing() throws Exception {
         this.sjmsSendDynamicAware.setScheme("sjms");
-        Exchange exchange = createExchangeWithBody("The Body");
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context(), "The Body");
         SendDynamicAware.DynamicAwareEntry entry
                 = new SendDynamicAware.DynamicAwareEntry(
                         "sjms:destination.SjmsSendDynamicAwareTest", "sjms:${header.test}", null, null);
-        Processor processor = this.sjmsSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
+        Processor processor = this.sjmsSendDynamicAware
+                .createPreProcessor(TestSupport.createExchangeWithBody(this.context(), "Body"), entry);
         processor.process(exchange);
         assertEquals("destination.SjmsSendDynamicAwareTest",
                 exchange.getMessage().getHeader(SjmsConstants.JMS_DESTINATION_NAME));
@@ -49,11 +51,12 @@ public class SjmsSendDynamicAwareTest extends CamelTestSupport {
     @Test
     public void testSlashedUriParsing() throws Exception {
         this.sjmsSendDynamicAware.setScheme("sjms");
-        Exchange exchange = createExchangeWithBody("The Body");
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context(), "The Body");
         SendDynamicAware.DynamicAwareEntry entry
                 = new SendDynamicAware.DynamicAwareEntry(
                         "sjms://destination.SjmsSendDynamicAwareTest", "sjms://${header.test}", null, null);
-        Processor processor = this.sjmsSendDynamicAware.createPreProcessor(createExchangeWithBody("Body"), entry);
+        Processor processor = this.sjmsSendDynamicAware
+                .createPreProcessor(TestSupport.createExchangeWithBody(this.context(), "Body"), entry);
         processor.process(exchange);
         assertEquals("destination.SjmsSendDynamicAwareTest",
                 exchange.getMessage().getHeader(SjmsConstants.JMS_DESTINATION_NAME));

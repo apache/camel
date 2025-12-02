@@ -24,28 +24,36 @@ import jakarta.jms.Session;
 import org.apache.camel.Endpoint;
 
 public interface JmsObjectFactory {
+    // NOTE: client must close the returned resource.
     MessageConsumer createMessageConsumer(Session session, Endpoint endpoint) throws Exception;
 
+    // NOTE: client must close the returned resource.
     MessageConsumer createQueueMessageConsumer(Session session, Destination destination) throws Exception;
 
+    // NOTE: client must close the returned resource.
     MessageConsumer createMessageConsumer(
             Session session, Destination destination,
             String messageSelector, boolean topic, String subscriptionId, boolean durable,
             boolean shared)
             throws Exception;
 
+    // NOTE: client must close the returned resource.
     MessageConsumer createMessageConsumer(
             Session session, Destination destination,
             String messageSelector, boolean topic, String subscriptionId, boolean durable,
             boolean shared, boolean noLocal)
             throws Exception;
 
+    // NOTE: client must close the returned resource.
     MessageProducer createMessageProducer(Session session, Endpoint endpoint) throws Exception;
 
+    // NOTE: client must close the returned resource.
     MessageProducer createMessageProducer(Session session, Endpoint endpoint, String destinationName) throws Exception;
 
+    // NOTE: client must close the returned resource.
     MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination) throws Exception;
 
+    // NOTE: client must close the returned resource.
     MessageProducer createMessageProducer(
             Session session, Destination destination,
             boolean persistent, long ttl)
