@@ -36,7 +36,9 @@
         <module>camel-test-junit5</module>
         <module>camel-test-junit6</module>
         <module>camel-test-spring-junit5</module>
+        <module>camel-test-spring-junit6</module>
         <module>camel-test-main-junit5</module>
+        <module>camel-test-main-junit6</module>
     </modules>
 
 </project>

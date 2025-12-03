@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "test-main-junit5",
+    "title": "Test Main JUnit5",
+    "description": "Camel unit testing with Main and JUnit 5",
+    "deprecated": false,
+    "firstVersion": "3.16.0",
+    "label": "testing,java",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-test-main-junit5",
+    "version": "4.17.0-SNAPSHOT"
+  }
+}
