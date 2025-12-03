@@ -180,7 +180,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
     }
 
     private String getProcessor(Row r) {
-        if (r.first || r.last) {
+        if (r.endpoint != null && (r.first || r.last)) {
             return "from[" + r.endpoint.getString("endpoint") + "]";
         } else if (r.nodeLabel != null) {
             return StringHelper.padString(r.nodeLevel, 2) + r.nodeLabel;
@@ -337,7 +337,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
             Row next = i > 0 && i < rows.size() + 2 ? rows.get(i + 1) : null;
 
             String uri = r.endpoint != null ? r.endpoint.getString("endpoint") : null;
-            Row t = r.first ? r : next; // if sending to endpoint then we should find details in the next step as they are response
+            Row t = uri != null && r.first ? r : next; // if sending to endpoint then we should find details in the next step as they are response
             if (uri != null && t != null) {
                 StringJoiner sj = new StringJoiner(" ");
                 var map = extractComponentModel(uri, t);
@@ -375,6 +375,13 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     var map = extractEipModel("split", next);
                     String sv = map.remove("CamelSplitSize");
                     r.summary = "Split (" + sv + ")";
+                }
+            } else if ("aggregate".equals(r.nodeShortName)) {
+                if (r.first) {
+                    var map = extractEipModel("aggregate", r);
+                    String ak = map.remove("CamelAggregatedCorrelationKey");
+                    String as = map.remove("CamelAggregatedSize");
+                    r.summary = "Aggregate (key:" + ak + " size:" + as + ")";
                 }
             }
         }

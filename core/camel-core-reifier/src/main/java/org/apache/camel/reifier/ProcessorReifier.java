@@ -686,6 +686,11 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         if (route != null && !route.getOutputs().isEmpty()) {
             first = route.getOutputs().get(0) == definition;
         }
+        // special for aggregate which output are regarded as a new first
+        NamedNode targetOutputDef = child != null ? child : definition;
+        if (!first && targetOutputDef.getParent() instanceof AggregateDefinition agg) {
+            first = agg.getOutputs().get(0) == targetOutputDef;
+        }
         // initialize the channel
         channel.initChannel(this.route, definition, child, interceptors, processor, route, first);
 
