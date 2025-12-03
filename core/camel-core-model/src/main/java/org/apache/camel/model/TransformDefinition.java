@@ -18,12 +18,10 @@ package org.apache.camel.model;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -34,27 +32,15 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransformDefinition extends ExpressionNode {
 
-    @XmlAttribute
-    private String fromType;
-    @XmlAttribute
-    private String toType;
-
     public TransformDefinition() {
     }
 
     protected TransformDefinition(TransformDefinition source) {
         super(source);
-        this.fromType = source.fromType;
-        this.toType = source.toType;
     }
 
     public TransformDefinition(Expression expression) {
         super(expression);
-    }
-
-    public TransformDefinition(DataType fromType, DataType toType) {
-        this.fromType = fromType.getFullName();
-        this.toType = toType.getFullName();
     }
 
     @Override
@@ -64,14 +50,6 @@ public class TransformDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
-        if (toType != null) {
-            if (fromType != null) {
-                return "Transform[" + fromType + ", " + toType + "]";
-            } else {
-                return "Transform[" + toType + "]";
-            }
-        }
-
         return "Transform[" + getExpression() + "]";
     }
 
@@ -82,14 +60,6 @@ public class TransformDefinition extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        if (toType != null) {
-            if (fromType != null) {
-                return "transform[" + fromType + ", " + toType + "]";
-            } else {
-                return "transform[" + toType + "]";
-            }
-        }
-
         return "transform[" + getExpression() + "]";
     }
 
@@ -102,25 +72,4 @@ public class TransformDefinition extends ExpressionNode {
         super.setExpression(expression);
     }
 
-    /**
-     * From type used in data type transformation.
-     */
-    public void setFromType(String fromType) {
-        this.fromType = fromType;
-    }
-
-    public String getFromType() {
-        return fromType;
-    }
-
-    /**
-     * To type used as a target data type in the transformation.
-     */
-    public void setToType(String toType) {
-        this.toType = toType;
-    }
-
-    public String getToType() {
-        return toType;
-    }
 }

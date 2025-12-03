@@ -47,6 +47,7 @@ import org.apache.camel.management.mbean.ManagedConvertHeader;
 import org.apache.camel.management.mbean.ManagedConvertVariable;
 import org.apache.camel.management.mbean.ManagedCustomLoadBalancer;
 import org.apache.camel.management.mbean.ManagedDataFormat;
+import org.apache.camel.management.mbean.ManagedDataTypeTransformer;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedDisabled;
 import org.apache.camel.management.mbean.ManagedDoCatch;
@@ -117,7 +118,6 @@ import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
-import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
@@ -452,8 +452,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedThrowException(context, (ThrowExceptionProcessor) target, definition);
             } else if (target instanceof TransformProcessor) {
                 answer = new ManagedTransformer(context, target, cast(definition));
-            } else if (target instanceof DataTypeProcessor && definition instanceof TransformDefinition) {
-                answer = new ManagedTransformer(context, target, (TransformDefinition) definition);
+            } else if (target instanceof DataTypeProcessor) {
+                answer = new ManagedDataTypeTransformer(context, target, cast(definition));
             } else if (target instanceof PredicateValidatingProcessor) {
                 answer = new ManagedValidate(context, (PredicateValidatingProcessor) target, cast(definition));
             } else if (target instanceof WireTapProcessor) {

@@ -219,7 +219,7 @@ RouteBuilder.addRoutes(context, b -> {
     b.from("timer:tick")
         .setBody()
             .simple("Hello Knative!")
-        .transform(new DataType("http:application-cloudevents")) // <2>
+        .transformDataType(new DataType("http:application-cloudevents")) // <2>
         .to("knative:event/default?kind=Broker&name=default"); // <3>
 });
 ----

@@ -419,7 +419,7 @@ from("direct:put")
     .to("langchain4j-embeddings:create")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.PUT)
     // Transform the embedding to a format usable by Infinispan
-    .transform(new DataType("infinispan:embeddings"))
+    .transformDataType(new DataType("infinispan:embeddings"))
     // Store the embedding
     .to("infinispan:myCache?embeddingStoreDimension=384");
 ----
@@ -435,7 +435,7 @@ from("direct:query")
     .to("langchain4j-embeddings:create")
     .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.QUERY)
     // Transforms the embedding to a vector kNN search
-    .transform(new DataType("infinispan:embeddings"))
+    .transformDataType(new DataType("infinispan:embeddings"))
     // Query embeddings
     .to("infinispan:myCache?embeddingStoreDimension=384");
 ----

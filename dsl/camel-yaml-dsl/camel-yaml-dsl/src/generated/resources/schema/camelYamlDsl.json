@@ -184,6 +184,9 @@
           "transacted" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.TransactedDefinition"
           },
+          "transformDataType" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.TransformDataTypeDefinition"
+          },
           "transform" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.TransformDefinition"
           },
@@ -8101,6 +8104,46 @@
           }
         }
       },
+      "org.apache.camel.model.TransformDataTypeDefinition" : {
+        "title" : "Transform Data Type",
+        "description" : "Transforms the message body based on known data type transformers.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Disables this EIP from the route.",
+            "default" : false
+          },
+          "fromType" : {
+            "type" : "string",
+            "title" : "From Type",
+            "description" : "From type used in data type transformation."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
+          "toType" : {
+            "type" : "string",
+            "title" : "To Type",
+            "description" : "To type used as a target data type in the transformation."
+          }
+        },
+        "required" : [ "toType" ]
+      },
       "org.apache.camel.model.TransformDefinition" : {
         "title" : "Transform",
         "description" : "Transforms the message body based on an expression",
@@ -8191,11 +8234,6 @@
             "description" : "Disables this EIP from the route.",
             "default" : false
           },
-          "fromType" : {
-            "type" : "string",
-            "title" : "From Type",
-            "description" : "From type used in data type transformation."
-          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -8205,11 +8243,6 @@
             "type" : "string",
             "title" : "Note",
             "description" : "Sets the note of this node"
-          },
-          "toType" : {
-            "type" : "string",
-            "title" : "To Type",
-            "description" : "To type used as a target data type in the transformation."
           },
           "constant" : { },
           "csimple" : { },

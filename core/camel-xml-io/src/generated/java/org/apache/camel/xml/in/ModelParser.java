@@ -1301,12 +1301,15 @@ public class ModelParser extends BaseParser {
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, outputDefinitionElementHandler(), noValueHandler());
     }
-    protected TransformDefinition doParseTransformDefinition() throws IOException, XmlPullParserException {
-        return doParse(new TransformDefinition(), (def, key, val) -> switch (key) {
+    protected TransformDataTypeDefinition doParseTransformDataTypeDefinition() throws IOException, XmlPullParserException {
+        return doParse(new TransformDataTypeDefinition(), (def, key, val) -> switch (key) {
                 case "fromType": def.setFromType(val); yield true;
                 case "toType": def.setToType(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
-            }, expressionNodeElementHandler(), noValueHandler());
+            }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
+    protected TransformDefinition doParseTransformDefinition() throws IOException, XmlPullParserException {
+        return doParse(new TransformDefinition(), processorDefinitionAttributeHandler(), expressionNodeElementHandler(), noValueHandler());
     }
     protected TryDefinition doParseTryDefinition() throws IOException, XmlPullParserException {
         return doParse(new TryDefinition(), processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
@@ -2941,6 +2944,7 @@ public class ModelParser extends BaseParser {
             case "toD": return doParseToDynamicDefinition();
             case "tokenizer": return doParseTokenizerDefinition();
             case "transacted": return doParseTransactedDefinition();
+            case "transformDataType": return doParseTransformDataTypeDefinition();
             case "transform": return doParseTransformDefinition();
             case "doTry": return doParseTryDefinition();
             case "unmarshal": return doParseUnmarshalDefinition();

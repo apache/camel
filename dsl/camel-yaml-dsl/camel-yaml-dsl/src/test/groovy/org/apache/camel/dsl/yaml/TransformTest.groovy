@@ -17,35 +17,31 @@
 package org.apache.camel.dsl.yaml
 
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
+import org.apache.camel.model.SetBodyDefinition
 import org.apache.camel.model.StepDefinition
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.model.TransformDefinition
+import org.apache.camel.model.language.ExpressionDefinition
 
 class TransformTest extends YamlTestSupport {
 
-    def "transform with data types"() {
+    def "transform"() {
         when:
             loadRoutes '''
                 - from:
                     uri: "direct:start"
                     steps:    
-                      - step:
-                          steps:
-                            - transform:
-                                fromType: "plain-text"
-                                toType: "application-octet-stream"
+                      - transform:
+                          simple: "Hello ${body}"
                       - to: "mock:result"    
                              
             '''
         then:
-            with(context.routeDefinitions[0].outputs[0], StepDefinition) {
-                with(outputs[0], TransformDefinition) {
-                    fromType == 'plain-text'
-                    toType == 'application-octet-stream'
+            with(context.routeDefinitions[0].outputs[0], TransformDefinition) {
+                with (expression, ExpressionDefinition) {
+                    language == 'simple'
+                    expression == 'Hello ${body}'
                 }
-            }
-            with(context.routeDefinitions[0].outputs[1], ToDefinition) {
-                endpointUri == 'mock:result'
             }
     }
 }

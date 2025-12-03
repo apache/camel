@@ -2102,6 +2102,15 @@ Transforms the message body based on an expression
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="transformDataType" type="tns:transformDataTypeDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Transforms the message body based on known data type transformers.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="transformers" type="tns:transformersDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -2472,6 +2481,7 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -3114,6 +3124,7 @@ The exception(s) to catch.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -3278,6 +3289,7 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -3367,6 +3379,7 @@ Disables this EIP from the route. Default value: false
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -3458,6 +3471,7 @@ Disables this EIP from the route. Default value: false
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -3958,6 +3972,7 @@ References a custom thread pool to use when offloading a guarded action to anoth
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -5127,6 +5142,7 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -5217,6 +5233,7 @@ predicate evaluated as true or false.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -5378,6 +5395,7 @@ Global option value.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -5539,6 +5557,7 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -5637,6 +5656,7 @@ intercepted.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -5745,6 +5765,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -5844,6 +5865,7 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -6184,6 +6206,7 @@ such as groovy.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -9763,6 +9786,7 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -9981,6 +10005,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -10170,6 +10195,7 @@ its considered handled as well.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -10428,6 +10454,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -10508,6 +10535,7 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -11215,6 +11243,7 @@ Name of variable to remove.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -11572,6 +11601,7 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -12008,6 +12038,7 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -12465,6 +12496,7 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -12698,6 +12730,7 @@ individual unit of work. Default value: false
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -13423,6 +13456,7 @@ Sets the model name.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
@@ -13436,6 +13470,31 @@ Sets the model name.
             <xs:documentation xml:lang="en">
 <![CDATA[
 Sets a reference to use for lookup the policy in the registry.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="transformDataTypeDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:noOutputDefinition">
+        <xs:sequence/>
+        <xs:attribute name="fromType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+From type used in data type transformation.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="toType" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To type used as a target data type in the transformation.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13475,24 +13534,6 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
-        <xs:attribute name="fromType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-From type used in data type transformation.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="toType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To type used as a target data type in the transformation.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -13565,6 +13606,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:toD"/>
             <xs:element ref="tns:tokenizer"/>
             <xs:element ref="tns:transacted"/>
+            <xs:element ref="tns:transformDataType"/>
             <xs:element ref="tns:transform"/>
             <xs:element ref="tns:doTry"/>
             <xs:element ref="tns:unmarshal"/>
