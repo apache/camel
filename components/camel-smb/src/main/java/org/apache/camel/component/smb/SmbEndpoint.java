@@ -52,8 +52,8 @@ import org.slf4j.LoggerFactory;
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
                               + "directoryMustExist,extendedAttributes,probeContentType,"
-                              + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
-                              + "renameUsingCopy,synchronous")
+                              + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,"
+                              + "synchronous")
 public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformation> implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(SmbEndpoint.class);

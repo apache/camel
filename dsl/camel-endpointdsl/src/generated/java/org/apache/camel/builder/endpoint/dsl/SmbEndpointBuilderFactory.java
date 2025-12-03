@@ -2461,6 +2461,38 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to fall back and do a copy and delete file, in case the file
+         * could not be renamed directly.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder copyAndDeleteOnRenameFail(boolean copyAndDeleteOnRenameFail) {
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
+            return this;
+        }
+        /**
+         * Whether to fall back and do a copy and delete file, in case the file
+         * could not be renamed directly.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointConsumerBuilder copyAndDeleteOnRenameFail(String copyAndDeleteOnRenameFail) {
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
+            return this;
+        }
+        /**
          * An optional SMB client configuration, can be used to configure client
          * specific configurations, like timeouts.
          * 
@@ -3136,6 +3168,42 @@ public interface SmbEndpointBuilderFactory {
             return this;
         }
         /**
+         * Perform rename operations using a copy and delete strategy. This
+         * option takes precedence over the copyAndDeleteOnRenameFail parameter
+         * that will automatically fall back to the copy and delete strategy,
+         * but only after additional delays.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param renameUsingCopy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder renameUsingCopy(boolean renameUsingCopy) {
+            doSetProperty("renameUsingCopy", renameUsingCopy);
+            return this;
+        }
+        /**
+         * Perform rename operations using a copy and delete strategy. This
+         * option takes precedence over the copyAndDeleteOnRenameFail parameter
+         * that will automatically fall back to the copy and delete strategy,
+         * but only after additional delays.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param renameUsingCopy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder renameUsingCopy(String renameUsingCopy) {
+            doSetProperty("renameUsingCopy", renameUsingCopy);
+            return this;
+        }
+        /**
          * Automatically create missing directories in the file's pathname. For
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written
@@ -3233,6 +3301,38 @@ public interface SmbEndpointBuilderFactory {
          */
         default AdvancedSmbEndpointProducerBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * Whether to fall back and do a copy and delete file, in case the file
+         * could not be renamed directly.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder copyAndDeleteOnRenameFail(boolean copyAndDeleteOnRenameFail) {
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
+            return this;
+        }
+        /**
+         * Whether to fall back and do a copy and delete file, in case the file
+         * could not be renamed directly.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointProducerBuilder copyAndDeleteOnRenameFail(String copyAndDeleteOnRenameFail) {
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
         }
         /**
@@ -3543,6 +3643,38 @@ public interface SmbEndpointBuilderFactory {
          */
         default AdvancedSmbEndpointBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * Whether to fall back and do a copy and delete file, in case the file
+         * could not be renamed directly.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder copyAndDeleteOnRenameFail(boolean copyAndDeleteOnRenameFail) {
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
+            return this;
+        }
+        /**
+         * Whether to fall back and do a copy and delete file, in case the file
+         * could not be renamed directly.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param copyAndDeleteOnRenameFail the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSmbEndpointBuilder copyAndDeleteOnRenameFail(String copyAndDeleteOnRenameFail) {
+            doSetProperty("copyAndDeleteOnRenameFail", copyAndDeleteOnRenameFail);
             return this;
         }
         /**
