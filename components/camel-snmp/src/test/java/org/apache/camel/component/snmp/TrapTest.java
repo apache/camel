@@ -41,8 +41,6 @@ import org.snmp4j.smi.TimeTicks;
 import org.snmp4j.smi.Variable;
 import org.snmp4j.smi.VariableBinding;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class TrapTest extends SnmpTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TrapTest.class);
 

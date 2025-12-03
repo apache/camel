@@ -19,6 +19,7 @@ package org.apache.camel.component.snmp;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.CommandResponder;
@@ -41,6 +42,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
     private static final Logger LOG = LoggerFactory.getLogger(SnmpTrapConsumer.class);
 
     private final SnmpEndpoint endpoint;
+    private Snmp snmp;
     private TransportMapping<? extends Address> transport;
 
     public SnmpTrapConsumer(SnmpEndpoint endpoint, Processor processor) {
@@ -68,7 +70,8 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
             throw new IllegalArgumentException("Unknown protocol: " + endpoint.getProtocol());
         }
 
-        Snmp snmp = new Snmp(transport);
+        // NOTE: the object is going to be closed by stop() lifecycle.
+        this.snmp = new Snmp(transport); // NOSONAR
         snmp.addCommandResponder(this);
 
         // listen to the transport
@@ -88,7 +91,8 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Stopping trap consumer on {}", this.endpoint.getServerAddress());
             }
-            this.transport.close();
+            IOHelper.close(transport);
+            IOHelper.close(snmp);
             LOG.info("Stopped trap consumer on {}", this.endpoint.getServerAddress());
         }
 
