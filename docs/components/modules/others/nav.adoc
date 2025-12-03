@@ -60,6 +60,7 @@
 ** xref:telemetry.adoc[Telemetry]
 ** xref:telemetry-dev.adoc[Telemetry Dev]
 ** xref:test-junit5.adoc[Test JUnit5]
+** xref:test-junit6.adoc[Test JUnit6]
 ** xref:test-main-junit5.adoc[Test Main JUnit5]
 ** xref:test-spring-junit5.adoc[Test Spring JUnit5]
 ** xref:threadpoolfactory-vertx.adoc[ThreadPoolFactory Vert.x]
