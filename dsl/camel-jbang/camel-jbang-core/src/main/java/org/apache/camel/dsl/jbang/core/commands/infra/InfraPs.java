@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -47,15 +48,14 @@ public class InfraPs extends InfraBaseCommand {
     public Integer doCall() throws Exception {
         // retrieve running services to filter output
         Set<String> runningAliases = new HashSet<>();
-        try {
-            List<Path> pidFiles = Files.list(CommandLineHelper.getCamelDir())
-                    .filter(p -> {
-                        if (serviceName == null) {
-                            return p.getFileName().toString().startsWith("infra-");
-                        } else {
-                            return p.getFileName().toString().startsWith("infra-" + serviceName.get(0));
-                        }
-                    })
+        try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
+            List<Path> pidFiles = files.filter(p -> {
+                if (serviceName == null) {
+                    return p.getFileName().toString().startsWith("infra-");
+                } else {
+                    return p.getFileName().toString().startsWith("infra-" + serviceName.get(0));
+                }
+            })
                     .toList();
 
             for (Path pidFile : pidFiles) {

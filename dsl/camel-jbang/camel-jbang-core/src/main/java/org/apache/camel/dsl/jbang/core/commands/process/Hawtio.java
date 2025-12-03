@@ -91,63 +91,59 @@ public class Hawtio extends CamelCommand {
     }
 
     protected Integer callHawtio() throws Exception {
-        ClassLoader cl = createClassLoader();
+        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
+            ClassLoader cl = createClassLoader();
+            downloader.setClassLoader(cl);
+            downloader.start();
+            // download hawtio embedded mode
+            downloader.downloadDependency("io.hawt", "hawtio-embedded", version);
+            // download war that has the web-console
+            MavenArtifact ma = downloader.downloadArtifact("io.hawt", "hawtio-war:war", version);
+            if (ma == null) {
+                printer().printErr("Cannot download io.hawt:hawtio-war:war:" + version);
+                return 1;
+            }
+            String war = ma.getFile().getAbsolutePath();
+            // invoke hawtio main app that launches hawtio
+            try {
+                // turn off hawito auth
+                System.setProperty("hawtio.authenticationEnabled", "false");
 
-        MavenDependencyDownloader downloader = new MavenDependencyDownloader();
-        downloader.setClassLoader(cl);
-        downloader.start();
-        // download hawtio embedded mode
-        downloader.downloadDependency("io.hawt", "hawtio-embedded", version);
-        // download war that has the web-console
-        MavenArtifact ma = downloader.downloadArtifact("io.hawt", "hawtio-war:war", version);
-        if (ma == null) {
-            printer().printErr("Cannot download io.hawt:hawtio-war:war:" + version);
-            return 1;
-        }
+                // use CL from that has the downloaded JAR
+                Thread.currentThread().setContextClassLoader(cl);
+                Class<?> clazz = cl.loadClass("io.hawt.embedded.Main");
+                Object hawt = clazz.getDeclaredConstructor().newInstance();
+                Method m = clazz.getMethod("setWar", String.class);
+                ObjectHelper.invokeMethod(m, hawt, war);
+                m = clazz.getMethod("setPort", Integer.class);
+                ObjectHelper.invokeMethod(m, hawt, port);
+                m = clazz.getMethod("run");
+                ObjectHelper.invokeMethod(m, hawt);
 
-        String war = ma.getFile().getAbsolutePath();
-
-        // invoke hawtio main app that launches hawtio
-        try {
-            // turn off hawito auth
-            System.setProperty("hawtio.authenticationEnabled", "false");
-
-            // use CL from that has the downloaded JAR
-            Thread.currentThread().setContextClassLoader(cl);
-            Class<?> clazz = cl.loadClass("io.hawt.embedded.Main");
-            Object hawt = clazz.getDeclaredConstructor().newInstance();
-            Method m = clazz.getMethod("setWar", String.class);
-            ObjectHelper.invokeMethod(m, hawt, war);
-            m = clazz.getMethod("setPort", Integer.class);
-            ObjectHelper.invokeMethod(m, hawt, port);
-            m = clazz.getMethod("run");
-            ObjectHelper.invokeMethod(m, hawt);
-
-            if (openUrl) {
-                // open web browser
-                String url = "http://localhost:" + port + "/hawtio";
-                System.setProperty("hawtio.url", url);
-                if (openUrl && Desktop.isDesktopSupported()) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(url));
-                    } catch (Exception e) {
-                        printer().printErr("Failed to open browser session, to access Hawtio open url: " + url);
+                if (openUrl) {
+                    // open web browser
+                    String url = "http://localhost:" + port + "/hawtio";
+                    System.setProperty("hawtio.url", url);
+                    if (openUrl && Desktop.isDesktopSupported()) {
+                        try {
+                            Desktop.getDesktop().browse(new URI(url));
+                        } catch (Exception e) {
+                            printer().printErr("Failed to open browser session, to access Hawtio open url: " + url);
+                        }
                     }
                 }
-            }
 
-            // keep JVM running
-            installHangupInterceptor();
-            shutdownLatch.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            printer().printErr("Interrupted while launching Hawtio");
-            return 1;
-        } catch (Exception e) {
-            printer().printErr("Cannot launch Hawtio due to: " + e.getMessage());
-            return 1;
-        } finally {
-            downloader.close();
+                // keep JVM running
+                installHangupInterceptor();
+                shutdownLatch.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                printer().printErr("Interrupted while launching Hawtio");
+                return 1;
+            } catch (Exception e) {
+                printer().printErr("Cannot launch Hawtio due to: " + e.getMessage());
+                return 1;
+            }
         }
 
         return 0;

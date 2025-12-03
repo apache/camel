@@ -249,10 +249,6 @@ public class ListKafka extends ProcessWatchCommand {
         return u;
     }
 
-    private String getMetadata(Row r) {
-        return r.groupId;
-    }
-
     private String getState(Row r) {
         return StringHelper.capitalize(r.state.toLowerCase(Locale.ROOT));
     }

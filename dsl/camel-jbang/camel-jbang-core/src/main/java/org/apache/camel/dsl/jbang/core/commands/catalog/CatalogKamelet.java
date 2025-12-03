@@ -72,9 +72,8 @@ public class CatalogKamelet extends CamelCommand {
 
         Map<String, Object> kamelets;
         var tccLoader = Thread.currentThread().getContextClassLoader();
-        try {
+        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
             ClassLoader cl = createClassLoader();
-            MavenDependencyDownloader downloader = new MavenDependencyDownloader();
             downloader.setClassLoader(cl);
             downloader.start();
             downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", kameletsVersion);
