@@ -89,7 +89,9 @@ public interface IBMCOSEndpointBuilderFactory {
         }
         /**
          * IBM COS Endpoint URL (e.g.,
-         * https://s3.us-south.cloud-object-storage.appdomain.cloud).
+         * https://s3.us-south.cloud-object-storage.appdomain.cloud) Note that
+         * some operations requires to use a regional endpoint URL instead of a
+         * cross-region one.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1169,7 +1171,9 @@ public interface IBMCOSEndpointBuilderFactory {
         }
         /**
          * IBM COS Endpoint URL (e.g.,
-         * https://s3.us-south.cloud-object-storage.appdomain.cloud).
+         * https://s3.us-south.cloud-object-storage.appdomain.cloud) Note that
+         * some operations requires to use a regional endpoint URL instead of a
+         * cross-region one.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1534,7 +1538,9 @@ public interface IBMCOSEndpointBuilderFactory {
         }
         /**
          * IBM COS Endpoint URL (e.g.,
-         * https://s3.us-south.cloud-object-storage.appdomain.cloud).
+         * https://s3.us-south.cloud-object-storage.appdomain.cloud) Note that
+         * some operations requires to use a regional endpoint URL instead of a
+         * cross-region one.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

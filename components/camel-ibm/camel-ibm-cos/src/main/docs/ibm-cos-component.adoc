@@ -127,6 +127,8 @@ Examples:
 For a complete list of endpoints, see
 https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-endpoints[IBM COS Endpoints documentation].
 
+Note that several operations requires a regional endpoint, as opposed to a cross-region endpoint.
+
 === IBM COS Producer Operation examples
 
 - Single Upload: This operation will upload a file to IBM COS based on the body content
