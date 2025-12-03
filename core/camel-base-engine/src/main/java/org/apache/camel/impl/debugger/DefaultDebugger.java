@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.MessageHistory;
@@ -48,7 +47,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The default implementation of the {@link Debugger}.
  */
-public class DefaultDebugger extends ServiceSupport implements Debugger, CamelContextAware {
+public class DefaultDebugger extends ServiceSupport implements Debugger {
 
     private final EventNotifier debugEventNotifier = new DebugEventNotifier();
     private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<>();

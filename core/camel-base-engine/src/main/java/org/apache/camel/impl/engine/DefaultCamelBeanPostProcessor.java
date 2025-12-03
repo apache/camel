@@ -497,7 +497,6 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         if (parameterTypes.length != 1) {
             LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
         } else {
-            String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
             Class<?> type = parameterTypes[0];
             Type genericType = method.getGenericParameterTypes()[0];
             Object value = getPostProcessorHelper().getInjectionPropertyValue(type, genericType, propertyValue,
