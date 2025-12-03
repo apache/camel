@@ -29,12 +29,12 @@ import org.testcontainers.containers.wait.strategy.Wait;
 @InfraService(service = ConsulInfraService.class,
               description = "Consul is a service networking solution",
               serviceAlias = { "consul" })
-public class ConsulLocalContainerInfraService implements ConsulInfraService, ContainerService<GenericContainer> {
+public class ConsulLocalContainerInfraService implements ConsulInfraService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_NAME = "consul";
 
     private static final Logger LOG = LoggerFactory.getLogger(ConsulLocalContainerInfraService.class);
 
-    private final GenericContainer container;
+    private final GenericContainer<?> container;
 
     public ConsulLocalContainerInfraService() {
         this(LocalPropertyResolver.getProperty(
@@ -46,12 +46,14 @@ public class ConsulLocalContainerInfraService implements ConsulInfraService, Con
         container = initContainer(containerName, CONTAINER_NAME);
     }
 
-    public ConsulLocalContainerInfraService(GenericContainer container) {
+    public ConsulLocalContainerInfraService(GenericContainer<?> container) {
         this.container = container;
     }
 
-    protected GenericContainer initContainer(String imageName, String containerName) {
-        return new GenericContainer(imageName)
+    @SuppressWarnings("resource")
+    // NOTE: factoring method. The object must be closed by client.
+    protected GenericContainer<?> initContainer(String imageName, String containerName) {
+        return new GenericContainer<>(imageName) // NOSONAR
                 .withNetworkAliases(containerName)
                 .withExposedPorts(Consul.DEFAULT_HTTP_PORT)
                 .waitingFor(Wait.forLogMessage(".*Synced node info.*", 1))
@@ -81,7 +83,7 @@ public class ConsulLocalContainerInfraService implements ConsulInfraService, Con
     }
 
     @Override
-    public GenericContainer getContainer() {
+    public GenericContainer<?> getContainer() {
         return container;
     }
 

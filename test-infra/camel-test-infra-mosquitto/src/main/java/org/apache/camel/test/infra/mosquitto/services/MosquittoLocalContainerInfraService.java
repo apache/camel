@@ -64,15 +64,17 @@ public class MosquittoLocalContainerInfraService implements MosquittoInfraServic
         this.container = container;
     }
 
+    @SuppressWarnings("resource")
+    // NOTE: the object must be closed by the client.
     protected GenericContainer<?> initContainer(String imageName, Integer port) {
         GenericContainer<?> ret;
 
         if (port == null) {
-            ret = new GenericContainer(imageName)
+            ret = new GenericContainer<>(imageName) // NOSONAR
                     .withExposedPorts(CONTAINER_PORT);
         } else {
             @SuppressWarnings("deprecation")
-            GenericContainer<?> fixedPortContainer = new FixedHostPortGenericContainer(imageName)
+            GenericContainer<?> fixedPortContainer = new FixedHostPortGenericContainer<>(imageName) // NOSONAR
                     .withFixedExposedPort(port, CONTAINER_PORT);
             ret = fixedPortContainer;
         }

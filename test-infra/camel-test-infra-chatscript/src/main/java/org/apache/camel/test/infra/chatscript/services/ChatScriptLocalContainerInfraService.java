@@ -31,14 +31,16 @@ import org.testcontainers.containers.GenericContainer;
 public class ChatScriptLocalContainerInfraService implements ChatScriptInfraService, ContainerService<GenericContainer<?>> {
     private static final Logger LOG = LoggerFactory.getLogger(ChatScriptLocalContainerInfraService.class);
     private static final int SERVICE_PORT = 1024;
-    private GenericContainer<?> container;
+    private final GenericContainer<?> container;
 
+    @SuppressWarnings("resource")
+    // NOTE: all resources will be closed by close().
     public ChatScriptLocalContainerInfraService() {
         String containerName = LocalPropertyResolver.getProperty(
                 ChatScriptLocalContainerInfraService.class,
                 ChatScriptProperties.CHATSCRIPT_CONTAINER);
 
-        container = new GenericContainer<>(containerName)
+        container = new GenericContainer<>(containerName) // NOSONAR
                 .withExposedPorts(SERVICE_PORT)
                 .withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withTty(true));
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
