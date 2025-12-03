@@ -457,6 +457,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition": return new ModelDeserializers.TopicLoadBalancerDefinitionDeserializer();
             case "transacted": return new ModelDeserializers.TransactedDefinitionDeserializer();
             case "org.apache.camel.model.TransactedDefinition": return new ModelDeserializers.TransactedDefinitionDeserializer();
+            case "transformDataType": return new ModelDeserializers.TransformDataTypeDefinitionDeserializer();
+            case "org.apache.camel.model.TransformDataTypeDefinition": return new ModelDeserializers.TransformDataTypeDefinitionDeserializer();
             case "transform": return new ModelDeserializers.TransformDefinitionDeserializer();
             case "org.apache.camel.model.TransformDefinition": return new ModelDeserializers.TransformDefinitionDeserializer();
             case "transformers": return new ModelDeserializers.TransformersDefinitionDeserializer();

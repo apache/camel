@@ -2858,33 +2858,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a processor which sets
-     * the body on the OUT message according to a data type transformation.
-     *
-     * @param  fromType the data type representing the input of the transformation
-     * @param  toType   the data type representing the output of the transformation.
-     * @return          the builder
-     */
-    public Type transform(DataType fromType, DataType toType) {
-        TransformDefinition answer = new TransformDefinition(fromType, toType);
-        addOutput(answer);
-        return asType();
-    }
-
-    /**
-     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a processor which sets
-     * the body on the OUT message according to a data type transformation.
-     *
-     * @param  toType the data type representing the output of the transformation.
-     * @return        the builder
-     */
-    public Type transform(DataType toType) {
-        TransformDefinition answer = new TransformDefinition(DataType.ANY, toType);
-        addOutput(answer);
-        return asType();
-    }
-
-    /**
-     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a processor which sets
      * the body on the OUT message
      *
      * @return a expression builder clause to set the body
@@ -2894,6 +2867,52 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         TransformDefinition answer = new TransformDefinition(clause);
         addOutput(answer);
         return clause;
+    }
+
+    /**
+     * To transform the message using known data types.
+     *
+     * @param  fromType the data type representing the input of the transformation
+     * @param  toType   the data type representing the output of the transformation.
+     * @return          the builder
+     */
+    public Type transformDataType(DataType fromType, DataType toType) {
+        TransformDataTypeDefinition answer = new TransformDataTypeDefinition(fromType, toType);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * To transform the message using known data types.
+     *
+     * @param  fromType the data type representing the input of the transformation
+     * @param  toType   the data type representing the output of the transformation.
+     * @return          the builder
+     */
+    public Type transformDataType(String fromType, String toType) {
+        return transformDataType(new DataType(fromType), new DataType(toType));
+    }
+
+    /**
+     * To transform the message using known data types.
+     *
+     * @param  toType the data type representing the output of the transformation.
+     * @return        the builder
+     */
+    public Type transformDataType(DataType toType) {
+        TransformDataTypeDefinition answer = new TransformDataTypeDefinition(DataType.ANY, toType);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * To transform the message using known data types.
+     *
+     * @param  toType the data type representing the output of the transformation.
+     * @return        the builder
+     */
+    public Type transformDataType(String toType) {
+        return transformDataType(new DataType(toType));
     }
 
     /**

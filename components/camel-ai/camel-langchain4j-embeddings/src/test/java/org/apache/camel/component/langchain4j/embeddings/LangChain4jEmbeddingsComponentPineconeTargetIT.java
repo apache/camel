@@ -131,7 +131,7 @@ public class LangChain4jEmbeddingsComponentPineconeTargetIT extends CamelTestSup
                         .to("langchain4j-embeddings:test")
                         .setHeader(PineconeVectorDbHeaders.ACTION).constant(PineconeVectorDbAction.UPSERT)
                         .setHeader(PineconeVectorDbHeaders.INDEX_ID).constant(POINT_ID)
-                        .transform(
+                        .transformDataType(
                                 new DataType("pinecone:embeddings"))
                         .to(PINECONE_URI);
             }

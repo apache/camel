@@ -182,7 +182,7 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
             public void configure() {
                 from("direct:start")
                         .to("langchain4j-embeddings:test")
-                        .transform(new DataType("infinispan:embeddings"))
+                        .transformDataType(new DataType("infinispan:embeddings"))
                         .to(INFINISPAN_URI);
             }
         };

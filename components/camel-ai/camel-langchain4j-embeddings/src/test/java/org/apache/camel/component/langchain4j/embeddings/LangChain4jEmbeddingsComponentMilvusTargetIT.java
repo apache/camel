@@ -192,7 +192,7 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                         .setHeader(MilvusHeaders.ACTION).constant(MilvusAction.INSERT)
                         .setHeader(MilvusHeaders.KEY_NAME).constant("userID")
                         .setHeader(MilvusHeaders.KEY_VALUE).constant(Long.valueOf("3"))
-                        .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
+                        .transformDataType(new org.apache.camel.spi.DataType("milvus:embeddings"))
                         .to(MILVUS_URI);
 
                 from("direct:up")
@@ -200,7 +200,7 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                         .setHeader(MilvusHeaders.ACTION).constant(MilvusAction.UPSERT)
                         .setHeader(MilvusHeaders.KEY_NAME).constant("userID")
                         .setHeader(MilvusHeaders.KEY_VALUE).constant(Long.valueOf("3"))
-                        .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
+                        .transformDataType(new org.apache.camel.spi.DataType("milvus:embeddings"))
                         .to(MILVUS_URI);
             }
         };

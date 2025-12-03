@@ -101,6 +101,7 @@ import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TokenizerDefinition;
 import org.apache.camel.model.TokenizerImplementationDefinition;
 import org.apache.camel.model.TransactedDefinition;
+import org.apache.camel.model.TransformDataTypeDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
@@ -19848,6 +19849,75 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
+            nodes = "transformDataType",
+            types = org.apache.camel.model.TransformDataTypeDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "Transform Data Type",
+            description = "Transforms the message body based on known data type transformers.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
+                    @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Disables this EIP from the route.", displayName = "Disabled"),
+                    @YamlProperty(name = "fromType", type = "string", description = "From type used in data type transformation.", displayName = "From Type"),
+                    @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
+                    @YamlProperty(name = "toType", type = "string", required = true, description = "To type used as a target data type in the transformation.", displayName = "To Type")
+            }
+    )
+    public static class TransformDataTypeDefinitionDeserializer extends YamlDeserializerBase<TransformDataTypeDefinition> {
+        public TransformDataTypeDefinitionDeserializer() {
+            super(TransformDataTypeDefinition.class);
+        }
+
+        @Override
+        protected TransformDataTypeDefinition newInstance() {
+            return new TransformDataTypeDefinition();
+        }
+
+        @Override
+        protected boolean setProperty(TransformDataTypeDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "disabled": {
+                    String val = asText(node);
+                    target.setDisabled(val);
+                    break;
+                }
+                case "fromType": {
+                    String val = asText(node);
+                    target.setFromType(val);
+                    break;
+                }
+                case "toType": {
+                    String val = asText(node);
+                    target.setToType(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "description": {
+                    String val = asText(node);
+                    target.setDescription(val);
+                    break;
+                }
+                case "note": {
+                    String val = asText(node);
+                    target.setNote(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
             nodes = "transform",
             types = org.apache.camel.model.TransformDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -19859,10 +19929,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Disables this EIP from the route.", displayName = "Disabled"),
                     @YamlProperty(name = "expression", type = "object:org.apache.camel.model.language.ExpressionDefinition", description = "Expression to return the transformed message body (the new message body to use)", displayName = "Expression", oneOf = "expression"),
-                    @YamlProperty(name = "fromType", type = "string", description = "From type used in data type transformation.", displayName = "From Type"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
-                    @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
-                    @YamlProperty(name = "toType", type = "string", description = "To type used as a target data type in the transformation.", displayName = "To Type")
+                    @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note")
             }
     )
     public static class TransformDefinitionDeserializer extends YamlDeserializerBase<TransformDefinition> {
@@ -19888,16 +19956,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "expression": {
                     org.apache.camel.model.language.ExpressionDefinition val = asType(node, org.apache.camel.model.language.ExpressionDefinition.class);
                     target.setExpression(val);
-                    break;
-                }
-                case "fromType": {
-                    String val = asText(node);
-                    target.setFromType(val);
-                    break;
-                }
-                case "toType": {
-                    String val = asText(node);
-                    target.setToType(val);
                     break;
                 }
                 case "id": {

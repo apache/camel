@@ -13,6 +13,29 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.16 to 4.17
 
+=== camel-core
+
+The `transform` EIP has moved the data-type function to a new specialized `transformDataType` EIP that
+works across all DSLs (Java, XML and YAML).
+
+For Java DSL that means code should be changed
+
+[source,java]
+----
+from("direct:start")
+    .transform(new DataType("myDataType"))
+    .to("mock:result");
+----
+
+to:
+
+[source,java]
+----
+from("direct:start")
+    .transformDataType(new DataType("myDataType"))
+    .to("mock:result");
+----
+
 === camel-jbang
 
 The `camel-kamelets-catalog` JAR is now downloaded on-demand.

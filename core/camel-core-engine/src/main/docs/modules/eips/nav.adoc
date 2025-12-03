@@ -105,6 +105,7 @@
 ** xref:topicLoadBalancer-eip.adoc[Topic Load Balancer]
 ** xref:transactional-client.adoc[Transactional Client]
 ** xref:transform-eip.adoc[Transform]
+** xref:transformDataType-eip.adoc[Transform Data Type]
 ** xref:unmarshal-eip.adoc[Unmarshal]
 ** xref:validate-eip.adoc[Validate]
 ** xref:weightedLoadBalancer-eip.adoc[Weighted Load Balancer]

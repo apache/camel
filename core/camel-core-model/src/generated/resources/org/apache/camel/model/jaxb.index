@@ -108,6 +108,7 @@ ToDynamicDefinition
 TokenizerDefinition
 TokenizerImplementationDefinition
 TransactedDefinition
+TransformDataTypeDefinition
 TransformDefinition
 TryDefinition
 UnmarshalDefinition

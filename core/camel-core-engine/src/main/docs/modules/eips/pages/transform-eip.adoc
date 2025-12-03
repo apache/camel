@@ -25,6 +25,7 @@ to perform the transformation
 * Using template-based xref:ROOT:index.adoc[Components], with the template being the source for how the message is translated
 * Messages can also be transformed using xref:manual::data-format.adoc[Data Format]
 to marshal and unmarshal messages in different encodings.
+* Using data type based transformation using xref:transformDataType-eip.adoc[Transform DataType]
 
 This page is documenting the first approach by using Transform EIP.
 
@@ -86,49 +87,6 @@ YAML::
           uri: log:hello
 ----
 ====
-
-The xref:transform-eip.adoc[Transform] may also reference a given from/to data type (`org.apache.camel.spi.DataType`).
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:cheese")
-    .transform(new DataType("myDataType"))
-    .to("log:hello");
-----
-
-XML::
-+
-[source,xml]
-----
-<route>
-    <from uri="direct:cheese"/>
-    <transform toType="myDataType"/>
-    <to uri="log:hello"/>
-</route>
-----
-
-YAML::
-+
-[source,yaml]
-----
-- from:
-    uri: direct:cheese
-    steps:
-      - transform:
-          to-type: myDataType
-      - to:
-          uri: log:hello
-----
-====
-
-The example above defines the xref:transform-eip.adoc[Transform] EIP that uses a target data type `myDataType`.
-The given data type may reference a xref:manual::transformer.adoc[Transformer] that is able to handle the data type transformation.
-
-Users may also specify `fromType` in order to reference a very specific transformation from a given data type to a given data type.
 
 == What is the difference between Transform and Set Body?
 

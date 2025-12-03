@@ -404,7 +404,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
                     MappingNode out = asMappingNode(nodeAt(dataTypes, "/out"));
                     if (out != null) {
-                        route.transform(new DataType(extractDataType(out)));
+                        route.transformDataType(new DataType(extractDataType(out)));
                     }
                 }
 
@@ -447,7 +447,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     if (dataTypes != null) {
                         MappingNode in = asMappingNode(nodeAt(dataTypes, "/in"));
                         if (in != null) {
-                            route.transform(new DataType(extractDataType(in)));
+                            route.transformDataType(new DataType(extractDataType(in)));
                         }
 
                         MappingNode out = asMappingNode(nodeAt(dataTypes, "/out"));
