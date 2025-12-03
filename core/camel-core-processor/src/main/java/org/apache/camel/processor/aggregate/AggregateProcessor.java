@@ -59,7 +59,6 @@ import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
-import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ExchangeHelper;
@@ -85,7 +84,7 @@ import org.slf4j.LoggerFactory;
  * message.
  */
 public class AggregateProcessor extends BaseProcessorSupport
-        implements Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware, RouteIdAware {
+        implements Navigate<Processor>, Traceable, ShutdownAware, IdAware, RouteIdAware {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
     public static final String AGGREGATE_OPTIMISTIC_LOCKING_EXECUTOR = "AggregateOptimisticLockingExecutor";

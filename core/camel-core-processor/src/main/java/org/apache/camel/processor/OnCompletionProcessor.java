@@ -248,7 +248,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
         return answer;
     }
 
-    private final class OnCompletionSynchronizationAfterConsumer extends SynchronizationAdapter implements Ordered {
+    private final class OnCompletionSynchronizationAfterConsumer extends SynchronizationAdapter {
 
         private final boolean routeScoped;
         private final String routeId;
@@ -403,7 +403,7 @@ public class OnCompletionProcessor extends BaseProcessorSupport implements Trace
         }
     }
 
-    private final class OnCompletionSynchronizationBeforeConsumer extends SynchronizationAdapter implements Ordered {
+    private final class OnCompletionSynchronizationBeforeConsumer extends SynchronizationAdapter {
 
         private final boolean routeScoped;
         private final String routeId;

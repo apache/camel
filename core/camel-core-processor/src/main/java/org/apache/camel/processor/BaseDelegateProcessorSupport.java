@@ -16,14 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.DisabledAware;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 /**
  * Base class for EIP implementations as {@link org.apache.camel.Processor}.
  */
-public abstract class BaseDelegateProcessorSupport extends DelegateAsyncProcessor implements DisabledAware {
+public abstract class BaseDelegateProcessorSupport extends DelegateAsyncProcessor {
 
     public BaseDelegateProcessorSupport(Processor processor) {
         super(processor);

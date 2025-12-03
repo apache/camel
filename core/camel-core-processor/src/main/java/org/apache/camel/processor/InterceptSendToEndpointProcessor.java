@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;

@@ -1054,7 +1054,6 @@ public class MulticastProcessor extends BaseProcessorSupport
         return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
     }
 
-    @SuppressWarnings("unchecked")
     protected Processor wrapInErrorHandler(Route route, Exchange exchange, Processor processor) {
         Processor answer;
         Processor key = processor;

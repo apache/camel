@@ -28,7 +28,7 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
-public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcessor, ErrorHandler {
+public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcessor {
 
     private final AsyncProcessor output;
 

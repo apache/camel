@@ -361,7 +361,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     /**
      * Simple task to perform calling the processor with no redelivery support
      */
-    protected class SimpleTask implements PooledExchangeTask, Runnable, AsyncCallback {
+    protected class SimpleTask implements PooledExchangeTask, AsyncCallback {
         private Exchange exchange;
         private AsyncCallback callback;
         private boolean first;
@@ -639,7 +639,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     /**
      * Task to perform calling the processor and handling redelivery if it fails (more advanced than ProcessTask)
      */
-    protected class RedeliveryTask implements PooledExchangeTask, Runnable {
+    protected class RedeliveryTask implements PooledExchangeTask {
         // state
         private Exchange original;
         private Exchange exchange;
