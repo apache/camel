@@ -17,7 +17,7 @@
 package org.apache.camel.component.spring.batch.support;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;

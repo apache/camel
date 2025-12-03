@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "test-junit6",
+    "title": "Test JUnit6",
+    "description": "Camel unit testing with JUnit 6",
+    "deprecated": false,
+    "firstVersion": "4.17.0",
+    "label": "testing,java",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-test-junit6",
+    "version": "4.17.0-SNAPSHOT"
+  }
+}
