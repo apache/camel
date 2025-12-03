@@ -1,4 +1,5 @@
 [
+  "CamelAggregatedCorrelationKey",
   "CamelAggregatedSize",
   "CamelAsteriskEventName",
   "CamelExecExitValue",

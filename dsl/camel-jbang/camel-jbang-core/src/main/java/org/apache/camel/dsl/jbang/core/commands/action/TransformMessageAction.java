@@ -284,7 +284,7 @@ public class TransformMessageAction extends ActionWatchCommand {
                     tableHelper.setPretty(pretty);
                     tableHelper.setLoggingColor(loggingColor);
                     tableHelper.setShowExchangeProperties(showExchangeProperties);
-                    String table = tableHelper.getDataAsTable(exchangeId, "InOut", null, null, message, cause);
+                    String table = tableHelper.getDataAsTable(exchangeId, "InOut", null, null, null, message, cause);
                     printer().println(table);
                 }
             }

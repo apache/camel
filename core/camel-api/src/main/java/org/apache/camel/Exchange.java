@@ -78,7 +78,8 @@ public interface Exchange extends VariableAware {
     @Metadata(label = "aggregate", description = "Enum that tell how this group was completed",
               enums = "consumer,force,interval,predicate,size,strategy,timeout", javaType = "String")
     String AGGREGATED_COMPLETED_BY = "CamelAggregatedCompletedBy";
-    @Metadata(label = "aggregate", description = "The correlation key for this aggregation group", javaType = "String")
+    @Metadata(label = "aggregate", description = "The correlation key for this aggregation group", javaType = "String",
+              important = true)
     String AGGREGATED_CORRELATION_KEY = "CamelAggregatedCorrelationKey";
     String AGGREGATED_COLLECTION_GUARD = "CamelAggregatedCollectionGuard";
     String AGGREGATION_STRATEGY = "CamelAggregationStrategy";

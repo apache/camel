@@ -892,7 +892,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
     }
 
     private String getDataAsTable(Row r) {
-        return tableHelper.getDataAsTable(null, null, r.endpoint, r.endpointService, r.message, null);
+        return tableHelper.getDataAsTable(null, null, null, r.endpoint, r.endpointService, r.message, null);
     }
 
     protected String getEndpointUri(StatusRow r) {
