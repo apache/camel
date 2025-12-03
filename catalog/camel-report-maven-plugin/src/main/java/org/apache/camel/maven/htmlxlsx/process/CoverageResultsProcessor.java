@@ -313,8 +313,9 @@ public class CoverageResultsProcessor {
             totalEipsTested.set(totalEips.get());
         }
         int coverage = 0;
-        if (totalEips.get() > 0) {
-            coverage = (100 * totalEipsTested.get()) / totalEips.get();
+        int total = totalEips.get();
+        if (total > 0) {
+            coverage = (100 * totalEipsTested.get()) / total;
         }
 
         RouteStatistic retval = new RouteStatistic();

@@ -538,7 +538,6 @@ public class RouteCoverageMojo extends AbstractMojo {
         return it;
     }
 
-    @SuppressWarnings("unchecked")
     private String templateCoverageData(
             String fileName, String routeId, List<RouteCoverageNode> model, AtomicInteger notCovered,
             AtomicInteger coveredNodes) {
