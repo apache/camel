@@ -251,10 +251,6 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
         return !singleStepExchangeId.isEmpty();
     }
 
-    private boolean isSingleStepMode(String exchangeId) {
-        return singleStepExchangeId.contains(exchangeId);
-    }
-
     @Override
     public void attach() {
         if (suspendMode) {

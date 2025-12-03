@@ -410,15 +410,16 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     return getCamelContext().getTypeConverter();
                 }
                 // for templates then create a new instance and let camel manage its lifecycle
+                // NOTE: the object will be closed by Camel lifecycle
                 Service answer = null;
                 if (getCamelContext() != null && type.isAssignableFrom(FluentProducerTemplate.class)) {
-                    answer = getCamelContext().createFluentProducerTemplate();
+                    answer = getCamelContext().createFluentProducerTemplate(); // NOSONAR
                 }
                 if (getCamelContext() != null && type.isAssignableFrom(ProducerTemplate.class)) {
-                    answer = getCamelContext().createProducerTemplate();
+                    answer = getCamelContext().createProducerTemplate(); // NOSONAR
                 }
                 if (getCamelContext() != null && type.isAssignableFrom(ConsumerTemplate.class)) {
-                    answer = getCamelContext().createConsumerTemplate();
+                    answer = getCamelContext().createConsumerTemplate(); // NOSONAR
                 }
                 if (answer != null) {
                     // lets make camel context manage its lifecycle

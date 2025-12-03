@@ -31,7 +31,7 @@ import org.apache.camel.support.service.ServiceSupport;
  * Default dev console resolver that looks for dev consoles factories in
  * <b>META-INF/services/org/apache/camel/dev-console/</b>.
  */
-public class DefaultDevConsoleResolver extends ServiceSupport implements DevConsoleResolver, CamelContextAware {
+public class DefaultDevConsoleResolver extends ServiceSupport implements DevConsoleResolver {
 
     public static final String DEV_CONSOLE_RESOURCE_PATH = "META-INF/services/org/apache/camel/dev-console/";
 

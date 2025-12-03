@@ -17,7 +17,6 @@
 package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRepository;
@@ -28,7 +27,7 @@ import org.apache.camel.spi.FactoryFinder;
  * Default health check resolver that looks for health checks factories in
  * <b>META-INF/services/org/apache/camel/health-check/</b>.
  */
-public class DefaultHealthCheckResolver implements HealthCheckResolver, CamelContextAware {
+public class DefaultHealthCheckResolver implements HealthCheckResolver {
 
     public static final String HEALTH_CHECK_RESOURCE_PATH = "META-INF/services/org/apache/camel/health-check/";
 
