@@ -38,21 +38,10 @@ public class RedisContainer extends GenericContainer<RedisContainer> {
         super(DockerImageName.parse(imageName));
     }
 
+    @SuppressWarnings("resource")
+    // NOTE: the object must be closed by the client.
     public static RedisContainer initContainer(String imageName, String networkAlias, boolean fixedPort) {
-        class TestInfraRedisContainer extends RedisContainer {
-            public TestInfraRedisContainer() {
-                super(imageName);
-                waitingFor(Wait.forListeningPort());
-
-                if (fixedPort) {
-                    addFixedExposedPort(RedisProperties.DEFAULT_PORT, RedisProperties.DEFAULT_PORT);
-                } else {
-                    withNetworkAliases(networkAlias)
-                            .withExposedPorts(RedisProperties.DEFAULT_PORT);
-                }
-            }
-        }
-        return new RedisContainer(imageName)
+        return new RedisContainer(imageName) // NOSONAR
                 .withNetworkAliases(networkAlias)
                 .withExposedPorts(RedisProperties.DEFAULT_PORT)
                 .waitingFor(Wait.forListeningPort());

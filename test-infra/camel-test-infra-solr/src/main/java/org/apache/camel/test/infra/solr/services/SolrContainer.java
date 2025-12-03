@@ -48,8 +48,10 @@ public class SolrContainer extends GenericContainer<SolrContainer> {
         super(DockerImageName.parse(imageName));
     }
 
+    @SuppressWarnings("resource")
+    // NOTE: the object must be closed by the client.
     public static SolrContainer initContainer(String networkAlias, boolean fixedPort) {
-        SolrContainer solrContainer = new SolrContainer()
+        SolrContainer solrContainer = new SolrContainer() // NOSONAR
                 .withNetworkAliases(networkAlias)
                 .withEnv("SOLR_OPTS", "-Dsolr.environment=test,label=camel-solr-test-infra,color=sandybrown")
                 .withEnv("GC_LOG_OPTS", "-verbose:")
