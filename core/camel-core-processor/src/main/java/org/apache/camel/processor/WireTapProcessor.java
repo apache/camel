@@ -84,7 +84,7 @@ public class WireTapProcessor extends BaseProcessorSupport
         this.dynamicUri = dynamicUri;
     }
 
-    private final class WireTapTask implements PooledExchangeTask, Runnable {
+    private final class WireTapTask implements PooledExchangeTask {
 
         private Exchange exchange;
         private final AsyncCallback callback = new AsyncCallback() {

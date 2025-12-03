@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.spi.DataType;
@@ -47,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Transformer loader scans packages for {@link org.apache.camel.spi.Transformer} classes annotated with
  * {@link DataType} annotation.
  */
-public class AnnotationTransformerLoader extends Transformer implements TransformerLoader, CamelContextAware {
+public class AnnotationTransformerLoader extends Transformer implements TransformerLoader {
 
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/Transformer";
 

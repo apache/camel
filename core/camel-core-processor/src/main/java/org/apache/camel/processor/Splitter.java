@@ -29,7 +29,6 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -38,7 +37,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.support.ExchangeHelper;
@@ -52,7 +50,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Implements a dynamic <a href="http://camel.apache.org/splitter.html">Splitter</a> pattern where an expression is
  * evaluated to iterate through each of the parts of a message and then each part is then send to some endpoint.
  */
-public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
+public class Splitter extends MulticastProcessor {
 
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private static final String SINGLE_DELIMITER_MARKER = "single";

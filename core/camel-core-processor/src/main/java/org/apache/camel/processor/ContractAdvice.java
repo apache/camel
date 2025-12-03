@@ -153,7 +153,9 @@ public class ContractAdvice implements CamelInternalProcessorAdvice<Object> {
         if (transformer != null) {
             transformer.transform(message, DataType.ANY, type);
         } else {
-            new TypeConverterTransformer(type).transform(message, DataType.ANY, type);
+            try (TypeConverterTransformer typeTrasformer = new TypeConverterTransformer(type)) {
+                typeTrasformer.transform(message, DataType.ANY, type);
+            }
         }
     }
 
