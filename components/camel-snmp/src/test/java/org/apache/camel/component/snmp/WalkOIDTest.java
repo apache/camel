@@ -21,11 +21,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class WalkOIDTest extends SnmpRespondTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(PollOIDTest.class);
 
     @ParameterizedTest
     @MethodSource("supportedVersions")
