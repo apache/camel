@@ -664,6 +664,10 @@ public class Debug extends Run {
                         row.location = jo.getString("location");
                         row.routeId = jo.getString("routeId");
                         row.nodeId = jo.getString("nodeId");
+                        if ("aggregate".equals(jo.getString("nodeShortName"))) {
+                            row.aggregate = new JsonObject();
+                            row.aggregate.put("nodeLabel", jo.getString("nodeLabel"));
+                        }
                         String uri = jo.getString("endpointUri");
                         if (uri != null) {
                             row.endpoint = new JsonObject();
@@ -1063,7 +1067,7 @@ public class Debug extends Run {
     }
 
     private String getDataAsTable(SuspendedRow r) {
-        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.endpoint, r.endpointService, r.message,
+        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.aggregate, r.endpoint, r.endpointService, r.message,
                 r.exception);
     }
 
@@ -1149,6 +1153,7 @@ public class Debug extends Run {
         long elapsed;
         boolean done;
         boolean failed;
+        JsonObject aggregate;
         JsonObject endpoint;
         JsonObject endpointService;
         JsonObject message;

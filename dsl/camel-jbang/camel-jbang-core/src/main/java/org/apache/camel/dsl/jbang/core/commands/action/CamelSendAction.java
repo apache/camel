@@ -249,7 +249,7 @@ public class CamelSendAction extends ActionBaseCommand {
                         tableHelper.setShowExchangeProperties(showExchangeProperties);
                         tableHelper.setShowExchangeVariables(showExchangeVariables);
                         String mep = (reply || replyFile != null) ? "InOut" : "InOnly";
-                        String table = tableHelper.getDataAsTable(exchangeId, mep, jo, null, message, cause);
+                        String table = tableHelper.getDataAsTable(exchangeId, mep, null, jo, null, message, cause);
                         printer().println(table);
                     }
                 }

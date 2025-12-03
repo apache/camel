@@ -294,7 +294,7 @@ public class CamelStubAction extends ActionWatchCommand {
                         }
                         String data
                                 = tableHelper.getDataAsTable(root.getString("exchangeId"), root.getString("exchangePattern"),
-                                        row.endpoint, null, root, null);
+                                        null, row.endpoint, null, root, null);
                         if (data != null) {
                             String[] lines = data.split(System.lineSeparator());
                             if (lines.length > 0) {

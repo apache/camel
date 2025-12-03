@@ -93,7 +93,7 @@ public class MessageTableHelper {
 
     public String getDataAsTable(
             String exchangeId, String exchangePattern,
-            JsonObject endpoint, JsonObject endpointService,
+            JsonObject aggregate, JsonObject endpoint, JsonObject endpointService,
             JsonObject root, JsonObject cause) {
 
         List<TableRow> rows = new ArrayList<>();
@@ -108,6 +108,13 @@ public class MessageTableHelper {
         String tab5 = null;
         String tab6 = null;
 
+        if (aggregate != null) {
+            eRow = new TableRow("Aggregate", null, null, aggregate.getString("nodeLabel"));
+            tab0 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+                    new Column().dataAlign(HorizontalAlign.LEFT)
+                            .minWidth(showExchangeProperties || showExchangeVariables ? 12 : 10).with(TableRow::kindAsString),
+                    new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::valueAsString)));
+        }
         if (endpoint != null) {
             eRow = new TableRow("Endpoint", null, null, endpoint.getString("endpoint"));
             tab0 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
