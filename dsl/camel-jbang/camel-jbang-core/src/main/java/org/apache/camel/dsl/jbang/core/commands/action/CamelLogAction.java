@@ -318,10 +318,8 @@ public class CamelLogAction extends ActionBaseCommand {
                 l1 = unescapeAnsi(l1);
                 l2 = unescapeAnsi(l2);
 
-                String n1 = StringHelper.before(l1, "| ");
                 String t1 = StringHelper.after(l1, "| ");
                 t1 = StringHelper.before(t1, "  ");
-                String n2 = StringHelper.before(l2, "| ");
                 String t2 = StringHelper.after(l2, "| ");
                 t2 = StringHelper.before(t2, "  ");
 

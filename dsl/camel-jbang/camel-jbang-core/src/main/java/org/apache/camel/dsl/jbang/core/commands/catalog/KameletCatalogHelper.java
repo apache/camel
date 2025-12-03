@@ -142,9 +142,8 @@ public final class KameletCatalogHelper {
 
     public static Map<String, Object> loadKamelets(String version) throws Exception {
         var tccLoader = Thread.currentThread().getContextClassLoader();
-        try {
+        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
             ClassLoader cl = createClassLoader();
-            MavenDependencyDownloader downloader = new MavenDependencyDownloader();
             downloader.setClassLoader(cl);
             downloader.start();
             downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", version);
@@ -161,9 +160,8 @@ public final class KameletCatalogHelper {
 
     public static InputStream loadKameletYamlSchema(String name, String version) throws Exception {
         var tccLoader = Thread.currentThread().getContextClassLoader();
-        try {
+        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
             ClassLoader cl = createClassLoader();
-            MavenDependencyDownloader downloader = new MavenDependencyDownloader();
             downloader.setClassLoader(cl);
             downloader.start();
             downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", version);
