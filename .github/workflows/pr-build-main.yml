@@ -29,7 +29,7 @@ on:
       - Jenkinsfile.*
       - NOTICE.txt
 
-permissions: 
+permissions:
   contents: read
 
 jobs:
