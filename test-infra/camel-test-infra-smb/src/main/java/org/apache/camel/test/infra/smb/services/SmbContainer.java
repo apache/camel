@@ -25,7 +25,8 @@ public class SmbContainer extends GenericContainer<SmbContainer> {
 
     public static final int SMB_PORT_DEFAULT = 445;
     public static final String DEFAULT_USER = "camel";
-    public static final String DEFAULT_PASSWORD = "camelTester123";
+    // NOTE: default value used for testing purposes only.
+    public static final String DEFAULT_PASSWORD = "camelTester123"; // NOSONAR
 
     public SmbContainer(boolean fixedPort) {
         super(new ImageFromDockerfile("localhost/samba:camel", false)

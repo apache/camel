@@ -40,7 +40,8 @@ public class KeycloakLocalContainerInfraService implements KeycloakInfraService,
     private static final String DEFAULT_KEYCLOAK_CONTAINER = "quay.io/keycloak/keycloak:latest";
     private static final int KEYCLOAK_PORT = 8080;
     private static final String DEFAULT_ADMIN_USERNAME = "admin";
-    private static final String DEFAULT_ADMIN_PASSWORD = "admin";
+    // NOTE: default value used only for testing purposes.
+    private static final String DEFAULT_ADMIN_PASSWORD = "admin"; // NOSONAR
     private static final String DEFAULT_REALM = "master";
 
     private final GenericContainer<?> container;

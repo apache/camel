@@ -231,20 +231,18 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
         if (clientSecret != null) {
             if (password == null) {
                 throw new MojoExecutionException(
-                        generateRequiredErrorMessage("password", "clientSecret"));
+                        // NOTE: a text error message to clarify the problem
+                        "Property 'password' must be provided when property 'clientSecret' was provided."); // NOSONAR
             }
         }
 
         if (keystoreResource != null) {
             if (keystorePassword == null) {
                 throw new MojoExecutionException(
-                        generateRequiredErrorMessage("keystorePassword", "keystoreResource"));
+                        // NOTE: a text error message to clarify the problem
+                        "Property 'keystorePassword' must be provided when property 'keystoreResource' was provided."); // NOSONAR
             }
         }
-    }
-
-    private String generateRequiredErrorMessage(String parameter1, String parameter2) {
-        return String.format("Property: %s must be provided when property: %s was provided.", parameter1, parameter2);
     }
 
     private KeyStoreParameters generateKeyStoreParameters() {
