@@ -297,8 +297,7 @@ public class Run extends CamelCommand {
     String localKameletDir;
 
     @Option(names = { "--port" },
-            description = "Embeds a local HTTP server on this port (use 0 to dynamic assign a free random port number)",
-            defaultValue = "8080")
+            description = "Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number)")
     int port = -1;
 
     @Option(names = { "--management-port" },

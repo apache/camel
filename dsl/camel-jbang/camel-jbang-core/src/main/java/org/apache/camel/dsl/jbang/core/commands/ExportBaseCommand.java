@@ -124,8 +124,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String name;
 
     @CommandLine.Option(names = { "--port" },
-                        description = "Embeds a local HTTP server on this port", defaultValue = "8080")
-    int port;
+                        description = "Embeds a local HTTP server on this port")
+    int port = -1;
 
     @CommandLine.Option(names = { "--management-port" },
                         description = "To use a dedicated port for HTTP management")
