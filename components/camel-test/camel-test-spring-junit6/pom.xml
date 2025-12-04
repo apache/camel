@@ -33,13 +33,24 @@
     <description>Camel unit testing with Spring and JUnit 6</description>
 
     <properties>
-        <firstVersion>3.0.0</firstVersion>
+        <firstVersion>4.17.0</firstVersion>
         <label>testing,java,spring</label>
         <title>Test Spring JUnit6</title>
     </properties>
 
-    <dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit6-jupiter-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
+    <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>

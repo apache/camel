@@ -3,8 +3,8 @@
 :shortname: test-spring-junit6
 :artifactid: camel-test-spring-junit6
 :description: Camel unit testing with Spring and JUnit 6
-:since: 3.0
-:supportlevel: Stable
+:since: 4.17
+:supportlevel: Preview
 :tabs-sync-option:
 
 *Since Camel {since}*

@@ -5,9 +5,9 @@
     "title": "Test Spring JUnit6",
     "description": "Camel unit testing with Spring and JUnit 6",
     "deprecated": false,
-    "firstVersion": "3.0.0",
+    "firstVersion": "4.17.0",
     "label": "testing,java,spring",
-    "supportLevel": "Stable",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-test-spring-junit6",
     "version": "4.17.0-SNAPSHOT"

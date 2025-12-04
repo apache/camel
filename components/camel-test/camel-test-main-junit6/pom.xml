@@ -33,7 +33,7 @@
     <description>Camel unit testing with Main and JUnit 6</description>
 
     <properties>
-        <firstVersion>3.16.0</firstVersion>
+        <firstVersion>4.17.0</firstVersion>
         <label>testing,java</label>
         <title>Test Main JUnit6</title>
     </properties>
