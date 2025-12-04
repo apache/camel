@@ -110,8 +110,7 @@ public class SimpleMockTest extends CamelSpringTestSupport {
 
 The example above is loading a classic Spring XML file (has `<beans>` as root tag).
 
-This approach provides feature parity with `org.apache.camel.test.junit6.CamelTestSupport`
-from xref:components:others:test-junit6.adoc[camel-test-junit6] but does not support Spring annotations
+This approach provides feature parity with `org.apache.camel.test.junit6.CamelTestSupport` but does not support Spring annotations
 on the test class such as `@Autowired`, `@DirtiesContext`, and `@ContextConfiguration`.
 
 Instead of instantiating the `CamelContext` and routes programmatically,
@@ -238,7 +237,7 @@ TIP: It's possible to run JUnit 5 & JUnit 6 based Camel Spring tests side by sid
 
 === Migration steps
 
-* Migration steps from xref:components:others:test-junit6.adoc[camel-test-junit6] should have been applied first
+* Migration steps from camel-test-junit6 should have been applied first
 * Imports of `org.apache.camel.test.spring.\*` should be replaced with `org.apache.camel.test.spring.junit6.*`
 * Usage of `@RunWith(CamelSpringRunner.class)` should be replaced with `@CamelSpringTest`
 * Usage of `@BootstrapWith(CamelTestContextBootstrapper.class)` should be replaced with `@CamelSpringTest`
