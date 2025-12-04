@@ -33,7 +33,9 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
 
-        getMockEndpoint("mock:result").expectedBodiesReceived(expectedBody);
+        MockEndpoint me = getMockEndpoint("mock:result");
+        me.reset();
+        me.expectedBodiesReceived(expectedBody);
 
         template.sendBodyAndHeader("direct:start", expectedBody, "foo", "bar");
 
@@ -42,7 +44,9 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
 
     @Test
     public void testSendNotMatchingMessage() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(0);
+        MockEndpoint me = getMockEndpoint("mock:result");
+        me.reset();
+        me.expectedMessageCount(0);
 
         template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
 
