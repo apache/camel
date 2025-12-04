@@ -38,11 +38,11 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
-        String opName = queryParameters.get("operation");
-        if (opName != null) {
-            return opName;
+        String answer = queryParameters.get("operation");
+        if (answer == null) {
+            answer = super.getOperationName(exchange, endpoint);
         }
-        return super.getOperationName(exchange, endpoint);
+        return clipMaxLength(answer);
     }
 
     @Override

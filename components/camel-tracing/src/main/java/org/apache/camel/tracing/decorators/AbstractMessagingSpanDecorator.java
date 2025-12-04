@@ -33,7 +33,7 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         // Use the destination name
-        return getDestination(exchange, endpoint);
+        return clipMaxLength(getDestination(exchange, endpoint));
     }
 
     @Override

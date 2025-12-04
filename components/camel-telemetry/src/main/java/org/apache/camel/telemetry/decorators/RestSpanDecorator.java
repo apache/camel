@@ -40,7 +40,7 @@ public class RestSpanDecorator extends AbstractHttpSpanDecorator {
 
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
-        return getPath(endpoint.getEndpointUri());
+        return clipMaxLength(getPath(endpoint.getEndpointUri()));
     }
 
     @Override

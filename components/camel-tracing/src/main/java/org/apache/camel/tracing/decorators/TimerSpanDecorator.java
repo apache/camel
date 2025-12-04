@@ -33,12 +33,11 @@ public class TimerSpanDecorator extends AbstractSpanDecorator {
 
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
-        Object name = exchange.getProperty(Exchange.TIMER_NAME);
-        if (name instanceof String) {
-            return (String) name;
+        String answer = exchange.getProperty(Exchange.TIMER_NAME, String.class);
+        if (answer == null) {
+            answer = super.getOperationName(exchange, endpoint);
         }
-
-        return super.getOperationName(exchange, endpoint);
+        return clipMaxLength(answer);
     }
 
 }
