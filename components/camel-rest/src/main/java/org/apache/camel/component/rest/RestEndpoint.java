@@ -432,8 +432,8 @@ public class RestEndpoint extends DefaultEndpoint {
                         consumes, produces, config, parameters);
             } else {
                 // NOTE: the stream must be closed by the client.
-                producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes,
-                        produces, config, parameters); // NOSONAR
+                producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, // NOSONAR
+                        produces, config, parameters);
             }
 
             RestProducer answer = new RestProducer(this, producer, config);

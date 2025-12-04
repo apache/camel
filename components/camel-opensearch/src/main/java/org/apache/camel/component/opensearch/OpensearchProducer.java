@@ -229,9 +229,9 @@ class OpensearchProducer extends DefaultAsyncProducer {
                                 = message.getHeader(PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(),
                                         Integer.class);
                         // NOTE: the stream must be closed by the client.
-                        OpensearchScrollRequestIterator<?> scrollRequestIterator = new OpensearchScrollRequestIterator<>(
+                        OpensearchScrollRequestIterator<?> scrollRequestIterator = new OpensearchScrollRequestIterator<>( // NOSONAR
                                 searchRequestBuilder, new OpenSearchClient(transport), scrollKeepAliveMs, exchange,
-                                documentClass); // NOSONAR:
+                                documentClass);
                         exchange.getIn().setBody(scrollRequestIterator);
                         cleanup(ctx);
                         callback.done(true);
