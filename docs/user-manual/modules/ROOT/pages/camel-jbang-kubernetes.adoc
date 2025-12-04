@@ -155,7 +155,7 @@ The Camel JBang Kubernetes export command provides several options to customize 
 |The image registry group used to push images to.
 
 |--image-builder
-|The image builder used to build the container image (e.g. docker, jib, podman, s2i).
+|The image builder used to build the container image (e.g. docker, jib, s2i).
 
 |--image-platform
 |List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).

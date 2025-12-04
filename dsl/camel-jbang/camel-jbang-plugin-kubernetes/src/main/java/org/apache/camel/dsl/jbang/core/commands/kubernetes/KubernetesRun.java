@@ -154,7 +154,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String imageGroup;
 
     @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
-                        description = "The image builder used to build the container image (e.g. docker, jib, podman).")
+                        description = "The image builder used to build the container image (e.g. docker, jib, s2i).")
     String imageBuilder = "jib";
 
     @CommandLine.Option(names = { "--cluster-type" },
