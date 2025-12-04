@@ -351,8 +351,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {
         // NOTE: the stream is going to be closed after the exchange completes.
-        StreamResponse<ChatCompletionChunk> streamResponse = getEndpoint().getClient().chat().completions()
-                .createStreaming(params); // NOSONAR
+        StreamResponse<ChatCompletionChunk> streamResponse = getEndpoint().getClient().chat().completions() // NOSONAR
+                .createStreaming(params);
 
         // hand Camel an Iterator for streaming EIPs (split, recipientList, etc.)
         Iterator<ChatCompletionChunk> it = streamResponse.stream().iterator();

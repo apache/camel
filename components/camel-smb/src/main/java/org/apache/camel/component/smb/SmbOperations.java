@@ -589,8 +589,8 @@ public class SmbOperations implements SmbFileOperations {
         InputStream is;
         try {
             // NOTE: the streams opened must be closed byt the client.
-            File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null,
-                    SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null); // NOSONAR
+            File shareFile = share.openFile(path, EnumSet.of(AccessMask.GENERIC_READ), null, // NOSONAR
+                    SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
             is = shareFile.getInputStream();
             exchange.getIn().setHeader(SmbComponent.SMB_FILE_INPUT_STREAM, is);
             exchange.getIn().setHeader(SmbConstants.SMB_UNC_PATH, shareFile.getUncPath());
