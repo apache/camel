@@ -19,6 +19,7 @@ package org.apache.camel.component.pg.replication.slot;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -197,12 +198,15 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
     }
 
     private boolean isSlotCreated() throws SQLException {
-        String sql
-                = String.format("SELECT count(*) FROM pg_replication_slots WHERE slot_name = '%s';", this.endpoint.getSlot());
+        String sql = "SELECT count(*) FROM pg_replication_slots WHERE slot_name = ?";
 
-        try (Statement statement = this.connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
-            resultSet.next();
-            return resultSet.getInt(1) > 0;
+        try (PreparedStatement ps = this.connection.prepareStatement(sql)) {
+            ps.setString(1, this.endpoint.getSlot());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1) > 0;
+            }
         }
     }
 
