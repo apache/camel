@@ -63,6 +63,7 @@
 ** xref:test-junit5.adoc[Test JUnit5]
 ** xref:test-junit6.adoc[Test JUnit6]
 ** xref:test-main-junit5.adoc[Test Main JUnit5]
+** xref:test-main-junit6.adoc[Test Main JUnit6]
 ** xref:test-spring-junit5.adoc[Test Spring JUnit5]
 ** xref:test-spring-junit6.adoc[Test Spring JUnit6]
 ** xref:threadpoolfactory-vertx.adoc[ThreadPoolFactory Vert.x]
