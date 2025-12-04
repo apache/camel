@@ -21,8 +21,6 @@ import org.apache.camel.test.infra.jdbc.services.JDBCService;
 import org.apache.camel.test.infra.jdbc.services.JDBCServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 public class PgEventITSupport extends CamelTestSupport {
@@ -37,8 +35,6 @@ public class PgEventITSupport extends CamelTestSupport {
     protected static final String POSTGRES_USER = "postgres";
     protected static final String POSTGRES_PASSWORD = "mysecretpassword";
     protected static final String POSTGRES_DB = "postgres";
-
-    private static final Logger LOG = LoggerFactory.getLogger(PgEventITSupport.class.getName());
 
     private static PostgreSQLContainer container;
 

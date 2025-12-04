@@ -53,9 +53,10 @@ public class PgEventProducer extends DefaultProducer {
                 statement.execute();
             }
         } else {
-            String sql = String.format("NOTIFY %s, '%s'", endpoint.getChannel(), payload);
-            try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
-                statement.execute();
+            try (PreparedStatement stmt = dbConnection.prepareStatement("SELECT pg_notify(?, ?)")) {
+                stmt.setString(1, endpoint.getChannel());
+                stmt.setString(2, payload);
+                stmt.execute();
             }
         }
     }
