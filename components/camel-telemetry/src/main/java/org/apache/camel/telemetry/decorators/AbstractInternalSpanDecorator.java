@@ -25,7 +25,7 @@ public abstract class AbstractInternalSpanDecorator extends AbstractSpanDecorato
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         // Internal communications use descriptive names, so suitable
         // as an operation name, but need to strip the scheme and any options
-        return stripSchemeAndOptions(endpoint);
+        return clipMaxLength(stripSchemeAndOptions(endpoint));
     }
 
 }

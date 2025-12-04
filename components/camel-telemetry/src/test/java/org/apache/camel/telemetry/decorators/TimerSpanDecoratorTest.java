@@ -31,7 +31,7 @@ public class TimerSpanDecoratorTest {
     public void testGetOperationName() {
         Exchange exchange = Mockito.mock(Exchange.class);
 
-        Mockito.when(exchange.getProperty(Exchange.TIMER_NAME)).thenReturn(TEST_NAME);
+        Mockito.when(exchange.getProperty(Exchange.TIMER_NAME, String.class)).thenReturn(TEST_NAME);
 
         SpanDecorator decorator = new TimerSpanDecorator() {
             @Override
