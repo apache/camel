@@ -124,6 +124,7 @@
         <flatten-maven-plugin-version>1.7.3</flatten-maven-plugin-version>
         <gmavenplus-plugin-version>2.1.0</gmavenplus-plugin-version>
         <license-maven-plugin-version>5.0.0</license-maven-plugin-version>
+        <spotless-maven-plugin-version>2.44.4</spotless-maven-plugin-version>
         <maven-assembly-plugin-version>3.8.0</maven-assembly-plugin-version>
         <maven-compiler-plugin-version>3.14.1</maven-compiler-plugin-version>
         <maven-dependency-plugin-version>3.9.0</maven-dependency-plugin-version>
@@ -452,6 +453,34 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-remote-resources-plugin</artifactId>
                     <version>${maven-remote-resources-plugin-version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>${spotless-maven-plugin-version}</version>
+                    <configuration>
+                        <java>
+                            <includes>
+                                <include>src/main/java/**/*.java</include>
+                                <include>src/test/java/**/*.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/package-info.java</exclude>
+                            </excludes>
+                            <palantirJavaFormat>
+                                <version>2.50.0</version>
+                                <style>PALANTIR</style>
+                                <formatJavadoc>false</formatJavadoc>
+                            </palantirJavaFormat>
+                            <removeUnusedImports />
+                            <importOrder>
+                                <order>java,jakarta,javax,org.w3c,org.xml,junit,</order>
+                            </importOrder>
+                            <licenseHeader>
+                                <file>${maven.multiModuleProjectDirectory}/buildingtools/src/main/resources/header-java.txt</file>
+                            </licenseHeader>
+                        </java>
+                    </configuration>
                 </plugin>
 
                 <plugin>
