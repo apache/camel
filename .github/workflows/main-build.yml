@@ -15,22 +15,23 @@
 # limitations under the License.
 #
 
-name: Build and test
+name: Main Branch Build
 
 on:
-  pull_request:
+  push:
     branches:
       - main
+      - camel-4.4.x
+      - camel-4.8.x
+      - camel-4.10.x
+      - camel-4.14.x
     paths-ignore:
-      - .github/**
       - README.md
       - SECURITY.md
-      - Jenkinsfile
-      - Jenkinsfile.*
       - NOTICE.txt
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -39,20 +40,14 @@ permissions:
 jobs:
   build:
     if: github.repository == 'apache/camel'
-    permissions:
-      issues: write
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        java: ['17']
-        experimental: [ false ]
-        include:
-          - java: '21'
-            experimental: true
-
+        java: ['17', '21']
+      fail-fast: false
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
       - id: install-packages
@@ -60,32 +55,40 @@ jobs:
       - id: install-mvnd
         uses: ./.github/actions/install-mvnd
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
-      - name: maven build
+      - name: Build with Maven
         run: ./etc/scripts/regen.sh
-      - name: archive logs
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+      - name: Archive build logs
+        uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: build-${{ matrix.java }}.log
+          name: build-jdk-${{ matrix.java }}.log
           path: build.log
-      - name: Fail if there are uncommitted changes
+          retention-days: 7
+      - name: Check for uncommitted changes
         shell: bash
         run: |
           [[ -z $(git status --porcelain) ]] || { echo 'There are uncommitted changes'; git status; echo; echo; git diff; exit 1; }
-      - name: mvn test
-        uses: ./.github/actions/incremental-build
+      - name: Run tests
+        run: |
+          ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l test.log $MVND_OPTS install -DskipITs
+      - name: Archive test logs
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
-          mode: test
-          pr-id: ${{ github.event.number }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-mvnd-install: 'true'
-          artifact-upload-suffix: java-${{ matrix.java }}
-      - name: mvn test parent pom dependencies changed
-        uses: ./.github/actions/detect-dependencies
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: test-jdk-${{ matrix.java }}.log
+          path: test.log
+          retention-days: 7
+      - name: Publish Test Results
+        if: always()
+        run: |
+          echo "## Test Results for JDK ${{ matrix.java }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          # Count test results
+          TESTS=$(find . -path '*target/surefire-reports/*.xml' -exec grep -l 'testsuite' {} \; 2>/dev/null | wc -l)
+          echo "Found test report files: $TESTS" >> $GITHUB_STEP_SUMMARY
+

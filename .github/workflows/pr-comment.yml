@@ -20,7 +20,12 @@ name: PR Comment Build
 on:
   issue_comment:
     types: [created]
-permissions:  
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+permissions:
   contents: read
 
 jobs:
